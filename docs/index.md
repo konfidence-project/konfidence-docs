@@ -1,0 +1,10 @@
+---
+# https://vitepress.dev/reference/default-theme-home-page
+layout: home
+
+hero:
+  name: "Konfidence Docs"
+  tagline: Comming to a kubernetes cluster near you soon!
+  
+---
+
