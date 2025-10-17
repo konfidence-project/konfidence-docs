@@ -8,7 +8,7 @@ export default defineConfig({
   description: "Public Documentation for Project Konfidence",
   themeConfig: {
     footer: {
-      message: 'Funded by the European Union - Part of the ApeiroRA projec  - TODO: add real footer',
+      message: 'Funded by the European Union - Part of the ApeiroRA project  - TODO: add real footer',
     },
     // https://vitepress.dev/reference/default-theme-config
     socialLinks: [
