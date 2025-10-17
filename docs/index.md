@@ -4,7 +4,6 @@ layout: home
 
 hero:
   name: "Konfidence Docs"
-  tagline: Comming to a kubernetes cluster near you soon!
+  tagline: Coming to a Kubernetes cluster near you soon!
   
 ---
-
