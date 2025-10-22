@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: Deliver with Konfidence
+  name: Konfidence
   text: Immutable by design. Automated by nature. Built for teams that move fast and deploy safely.
   tagline: Reliable. Reproducible. Ready soon.
   
