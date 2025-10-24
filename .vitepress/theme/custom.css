@@ -1,39 +1,99 @@
-/* Hide GitHub social link on the homepage */
-.home .VPNavBarSocialLinks {
-  display: none;
-}
-
-.konfidence-brand {
-  color: #F3AE3D;
-  font-size: 3rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.hero-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.hero-announce {
+  display: grid;
+  grid-template-columns: max-content 360px;
+  grid-template-rows: auto 1fr;
   align-items: center;
+  column-gap: 2.5rem; 
   width: 100%;
-  max-width: 1200px;
+  max-width: 980px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 4rem 2rem;
   box-sizing: border-box;
 }
 
-.hero-text {
-  flex: 1;
-  min-width: 300px;
+.konfidence-brand {
+  grid-column: 1;
+  grid-row: 1;
+  color: #F3AE3D;
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 1rem 0;
+}
+
+.hero-copy {
+  grid-column: 1;
+  grid-row: 2;
+  width: max-content;
+  max-width: 560px;
 }
 
 .hero-logo {
-  width: 250px;
-  flex-shrink: 0;
-  text-align: right;
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: auto 112%;
+  background-position: left center;
+  filter: drop-shadow(0 32px 72px rgba(243, 174, 61, 0.45))
+          drop-shadow(0 12px 24px rgba(243, 174, 61, 0.25));
 }
 
-.hero-logo img {
-  max-width: 100%;
-  height: auto;
+.home .VPNavBarSocialLinks {
+  display: none !important;
 }
+
+
+@media (max-width: 768px) {
+  .hero-announce {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1.5rem 4rem;
+    gap: 2rem;
+  }
+
+  .hero-logo {
+    order: -1; /* Logo vor Text */
+    width: 40%;
+    max-width: 260px;
+    aspect-ratio: 1 / 1;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 32px 72px rgba(243, 174, 61, 0.45))
+            drop-shadow(0 12px 24px rgba(243, 174, 61, 0.25));
+    margin-bottom: 1rem;
+  }
+
+  .konfidence-brand {
+    font-size: 2.25rem;
+    margin: 0.5rem 0;
+  }
+
+  .hero-copy {
+    max-width: 40ch;
+  }
+
+  .heading {
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  .tagline {
+    font-size: 1rem;
+    margin-top: 0.75rem;
+  }
+}
+
+:root:has(.hero-announce) .VPNavBar .VPSocialLinks,
+:root:has(.hero-announce) .VPNavBar .VPNavBarSocialLinks,
+:root:has(.hero-announce) .VPSidebar .VPSocialLinks,
+:root:has(.hero-announce) .VPNavBar a[href*="github.com"],
+:root:has(.hero-announce) .VPSidebar a[href*="github.com"] {
+  display: none !important;
+}
+
