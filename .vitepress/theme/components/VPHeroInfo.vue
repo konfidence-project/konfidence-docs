@@ -6,13 +6,19 @@ const { isDark } = useData();
 </script>
 
 <template>
-    <img :src="withBase(isDark ? '/assets/logo/full/SVG/1200_konfidence_logo_dark.svg' : '/assets/logo/full/SVG/1200_konfidence_logo_light.svg')"
-        class="hero-image" alt="Konfidence logo">
+    <h1 class="konfidence-brand">Konfidence</h1>
 
     <h1 class="heading"> Immutable by design. </h1>
     <h1 class="heading">Automated by nature. </h1>
     <h1 class="heading"> Built for teams that move fast and deploy safely.</h1>
     <p class="tagline">Reliable. Reproducible. Ready soon.</p>
+    
+    <div class="hero-logo">
+      <img
+        :src="withBase(isDark ? '/assets/logo/Icon_only/SVG/512_konfidence_icon_color.svg' : '/assets/logo/Icon_only/SVG/512_konfidence_icon_color.svg')"
+        alt="Konfidence Logo"
+      />
+    </div>
 
 </template>
 

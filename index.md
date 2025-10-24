@@ -4,4 +4,3 @@ layout: home
 
 hero:
   name: Konfidence
-  

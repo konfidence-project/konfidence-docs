@@ -1,0 +1,39 @@
+/* Hide GitHub social link on the homepage */
+.home .VPNavBarSocialLinks {
+  display: none;
+}
+
+.konfidence-brand {
+  color: #F3AE3D;
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.hero-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.hero-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.hero-logo {
+  width: 250px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.hero-logo img {
+  max-width: 100%;
+  height: auto;
+}

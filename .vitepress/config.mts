@@ -4,7 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
 
   
-  title: "Konfidence Docs",
+  title: "Konfidence",
   description: "Public Documentation for Project Konfidence",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
