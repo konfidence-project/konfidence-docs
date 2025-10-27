@@ -21,9 +21,11 @@ const logoUrl = computed(() =>
   <div class="hero-copy">
     <h2 class="heading">Immutable by design.</h2>
     <h2 class="heading">Automated by nature.</h2>
-    <h2 class="heading">Built for fast, safe delivery.</h2>
-    <p class="tagline">Reliable. Reproducible. Ready soon.</p>
+    <h2 class="heading">Built for fast, safe deployment.</h2>
+    <p class="tagline">Reliable. Reproducible. Sovereign.</p>
+    <p class="tagline">Coming to a cluster near you soon.</p>
   </div>
+  
 
   <div class="hero-logo" :style="{ backgroundImage: `url(${logoUrl})` }"></div>
 </section>
