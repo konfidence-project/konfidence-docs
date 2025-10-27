@@ -6,12 +6,14 @@ export default defineConfig({
   
   title: "Konfidence",
   description: "Public Documentation for Project Konfidence",
+  
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/konfidence-project/konfidence-docs' }
-    ],
-    logo: {src: '/assets/logo/Icon_only/SVG/512_konfidence_icon_color.svg'},
+
+    logo: {
+      light: '/assets/logo/full/SVG/400_konfidence_logo_light.svg', 
+        dark: '/assets/logo/full/SVG/400_konfidence_logo_dark.svg'},
+    siteTitle:false    
     
   }
 })

@@ -14,11 +14,17 @@
 .konfidence-brand {
   grid-column: 1;
   grid-row: 1;
-  color: #F3AE3D;
   font-size: 3rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  margin: 0 0 1rem 0;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+  background: #27A3CA;
+  background: linear-gradient(142deg, rgb(0, 195, 255) 0%, #F3AE3D 40%, #F3AE3D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
 }
 
 .hero-copy {
@@ -88,12 +94,3 @@
     margin-top: 0.75rem;
   }
 }
-
-:root:has(.hero-announce) .VPNavBar .VPSocialLinks,
-:root:has(.hero-announce) .VPNavBar .VPNavBarSocialLinks,
-:root:has(.hero-announce) .VPSidebar .VPSocialLinks,
-:root:has(.hero-announce) .VPNavBar a[href*="github.com"],
-:root:has(.hero-announce) .VPSidebar a[href*="github.com"] {
-  display: none !important;
-}
-

@@ -16,23 +16,22 @@ const logoUrl = computed(() =>
 
 <template>
   <section class="hero-announce">
-  <h1 class="konfidence-brand">Konfidence</h1>
+    <h1 class="konfidence-brand">Konfidence</h1>
 
-  <div class="hero-copy">
-    <h2 class="heading">Immutable by design.</h2>
-    <h2 class="heading">Automated by nature.</h2>
-    <h2 class="heading">Built for fast, safe deployment.</h2>
-    <p class="tagline">Reliable. Reproducible. Sovereign.</p>
-    <p class="tagline">Coming to a cluster near you soon.</p>
-  </div>
-  
+    <div class="hero-copy">
+      <h2 class="heading">Immutable by design.</h2>
+      <h2 class="heading">Automated by nature.</h2>
+      <h2 class="heading">Built for fast, safe deployment.</h2>
+      <p class="tagline">Reliable. Reproducible. Sovereign.</p>
+      <p class="announcement">Coming to a cluster near you soon.</p>
+    </div>
 
-  <div class="hero-logo" :style="{ backgroundImage: `url(${logoUrl})` }"></div>
-</section>
+
+    <div class="hero-logo" :style="{ backgroundImage: `url(${logoUrl})` }"></div>
+  </section>
 </template>
 
 <style scoped>
-
 .heading {
   margin: 0;
   display: block;
@@ -40,6 +39,17 @@ const logoUrl = computed(() =>
   line-height: 1.2;
   font-weight: 600;
 }
-.heading + .heading { margin-top: 0.25rem; }
-.tagline { font-size: 1.125rem; margin-top: 0.85rem; }
+
+
+
+.tagline {
+  font-size: 1.125rem;
+  margin-top: 0.85rem;
+}
+
+.announcement {
+  font-size: 2rem;
+  margin-top: 2rem;
+  text-shadow: 0 0 15px rgba(247, 162, 26, 0.417);
+}
 </style>
