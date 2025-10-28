@@ -2,17 +2,17 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  srcDir: "docs",
+
   
-  title: "Konfidence Docs",
+  title: "Konfidence",
   description: "Public Documentation for Project Konfidence",
+  ignoreDeadLinks:true,
   themeConfig: {
-    footer: {
-      message: 'Funded by the European Union - Part of the ApeiroRA project  - TODO: add real footer',
-    },
     // https://vitepress.dev/reference/default-theme-config
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/konfidence-project/konfidence-docs' }
-    ]
+
+    logo: {
+      light: '/assets/logo/full/SVG/400_konfidence_logo_light.svg', 
+        dark: '/assets/logo/full/SVG/400_konfidence_logo_dark.svg'},
+    siteTitle:false    
   }
 })
