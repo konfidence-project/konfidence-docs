@@ -48,9 +48,10 @@ import {withBase} from "vitepress";
           <div class="copyright">
             <p>
               <strong>
-                Copyright 2025 SAP SE or an SAP affiliate company and Konfidence contributors.
+                Copyright 2025 SAP SE or an SAP affiliate company and Konfidence contributors. 
               </strong>
             </p>
+            <a href="https://www.sap.com/about/legal/impressum-se.html">Legal Disclosure</a>
           
           </div>
         </div>
@@ -98,6 +99,8 @@ import {withBase} from "vitepress";
 
 .message,
 .copyright {
+  display: flex;
+  justify-content: space-between;
   line-height: 24px;
   font-size: 14px;
   font-weight: 500;
