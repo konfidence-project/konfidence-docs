@@ -1,10 +1,13 @@
 <template>
   <DefaultTheme.Layout>
-    <template #layout-bottom>
-      <VPFooter />
-    </template>
     <template #home-hero-info>
       <VPHeroInfo />
+    </template>
+    <template #doc-after>
+      <VPFooter />
+    </template>
+    <template #home-features-after>
+      <VPFooter />
     </template>
   </DefaultTheme.Layout>
 </template>
