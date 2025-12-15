@@ -1,6 +1,6 @@
 # Konfidence Docs
 
-Official documentation for the Konfidence project, built with [VitePress](https://vitepress.dev/).
+This is the working repository and contains the preview environment of the official documentation for the Konfidence project, built with [VitePress](https://vitepress.dev/).
 
 ## Development Setup
 
