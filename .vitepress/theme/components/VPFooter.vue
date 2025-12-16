@@ -71,9 +71,6 @@ import {withBase} from "vitepress";
   background-color: var(--vp-c-bg);
 }
 
-.VPFooter.has-sidebar {
-  display: none;
-}
 
 .VPFooter :deep(a) {
   text-decoration-line: underline;
@@ -115,10 +112,6 @@ import {withBase} from "vitepress";
   margin-top: 64px;
 }
 
-.container {
-  max-width: 1152px;
-  margin: 0 auto;
-}
 
 /* Columns for navigation links */
 .footer-columns {
@@ -164,21 +157,28 @@ import {withBase} from "vitepress";
 /* Funding Notice Section */
 .funding-notice {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
   padding: 0 0 24px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.funding-image {
+  flex-shrink: 0;
+  max-width: 100%;
 }
 
 .funding-image img {
-  max-width: 300px;
+  max-width: 100%;
+  width: 200px;
   height: auto;
   display: block;
 }
 
 .funding-text {
   flex: 1;
-  min-width: 280px;
   font-size: 12px;
   color: var(--vp-c-text-2);
   line-height: 1.6;
