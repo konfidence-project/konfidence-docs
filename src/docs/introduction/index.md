@@ -54,7 +54,7 @@ Konfidence supports everyone involved in the software delivery lifecycle:
 - [Operators](src/docs/operator-guide) who manage deployments and environment promotion.
 - [Contributors](src/docs/contributor-guide) who extend the framework or integrate it with existing tooling. 
 
-## What can you do with Konfidence?
+## What are the benefits of Konfidence?
 
 Konfidence enables teams to:
 
@@ -63,9 +63,9 @@ Konfidence enables teams to:
 - Perform controlled rollouts using feature toggles and ring deployments  
 - Track and audit application versions throughout the delivery lifecycle  
 - Avoid unnecessary redeployments and reduce operational overhead  
+- Reduce infrastructure costs by reusing services across stages within the same landscape  
 
 These principles support frequent releases while maintaining control and reliability.
-
 
 ## What's next?
 
