@@ -6,6 +6,11 @@ export default defineConfig({
   vite: {
     publicDir: '../public'
   },
+  head: [
+    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
+    ['link', { href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', rel: 'stylesheet' }]
+  ],
   title: "Konfidence",
   description: "Public Documentation for Project Konfidence",
   ignoreDeadLinks: true,
@@ -30,33 +35,41 @@ export default defineConfig({
       '/docs/': [
         {
           text: 'Getting Started',
-          link: '/docs/getting-started/'
+          collapsed: false,
+          items: [
+            { text: 'Quickstart', link: '/docs/getting-started/quickstart' }
+          ]
         },
         {
           text: 'Introduction',
-          link: '/docs/introduction/'
+          collapsed: false,
+          items: [
+            { text: 'What is Konfidence?', link: '/docs/introduction/what-is-konfidence' }
+          ]
         },
         {
           text: 'Core Concepts',
-          link: '/docs/core-concepts/',
           collapsed: false,
           items: [
+            { text: 'Konfidence Core Concepts', link: '/docs/core-concepts/konfidence-core-concepts' },
             { text: 'Architecture', link: '/docs/core-concepts/architecture-overview' },
-            { text: 'Key Objects', link: '/docs/core-concepts/key-objects' },
             { text: 'Glossary', link: '/docs/core-concepts/glossary' }
           ]
         },
         {
           text: 'User Guide',
-          link: '/docs/user-guide/'
+          collapsed: false,
+          items: []
         },
         {
           text: 'Operator Guide',
-          link: '/docs/operator-guide/'
+          collapsed: false,
+          items: []
         },
         {
           text: 'Contributor Guide',
-          link: '/docs/contributor-guide/'
+          collapsed: false,
+          items: []
         }
       ]
     },
