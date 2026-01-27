@@ -73,6 +73,7 @@
   --konfidence-orange: #FFAA00;
   --konfidence-blue-light: #80D2E0;
   --konfidence-blue: #139CC7;
+  --konfidence-blue-dark: #0E7FA3;
 
   /* VitePress Brand Overrides */
   --vp-c-brand-1: #139CC7;
@@ -92,6 +93,7 @@
   --konfidence-orange: #FFAA00;
   --konfidence-blue-light: #B9E6EB;
   --konfidence-blue: #1FACD0;
+  --konfidence-blue-dark: #0E9DBF;
 
   /* VitePress Brand Overrides */
   --vp-c-brand-1: #1FACD0;
@@ -108,17 +110,41 @@
   font-size: 16px;
 }
 
-/* Top-level group titles (non-clickable) - always orange */
+/* Top-level group titles (non-clickable) - dark blue, bold */
 .VPSidebarItem.level-0 > .item > .text {
   font-weight: 700;
   font-size: 16px;
-  color: var(--konfidence-orange) !important;
+  color: var(--konfidence-blue-dark) !important;
 }
 
-/* Spacing between top-level groups */
+/* Spacing between top-level groups - unified */
 .VPSidebarItem.level-0 {
-  padding-top: 12px;
-  padding-bottom: 6px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-top: 0;
+  margin-bottom: 0;
+  border-top: none !important;
+}
+
+/* First top-level item needs less top padding */
+.VPSidebarItem.level-0:first-child {
+  padding-top: 0;
+}
+
+/* Remove divider lines and extra margins from sidebar groups */
+.VPSidebar .group {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+/* Collapsed items container - reduce spacing */
+.VPSidebarItem .items {
+  padding-top: 4px;
+  padding-bottom: 8px;
 }
 
 /* Child links - default: text color */
@@ -128,9 +154,9 @@
   transition: color 0.2s ease;
 }
 
-/* Spacing between child links */
+/* Spacing between child links - reduced */
 .VPSidebarItem.level-1 > .item {
-  padding: 8px 0;
+  padding: 4px 0;
 }
 
 /* Child links - hover: blue */
@@ -138,10 +164,64 @@
   color: var(--konfidence-blue) !important;
 }
 
-/* Child links - active: blue */
+/* Child links - active: blue, regular weight (not bold) */
 .VPSidebarItem.level-1.is-active > .item > .link > .text {
   color: var(--konfidence-blue) !important;
-  font-weight: 600;
+  font-weight: 400;
+}
+
+/* =============================================
+   Content Page Styling
+   ============================================= */
+
+/* Remove horizontal divider lines on content pages */
+.VPDoc .divider,
+.VPDoc hr,
+.VPDocFooter::before,
+.VPDoc .content-container hr {
+  display: none !important;
+  border: none !important;
+}
+
+/* Remove divider line above footer */
+.VPDocFooter {
+  border-top: none !important;
+  margin-top: 2rem;
+  padding-top: 1rem;
+}
+
+/* Remove divider line below page title */
+.VPDoc h1 {
+  border-bottom: none !important;
+  padding-bottom: 0;
+}
+
+/* Uniform paragraph spacing */
+.VPDoc .vp-doc p {
+  margin: 1rem 0;
+}
+
+/* Uniform heading spacing */
+.VPDoc .vp-doc h2 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-top: none !important;
+  padding-top: 0;
+}
+
+.VPDoc .vp-doc h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Uniform list spacing */
+.VPDoc .vp-doc ul,
+.VPDoc .vp-doc ol {
+  margin: 1rem 0;
+}
+
+.VPDoc .vp-doc li {
+  margin: 0.5rem 0;
 }
 
 /* =============================================
