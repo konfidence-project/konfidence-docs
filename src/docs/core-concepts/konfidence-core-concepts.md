@@ -1,12 +1,12 @@
 ---
-title: Key Objects
-description: Reference guide for Konfidence's key objects. Understand the building blocks of this framework.
+title: Konfidence Core Concepts
+description: Reference guide for Konfidence's core concepts. Understand the building blocks of this framework.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Key Objects
+# Konfidence Core Concepts
 
 
 
