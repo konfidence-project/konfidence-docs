@@ -29,6 +29,7 @@ A controller responsible for executing the deployment of individual artifacts.
 A deployer acts upon ArtifactDeployment CRs and performs the deployment of an artifact for a specific runtime, e.g. Kubernetes.
  
 ## Global Control Plane
+
 A global control plane is the primary interface to manage the software delivery process. 
 
 It defines and distributes the desired state for multiple local control planes. The global control plane assembles, validates, and dispatches deployment configurations, such as software versions and stage resources.
