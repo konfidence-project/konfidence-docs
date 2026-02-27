@@ -1,7 +1,7 @@
 ---
 title: Glossary
 description: Comprehensive glossary of Konfidence terminology, acronyms, and technical terms. Quick reference for developers and operators.
-outline: false
+outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
