@@ -20,24 +20,24 @@ Konfidence uses a split architecture. This keeps your central management secure 
 
 The global control plane is the primary interface for your project. It manages the delivery process but does not touch your target environments directly.
 
-* **Definition:** A centralized service that defines and distributes the desired state (vectors and stages) for all connected environments.
-* **Role:** It acts as the "single source of truth" for your software delivery. It receives status updates but never sends commands directly into the clusters, ensuring security.
+* **Definition:** The GCP defines and distributes the desired state for multiple local control planes.
+* **Role:** It assembles, validates, and dispatches deployment configurations, such as software versions and stage resources. The GCP receives status updates but never sends commands directly into the clusters, ensuring security.
 
 ### Local control plane (LCP)
 
 The local control plane is a runtime orchestrator that lives close to your target environment (typically a Kubernetes cluster).
 
 * **Definition:** A local operator that pulls configurations from the global control plane and applies them to the cluster.
-* **Role:** It manages the vector lifecycle, consisting of deployment, migration and activation. By using a *pull model* (connecting outbound to the manager), it allows you to deploy securely without opening firewalls for inbound traffic.
+* **Role:** The LCP manages and executes software deployments in one or more environments based on a specific target state, such as a stage resource. By using a *pull model* (connecting outbound to the manager), it allows you to deploy securely without opening firewalls for inbound traffic.
 
 ### Landscape
 
-A landscape is the actual place where deployments happen. Infrastructure administrators usually manage landscapes.
+A landscape is the actual place where deployments happen.
 
 * **Definition:** The physical or virtual infrastructure where your software runs. Usually, this is a Kubernetes cluster or a CloudFoundry space. However, it can also be a CDN provider, a functional runtime, or a bare-metal machine.
 * **Role:** It provides the foundation for your applications. Konfidence does not manage the landscape itself; you must provide the underlying infrastructure. Each landscape belongs to one local control plane, which manages all deployments there. You can set up multiple landscapes for different purposes (like testing vs. production) or for different geographical regions (like EU vs. US).
 
-## Defining Your application
+## Defining your application
 
 Before you deploy software, you must define it. Konfidence uses strict versioning to ensure consistency and builds heavily on the Open Component Model (OCM) to package and describe these definitions. 
 
@@ -63,7 +63,7 @@ A vector is a complete, immutable snapshot of your entire application at a speci
 
 ### Stage
 
-A stage represents a specific step in your delivery process, such as `Development`, `Test`, or `Release`.
+A stage represents a specific step in your delivery process, such as `Development`, `Test`, or `Production`.
 As opposed to a landscape (which is physical), a stage is the logical deployment target for a vector.
 
 * **Definition:**  A Kubernetes custom resource (CRD) that acts as a checkpoint. It maps one specific vector to a specific landscape.
@@ -88,8 +88,6 @@ Because stages change over time (e.g., updating `Test` from vector v1 to v2), Ko
 
 ### VectorAssignment
 
-This concept connects the abstract deployment plan to the concrete resources in the cluster.
-
 * **Definition:** A resource that creates a logical binding between a vectorDeployment and specific artifactDeployments.
 * **Role:** It manages efficiency. Since multiple vectors often reuse the same artifacts, this assignment ensures the system knows exactly which artifacts belong to the current deployment without duplicating them.
 
@@ -100,7 +98,7 @@ The Deployer is the tool that translates Konfidence instructions into reality.
 * **Definition:** A specific controller responsible for executing the deployment of individual artifacts for a specific runtime (like Kubernetes).
 * **Role:** It performs the low-level technical work. It reads the artifactDeployment instructions and creates the necessary resources (like Pods and Services) in the cluster. -->
 
-## Putting It All Together: The Workflow
+## Putting it all together: the workflow
 
 Here is the step-by-step flow of a deployment in Konfidence:
 
@@ -109,9 +107,9 @@ Here is the step-by-step flow of a deployment in Konfidence:
 3.  **Promote:** You assign this vector to a **stage** (like `Development`).
 4.  **Pull:** The **local control plane** detects the change and pulls the new configuration.
 5.  **Snapshot:** The system creates a **stageVersion** to track this specific rollout.
-6.  **vector lifecycle begins:**
+6.  **Vector lifecycle begins:**
     * **Deployers** deploy the necessary artifacts.
-    * **vectorAssignments** link these artifacts to the current vector.
+    * **VectorAssignments** link these artifacts to the current vector.
     * **Tasks** (like migrations) prepare the data.
 7.  **Activate:** Once everything is ready, traffic switches to the new version, and you can track the entire flow in the delivery dashboard.
 
