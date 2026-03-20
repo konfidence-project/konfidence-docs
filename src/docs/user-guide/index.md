@@ -1,16 +1,16 @@
 ---
-title: User Guide
+title: User guide
 description: Complete user guide for working with Konfidence. 
 outline: deep
 editLink: true
 lastUpdated: true
 ---
 
-# User Guide
+# User guide
 
 
 
 ## Related
 
-- [Getting Started](/docs/getting-started/) - Quick start guide
-- [Core Concepts](/docs/core-concepts/) - Fundamental concepts
+- [Getting started](/docs/getting-started/) - Quick start guide
+- [Core concepts](/docs/core-concepts/) - Fundamental concepts

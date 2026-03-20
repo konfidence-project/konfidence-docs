@@ -28,7 +28,7 @@ An artifact deployment can be reused by multiple vector deployments within a lan
 A controller responsible for executing the deployment of individual artifacts. 
 A deployer acts upon ArtifactDeployment CRs and performs the deployment of an artifact for a specific runtime, e.g. Kubernetes.
  
-## Global Control Plane
+## Global control plane
 
 A global control plane is the primary interface to manage the software delivery process. 
 
@@ -40,7 +40,7 @@ The global control plane also receives regular status updates from its connected
 
 A landscape is the logical grouping of multiple stages and deployment targets. In Konfidence, it is represented by a Kubernetes namespace. A landscape is where deployments are physically executed. 
 
-## Local Control Plane
+## Local control plane
 
 A local control plane is a runtime orchestrator that manages and executes software deployments in one or more environments based on a specific target state, such as a stage resource. 
 
