@@ -69,4 +69,4 @@ These principles support frequent releases while maintaining control and reliabi
 
 ## What's next?
 
-If you're new to Konfidence, begin with the [Core Concepts](src/docs/core-concepts) section to understand how application vectors, environments, and delivery semantics fit together. From there, choose the guide that matches your role: User, Operator, or Contributor.
+If you're new to Konfidence, begin with the [Konfidence core concepts](/konfidence-core-concepts) section to understand how application vectors, environments, and delivery semantics fit together. From there, choose the guide that matches your role: User, Operator, or Contributor.

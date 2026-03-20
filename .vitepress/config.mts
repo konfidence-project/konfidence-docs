@@ -34,7 +34,7 @@ export default defineConfig({
     sidebar: {
       '/docs/': [
         {
-          text: 'Getting Started',
+          text: 'Getting started',
           collapsed: false,
           items: [
             { text: 'Quickstart', link: '/docs/getting-started/quickstart' }
@@ -48,26 +48,26 @@ export default defineConfig({
           ]
         },
         {
-          text: 'Core Concepts',
+          text: 'Core concepts',
           collapsed: false,
           items: [
-            { text: 'Konfidence Core Concepts', link: '/docs/core-concepts/konfidence-core-concepts' },
+            { text: 'Konfidence core concepts', link: '/docs/core-concepts/konfidence-core-concepts' },
             { text: 'Architecture', link: '/docs/core-concepts/architecture-overview' },
             { text: 'Glossary', link: '/docs/core-concepts/glossary' }
           ]
         },
         {
-          text: 'User Guide',
+          text: 'User guide',
           collapsed: false,
           items: []
         },
         {
-          text: 'Operator Guide',
+          text: 'Operator guide',
           collapsed: false,
           items: []
         },
         {
-          text: 'Contributor Guide',
+          text: 'Contributor guide',
           collapsed: false,
           items: []
         }
