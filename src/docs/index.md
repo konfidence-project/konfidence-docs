@@ -6,6 +6,6 @@ editLink: true
 lastUpdated: true
 ---
 
-# Konfidence Documentation
+# Documentation
 
 <DocsCards />
