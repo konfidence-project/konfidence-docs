@@ -23,7 +23,6 @@ const logoUrl = computed(() =>
       <h2 class="heading">Automated by nature.</h2>
       <h2 class="heading">Built for fast, safe deployment.</h2>
       <p class="tagline">Reliable. Reproducible. Sovereign.</p>
-      <p class="announcement">Coming to a cluster near you soon.</p>
     </div>
 
 
@@ -32,6 +31,12 @@ const logoUrl = computed(() =>
 </template>
 
 <style scoped>
+.hero-announce {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
 .heading {
   margin: 0;
   display: block;
@@ -39,8 +44,6 @@ const logoUrl = computed(() =>
   line-height: 1.2;
   font-weight: 600;
 }
-
-
 
 .tagline {
   font-size: 1.125rem;
