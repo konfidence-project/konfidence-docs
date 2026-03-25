@@ -45,11 +45,7 @@ import FeatureOverview from './components/FeatureOverview.vue'
   display: inline-block;
   text-decoration: none;
   background: transparent;
-  background: linear-gradient(142deg, #139CC7 0%, #FFAA00 50%, #FFD600 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
+  color: var(--vp-c-brand-1);
 }
 
 .what-is-button:hover {
