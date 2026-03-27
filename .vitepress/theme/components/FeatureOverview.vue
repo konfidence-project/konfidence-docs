@@ -3,7 +3,7 @@
     <div class="feature-tiles">
       <div class="feature-tile">
         <h3>Deploy once, run everywhere</h3>
-        <p>Immutable vectors guarantee that what you test is exactly what runs in production.</p>
+        <p>Immutable vectors guarantee that what you test is exactly what runs in production, eliminating environment inconsistencies.</p>
       </div>
 
       <div class="feature-tile">
@@ -12,12 +12,12 @@
       </div>
 
       <div class="feature-tile">
-        <h3>Improve your DORA metrics</h3>
-        <p>Teams see measurable improvements in deployment frequency and change failure rates.</p>
+        <h3>Improve delivery performance</h3>
+        <p>Teams see measurable improvements in deployment frequency and change failure rates through predictable, repeatable delivery pipelines.</p>
       </div>
 
       <div class="feature-tile">
-        <h3>Kubernetes-native by design</h3>
+        <h3>Run natively on Kubernetes</h3>
         <p>Built specifically for Kubernetes environments, leveraging native APIs and patterns. No additional infrastructure overhead.</p>
       </div>
     </div>

@@ -5,7 +5,7 @@
     </template>
     <template #home-hero-after>
       <div class="button-container">
-        <a href="/docs/introduction/what-is-konfidence.html" class="what-is-button">What is Konfidence?</a>
+        <a href="/docs/introduction/what-is-konfidence.html" class="what-is-button">Explore Konfidence</a>
       </div>
       <FeatureOverview />
     </template>
@@ -38,14 +38,13 @@ import FeatureOverview from './components/FeatureOverview.vue'
   padding: 0.75rem 2.5rem;
   font-size: 1rem;
   font-weight: 600;
-  border: 2px solid var(--vp-c-brand-1);
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-block;
   text-decoration: none;
-  background: transparent;
-  color: var(--vp-c-brand-1);
+  background: linear-gradient(135deg, #FFCB49, #FF960C);
+  color: white;
 }
 
 .what-is-button:hover {
