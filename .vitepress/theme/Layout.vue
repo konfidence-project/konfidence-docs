@@ -43,7 +43,7 @@ import FeatureOverview from './components/FeatureOverview.vue'
   transition: all 0.3s ease;
   display: inline-block;
   text-decoration: none;
-  background: linear-gradient(135deg, #FFCB49, #FF960C);
+  background: #139CC7;
   color: white;
 }
 
