@@ -2,27 +2,31 @@
   <div class="feature-overview-wrapper">
     <div class="feature-tiles">
       <div class="feature-tile">
-        <h3>Deploy once, run everywhere</h3>
-        <p>Immutable vectors guarantee that what you test is exactly what runs in production, eliminating environment inconsistencies.</p>
+        <h3><RefreshCcw class="tile-icon" />Reuse</h3>
+        <p>Deploy once, run everywhere: Immutable vectors guarantee that what you test is exactly what runs in production, eliminating environment inconsistencies.</p>
       </div>
 
       <div class="feature-tile">
-        <h3>Scale releases without losing control</h3>
-        <p>Maintains delivery consistency even as release frequency increases and teams grow.</p>
+        <h3><TrendingUp class="tile-icon" />Scale</h3>
+        <p>Scale releases without losing control: Automated delivery controls ensure every release follows the same reliable process, even as release frequency increases and teams grow.</p>
       </div>
 
       <div class="feature-tile">
-        <h3>Improve delivery performance</h3>
-        <p>Teams see measurable improvements in deployment frequency and change failure rates through predictable, repeatable delivery pipelines.</p>
+        <h3><Zap class="tile-icon" />Accelerate</h3>
+        <p>Improve delivery performance: Teams see measurable improvements in deployment frequency and change failure rates through predictable, repeatable delivery pipelines.</p>
       </div>
 
       <div class="feature-tile">
-        <h3>Run natively on Kubernetes</h3>
-        <p>Built specifically for Kubernetes environments, leveraging native APIs and patterns. No additional infrastructure overhead.</p>
+        <h3><Layers class="tile-icon" />Integrate</h3>
+        <p>The framework runs natively on Kubernetes, using native APIs and patterns to manage delivery workflows. There is no extra infrastructure layer to install or maintain.</p>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+import { RefreshCcw, TrendingUp, Zap, Layers } from 'lucide-vue-next'
+</script>
 
 <style scoped>
 .feature-overview-wrapper {
@@ -39,11 +43,23 @@
 
 .feature-tile {
   background: var(--vp-c-bg-soft);
-  border: 2px solid var(--vp-c-brand-1);
+  border: 2px solid transparent;
   border-radius: 12px;
   padding: 2rem;
   display: flex;
   flex-direction: column;
+  background-clip: padding-box;
+  outline: 2px solid transparent;
+  position: relative;
+}
+
+.feature-tile::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #139CC7, #80D2E0);
+  z-index: -1;
 }
 
 .feature-tile:hover {
@@ -52,9 +68,19 @@
 .feature-tile h3 {
   font-size: 1.1rem;
   margin: 0 0 1rem 0;
-  color: var(--vp-c-brand-1);
+  color: var(--vp-c-text-1);
   font-weight: 600;
   line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tile-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex-shrink: 0;
+  color: #139CC7;
 }
 
 .feature-tile p {
