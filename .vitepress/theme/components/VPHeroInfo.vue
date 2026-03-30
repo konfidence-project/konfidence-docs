@@ -26,7 +26,7 @@ const logoUrl = computed(() =>
     </div>
 
 
-    <div class="hero-logo" :style="{ backgroundImage: `url(${logoUrl})` }"></div>
+    <img class="hero-logo" :src="logoUrl" alt="" />
   </section>
 </template>
 
@@ -38,7 +38,7 @@ const logoUrl = computed(() =>
 }
 
 .heading {
-  margin: 0;
+  margin: 0 0 0.4rem 0;
   display: block;
   font-size: 2rem;
   line-height: 1.2;
