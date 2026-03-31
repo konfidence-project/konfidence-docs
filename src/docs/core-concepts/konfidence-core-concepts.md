@@ -16,6 +16,8 @@ This section explains the main building blocks of Konfidence. You will learn the
 
 Konfidence uses a split architecture. This keeps your central management secure while allowing your applications to run anywhere.
 
+<DrawioDiagram src="/assets/diagrams/konfidence-architecture.drawio" />
+
 ### Global control plane (GCP)
 
 The global control plane is the primary interface for your project. It manages the delivery process but does not touch your target environments directly.
