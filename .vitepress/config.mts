@@ -52,7 +52,6 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: 'Konfidence core concepts', link: '/docs/core-concepts/konfidence-core-concepts' },
-            { text: 'Architecture', link: '/docs/core-concepts/architecture-overview' },
             { text: 'Glossary', link: '/docs/core-concepts/glossary' }
           ]
         },
