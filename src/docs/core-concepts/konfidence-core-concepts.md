@@ -18,26 +18,26 @@ Konfidence uses a split architecture. This keeps your central management secure 
 
 <DrawioDiagram src="/assets/diagrams/konfidence-architecture.drawio" />
 
-### Global control plane (GCP)
+### Galaxy
 
-The global control plane is the primary interface for your project. It manages the delivery process but does not touch your target environments directly.
+The galaxy is the primary interface for your project. It manages the delivery process but does not touch your target environments directly.
 
-* **Definition:** The GCP defines and distributes the desired state for multiple local control planes.
-* **Role:** It assembles, validates, and dispatches deployment configurations, such as software versions and stage resources. The GCP receives status updates but never sends commands directly into the clusters, ensuring security.
+* **Definition:** As the global control plane, the galaxy defines and distributes the desired state for multiple stars.
+* **Role:** It assembles, validates, and dispatches deployment configurations, such as software versions and stage resources. The galaxy receives status updates but never sends commands directly into the clusters, ensuring security.
 
-### Local control plane (LCP)
+### Star
 
-The local control plane is a runtime orchestrator that lives close to your target environment (typically a Kubernetes cluster).
+A star is a local runtime orchestrator that lives close to your target environment (typically a Kubernetes cluster).
 
-* **Definition:** A local operator that pulls configurations from the global control plane and applies them to the cluster.
-* **Role:** The LCP manages and executes software deployments in one or more environments based on a specific target state, such as a stage resource. By using a *pull model* (connecting outbound to the manager), it allows you to deploy securely without opening firewalls for inbound traffic.
+* **Definition:** A local operator that pulls configurations from the galaxy and applies them to the cluster.
+* **Role:** The star manages and executes software deployments in one or more environments based on a specific target state, such as a stage resource. By using a *pull model* (connecting outbound to the manager), it allows you to deploy securely without opening firewalls for inbound traffic.
 
 ### Landscape
 
 A landscape is the actual place where deployments happen.
 
 * **Definition:** The physical or virtual infrastructure where your software runs. Usually, this is a Kubernetes cluster or a CloudFoundry space. However, it can also be a CDN provider, a functional runtime, or a bare-metal machine.
-* **Role:** It provides the foundation for your applications. Konfidence does not manage the landscape itself; you must provide the underlying infrastructure. Each landscape belongs to one local control plane, which manages all deployments there. You can set up multiple landscapes for different purposes (like testing vs. production) or for different geographical regions (like EU vs. US).
+* **Role:** It provides the foundation for your applications. Konfidence does not manage the landscape itself; you must provide the underlying infrastructure. Each landscape belongs to one star, which manages all deployments there. You can set up multiple landscapes for different purposes (like testing vs. production) or for different geographical regions (like EU vs. US).
 
 ## Defining your application
 
@@ -107,7 +107,7 @@ Here is the step-by-step flow of a deployment in Konfidence:
 1.  **Build:** Your CI pipeline builds code and publishes **artifacts**.
 2.  **Assemble:** Konfidence groups these artifacts into a new **vector**.
 3.  **Promote:** You assign this vector to a **stage** (like `Development`).
-4.  **Pull:** The **local control plane** detects the change and pulls the new configuration.
+4.  **Pull:** The **star** detects the change and pulls the new configuration.
 5.  **Snapshot:** The system creates a **stageVersion** to track this specific rollout.
 6.  **Vector lifecycle begins:**
     * **Deployers** deploy the necessary artifacts.

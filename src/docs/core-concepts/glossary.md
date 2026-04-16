@@ -28,23 +28,18 @@ An artifact deployment can be reused by multiple vector deployments within a lan
 A controller responsible for executing the deployment of individual artifacts. 
 A deployer acts upon ArtifactDeployment CRs and performs the deployment of an artifact for a specific runtime, e.g. Kubernetes.
  
-## Global control plane
+## Galaxy
 
-A global control plane is the primary interface to manage the software delivery process. 
+The galaxy acts as the central orchestrator and is the primary interface to manage the entire software delivery process. 
 
-It defines and distributes the desired state for multiple local control planes. The global control plane assembles, validates, and dispatches deployment configurations, such as software versions and stage resources.
+As the global control plane, it defines and distributes the desired state for all connected stars. The galaxy assembles, validates, and dispatches deployment configurations, such as software versions and stage resources.
 
-The global control plane also receives regular status updates from its connected local control planes, enabling centralized tracking and consistency of software delivery.
+Additionally, it also receives regular status updates from its connected stars, enabling centralized tracking and consistency of software delivery.
 
 ## Landscape
 
 A landscape is the logical grouping of multiple stages and deployment targets. In Konfidence, it is represented by a Kubernetes namespace. A landscape is where deployments are physically executed. 
 
-## Local control plane
-
-A local control plane is a runtime orchestrator that manages and executes software deployments in one or more environments based on a specific target state, such as a stage resource. 
-
-The local control plane pulls its configuration and target deployment state from the global control plane, applies those specifications to its managed resources, and regularly sends updates about its current status back to the global control plane. It belongs to at most one global control plane, but it can also act independently.
 
 ## Promotion
 
@@ -59,6 +54,14 @@ A stage is a defined step in the delivery process, such as build, test, or relea
 A stage serves as a checkpoint for quality assurance and approval. In Konfidence, stages are a virtual concept. They are represented by a Kubernetes CRD. 
 
 Deployments are executed in landscapes and mapped to stages. Through this, a deployment can be part of multiple stages of the same landscape.
+
+## Star
+
+A star is a local runtime orchestrator that manages and executes software deployments in one or more environments based on a specific target state, such as a stage resource. 
+
+Acting as a local control plane, a star pulls its configuration and target deployment state from the galaxy.
+
+It applies these specifications to its managed resources and reports real-time status updates back to the galaxy. While a star is typically connected to one galaxy to receive its instructions, it is designed to maintain operations independently if the connection is interrupted.
 
 ## Task
 
