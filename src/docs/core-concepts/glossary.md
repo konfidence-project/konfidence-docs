@@ -32,9 +32,9 @@ A deployer acts upon ArtifactDeployment CRs and performs the deployment of an ar
 
 The galaxy acts as the central orchestrator and is the primary interface to manage the entire software delivery process. 
 
-As the global control plane, it defines and distributes the desired state for all connected stars. The galaxy assembles, validates, and dispatches deployment configurations, such as software versions and stage resources.
+As the global control plane, it defines and distributes the desired state for all connected [stars](#star). The galaxy assembles, validates, and dispatches deployment configurations, such as software versions and stage resources.
 
-Additionally, it also receives regular status updates from its connected stars, enabling centralized tracking and consistency of software delivery.
+It also receives regular status updates from its connected stars, enabling centralized tracking and consistency of software delivery.
 
 ## Landscape
 
@@ -59,7 +59,7 @@ Deployments are executed in landscapes and mapped to stages. Through this, a dep
 
 A star is a local runtime orchestrator that manages and executes software deployments in one or more environments based on a specific target state, such as a stage resource. 
 
-Acting as a local control plane, a star pulls its configuration and target deployment state from the galaxy.
+Acting as a local control plane, a star pulls its configuration and target deployment state from the [galaxy](#galaxy).
 
 It applies these specifications to its managed resources and reports real-time status updates back to the galaxy. While a star is typically connected to one galaxy to receive its instructions, it is designed to maintain operations independently if the connection is interrupted.
 
