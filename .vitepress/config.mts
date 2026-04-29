@@ -56,19 +56,32 @@ export default defineConfig({
           ]
         },
         {
-          text: 'User guide',
+          text: 'Develop & Integrate',
           collapsed: false,
-          items: []
+          items: [
+            { text: 'Overview', link: '/docs/develop-integrate/' }
+          ]
         },
         {
-          text: 'Operator guide',
+          text: 'Deploy & Operate',
           collapsed: false,
-          items: []
+          items: [
+            { text: 'Overview', link: '/docs/deploy-operate/' }
+          ]
         },
         {
-          text: 'Contributor guide',
+          text: 'Observe & Improve',
           collapsed: false,
-          items: []
+          items: [
+            { text: 'Overview', link: '/docs/observe-improve/' }
+          ]
+        },
+        {
+          text: 'Extend & Customize',
+          collapsed: false,
+          items: [
+            { text: 'Overview', link: '/docs/extend-customize/' }
+          ]
         }
       ]
     },
