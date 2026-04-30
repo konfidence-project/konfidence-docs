@@ -18,7 +18,7 @@ A concise 2-3 sentence summary of what readers will learn and why it matters.
 - Prerequisite 2
 - Estimated time: X minutes
 
-## [Step 1 - Clear action-oriented title]
+## Step 1 - [Clear action-oriented title]
 
 Explain the concept briefly. Then provide concrete steps.
 
@@ -28,21 +28,21 @@ code example here
 
 Expected output or result description.
 
-## [Step 2 - Next action]
+## Step 2 - [Next action]
 
 [Repeat pattern]
 
-### [Step 3 - Final action]
+## Step 3 - [Final action]
 
 [Repeat pattern]
 
-### What you've learned
+## What you've learned
 
 - Concept or skill 1
 - Concept or skill 2
 - Concept or skill 3
 
-### Next steps
+## Next steps
 
 - Link to related how-to guides
 - Link to reference documentation
