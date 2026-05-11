@@ -77,6 +77,12 @@ export default defineConfig({
     editLink: {
       pattern: 'https://github.com/konfidence-project/konfidence-docs/edit/main/:path',
       text: 'Edit this page on GitHub'
+    },
+
+    // search configuration
+    search: {
+      provider: 'local'
     }
+
   }
 })
