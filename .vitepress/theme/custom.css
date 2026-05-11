@@ -46,8 +46,13 @@
           drop-shadow(0 12px 24px rgba(243, 174, 61, 0.25));
 }
 
-.home .VPNavBarSocialLinks {
+/* "Docs" nav link only visible on home page */
+.VPNavBarMenu {
   display: none !important;
+}
+
+.home .VPNavBarMenu {
+  display: flex !important;
 }
 
 /* Navbar link styling */
@@ -59,6 +64,20 @@
 
 .VPNavBar .title {
   font-size: 18px !important;
+}
+
+/* GitHub icon immediately left of dark mode toggle, both in right corner */
+.VPNavBarSocialLinks {
+  order: 1;
+}
+
+.VPNavBarAppearance {
+  order: 2;
+}
+
+/* Remove separator left of GitHub icon, keep the one between GitHub and dark mode */
+.VPNavBarSocialLinks::before {
+  display: none !important;
 }
 
 
@@ -277,4 +296,16 @@
     font-size: 1rem;
     margin-top: 0.75rem;
   }
+}
+
+/* =============================================
+   Docs Landing Page — Full-Width Content
+   ============================================= */
+
+.docs-landing .VPDoc .content-container {
+  max-width: none !important;
+}
+
+.docs-landing .VPDoc h1 {
+  text-align: center;
 }

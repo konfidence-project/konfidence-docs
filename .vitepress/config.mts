@@ -25,9 +25,11 @@ export default defineConfig({
 
     // Navigation bar
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Docs', link: '/docs/' },
-      { text: 'GitHub', link: 'https://github.com/konfidence-project' }
+      { text: 'Docs', link: '/docs/' }
+    ],
+
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/konfidence-project' }
     ],
 
     // Sidebar navigation
@@ -37,19 +39,14 @@ export default defineConfig({
           text: 'Getting started',
           collapsed: false,
           items: [
-            { text: 'Quickstart', link: '/docs/getting-started/quickstart' }
-          ]
-        },
-        {
-          text: 'Introduction',
-          collapsed: false,
-          items: [
-            { text: 'What is Konfidence?', link: '/docs/introduction/what-is-konfidence' }
+            { text: 'Quickstart', link: '/docs/getting-started/quickstart' },
+            { text: 'What is Konfidence?', link: '/docs/getting-started/what-is-konfidence' },
+            { text: 'Documentation overview', link: '/docs/' }
           ]
         },
         {
           text: 'Core concepts',
-          collapsed: false,
+          collapsed: true,
           items: [
             { text: 'Konfidence core concepts', link: '/docs/core-concepts/konfidence-core-concepts' },
             { text: 'Glossary', link: '/docs/core-concepts/glossary' }
@@ -57,28 +54,28 @@ export default defineConfig({
         },
         {
           text: 'Develop & Integrate',
-          collapsed: false,
+          collapsed: true,
           items: [
             { text: 'Overview', link: '/docs/develop-integrate/' }
           ]
         },
         {
           text: 'Deploy & Operate',
-          collapsed: false,
+          collapsed: true,
           items: [
             { text: 'Overview', link: '/docs/deploy-operate/' }
           ]
         },
         {
-          text: 'Observe & Improve',
-          collapsed: false,
+          text: 'Observe & Deliver',
+          collapsed: true,
           items: [
             { text: 'Overview', link: '/docs/observe-improve/' }
           ]
         },
         {
           text: 'Extend & Customize',
-          collapsed: false,
+          collapsed: true,
           items: [
             { text: 'Overview', link: '/docs/extend-customize/' }
           ]

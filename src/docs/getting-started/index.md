@@ -8,9 +8,6 @@ lastUpdated: true
 
 # Getting started
 
-
-
 ## Related
 
 - [Core concepts](/docs/core-concepts/) - Understand the fundamentals
-- [User guide](/docs/user-guide/) - Learn how to use Konfidence

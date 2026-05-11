@@ -5,7 +5,7 @@
     </template>
     <template #home-hero-after>
       <div class="button-container">
-        <a href="/docs/introduction/what-is-konfidence.html" class="what-is-button">Explore Konfidence</a>
+        <a href="/docs/getting-started/what-is-konfidence.html" class="what-is-button">Explore Konfidence</a>
       </div>
       <FeatureOverview />
     </template>

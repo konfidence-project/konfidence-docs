@@ -1,10 +1,13 @@
 <template>
   <div class="docs-cards-wrapper">
-    <p class="intro">Select your role to find the documentation that matters most to you.</p>
+    <p class="intro">Select your role to find the right documentation.</p>
 
     <div class="docs-cards">
-      <a href="/docs/develop-integrate/" class="docs-card">
+      <a href="/docs/develop-integrate/" class="docs-card docs-card--blue">
         <div class="card-header">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>
+          </div>
           <h2>Develop & Integrate</h2>
           <div class="role-tags">
             <span class="role-tag">Developer</span>
@@ -13,26 +16,19 @@
           </div>
         </div>
         <p class="card-description">Integrate Konfidence into your dev workflow. Ship features fast with short feedback loops.</p>
-        <div class="jobs">
-          <span class="jobs-label">What you can do here</span>
-          <ul>
-            <li>Integrate new microservices and features into Konfidence</li>
-            <li>Test local changes quickly without promoting to master</li>
-            <li>Set up automated feedback loops and E2E tests</li>
-          </ul>
-        </div>
-        <div class="links">
-          <span>Useful Links</span>
-          <ul>
-            <li><a href="/docs/getting-started/" @click.stop>Getting Started</a></li>
-            <li><a href="/docs/develop-integrate/" @click.stop>Develop & Integrate Overview</a></li>
-            <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
-          </ul>
-        </div>
+        <ul class="card-links">
+          <li><a href="/docs/getting-started/" @click.stop>Getting Started</a></li>
+          <li><a href="/docs/develop-integrate/" @click.stop>Develop & Integrate Overview</a></li>
+          <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
+        </ul>
+        <div class="card-footer">Explore <span class="arrow">→</span></div>
       </a>
 
-      <a href="/docs/deploy-operate/" class="docs-card">
+      <a href="/docs/deploy-operate/" class="docs-card docs-card--teal">
         <div class="card-header">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
+          </div>
           <h2>Deploy & Operate</h2>
           <div class="role-tags">
             <span class="role-tag">DevOps Engineer</span>
@@ -40,28 +36,21 @@
             <span class="role-tag">Infra Engineer</span>
           </div>
         </div>
-        <p class="card-description">Install, configure, and run Konfidence in production. Manage promotion flows, monitor landscapes, and automate rollouts across regions.</p>
-        <div class="jobs">
-          <span class="jobs-label">What you can do here</span>
-          <ul>
-            <li>Install and configure Konfidence on clusters</li>
-            <li>Set up and manage promotion flows across landscapes</li>
-            <li>Monitor environments and respond to incidents</li>
-          </ul>
-        </div>
-        <div class="links">
-          <span>Useful Links</span>
-          <ul>
-            <li><a href="/docs/deploy-operate/" @click.stop>Deploy & Operate Overview</a></li>
-            <li><a href="/docs/core-concepts/konfidence-core-concepts" @click.stop>Core Concepts</a></li>
-            <li><a href="/docs/getting-started/" @click.stop>Getting Started</a></li>
-          </ul>
-        </div>
+        <p class="card-description">Install, configure, and run Konfidence in production. Manage promotion flows and automate rollouts across regions.</p>
+        <ul class="card-links">
+          <li><a href="/docs/deploy-operate/" @click.stop>Deploy & Operate Overview</a></li>
+          <li><a href="/docs/core-concepts/konfidence-core-concepts" @click.stop>Core Concepts</a></li>
+          <li><a href="/docs/getting-started/" @click.stop>Getting Started</a></li>
+        </ul>
+        <div class="card-footer">Explore <span class="arrow">→</span></div>
       </a>
 
-      <a href="/docs/observe-improve/" class="docs-card">
+      <a href="/docs/observe-improve/" class="docs-card docs-card--amber">
         <div class="card-header">
-          <h2>Observe & Improve</h2>
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="15" y="5" width="4" height="12" rx="1"/><rect x="7" y="8" width="4" height="9" rx="1"/></svg>
+          </div>
+          <h2>Observe & Deliver</h2>
           <div class="role-tags">
             <span class="role-tag">Product Manager</span>
             <span class="role-tag">Program Manager</span>
@@ -69,26 +58,19 @@
           </div>
         </div>
         <p class="card-description">Get visibility into your delivery performance. Track DORA KPIs, monitor rollout status, and make data-driven release decisions.</p>
-        <div class="jobs">
-          <span class="jobs-label">What you can do here</span>
-          <ul>
-            <li>Track DORA KPIs and delivery performance metrics</li>
-            <li>Monitor feature rollout status across environments</li>
-            <li>Prepare audit logs and management insights for stakeholders</li>
-          </ul>
-        </div>
-        <div class="links">
-          <span>Useful Links</span>
-          <ul>
-            <li><a href="/docs/observe-improve/" @click.stop>Observe & Improve Overview</a></li>
-            <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
-            <li><a href="/docs/core-concepts/glossary" @click.stop>Glossary</a></li>
-          </ul>
-        </div>
+        <ul class="card-links">
+          <li><a href="/docs/observe-improve/" @click.stop>Observe & Deliver Overview</a></li>
+          <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
+          <li><a href="/docs/core-concepts/glossary" @click.stop>Glossary</a></li>
+        </ul>
+        <div class="card-footer">Explore <span class="arrow">→</span></div>
       </a>
 
-      <a href="/docs/extend-customize/" class="docs-card">
+      <a href="/docs/extend-customize/" class="docs-card docs-card--orange">
         <div class="card-header">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/></svg>
+          </div>
           <h2>Extend & Customize</h2>
           <div class="role-tags">
             <span class="role-tag">Extension Developer</span>
@@ -96,193 +78,227 @@
           </div>
         </div>
         <p class="card-description">Extend Konfidence or contribute to the project. Add runtimes, customize vector assembly, and shape the open-source ecosystem.</p>
-        <div class="jobs">
-          <span class="jobs-label">What you can do here</span>
-          <ul>
-            <li>Add custom deployment runtimes and extend ingress</li>
-            <li>Automate and customize vector assembly workflows</li>
-            <li>Contribute code, documentation, and issues to the project</li>
-          </ul>
-        </div>
-        <div class="links">
-          <span>Useful Links</span>
-          <ul>
-            <li><a href="/docs/extend-customize/" @click.stop>Extend & Customize Overview</a></li>
-            <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
-            <li><a href="https://github.com/konfidence-project" @click.stop>GitHub Repository</a></li>
-          </ul>
-        </div>
+        <ul class="card-links">
+          <li><a href="/docs/extend-customize/" @click.stop>Extend & Customize Overview</a></li>
+          <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
+          <li><a href="https://github.com/konfidence-project" @click.stop>GitHub Repository</a></li>
+        </ul>
+        <div class="card-footer">Explore <span class="arrow">→</span></div>
       </a>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* ── Wrapper ── */
 .docs-cards-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 0.25rem 0 2.5rem;
 }
 
 .intro {
-  font-size: 1.1rem;
-  color: var(--vp-c-text-2);
-  margin-bottom: 2.5rem;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--vp-c-text-1);
+  margin-bottom: 1.75rem;
   text-align: center;
+  letter-spacing: -0.01em;
 }
 
+/* ── 2×2 Grid ── */
 .docs-cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .docs-cards {
     grid-template-columns: 1fr;
   }
 }
 
+/* ── Card base ── */
 .docs-card {
-  background: var(--vp-c-bg-soft);
-  border: 2px solid var(--vp-c-divider);
-  border-radius: 12px;
-  padding: 2rem;
-  text-decoration: none;
-  color: inherit;
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  transition: all 0.3s ease;
+  gap: 0.85rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
+
+/* Colored top stripe */
+.docs-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 12px 12px 0 0;
+}
+
+.docs-card--blue::before   { background: #139CC7; }
+.docs-card--teal::before   { background: #0E7FA3; }
+.docs-card--amber::before  { background: #FFAA00; }
+.docs-card--orange::before { background: #FF960C; }
+
+/* Hover */
+.docs-card--blue:hover,
+.docs-card--teal:hover   { border-color: #139CC7; box-shadow: 0 6px 24px rgba(19, 156, 199, 0.12); }
+.docs-card--amber:hover  { border-color: #FFAA00; box-shadow: 0 6px 24px rgba(255, 170, 0, 0.14); }
+.docs-card--orange:hover { border-color: #FF960C; box-shadow: 0 6px 24px rgba(255, 150, 12, 0.14); }
 
 .docs-card:hover {
-  border-color: var(--vp-c-brand-1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 }
 
+/* ── Header ── */
 .card-header {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.6rem;
+  padding-top: 0.25rem;
 }
 
+.card-icon {
+  display: flex;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--vp-c-bg-soft);
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.card-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.docs-card--blue .card-icon svg,
+.docs-card--teal .card-icon svg  { color: #139CC7; }
+.docs-card--amber .card-icon svg { color: #9C6200; }
+.docs-card--orange .card-icon svg { color: #B05500; }
+
+:global(.dark) .docs-card--amber .card-icon svg  { color: #FFAA00; }
+:global(.dark) .docs-card--orange .card-icon svg { color: #FF960C; }
+
 .docs-card h2 {
-  font-size: 1.4rem;
-  margin: 0;
-  color: var(--vp-c-brand-1);
+  font-size: 1.2rem;
   font-weight: 700;
+  margin: 0;
   line-height: 1.3;
 }
 
+.docs-card--blue h2,
+.docs-card--teal h2  { color: var(--vp-c-brand-1); }
+.docs-card--amber h2 { color: #9C6200; }
+.docs-card--orange h2 { color: #B05500; }
+
+:global(.dark) .docs-card--amber h2  { color: #FFAA00; }
+:global(.dark) .docs-card--orange h2 { color: #FF960C; }
+
+/* ── Role tags ── */
 .role-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.role-tag {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.2rem 0.65rem;
-  border-radius: 999px;
-  background: rgba(255, 203, 73, 0.18);
-  color: #CC7700;
-  border: 1px solid rgba(255, 150, 12, 0.3);
-  white-space: nowrap;
-}
-
-:global(.dark) .role-tag {
-  background: rgba(255, 170, 0, 0.15);
-  color: #FFAA00;
-  border-color: rgba(255, 170, 0, 0.25);
-}
-
-.card-description {
-  color: var(--vp-c-text-2);
-  line-height: 1.6;
-  margin: 0;
-  font-size: 0.95rem;
-}
-
-.jobs {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.jobs-label {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--vp-c-text-3);
-  font-weight: 600;
-}
-
-.jobs ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
   gap: 0.35rem;
 }
 
-.jobs li {
+.role-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  background: rgba(255, 203, 73, 0.16);
+  color: #CC7700;
+  border: 1px solid rgba(255, 150, 12, 0.28);
+}
+
+:global(.dark) .role-tag {
+  background: rgba(255, 170, 0, 0.13);
+  color: #FFAA00;
+  border-color: rgba(255, 170, 0, 0.22);
+}
+
+/* ── Description ── */
+.card-description {
   font-size: 0.9rem;
   color: var(--vp-c-text-2);
-  padding-left: 1rem;
-  position: relative;
+  line-height: 1.6;
+  margin: 0;
 }
 
-.jobs li::before {
-  content: "·";
-  position: absolute;
-  left: 0;
-  color: #FF960C;
-  font-weight: 700;
-}
-
-.links {
-  margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid var(--vp-c-divider);
-}
-
-.links > span {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--vp-c-text-3);
-  font-weight: 600;
-  display: block;
-  margin-bottom: 0.6rem;
-}
-
-.links ul {
+/* ── Links ── */
+.card-links {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.3rem;
 }
 
-.links a {
-  color: var(--vp-c-brand-1);
-  text-decoration: none;
-  font-size: 0.9rem;
+.card-links a {
+  font-size: 0.875rem;
   font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s ease;
 }
 
-.links a:hover {
-  color: var(--vp-c-brand-2);
-  text-decoration: underline;
-}
-
-.links a::before {
+.card-links a::before {
   content: "→ ";
-  margin-right: 0.25rem;
+  font-size: 0.8rem;
 }
+
+.docs-card--blue .card-links a,
+.docs-card--teal .card-links a  { color: var(--vp-c-brand-1); }
+.docs-card--amber .card-links a { color: #9C6200; }
+.docs-card--orange .card-links a { color: #B05500; }
+
+.docs-card--blue .card-links a:hover,
+.docs-card--teal .card-links a:hover  { color: var(--vp-c-brand-2); }
+.docs-card--amber .card-links a:hover { color: #7A4C00; }
+.docs-card--orange .card-links a:hover { color: #8A4000; }
+
+:global(.dark) .docs-card--amber .card-links a  { color: #FFAA00; }
+:global(.dark) .docs-card--orange .card-links a { color: #FF960C; }
+
+/* ── Footer CTA ── */
+.card-footer {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--vp-c-divider);
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.card-footer .arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.docs-card:hover .card-footer .arrow {
+  transform: translateX(4px);
+}
+
+.docs-card--blue .card-footer,
+.docs-card--teal .card-footer  { color: var(--vp-c-brand-1); }
+.docs-card--amber .card-footer { color: #9C6200; }
+.docs-card--orange .card-footer { color: #B05500; }
+
+:global(.dark) .docs-card--amber .card-footer  { color: #FFAA00; }
+:global(.dark) .docs-card--orange .card-footer { color: #FF960C; }
 </style>
