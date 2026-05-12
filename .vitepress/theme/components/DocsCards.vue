@@ -1,6 +1,7 @@
 <template>
   <div class="docs-cards-wrapper">
-    <p class="intro">Select your role to find the right documentation.</p>
+    <h1>Documentation Overview</h1>
+    <p class="intro">Not sure where to start? Pick the section that fits your work.</p>
 
     <div class="docs-cards">
       <a href="/docs/develop-integrate/" class="docs-card docs-card--blue">
