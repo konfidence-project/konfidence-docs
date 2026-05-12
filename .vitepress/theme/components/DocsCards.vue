@@ -1,6 +1,6 @@
 <template>
   <div class="docs-cards-wrapper">
-    <h1>Documentation Overview</h1>
+    <h1>Documentation overview</h1>
     <p class="intro">Not sure where to start? Pick the section that fits your work.</p>
 
     <div class="docs-cards">
