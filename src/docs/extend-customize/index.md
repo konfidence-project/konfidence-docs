@@ -8,9 +8,9 @@ lastUpdated: true
 
 # Extend & Customize
 
-Contribute to Konfidence through development and documentation, or adapt it to your organization's workflows. 
+Extend Konfidence or contribute to the project through development and documentation.
 
-## Related
-
-- [Core Concepts](/docs/core-concepts/) - Fundamental concepts
-- [GitHub Repository](https://github.com/konfidence-project) - Source code
+- [Contributing](./code-of-conduct.md)
+- [Style guide](./styleguide.md)
+- [Guide templates](./guide-templates.md)
+- [GitHub repository](https://github.com/konfidence-project)
