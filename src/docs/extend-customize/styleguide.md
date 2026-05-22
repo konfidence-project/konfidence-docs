@@ -1,11 +1,11 @@
 ---
-title: "Documentation style guide"
+title: "Style guide"
 description: "Style guide for Konfidence project documentation"
 ---
 
-# Documentation style guide
+# Style guide
 
-This style guide defines tone, structure, and formatting rules for writing and editing Konfidence project documentation. It ensures that our content is clear, consistent, and accessible for all readers.
+This style guide defines tone, structure, and formatting rules for writing and editing Konfidence project documentation. It ensures that the content is clear, consistent, and accessible for all readers.
 
 ## Spelling and grammar
 
@@ -15,9 +15,8 @@ This style guide defines tone, structure, and formatting rules for writing and e
 ## Terminology
 
 - Use consistent vocabulary.
-- Refer to the Konfidence glossary when writing or editing documentation.
+- Refer to the Konfidence [glossary](../core-concepts/glossary.md) when writing or editing documentation.
 - Introduce abbreviations only after spelling them out:
-
     > Konfidence uses the Open Component Model (OCM) to describe vectors and artifacts stored in an Open Container Initiative (OCI) registry.
 
 ## Structure
@@ -30,10 +29,10 @@ The user comes to our documentation with a specific goal in mind, whether they'r
 
 Depending on the user's goal, your document will most likely fit into one of these types:
 
-| Document type    | Helps user to        | Provides                                    | Examples |
-| ---------------- | -------------------- | ------------------------------------------- | -------- |
-| **How-to guide** | Accomplish a task    | Step-by-step instructions                   |          |
-| **Concept**      | Understand something | Explanation of concepts and functionalities |          |
+| Document type    | Helps user to        | Provides                                    |
+| ---------------- | -------------------- | ------------------------------------------- |
+| [**How-to guide**](./guide-templates.md#how-to-guide) | Accomplish a task    | Step-by-step instructions                   |
+| [**Concept guide**](./guide-templates.md#concept-guide)     | Understand something | Explanation of concepts and functionalities |
 
 ## Writing style
 
@@ -95,34 +94,18 @@ Use the **active voice** and say *you* like you would in a normal conversation.
 
 Use diagrams to clarify complex relationships, workflows, or architecture. Choose the format that best suits your content and audience. Prefer lightweight, maintainable formats that render well in Markdown-based documentation.
 
-### Embedding diagrams (for example, from draw.io)
+### Embedding diagrams from draw.io
 
-You can include diagrams by exporting them as images (SVG or PNG) and referencing them in Markdown:
+The Konfidence documentation supports embedding `.drawio` files directly. A custom Vue component renders the diagram inline using the diagrams.net viewer.
 
-1. Export your diagram from draw.io as `.svg` or `.png`.
-2. Place the file in the topic-specific subfolder under assets (for example, `docs/adr/assets`).
-3. Embed it in your Markdown file with a relative path: `![Vector promotion flow](./docs/adr/assets/vector-promotion-flow.svg)`
+To embed a draw.io diagram:
 
-✅ Always include descriptive alt text.
+1. Place the `.drawio` file in the topic-specific subfolder under `public/assets/diagrams/`.
+2. Use the `DrawioDiagram` component in your Markdown file:
 
-✅ Prefer SVG format for better rendering.
-
-❌ Don't embed base64-encoded images inline.
-
-### Mermaid diagrams
-
-Mermaid diagrams are supported in the Konfidence documentation and can help visualize processes or relationships.
-
-Use a fenced code block with `mermaid` as the language identifier. Example:
-
-```mermaid
-graph TD;
-    A-->B;
-    B-->C;
-    C-->A;
+```md
+<DrawioDiagram src="/assets/diagrams/example-file.drawio" />
 ```
-
-See the [Mermaid syntax documentation](https://mermaid.js.org/syntax/) for more information on the Mermaid syntax.
 
 ## Links and references
 

@@ -77,7 +77,10 @@ export default defineConfig({
           text: 'Extend & Customize',
           collapsed: true,
           items: [
-            { text: 'Overview', link: '/docs/extend-customize/' }
+            { text: 'Overview', link: '/docs/extend-customize/' },
+            { text: 'Contributing', link: '/docs/extend-customize/code-of-conduct' },
+            { text: 'Style guide', link: '/docs/extend-customize/styleguide' },
+            { text: 'Guide templates', link: '/docs/extend-customize/guide-templates' },
           ]
         }
       ]

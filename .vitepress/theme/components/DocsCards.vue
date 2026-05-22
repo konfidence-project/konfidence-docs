@@ -80,9 +80,8 @@
         </div>
         <p class="card-description">Extend Konfidence or contribute to the project. Add runtimes, customize vector assembly, and shape the open-source ecosystem.</p>
         <ul class="card-links">
-          <li><a href="/docs/extend-customize/" @click.stop>Extend & Customize Overview</a></li>
-          <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
-          <li><a href="https://github.com/konfidence-project" @click.stop>GitHub Repository</a></li>
+          <li><a href="/docs/extend-customize/code-of-conduct" @click.stop>Contributing</a></li>
+          <li><a href="/docs/extend-customize/styleguide" @click.stop>Styleguide</a></li>
         </ul>
         <div class="card-footer">Explore <span class="arrow">→</span></div>
       </a>
