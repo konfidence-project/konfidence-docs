@@ -1,15 +1,24 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  srcDir: './src',
+  srcDir: "./src",
   vite: {
-    publicDir: '../public'
+    publicDir: "../public",
   },
   head: [
-    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
-    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
-    ['link', { href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', rel: 'stylesheet' }]
+    ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],
+    [
+      "link",
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" },
+    ],
+    [
+      "link",
+      {
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+        rel: "stylesheet",
+      },
+    ],
   ],
   title: "Konfidence",
   description: "Public Documentation for Project Konfidence",
@@ -18,86 +27,100 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
 
     logo: {
-      light: '/assets/logo/full/SVG/400_konfidence_logo_light.svg',
-      dark: '/assets/logo/full/SVG/400_konfidence_logo_dark.svg'
+      light: "/assets/logo/full/SVG/400_konfidence_logo_light.svg",
+      dark: "/assets/logo/full/SVG/400_konfidence_logo_dark.svg",
     },
     siteTitle: false,
 
     // Navigation bar
-    nav: [
-      { text: 'Docs', link: '/docs/' }
-    ],
+    nav: [{ text: "Docs", link: "/docs/" }],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/konfidence-project' }
+      { icon: "github", link: "https://github.com/konfidence-project" },
     ],
 
     // Sidebar navigation
     sidebar: {
-      '/docs/': [
-        { text: 'Home', link: '/docs/' },
+      "/docs/": [
+        { text: "Home", link: "/docs/" },
         {
-          text: 'Getting started',
+          text: "Getting started",
           collapsed: false,
           items: [
-            { text: 'What is Konfidence?', link: '/docs/getting-started/what-is-konfidence' },
-            { text: 'Quickstart', link: '/docs/getting-started/quickstart' },
-            { text: 'Deliver a sample vector', link: '/docs/getting-started/deliver-sample-app' },
-            { text: 'Create your own vector', link: '/docs/getting-started/create-vector' },
-          ]
+            {
+              text: "What is Konfidence?",
+              link: "/docs/getting-started/what-is-konfidence",
+            },
+            { text: "Quickstart", link: "/docs/getting-started/quickstart" },
+            {
+              text: "Quickstart-Ansgar",
+              link: "/docs/getting-started/quickstart-ansgar",
+            },
+            {
+              text: "Deliver a sample vector",
+              link: "/docs/getting-started/deliver-sample-app",
+            },
+            {
+              text: "Create your own vector",
+              link: "/docs/getting-started/create-vector",
+            },
+          ],
         },
         {
-          text: 'Core concepts',
+          text: "Core concepts",
           collapsed: true,
           items: [
-            { text: 'Konfidence core concepts', link: '/docs/core-concepts/konfidence-core-concepts' },
-            { text: 'Glossary', link: '/docs/core-concepts/glossary' }
-          ]
+            {
+              text: "Konfidence core concepts",
+              link: "/docs/core-concepts/konfidence-core-concepts",
+            },
+            { text: "Glossary", link: "/docs/core-concepts/glossary" },
+          ],
         },
         {
-          text: 'Develop & Integrate',
+          text: "Develop & Integrate",
           collapsed: true,
-          items: [
-            { text: 'Overview', link: '/docs/develop-integrate/' }
-          ]
+          items: [{ text: "Overview", link: "/docs/develop-integrate/" }],
         },
         {
-          text: 'Deploy & Operate',
+          text: "Deploy & Operate",
           collapsed: true,
-          items: [
-            { text: 'Overview', link: '/docs/deploy-operate/' }
-          ]
+          items: [{ text: "Overview", link: "/docs/deploy-operate/" }],
         },
         {
-          text: 'Observe & Deliver',
+          text: "Observe & Deliver",
           collapsed: true,
-          items: [
-            { text: 'Overview', link: '/docs/observe-improve/' }
-          ]
+          items: [{ text: "Overview", link: "/docs/observe-improve/" }],
         },
         {
-          text: 'Extend & Customize',
+          text: "Extend & Customize",
           collapsed: true,
           items: [
-            { text: 'Overview', link: '/docs/extend-customize/' },
-            { text: 'Contributing', link: '/docs/extend-customize/code-of-conduct' },
-            { text: 'Style guide', link: '/docs/extend-customize/styleguide' },
-            { text: 'Guide templates', link: '/docs/extend-customize/guide-templates' },
-          ]
-        }
-      ]
+            { text: "Overview", link: "/docs/extend-customize/" },
+            {
+              text: "Contributing",
+              link: "/docs/extend-customize/code-of-conduct",
+            },
+            { text: "Style guide", link: "/docs/extend-customize/styleguide" },
+            {
+              text: "Guide templates",
+              link: "/docs/extend-customize/guide-templates",
+            },
+          ],
+        },
+      ],
     },
 
     // Edit link configuration
     editLink: {
-      pattern: 'https://github.com/konfidence-project/konfidence-docs/edit/main/:path',
-      text: 'Edit this page on GitHub'
+      pattern:
+        "https://github.com/konfidence-project/konfidence-docs/edit/main/:path",
+      text: "Edit this page on GitHub",
     },
 
     // search configuration
     search: {
-      provider: 'local'
-    }
-
-  }
-})
+      provider: "local",
+    },
+  },
+});
