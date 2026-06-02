@@ -35,13 +35,15 @@ export default defineConfig({
     // Sidebar navigation
     sidebar: {
       '/docs/': [
+        { text: 'Home', link: '/docs/' },
         {
           text: 'Getting started',
           collapsed: false,
           items: [
-            { text: 'Quickstart', link: '/docs/getting-started/quickstart' },
             { text: 'What is Konfidence?', link: '/docs/getting-started/what-is-konfidence' },
-            { text: 'Documentation overview', link: '/docs/' }
+            { text: 'Quickstart', link: '/docs/getting-started/quickstart' },
+            { text: 'Deliver a sample vector', link: '/docs/getting-started/deliver-sample-app' },
+            { text: 'Create your own vector', link: '/docs/getting-started/create-vector' },
           ]
         },
         {
