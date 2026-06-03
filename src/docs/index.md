@@ -8,4 +8,10 @@ lastUpdated: true
 pageClass: docs-landing
 ---
 
+# Topic parking spot (not sure where to put these)
+* artifact re-use, dynamic reassignments
+* stageversionusage, how to control vector lifetime
+* dynamic routing, gateway API implications
+* stage/landscape configuration
+
 <DocsCards />
