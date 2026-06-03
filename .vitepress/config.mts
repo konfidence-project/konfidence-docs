@@ -71,26 +71,93 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "Konfidence core concepts",
-              link: "/docs/core-concepts/konfidence-core-concepts",
+              text: "System Architecture",
+              link: "/docs/core-concepts/system-architecture",
             },
-            { text: "Glossary", link: "/docs/core-concepts/glossary" },
+            {
+              text: "Vectors and Artifacts",
+              link: "/docs/core-concepts/vectors-and-artifacts",
+            },
+            {
+              text: "Delivery Flow",
+              link: "/docs/core-concepts/delivery-flow",
+            },
+            {
+              text: "Vector Deployments",
+              link: "/docs/core-concepts/vector-deployments",
+            },
           ],
         },
         {
           text: "Develop & Integrate",
           collapsed: true,
-          items: [{ text: "Overview", link: "/docs/develop-integrate/" }],
+          items: [
+            {
+              text: "Overview",
+              link: "/docs/develop-integrate/"
+            },
+            {
+              text: "Prepare your Application",
+              link: "/docs/develop-integrate/prepare-your-application"
+            },
+            {
+              text: "Publish Artifacts",
+              link: "/docs/develop-integrate/publish-artifacts"
+            },
+            {
+              text: "Run Migrations",
+              link: "/docs/develop-integrate/run-migrations"
+            },
+            {
+              text: "Use Vector-scoped Configuration",
+              link: "/docs/develop-integrate/vector-configuration"
+            },
+          ],
         },
         {
           text: "Deploy & Operate",
           collapsed: true,
-          items: [{ text: "Overview", link: "/docs/deploy-operate/" }],
+          items: [
+            { text: "Overview", link: "/docs/deploy-operate/" },
+            {
+              text: "Installation variants",
+              link: "/docs/develop-integrate/installation-variants"
+            },
+            {
+              text: "Galaxy installation",
+              link: "/docs/develop-integrate/galaxy-installation"
+            },
+            {
+              text: "Star installation",
+              link: "/docs/develop-integrate/star-installation"
+            },
+            {
+              text: "Upgrading Konfidence",
+              link: "/docs/develop-integrate/upgrading-konfidence"
+            },
+          ],
         },
         {
           text: "Observe & Deliver",
           collapsed: true,
-          items: [{ text: "Overview", link: "/docs/observe-improve/" }],
+          items: [
+            {
+              text: "Overview",
+              link: "/docs/observe-improve/"
+            },
+            {
+              text: "Build vectors",
+              link: "/docs/observe-improve/build-vectors"
+            },
+            {
+              text: "Define promotions",
+              link: "/docs/observe-improve/define-promotions"
+            },
+            {
+              text: "Paved Road",
+              link: "/docs/observe-improve/paved-road"
+            },
+          ],
         },
         {
           text: "Extend & Customize",
@@ -101,11 +168,26 @@ export default defineConfig({
               text: "Contributing",
               link: "/docs/extend-customize/code-of-conduct",
             },
+            {
+              text: "Create your own deployer",
+              link: "/docs/extend-customize/create-deployer",
+            },
             { text: "Style guide", link: "/docs/extend-customize/styleguide" },
             {
               text: "Guide templates",
               link: "/docs/extend-customize/guide-templates",
             },
+          ],
+        },
+        {
+          text: "Reference",
+          collapsed: true,
+          items: [
+            { text: "Releases", link: "/docs/reference/releases" },
+            { text: "CLI", link: "/docs/reference/cli" },
+            { text: "CRD", link: "/docs/reference/crd" },
+            { text: "Deployer Contract", link: "/docs/reference/deployer-contract" },
+            { text: "Glossary", link: "/docs/reference/glossary" },
           ],
         },
       ],
