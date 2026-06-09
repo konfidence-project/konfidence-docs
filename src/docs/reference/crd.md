@@ -14,6 +14,18 @@ Reference for Konfidence Custom Resource Definitions (CRDs) used in Kubernetes.
 
 Konfidence extends Kubernetes with custom resources that manage the deployment lifecycle. These CRDs are used by both Galaxy and Stars to orchestrate software delivery.
 
+<!-- 
+  Content type (Diátaxis): Reference — accurate, structured, complete. One section per CRD with apiVersion, kind, spec fields, and a minimal YAML example.
+  TW will structure this as: one H3 per CRD, consistent field table (field | type | required | description), minimal YAML example per CRD.
+
+  Dev input needed:
+  
+  - For each CRD: confirm the spec fields listed are accurate and complete (or provide the current schema)
+  
+
+  Ticket: DOCS — CRD Reference: Replace placeholder API group, add missing CRDs (VectorTemplate, StageConfig, VectorPromotion), validate existing spec fields
+-->
+
 ## Core CRDs
 
 ### Vector

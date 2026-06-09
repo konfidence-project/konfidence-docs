@@ -33,7 +33,10 @@ export default defineConfig({
     siteTitle: false,
 
     // Navigation bar
-    nav: [{ text: "Docs", link: "/docs/" }],
+    nav: [
+      { text: "Docs", link: "/docs/" },
+      { text: "Releases", link: "/docs/reference/releases" },
+    ],
 
     socialLinks: [
       { icon: "github", link: "https://github.com/konfidence-project" },
@@ -51,9 +54,8 @@ export default defineConfig({
               text: "What is Konfidence?",
               link: "/docs/getting-started/what-is-konfidence",
             },
-            { text: "Quickstart", link: "/docs/getting-started/quickstart" },
             {
-              text: "Quickstart-Ansgar",
+              text: "Quickstart",
               link: "/docs/getting-started/quickstart-ansgar",
             },
             {
@@ -93,24 +95,38 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "Overview",
-              link: "/docs/develop-integrate/"
-            },
-            {
               text: "Prepare your Application",
-              link: "/docs/develop-integrate/prepare-your-application"
+              link: "/docs/develop-integrate/prepare-your-application",
             },
             {
               text: "Publish Artifacts",
-              link: "/docs/develop-integrate/publish-artifacts"
+              link: "/docs/develop-integrate/publish-artifacts",
             },
             {
               text: "Run Migrations",
-              link: "/docs/develop-integrate/run-migrations"
+              link: "/docs/develop-integrate/run-migrations",
             },
             {
               text: "Use Vector-scoped Configuration",
-              link: "/docs/develop-integrate/vector-configuration"
+              link: "/docs/develop-integrate/vector-configuration",
+            },
+            {
+              text: "Observe & Deliver",
+              collapsed: true,
+              items: [
+                {
+                  text: "Build vectors",
+                  link: "/docs/develop-integrate/observe-improve/build-vectors",
+                },
+                {
+                  text: "Define promotions",
+                  link: "/docs/develop-integrate/observe-improve/define-promotions",
+                },
+                {
+                  text: "Paved Road",
+                  link: "/docs/develop-integrate/observe-improve/paved-road",
+                },
+              ],
             },
           ],
         },
@@ -118,44 +134,21 @@ export default defineConfig({
           text: "Deploy & Operate",
           collapsed: true,
           items: [
-            { text: "Overview", link: "/docs/deploy-operate/" },
             {
               text: "Installation variants",
-              link: "/docs/develop-integrate/installation-variants"
+              link: "/docs/deploy-operate/installation-variants",
             },
             {
               text: "Galaxy installation",
-              link: "/docs/develop-integrate/galaxy-installation"
+              link: "/docs/deploy-operate/galaxy-installation",
             },
             {
               text: "Star installation",
-              link: "/docs/develop-integrate/star-installation"
+              link: "/docs/deploy-operate/star-installation",
             },
             {
               text: "Upgrading Konfidence",
-              link: "/docs/develop-integrate/upgrading-konfidence"
-            },
-          ],
-        },
-        {
-          text: "Observe & Deliver",
-          collapsed: true,
-          items: [
-            {
-              text: "Overview",
-              link: "/docs/observe-improve/"
-            },
-            {
-              text: "Build vectors",
-              link: "/docs/observe-improve/build-vectors"
-            },
-            {
-              text: "Define promotions",
-              link: "/docs/observe-improve/define-promotions"
-            },
-            {
-              text: "Paved Road",
-              link: "/docs/observe-improve/paved-road"
+              link: "/docs/deploy-operate/upgrading-konfidence",
             },
           ],
         },
@@ -163,7 +156,6 @@ export default defineConfig({
           text: "Extend & Customize",
           collapsed: true,
           items: [
-            { text: "Overview", link: "/docs/extend-customize/" },
             {
               text: "Contributing",
               link: "/docs/extend-customize/code-of-conduct",
@@ -183,10 +175,8 @@ export default defineConfig({
           text: "Reference",
           collapsed: true,
           items: [
-            { text: "Releases", link: "/docs/reference/releases" },
             { text: "CLI", link: "/docs/reference/cli" },
             { text: "CRD", link: "/docs/reference/crd" },
-            { text: "Deployer Contract", link: "/docs/reference/deployer-contract" },
             { text: "Glossary", link: "/docs/reference/glossary" },
           ],
         },

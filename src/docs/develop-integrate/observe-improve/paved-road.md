@@ -8,6 +8,19 @@ lastUpdated: true
 
 # Paved Road
 
+<!-- 
+  TW note: This page mixes two Diátaxis types and should be split:
+  1. **Explanation** — "What is a paved road?" (concept, benefits, how it fits the Konfidence model)
+  2. **How-to guide** — "How to design and implement a paved road" (the step-by-step content below)
+  Suggest creating a separate "Design a paved road" how-to page and keeping this page as explanation only.
+
+  Dev input needed:
+  - Is "Paved Road" a concrete Konfidence feature (a CRD, a config object), or a methodology pattern that teams adopt using standard Konfidence resources?
+  - If it's a methodology pattern, what Konfidence resources does an operator use to implement it?
+
+  Ticket: DOCS — Paved Road: Explanation + How-to pages
+-->
+
 A paved road represents a standardized, well-tested delivery path in Konfidence. It enables teams to deliver software safely and consistently by providing a pre-configured, vetted execution path.
 
 ## What is a paved road?
@@ -123,6 +136,6 @@ Measure paved road effectiveness:
 
 ## See also
 
-- [Define promotions](/docs/observe-improve/define-promotions) - Detailed promotion configuration
-- [Build vectors](/docs/observe-improve/build-vectors) - Vector composition
+- [Define promotions](/docs/develop-integrate/observe-improve/define-promotions) - Detailed promotion configuration
+- [Build vectors](/docs/develop-integrate/observe-improve/build-vectors) - Vector composition
 

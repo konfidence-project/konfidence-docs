@@ -13,4 +13,3 @@ Oversee the planning, execution, and delivery of products aligned with stakehold
 ## Related
 
 - [Core Concepts](/docs/core-concepts/) - Fundamental concepts
-- [Glossary](/docs/core-concepts/glossary) - Terminology reference

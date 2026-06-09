@@ -10,6 +10,16 @@ lastUpdated: true
 
 Track Konfidence releases, version information, and upgrade compatibility.
 
+<!-- 
+  Content type (Diátaxis): Reference — accurate, structured version history. One section per release, consistent format.
+  TW will structure this as: a table or list of releases with version, date, type (major/minor/patch), and changelog link.
+
+  Dev input needed:
+  - Provide release entries once the first public release is cut (version, date, summary, changelog link)
+ 
+  Ticket:there already a ticket exists 
+-->
+
 ## Current versions
 
 Refer to the official Konfidence repository and release notes for current version information and compatibility matrices.
@@ -47,14 +57,6 @@ Each release includes:
 - Breaking changes and migration guides
 - Dependency updates
 - Known issues
-
-## Long-term support (LTS)
-
-Select releases receive extended support:
-
-- Security fixes for extended periods
-- Backports of critical bug fixes
-- Migration assistance to newer versions
 
 ## See also
 

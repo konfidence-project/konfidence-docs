@@ -10,6 +10,17 @@ lastUpdated: true
 
 Complete reference for the Konfidence command-line interface (CLI).
 
+<!-- 
+  Content type (Diátaxis): Reference — accurate, complete, consistent structure. Minimal narrative. Commands, flags, exit codes.
+  TW will structure this as: one section per command group, each with usage syntax, flags table, and a minimal example.
+
+  Dev input needed:
+  - Which binaray name will the CLI use? `konfidence`  or `kden`?
+  
+
+  Ticket: DOCS — CLI Reference: Replace placeholder content with actual CLI command reference (binary name, commands, flags)
+-->
+
 ## Overview
 
 The Konfidence CLI is the primary tool for interacting with Galaxy and managing deployments.

@@ -21,6 +21,19 @@ requirements:
 
 # Build your first Artifacts
 
+<!-- 
+  Content type (Diátaxis): Tutorial — learner follows a guided path to publish their first artifacts and assemble a vector. 
+  TW will structure this as: numbered steps with expected output after each, "what just happened" summary at the end.
+
+  Dev input needed:
+  - What is `component-constructor.yaml`? OCM component descriptor, Konfidence-specific manifest, or something else? Include a minimal working example.
+  - Confirm `VectorTemplate` is the correct CRD name
+  - What output should the user see after `kden artifact push` succeeds? (stdout, kubectl resources created)
+  - Is this tutorial independent of "Deliver a sample vector", or should one be done before the other?
+
+  Ticket: DOCS — Tutorial: Create your own vector
+-->
+
 steps:
 * publish app artifacts with kden CLI: `kden artifact push -f component-constructor.yaml`
 * check VectorTemplate status: `kubectl get vectortemplate vector-dev`

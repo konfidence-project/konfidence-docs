@@ -12,5 +12,5 @@ lastUpdated: true
 
 ## Related
 
-- [User guide](/docs/user-guide/) - Practical usage examples
-- [Operator guide](/docs/operator-guide/) - Deployment and operations
+- [Develop & Integrate](/docs/develop-integrate/) - Integration guides for developers
+- [Deploy & Operate](/docs/deploy-operate/) - Installation and operations guides

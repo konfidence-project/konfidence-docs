@@ -1,5 +1,5 @@
 ---
-title: Quickstart Ansgar
+title: Quickstart
 description: Get started with Konfidence in minutes.
 outline: [2, 3]
 editLink: true
@@ -26,22 +26,25 @@ This will:
 
 
 ::: details Manual Setup
-* can we do it as easy-to-use kind setup? -> Kargo provides install scripts for Docker Desktop, kind, etc
-* helm install konfidence-galaxy (+ configuration?)
-* helm install konfidence-star (+ configuration?)
+<!-- 
+  Content type (Diátaxis): How-to guide — install Konfidence manually on an existing cluster (alternative to the kind script).
+  TW will structure this as: Prerequisites → helm repo add → helm install Galaxy → helm install Star → verify.
 
-very simplistic setup:
-* control planes installed on a single cluster
-* deploy workloads to same cluster
+  Dev input needed:
+  - which resources does the user need to install Konfidence (locally)?
 
-production-grade setup will involve multiple clusters
+  Ticket: DOCS — Quickstart for Konfidence
+-->
+
+Manual installation steps will be documented here. See [Galaxy installation](/docs/deploy-operate/galaxy-installation) and [Star installation](/docs/deploy-operate/star-installation) for full details.
 :::
 
 ## Verification:
 
 Konfidence UI available with port forward
+
 ```bash
-kubectl port-forward svc/konfidence-ui -n konfidence-system     
+kubectl port-forward svc/konfidence-ui -n konfidence-system <local-port>:<container-port>
 ```
 (imagine screenshot here)
 ![](https://placehold.co/600x400)
@@ -79,10 +82,10 @@ $ kden push stage dev --from-oci ghcr.io/konfidence-ai/example-app:latest
 ✔  StageVersion dev-fe41ed7c created successfully
 ...creating Artifacts
 ```
-::: details
-- this will create stage + stageversion: link to concept
-- konfidence creates Artifacts: link to concept
-- Flux deployer picks up the new stage and deploys the app
+::: details What just happened?
+- Konfidence created a **Stage** and a **StageVersion** for your `dev` deployment — see [Vector Deployments](/docs/core-concepts/vector-deployments).
+- The push created **Artifacts** for each service in the example app — see [Vectors and Artifacts](/docs/core-concepts/vectors-and-artifacts).
+- The Flux deployer detected the new Stage and deployed the artifacts to your cluster.
 :::
 
 Access the UI of the example App
