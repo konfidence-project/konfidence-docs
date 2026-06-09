@@ -17,11 +17,21 @@ Before you can deploy your application using Konfidence, you need to prepare it 
 
 ## Application structure
 
-* konfidence shines for microservices architectures
+* Konfidence is designed for microservices architectures
 * each microservice should be one artifact
 * artifacts should be independently versioned and deployable
 
 ## Vector Context
+
+<!-- 
+  Content type (Diátaxis): How-to guide — user needs to prepare his application before using it in Konfidence
+  TW will structure this as: what has the user to do before deploying his app in Konfidence
+
+  Dev input needed:
+ 
+
+  Ticket: DOCS — How to Prepare your Application for Konfidence
+-->
 
 * microservices need to be vector-aware
 * incoming requests have Vector-ID header that needs to be forwarded to all downstream service calls

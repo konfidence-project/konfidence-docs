@@ -50,9 +50,9 @@ By separating build and release concerns, Konfidence establishes a predictable a
 ## Who is Konfidence for?
 
 Konfidence supports everyone involved in the software delivery lifecycle:
-- [Users](src/docs/user-guide), who define and validate application vectors.
-- [Operators](src/docs/operator-guide) who manage deployments and environment promotion.
-- [Contributors](src/docs/contributor-guide) who extend the framework or integrate it with existing tooling.
+- [Developers and architects](/docs/develop-integrate/), who define and validate application vectors.
+- [DevOps and infrastructure engineers](/docs/deploy-operate/), who manage deployments and environment promotion.
+- [Extension developers and contributors](/docs/extend-customize/), who extend the framework or integrate it with existing tooling.
 
 ## What are the benefits of Konfidence?
 
@@ -61,6 +61,7 @@ Konfidence enables teams to:
 - Assemble artifacts into immutable application vectors to define exactly what gets delivered
 - Promote the same verified application version consistently across environments
 - Perform controlled rollouts using feature toggles and ring deployments
+<!-- DEV: Confirm whether feature toggles and ring deployments will be implemented in the first version or just planned for future releases, otherwhise this should be removed -->
 - Track and audit application versions throughout the delivery lifecycle
 - Avoid unnecessary redeployments and reduce operational overhead
 - Reduce infrastructure costs by reusing services across stages within the same landscape
@@ -69,4 +70,4 @@ These principles support frequent releases while maintaining control and reliabi
 
 ## What's next?
 
-If you're new to Konfidence, begin with the [Konfidence core concepts](/konfidence-core-concepts) section to understand how application vectors, environments, and delivery semantics fit together. From there, choose the guide that matches your role: User, Operator, or Contributor.
+If you're new to Konfidence, begin with the [Core concepts](/docs/core-concepts/) section to understand how application vectors, environments, and delivery semantics fit together. From there, choose the section that matches your role.

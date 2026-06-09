@@ -8,6 +8,14 @@ lastUpdated: true
 
 # Star installation
 
+<!-- 
+  Content type (Diátaxis): How-to guide — operator installs a Star local control plane in a target landscape and registers it with Galaxy.
+    TW will create structured guide for this
+    
+   DEV:
+  - what are the concrete steps that the user has to do to complete the installation?  
+  Ticket: DOCS — Star Installation: 
+
 ## Prerequisites
 
 - Target landscape infrastructure (e.g. k8s cluster) with appropriate permissions
@@ -15,7 +23,6 @@ lastUpdated: true
 - Access to container registries where artifacts are stored
 
 ## Helm
-
 * `helm install star`
 
 ## Picking your Deployer
@@ -30,8 +37,16 @@ lastUpdated: true
 
 ## Register with Galaxy
 
+<!-- DEV:
+  - What is the "sync controller"? Is it part of the Star Helm chart or a separate install?
+  - What configuration does it need to connect to Galaxy (URL, credentials, certificate)?
+  - How does the operator verify that registration succeeded?
+-->
+
 * set up and configure sync controller
 
 ## OCI connectivity
+
+<!-- DEV: Same as Galaxy installation — what type of secret is needed and how is it referenced in Helm values? -->
 
 * add secrets for OCI registry access

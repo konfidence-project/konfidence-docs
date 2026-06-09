@@ -22,7 +22,6 @@
           <li><a href="/docs/develop-integrate/" @click.stop>Develop & Integrate Overview</a></li>
           <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
         </ul>
-        <div class="card-footer">Explore <span class="arrow">→</span></div>
       </a>
 
       <a href="/docs/deploy-operate/" class="docs-card docs-card--teal">
@@ -43,10 +42,10 @@
           <li><a href="/docs/core-concepts/konfidence-core-concepts" @click.stop>Core Concepts</a></li>
           <li><a href="/docs/getting-started/" @click.stop>Getting Started</a></li>
         </ul>
-        <div class="card-footer">Explore <span class="arrow">→</span></div>
       </a>
 
-      <a href="/docs/observe-improve/" class="docs-card docs-card--amber">
+      <!-- Observe & Deliver card — hidden until the section is ready
+      <a href="/docs/develop-integrate/observe-improve/" class="docs-card docs-card--amber">
         <div class="card-header">
           <div class="card-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="15" y="5" width="4" height="12" rx="1"/><rect x="7" y="8" width="4" height="9" rx="1"/></svg>
@@ -60,12 +59,12 @@
         </div>
         <p class="card-description">Get visibility into your delivery performance. Track DORA KPIs, monitor rollout status, and make data-driven release decisions.</p>
         <ul class="card-links">
-          <li><a href="/docs/observe-improve/" @click.stop>Observe & Deliver Overview</a></li>
+          <li><a href="/docs/develop-integrate/observe-improve/" @click.stop>Observe & Deliver Overview</a></li>
           <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
           <li><a href="/docs/core-concepts/glossary" @click.stop>Glossary</a></li>
         </ul>
-        <div class="card-footer">Explore <span class="arrow">→</span></div>
       </a>
+      -->
 
       <a href="/docs/extend-customize/" class="docs-card docs-card--orange">
         <div class="card-header">
@@ -83,7 +82,6 @@
           <li><a href="/docs/extend-customize/code-of-conduct" @click.stop>Contributing</a></li>
           <li><a href="/docs/extend-customize/styleguide" @click.stop>Styleguide</a></li>
         </ul>
-        <div class="card-footer">Explore <span class="arrow">→</span></div>
       </a>
     </div>
   </div>
@@ -104,10 +102,10 @@
   letter-spacing: -0.01em;
 }
 
-/* ── 2×2 Grid ── */
+/* ── 3-column Grid ── */
 .docs-cards {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
 }
 

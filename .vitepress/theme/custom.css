@@ -46,14 +46,7 @@
           drop-shadow(0 12px 24px rgba(243, 174, 61, 0.25));
 }
 
-/* "Docs" nav link only visible on home page */
-.VPNavBarMenu {
-  display: none !important;
-}
-
-.home .VPNavBarMenu {
-  display: flex !important;
-}
+/* Nav links visible on all pages */
 
 /* Navbar link styling */
 .VPNavBarMenuLink,
@@ -137,6 +130,22 @@
   color: var(--konfidence-blue-dark) !important;
 }
 
+/* "Home" — level-0 link item: match bold/blue styling of section headers.
+   Only direct-child selectors (>) are used here so nested level-1 items
+   are never reached. Section headers without a link property don't render
+   an <a> at this path, so they are unaffected. */
+.VPSidebarItem.level-0 > .item > a > .text {
+  font-weight: 700 !important;
+  font-size: 16px;
+  color: var(--konfidence-blue-dark) !important;
+}
+
+/* Keep bold when "Home" is the active page */
+.VPSidebarItem.level-0.is-active > .item > a > .text {
+  font-weight: 700 !important;
+  color: var(--konfidence-blue) !important;
+}
+
 /* Spacing between top-level groups - unified */
 .VPSidebarItem.level-0 {
   padding-top: 4px;
@@ -149,6 +158,7 @@
 /* First top-level item needs less top padding */
 .VPSidebarItem.level-0:first-child {
   padding-top: 0;
+  padding-bottom: 2px;
 }
 
 /* Remove divider lines and extra margins from sidebar groups */

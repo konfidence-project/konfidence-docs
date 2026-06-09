@@ -8,8 +8,6 @@ lastUpdated: true
 
 # Installation variants
 
-(internal note: we ignore KCP-based installation for now)
-
 ## Single Cluster Installation
 * everything runs on a single Kubernetes cluster
 * only for demonstration purposes, not recommended for production

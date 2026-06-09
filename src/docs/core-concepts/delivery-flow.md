@@ -25,5 +25,16 @@ Here is how a deployment flows through Konfidence:
     * **Tasks** (like migrations) prepare the data.
 7.  **Activate:** Once everything is ready, traffic switches to the new version, and you can track the entire flow in the delivery dashboard.
 
+<!-- 
+  Content type (Diátaxis): Explanation — addresses "how does it work?" Background, no instructions.
+  TW will structure this page as: narrative prose describing each step, with a visual flow diagram.
+
+  Dev input needed:
+  - Is there already a "delivery dashboard"? 
+  - Is the flow above complete, or are there parallel paths (e.g., simultaneous deployers)?
+
+  Ticket: already exists https://github.com/konfidence-project/konfidence-project/issues/613
+-->
+
 This structured approach ensures that every deployment is auditable, reproducible, and safe, regardless of the complexity of your application.
 

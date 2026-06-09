@@ -19,6 +19,16 @@ requirements:
 * product-page / reviews / details 
 * ratings not included in quickstart because of external database dependency
 
+<!-- 
+  Content type (Diátaxis): Tutorial — user follows a guided path to deploy a sample application through two stages (dev → production).
+  TW will structure this as: numbered steps, expected output after key steps, "what just happened" summaries, clear end state.
+
+  Dev input needed:
+  - Is this tutorial independent of "Create your own vector", or should one be done first?
+
+  Ticket: DOCS — Deliver a sample vector: Provide example YAML for StageConfig, VectorPromotion; confirm CRD names and tutorial sequence
+-->
+
 # Define your Delivery Flow
 
 
@@ -45,7 +55,6 @@ steps:
 * requests automatically go to the latest deployed vector in the stage
 
 check the resources which have been created:
-# todo: add output of commands
 * `kubectl get vectordeployment`
 * `kubectl get artifactdeployment`
 * `kubectl get httproute`

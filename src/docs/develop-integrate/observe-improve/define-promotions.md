@@ -66,6 +66,17 @@ Establish conditions that must be met:
 - Documents who approved and when
 - Provides rollback capability
 
+<!-- 
+  Content type (Diátaxis): How-to guide — user wants to define promotion rules that move vectors through stages automatically or with approvals.
+  TW will structure this as: what a promotion is → create a VectorPromotion resource → configure rules → trigger and monitor.
+
+  Dev input needed:
+  - Are the "Advanced strategies" below (blue-green, canary, feature flags, time-based, condition-based) implemented features of Konfidence, or aspirational descriptions? 
+  - What does a minimal VectorPromotion YAML resource look like?
+
+  Ticket: DOCS — How to Define Promotions
+-->
+
 ## Advanced strategies
 
 ### Blue-green deployments
@@ -97,5 +108,5 @@ Establish conditions that must be met:
 
 ## See also
 
-- [Paved Road](/docs/observe-improve/paved-road) - Standardized delivery paths
+- [Paved Road](/docs/develop-integrate/observe-improve/paved-road) - Standardized delivery paths
 

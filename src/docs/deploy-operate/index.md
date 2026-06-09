@@ -13,4 +13,4 @@ Ensure the reliability, performance, and scalability of your Konfidence setup. I
 ## Related
 
 - [Getting Started](/docs/getting-started/) - Quickstart guide
-- [Core Concepts](/docs/core-concepts/konfidence-core-concepts) - Core concepts
+- [Core Concepts](/docs/core-concepts/) - Core concepts
