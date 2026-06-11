@@ -8,6 +8,8 @@ lastUpdated: true
 
 # What is Konfidence?
 
+[//]: # (TODO @marco: check this section again before initial release, to make sure it accurately reflects the current state of the project and its goals)
+
 Konfidence is a comprehensive software delivery framework for microservice-based software-as-a-service applications.
 
 It helps teams deliver complex applications consistently across multiple environments.

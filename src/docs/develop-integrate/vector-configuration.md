@@ -17,7 +17,7 @@ lastUpdated: true
   - What is "global/environment configuration" in Konfidence terms, and where is it defined?
 
 
-  Ticket: DOCS — Use Vector-Scoped Configuration: Concepts and How-to`s
+  Ticket: https://github.com/konfidence-project/konfidence-project/issues/710
 -->
 
 * how to add configuration to a vector

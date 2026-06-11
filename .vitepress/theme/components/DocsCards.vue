@@ -18,9 +18,9 @@
         </div>
         <p class="card-description">Integrate Konfidence into your dev workflow. Ship features fast with short feedback loops.</p>
         <ul class="card-links">
-          <li><a href="/docs/getting-started/" @click.stop>Getting Started</a></li>
-          <li><a href="/docs/develop-integrate/" @click.stop>Develop & Integrate Overview</a></li>
-          <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
+          <li><a href="/docs/develop-integrate/publish-artifacts/" @click.stop>Publish Artifacts</a></li>
+          <li><a href="/docs/develop-integrate/observe-improve/build-vectors/" @click.stop>Build Vectors</a></li>
+          <li><a href="/docs/develop-integrate/observe-improve/define-promotions/" @click.stop>Define Promotions</a></li>
         </ul>
       </a>
 
@@ -38,9 +38,7 @@
         </div>
         <p class="card-description">Install, configure, and run Konfidence in production. Manage promotion flows and automate rollouts across regions.</p>
         <ul class="card-links">
-          <li><a href="/docs/deploy-operate/" @click.stop>Deploy & Operate Overview</a></li>
-          <li><a href="/docs/core-concepts/konfidence-core-concepts" @click.stop>Core Concepts</a></li>
-          <li><a href="/docs/getting-started/" @click.stop>Getting Started</a></li>
+          <li><a href="/docs/deploy-operate/installation-variants" @click.stop>Installation Variants</a></li>
         </ul>
       </a>
 

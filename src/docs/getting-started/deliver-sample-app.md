@@ -78,8 +78,6 @@ results:
 
 # Next Steps
 
-(this is a call-to-action for users to continue exploring the project after the quickstart)
-
 * publish changes to an artifact to deploy a new vector to dev stage
 * add the ratings microservice to the app and experiment with database migrations
 * install the star control plane on a second cluster and deploy the production stage there

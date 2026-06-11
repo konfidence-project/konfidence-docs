@@ -6,7 +6,7 @@ editLink: true
 lastUpdated: true
 ---
 
-# Paved Road
+# Paved Road (optional)
 
 <!-- 
   Content type (Diátaxis): Explanation - What is the delivery pipeline setup that we recommend with Konfidence (e.g. dev -> test -> prod)

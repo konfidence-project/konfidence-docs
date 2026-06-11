@@ -51,6 +51,7 @@ export default defineConfig({
           collapsed: false,
           items: [
             {
+              // TODO @marco: move out to landing page (or other place?), re-use some (distilled) parts for quickstart
               text: "What is Konfidence?",
               link: "/docs/getting-started/what-is-konfidence",
             },
@@ -59,11 +60,11 @@ export default defineConfig({
               link: "/docs/getting-started/quickstart",
             },
             {
-              text: "Deliver a sample vector",
+              text: "Deliver a sample app",
               link: "/docs/getting-started/deliver-sample-app",
             },
             {
-              text: "Create your own vector",
+              text: "Create your own app",
               link: "/docs/getting-started/create-vector",
             },
           ],
