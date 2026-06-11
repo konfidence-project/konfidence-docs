@@ -8,6 +8,16 @@ lastUpdated: true
 
 # Vector Deployments
 
+
+1.  **Pull:** The **star** tracks a `Stage` and pulls the vector which should be deployed. 
+2.  **Snapshot:** The system creates a **StageVersion** to track this specific rollout.
+3.  **Vector lifecycle begins:**
+    * **Deployers** deploy the necessary artifacts.
+    * **VectorAssignments** link these artifacts to the current vector.
+    * **Tasks** (like migrations) prepare the data.
+    * **Activate:** Once everything is ready, traffic switches to the new version, and you can track the entire flow in the delivery dashboard.
+
+
 <!-- 
   Content type (Diátaxis): Explanation — describes the concepts that govern how Konfidence tracks and controls vector deployments. No instructions.
   TW will structure this as: brief intro paragraph per concept, then the sub-concepts with expanded prose (not bullet stubs).

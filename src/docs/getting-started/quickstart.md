@@ -8,25 +8,61 @@ lastUpdated: true
 
 # Before you begin
 
-requirements: 
-* a running k8s cluster 
-  - flux installed (link to flux installation guide)
-  - gateway API installed (link to istio installation guide)
+You need a Kubernetes cluster with Konfidence and the Konfidence CLI installed.
 
-# Installation
+## Cluster Setup
 
-* can we do it as easy-to-use kind setup?
-* helm install konfidence-galaxy (+ configuration?)
-* helm install konfidence-star (+ configuration?)
+For a quick test, you can start a local kind cluster with Konfidence installed:
 
-very simplistic setup:
-* control planes installed on a single cluster
-* deploy workloads to same cluster
+```bash
+curl -L https://raw.githubusercontent.com/konfidence-project/konfidence/main/hack/quickstart/kind.sh | sh
+```
 
-production-grade setup will involve multiple clusters
+This will:
+- spin up a kind cluster
+- install flux
+- install the GatewayAPI CRDs
+- install the Konfidence Galaxy+Star Helm Charts
+- install a Deployer for Kubernetes target runtime
+
+
+::: details Manual Setup
+<!-- 
+  Content type (Diátaxis): How-to guide — install Konfidence manually on an existing cluster (alternative to the kind script).
+  TW will structure this as: Prerequisites → helm repo add → helm install Galaxy → helm install Star → verify.
+
+  Dev input needed:
+  - which resources does the user need to install Konfidence (locally)?
+
+  Tickets: 
+    * Example app: prepare sample artifacts & vector + cleanup example repo (do we want to stick with istio examples?)
+    * DOCS — Quickstart for Konfidence
+
+-->
+
+Manual installation steps will be documented here. See [Galaxy installation](/docs/deploy-operate/galaxy-installation) and [Star installation](/docs/deploy-operate/star-installation) for full details.
+:::
+
+# Deploy your first App
+
+Use konfidence-cli to push new stage with example app from ghcr to local docker OCI
+
+```bash
+$ kden push stage dev --from-oci ghcr.io/konfidence-ai/example-app:latest
+
+✔  Stage dev pushed successfully
+✔  StageVersion dev-fe41ed7c created successfully
+...creating Artifacts
+```
+::: details What just happened?
+- Konfidence created a **Stage** and a **StageVersion** for your `dev` deployment — see [Vector Deployments](/docs/core-concepts/vector-deployments).
+- The push created **Artifacts** for each service in the example app — see [Vectors and Artifacts](/docs/core-concepts/vectors-and-artifacts).
+- The Flux deployer detected the new Stage and deployed the artifacts to your cluster.
+  :::
+
+Access the UI of the example App
 
 # Next Steps
 
-* publish changes to an artifact to deploy a new vector to dev stage
-* add the ratings microservice to the app and experiment with database migrations
-* install the star control plane on a second cluster and deploy the production stage there
+* [create your own vector and deploy it to dev stage](/docs/getting-started/create-vector) 
+* [create a delivery flow across multiple stages](/docs/getting-started/deliver-sample-app) 
