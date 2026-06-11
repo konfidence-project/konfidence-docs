@@ -13,6 +13,7 @@ pageClass: docs-landing
   - StageVersionUsage and how to control vector lifetime
   - Dynamic routing and Gateway API implications
   - Stage and landscape configuration
+  - Vector / Artifacts Signing and Verification
 -->
 
 <DocsCards />
