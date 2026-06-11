@@ -16,14 +16,8 @@ Here is how a deployment flows through Konfidence:
 
 1.  **Build:** Your CI pipeline builds code and publishes **artifacts**.
 2.  **Assemble:** Konfidence groups these artifacts into a new **vector**.
-3.  **Promote:** You assign this vector to a **stage** (like `Development`).
-4.  **Pull:** The **star** detects the change and pulls the new configuration.
-5.  **Snapshot:** The system creates a **stageVersion** to track this specific rollout.
-6.  **Vector lifecycle begins:**
-    * **Deployers** deploy the necessary artifacts.
-    * **VectorAssignments** link these artifacts to the current vector.
-    * **Tasks** (like migrations) prepare the data.
-7.  **Activate:** Once everything is ready, traffic switches to the new version, and you can track the entire flow in the delivery dashboard.
+3.  **Assign:** You assign the vector to a stage for deployment. 
+4.  **Promote:** You propagate changes across your environments, moving the application towards production
 
 <!-- 
   Content type (Diátaxis): Explanation — addresses "how does it work?" Background, no instructions.

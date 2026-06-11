@@ -56,7 +56,7 @@ export default defineConfig({
             },
             {
               text: "Quickstart",
-              link: "/docs/getting-started/quickstart-ansgar",
+              link: "/docs/getting-started/quickstart",
             },
             {
               text: "Deliver a sample vector",
@@ -107,26 +107,20 @@ export default defineConfig({
               link: "/docs/develop-integrate/run-migrations",
             },
             {
+              text: "Build vectors",
+              link: "/docs/develop-integrate/observe-improve/build-vectors",
+            },
+            {
               text: "Use Vector-scoped Configuration",
               link: "/docs/develop-integrate/vector-configuration",
             },
             {
-              text: "Observe & Deliver",
-              collapsed: true,
-              items: [
-                {
-                  text: "Build vectors",
-                  link: "/docs/develop-integrate/observe-improve/build-vectors",
-                },
-                {
-                  text: "Define promotions",
-                  link: "/docs/develop-integrate/observe-improve/define-promotions",
-                },
-                {
-                  text: "Paved Road",
-                  link: "/docs/develop-integrate/observe-improve/paved-road",
-                },
-              ],
+              text: "Define promotions",
+              link: "/docs/develop-integrate/observe-improve/define-promotions",
+            },
+            {
+              text: "Paved Road",
+              link: "/docs/develop-integrate/observe-improve/paved-road",
             },
           ],
         },
@@ -177,6 +171,7 @@ export default defineConfig({
           items: [
             { text: "CLI", link: "/docs/reference/cli" },
             { text: "CRD", link: "/docs/reference/crd" },
+            { text: "Deployer Specification", link: "/docs/reference/deployer-specification" },
             { text: "Glossary", link: "/docs/reference/glossary" },
           ],
         },

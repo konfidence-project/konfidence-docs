@@ -6,6 +6,14 @@ editLink: true
 lastUpdated: true
 ---
 
+<!-- 
+  Content type (Diátaxis): How-to guide — user wants to assemble a vector with own artifacts 
+
+  Dev input needed:
+
+  Ticket: DOCS — How to build vectors
+-->
+
 # Build vectors
 
 * Vectors are the core deployment unit in Konfidence
