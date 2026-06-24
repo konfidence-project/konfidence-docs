@@ -107,8 +107,26 @@ export default defineConfig({
               link: "/docs/develop-integrate/observe-improve/build-vectors",
             },
             {
-              text: "Use Vector-scoped Configuration",
-              link: "/docs/develop-integrate/vector-configuration",
+                text: "Vector Data / Configuration",
+                collapsed: true,
+                items: [
+                    {
+                        text: "Overview",
+                        link: "/docs/develop-integrate/vector-data/overview",
+                    },
+                    {
+                        text: "Add configuration to a vector",
+                        link: "/docs/develop-integrate/vector-data/vector-configuration",
+                    },
+                    {
+                        text: "Add deployment results to an artifact",
+                        link: "/docs/develop-integrate/vector-data/deployment-results",
+                    },
+                    {
+                        text: "Access vector data in your application",
+                        link: "/docs/develop-integrate/vector-data/access-vector-data",
+                    },
+                ],
             },
             {
               text: "Define promotions",
@@ -140,6 +158,20 @@ export default defineConfig({
               text: "Upgrading Konfidence",
               link: "/docs/deploy-operate/upgrading-konfidence",
             },
+            {
+                text: "Runtime Components",
+                collapsed: true,
+                items: [
+                    {
+                        text: "Overview",
+                        link: "/docs/deploy-operate/runtime-components/overview",
+                    },
+                    {
+                        text: "Configuration Service",
+                        link: "/docs/deploy-operate/runtime-components/configuration-service",
+                    },
+                ],
+            }
           ],
         },
         {
