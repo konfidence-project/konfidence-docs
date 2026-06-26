@@ -34,42 +34,81 @@ This will:
 
 
 ::: details Manual Setup
-<!-- 
-  Content type (Diátaxis): How-to guide — install Konfidence manually on an existing cluster (alternative to the kind script).
-  TW will structure this as: Prerequisites → helm repo add → helm install Galaxy → helm install Star → verify.
+If you already have a Kubernetes cluster, select it in your current kubeconfig context and install Konfidence manually with the following commands.
 
-  Dev input needed:
-  - which resources does the user need to install Konfidence (locally)?
-
-  Tickets: 
-    * Example app: prepare sample artifacts & vector + cleanup example repo (do we want to stick with istio examples?)
-    * DOCS — Quickstart for Konfidence
-
--->
-
-Manual installation steps will be documented here. See [Galaxy installation](/docs/deploy-operate/galaxy-installation) and [Star installation](/docs/deploy-operate/star-installation) for full details.
-:::
-
-## Deploy your first app
-
-Use konfidence-cli to push new stage with example app from ghcr to local docker OCI
+Set the Konfidence version and target namespace:
 
 ```bash
-$ kden push stage dev --from-oci ghcr.io/konfidence-ai/example-app:latest
-
-✔  Stage dev pushed successfully
-✔  StageVersion dev-fe41ed7c created successfully
-...creating Artifacts
+export KONFIDENCE_VERSION=0.0.1-alpha.1
+export KONFIDENCE_NAMESPACE=konfidence-system
 ```
-::: details What just happened?
-- Konfidence created a **Stage** and a **StageVersion** for your `dev` deployment — see [Vector Deployments](/docs/core-concepts/vector-deployments).
-- The push created **Artifacts** for each service in the example app — see [Vectors and Artifacts](/docs/core-concepts/vectors-and-artifacts).
-- The Flux deployer detected the new Stage and deployed the artifacts to your cluster.
-  :::
 
-Access the UI of the example App
+Install the Gateway API CRDs:
+
+```bash
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
+```
+
+Install Flux and wait for the source controller to become available:
+
+```bash
+kubectl apply -f https://github.com/fluxcd/flux2/releases/latest/download/install.yaml
+
+kubectl wait deployment/source-controller \
+  --namespace flux-system \
+  --for=condition=Available \
+  --timeout=180s
+```
+
+Install Galaxy:
+
+```bash
+helm upgrade --install galaxy oci://ghcr.io/konfidence-project/charts/galaxy \
+  --version "$KONFIDENCE_VERSION" \
+  --namespace "$KONFIDENCE_NAMESPACE" \
+  --create-namespace \
+  --set image.repository=ghcr.io/konfidence-project/galaxy-operator \
+  --set image.tag="$KONFIDENCE_VERSION" \
+  --wait
+```
+
+Install Star:
+
+```bash
+helm upgrade --install star oci://ghcr.io/konfidence-project/charts/star \
+  --version "$KONFIDENCE_VERSION" \
+  --namespace "$KONFIDENCE_NAMESPACE" \
+  --create-namespace \
+  --set image.repository=ghcr.io/konfidence-project/star-operator \
+  --set image.tag="$KONFIDENCE_VERSION" \
+  --set controller.controllerNamespace="$KONFIDENCE_NAMESPACE" \
+  --wait
+```
+
+Install the Kubernetes landscape orchestrator:
+
+```bash
+helm upgrade --install kubernetes-landscape-orchestrator oci://ghcr.io/konfidence-project/charts/kubernetes-landscape-orchestrator \
+  --version "$KONFIDENCE_VERSION" \
+  --namespace "$KONFIDENCE_NAMESPACE" \
+  --create-namespace \
+  --set image.repository=ghcr.io/konfidence-project/kubernetes-landscape-orchestrator \
+  --set image.tag="$KONFIDENCE_VERSION" \
+  --wait
+```
+
+Verify the installation with:
+
+```bash
+kubectl get deployments -n konfidence-system
+```
+
+You should see `galaxy`, `star`, and `kubernetes-landscape-orchestrator`.
+
+See [Galaxy installation](/docs/deploy-operate/galaxy-installation) and [Star installation](/docs/deploy-operate/star-installation) for full details.
+:::
 
 ## Next steps
 
 * [create your own vector and deploy it to dev stage](/docs/getting-started/create-vector) 
-* [create a delivery flow across multiple stages](/docs/getting-started/deliver-sample-app) 
+* [create a delivery flow across multiple stages](/docs/getting-started/deliver-sample-app)
