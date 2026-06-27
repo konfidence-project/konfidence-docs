@@ -8,35 +8,69 @@ lastUpdated: true
 
 # Delivery Flow
 
-Konfidence makes software delivery safe, consistent, and scalable. It manages complexity by breaking the deployment process into clear, distinct parts.
-
-## Step-by-step workflow
-
-Here is how a deployment flows through Konfidence:
-
-1.  **Build:** Your CI pipeline builds code and publishes **artifacts**.
-2.  **Assemble:** Konfidence groups these artifacts into a new **vector**.
-3.  **Assign:** You assign the vector to a stage for deployment. 
-4.  **Promote:** You propagate changes across your environments, moving the application towards production.
-
-<!-- 
-  Content type (Diátaxis): Explanation — addresses "how does it work?" Background, no instructions.
-  TW will structure this page as: narrative prose describing each step, with a visual flow diagram.
-
-  Dev input needed:
-  - Is there already a "delivery dashboard"? -> not yet
-  - Is the flow above complete, or are there parallel paths (e.g., simultaneous deployers)? -> complete; Deployers are not part of the vector delivery flow as far as I understand it. My understanding is that the vector delivery flow ends at the border of the galaxy, which is the GalaxySync resource created by the stage-configuration-controller (omitted in this documentation section to not go too much into technical details).
-
-  Ticket: already exists https://github.com/konfidence-project/konfidence-project/issues/613
+<!--
+  Content type (Diátaxis): Explanation. This page explains how the delivery flow works and keeps task instructions out of scope.
+  The flow described here ends at the Galaxy boundary. The runtime deployment lifecycle in Stars and landscapes is covered by the Vector Deployments page.
+  TODO: Confirm whether future docs should name the generated synchronization resource as GalaxySync or StageSync. Existing developer input for this file names GalaxySync; planning notes mention StageSync.
 -->
 
-This structured approach ensures that every deployment is auditable, reproducible, and safe, regardless of the complexity of your application.
+The Konfidence delivery flow describes how build outputs become controlled deployment state.
+It starts with artifacts published by CI pipelines, assembles those artifacts into an immutable vector, assigns that vector to a stage, and promotes vectors toward later delivery targets.
 
-### Build
-Build your application and publish it. Konfidence doesn't impose any restrictions on how you build your application as long as it is accessible in an OCM-compliant repository and has an alias set that is not a semantic version. These are the prerequisites for the following steps of the delivery flow to be able to use your artifacts.
+The main relationship to understand is:
 
-### Assemble
-Once you have the necessary parts of your application available in the repository, you can assemble them into a vector. This is done by configuring the `VectorTemplate` custom resource, which looks like this:
+- Artifacts are the inputs.
+- A vector is the immutable application version assembled from those inputs.
+- A stage selects which vector should be delivered for a delivery checkpoint.
+- A promotion makes a vector available at another target location without changing the vector itself.
+
+## The delivery flow in Konfidence
+
+The delivery flow sits between artifact publishing and runtime deployment.
+It is part of the Galaxy-side control plane and describes how Konfidence turns build outputs into target stage state.
+
+This page focuses on the delivery state before runtime deployment starts.
+It does not describe how deployers create workloads in a landscape.
+That runtime lifecycle starts after a Star pulls the target stage state from Galaxy.
+
+### Delivery flow at a glance
+
+Read the flow as a progression of state:
+
+| Phase | Result | Konfidence concept or resource |
+| --- | --- | --- |
+| Build | Build results are available as artifacts in an OCM-compliant repository. | Artifact |
+| Assemble | Selected artifacts are combined into one immutable vector. | Vector, `VectorTemplate` custom resource |
+| Assign | A stage points to the vector that should be delivered. | Stage, `StageConfiguration` custom resource |
+| Promote | The vector is copied to another registry location or path for a later target. | `VectorPromotionConfig`, `VectorPromotion` custom resources |
+
+Entries in code style are Kubernetes custom resources.
+Concepts such as artifact, vector, and stage describe the delivery model that those resources configure.
+
+## Flow phases
+
+### Build: publish artifacts
+
+Konfidence does not prescribe how teams build their applications.
+A CI pipeline can use the build system that fits the application, as long as the resulting artifact is available in an Open Component Model (OCM)-compliant repository.
+
+For the later delivery phases to consume the artifact, the artifact must also be referenced by an alias that is not a semantic version.
+That alias gives Konfidence a stable reference that can be used when assembling and promoting vectors.
+
+### Assemble: define the vector
+
+A vector is the complete application version that Konfidence moves through the delivery flow.
+It contains the selected artifacts and represents the desired application state at a specific point in time.
+
+The `VectorTemplate` custom resource defines how Konfidence assembles that vector.
+The most important fields are:
+
+- `uploadTarget`, which defines where the assembled vector is stored.
+- `components`, which defines which previously built artifacts are part of the vector.
+- `config`, which references credentials used to access the required registries.
+- `base`, which can optionally reference an existing vector to build on.
+
+The following example shows the relationship between those fields:
 
 ```yaml
 apiVersion: galaxy.konfidence.cloud/v1alpha1
@@ -55,11 +89,20 @@ spec:
       name: registry-credentials
 ```
 
-Here the most relevant configuration is the `uploadTarget` and the `components`. `uploadTarget` defines where your assembled vector will be stored in the registry, while `components` defines which previously built artifacts will be part of the vector. Note that both the `uploadTarget` as well as all artifacts specify an alias which is necessary to be able to fetch the resource from the registry. Furthermore, the different entries under `components` do not have to be located in the same registry. As can be seen above *service2* is in a different registry than the `uploadTarget` and *service1* specify. Artifacts from different registries will be copied into the target registry specified in `uploadTarget`. Using the `config` array you can define credentials that are used to access the registry.\
-There is another optional property `base` that can be used to specify an already existing vector which this new vector should build upon. This way all artifacts that are already part of the base vector will be part of the new vector in addition to the ones that are specified under `components` for the new one.
+Both the `uploadTarget` and the entries under `components` use aliases so that Konfidence can fetch the referenced resources.
+The component artifacts do not have to be stored in the same registry as the vector target.
+If a component artifact is stored elsewhere, Konfidence copies it into the target registry defined by `uploadTarget`.
 
-### Assign
-When your vector is assembled you can use it by assigning it to a stage. You can achieve this by using the `StageConfiguration` custom resource.
+When `base` is set, the new vector includes the artifacts from the base vector and the additional artifacts listed under `components`.
+This lets teams derive a new vector from an existing vector without redefining every artifact reference.
+
+### Assign: connect the vector to a stage
+
+After a vector has been assembled, the delivery flow connects it to a stage.
+A stage is a defined checkpoint in the delivery process and references one vector at a time.
+
+The `StageConfiguration` custom resource describes that relationship.
+It defines the stage name, the vector assigned to that stage, and the target location where the stage state should be created.
 
 ```yaml
 apiVersion: galaxy.konfidence.cloud/v1alpha1
@@ -78,14 +121,24 @@ spec:
       name: registry-credentials
 ```
 
-In this example `StageConfiguration` you can see that the `vector` property references the component that was configured as the `uploadTarget` of the `VectorTemplate`. Thus, we are assigning this vector to the stage *example-stage*. This stage is to be created in the Kubernetes namespace `dev-eu10` inside the KCP workspace `root:sample-organization`.\
-Again, `config` is used to ensure the vector can be fetched from the registry.
-<!-- Since there is an ongoing discussion about uniting the Galaxy and Star into a single cluster, KCP might be discarded alltogether. Thus, the targetWorkspace property could be obsolete soon.-->
+In this example, `vector` references the component that was configured as the `uploadTarget` in the `VectorTemplate`.
+The stage named `example-stage` is created in the Kubernetes namespace `dev-eu10` inside the KCP workspace `root:sample-organization`.
+As with vector assembly, `config` gives Konfidence the registry access information it needs to fetch the vector.
 
-### Promote
-You might want to make your vector available in different registries or at different paths inside the same registry. This is what promotions are for. To execute a promotion two custom resources are necessary. On the one hand, there is the `VectorPromotionConfig`, which configures the promotion. On the other hand, the `VectorPromotion` triggers a one-time execution of the promotion.
+<!-- TODO: Existing developer input says KCP might be removed in the future. If that happens, update or remove targetWorkspace from this explanation and example. -->
 
-__VectorPromotionConfig__
+### Promote: prepare a vector for another target
+
+Promotion makes a vector available at a different registry location or path.
+This supports flows such as moving a verified vector from a development target to a test or production target.
+
+Konfidence separates promotion configuration from promotion execution:
+
+- `VectorPromotionConfig` defines the source vector, the target location, and the registry access configuration.
+- `VectorPromotion` triggers one execution of that configuration.
+
+The `VectorPromotionConfig` describes where the vector comes from and where it should be copied:
+
 ```yaml
 apiVersion: galaxy.konfidence.cloud/v1alpha1
 kind: VectorPromotionConfig
@@ -101,9 +154,8 @@ spec:
       name: registry-credentials
 ```
 
-The `VectorPromotionConfig` defines the `source` of the vector as well as its `target` and the necessary `config` to access the referenced registries.
+The `VectorPromotion` references that configuration and triggers a one-time promotion:
 
-__VectorPromotion__
 ```yaml
 apiVersion: galaxy.konfidence.cloud/v1alpha1
 kind: VectorPromotion
@@ -115,5 +167,52 @@ spec:
   ttlAfterFinished: 1h
 ```
 
-The `VectorPromotion` references the `VectorPromotionConfig` to use and triggers an execution of the promotion. It is strictly executed only once, no matter if the promotion succeeds or not. By executing promotions only when manually triggered, accidentally overwriting aliases of vectors is prevented. The `ttlAfterFinished` defines how long the `VectorPromotion` resource will remain after the promotion was executed, regardless of success. After the TTL has expired, the `VectorPromotion` is cleaned up.\
-The status of the `VectorPromotion` is reflected on the `VectorPromotionConfig` it references. The `VectorPromotionConfig` exposes both the status of the overall last `VectorPromotion` using this `VectorPromotionConfig` as well as the last successful `VectorPromotion` using it. If the last promotion was successful both show the same status.
+A `VectorPromotion` is executed only once, whether it succeeds or fails.
+This protects vector aliases from accidental overwrites because promotions happen only when explicitly triggered.
+
+The `ttlAfterFinished` field defines how long the `VectorPromotion` resource remains after execution.
+After the TTL expires, the resource is cleaned up.
+The status of a promotion is reflected on the referenced `VectorPromotionConfig`, which exposes both the most recent promotion status and the most recent successful promotion status.
+If the most recent promotion succeeded, both status values describe the same promotion.
+
+## Resource relationships
+
+The resources in the delivery flow point to each other through vector references:
+
+- `VectorTemplate.spec.uploadTarget` defines the vector that assembly creates.
+- `StageConfiguration.spec.vector` points to the vector that a stage should use.
+- `VectorPromotionConfig.spec.source` points to the vector to promote.
+- `VectorPromotionConfig.spec.target` defines where the promoted vector should be available.
+- `VectorPromotion.spec.vectorPromotionConfigRef` points to the promotion configuration that should run once.
+
+These relationships keep the vector contents separate from the delivery state around the vector.
+
+## Runtime boundary
+
+The delivery flow described on this page ends before deployers act on workloads.
+At that boundary, Galaxy has produced the target stage state that a Star can pull and apply in its landscapes.
+
+After that point, the runtime deployment lifecycle starts.
+That lifecycle includes concepts such as vector deployments, artifact deployments, vector assignments, tasks, and activation.
+For those concepts, see [Vector Deployments](./vector-deployments.md).
+
+## Immutability and promotion state
+
+Konfidence treats vectors as immutable application versions.
+When a service, configuration, or artifact reference changes, the result is a new vector instead of a mutation of an existing one.
+
+That immutability gives promotion a clear meaning.
+Promotion moves or copies a known vector reference to a target location; it does not rewrite the vector contents.
+Because `VectorPromotion` resources are one-time triggers and promotion status is recorded on `VectorPromotionConfig`, teams can understand which vector was promoted and whether the latest promotion succeeded.
+
+This model supports controlled delivery because each stage can be tied back to a specific vector and each vector can be tied back to the artifacts that were assembled into it.
+
+## Related pages
+
+Read these pages for the surrounding concepts and task-oriented guidance:
+
+- [Vectors and Artifacts](./vectors-and-artifacts.md) explains the package model behind artifacts and immutable vectors.
+- [System Architecture](./system-architecture.md) explains how Galaxy, Star, and landscapes divide responsibility.
+- [Vector Deployments](./vector-deployments.md) explains the runtime deployment concepts that apply after a vector reaches a target landscape.
+- [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.
+- [Define promotions](../develop-integrate/observe-improve/define-promotions.md) explains the task-oriented flow for promotion setup.
