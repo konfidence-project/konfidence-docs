@@ -250,6 +250,32 @@
   margin-bottom: 0.75rem;
 }
 
+/* Branded disclosure boxes for setup notes and "what happened" callouts. */
+.VPDoc .vp-doc .custom-block.details {
+  border: 1px solid rgba(19, 156, 199, 0.28);
+  border-left: 4px solid var(--konfidence-orange);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 170, 0, 0.10), rgba(128, 210, 224, 0.10)),
+    var(--vp-c-bg-soft);
+}
+
+.VPDoc .vp-doc .custom-block.details summary {
+  color: var(--konfidence-blue-dark);
+  font-weight: 700;
+}
+
+.dark .VPDoc .vp-doc .custom-block.details {
+  border-color: rgba(185, 230, 235, 0.24);
+  background:
+    linear-gradient(135deg, rgba(255, 170, 0, 0.12), rgba(31, 172, 208, 0.12)),
+    var(--vp-c-bg-soft);
+}
+
+.dark .VPDoc .vp-doc .custom-block.details summary {
+  color: var(--konfidence-blue-light);
+}
+
 /* Uniform list spacing */
 .VPDoc .vp-doc ul,
 .VPDoc .vp-doc ol {
