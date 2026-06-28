@@ -47,12 +47,45 @@ const logoUrl = computed(() =>
 
 .tagline {
   font-size: 1.125rem;
-  margin-top: 0.85rem;
+  margin: 0.85rem 0 0;
+  color: var(--vp-c-text-1);
+  font-weight: 600;
 }
 
 .announcement {
   font-size: 2rem;
   margin-top: 2rem;
   text-shadow: 0 0 15px rgba(247, 162, 26, 0.417);
+}
+
+@media (max-width: 768px) {
+  .hero-announce {
+    padding: 0 1.5rem;
+  }
+
+  .konfidence-brand {
+    font-size: 2.25rem;
+  }
+
+  .hero-copy {
+    width: 100%;
+    max-width: 40ch;
+  }
+
+  .heading {
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  .tagline {
+    font-size: 1rem;
+    margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .heading {
+    font-size: 1.34rem;
+  }
 }
 </style>
