@@ -77,6 +77,10 @@ export default defineConfig({
               link: "/docs/core-concepts/vectors-and-artifacts",
             },
             {
+              text: "Stages and Promotions",
+              link: "/docs/core-concepts/stages-and-promotions",
+            },
+            {
               text: "Delivery Flow",
               link: "/docs/core-concepts/delivery-flow",
             },
