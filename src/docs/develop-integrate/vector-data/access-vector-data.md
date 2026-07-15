@@ -1,6 +1,6 @@
 ---
-title: Access vector data
-description: Learn how to access vector-scoped configuration data in your application code.
+title: Access vector data in your application
+description: Learn how to access vector data in your application code.
 ---
 
 # Access vector data in your application
@@ -9,12 +9,50 @@ description: Learn how to access vector-scoped configuration data in your applic
   Content type (Diátaxis): How-to guide — developer wants to access vector data in their code
 -->
 
-*   Identity = X-Vector-ID HTTP header set by the ingress gateway on every routed request — this is what tells the app which vector's config to load. Forward it on every outbound HTTP call (mandatory contract; otherwise vector routing breaks at the next hop).
-*   Lookup goes through the central per-landscape configuration service via OpenFeature / OFREP. No plain REST endpoint, no Konfidence SDK — use any standard OpenFeature client. Pass the vector-id as the targetingKey in the OpenFeature evaluation context.
-*   Two evaluation modes against the same OFREP API:
-*   Single-flag: POST /ofrep/v1/evaluate/flags/{key} with the toggle name → returns one value.
-*   Whole-bundle shortcut: pass the vector-id itself as the flag key → returns the entire vector configuration object (features + authored config + deployment results) in one call. Useful at app startup to prime your local view.
-*   Bulk: POST /ofrep/v1/evaluate/flags returns all features at once with ETag support (If-None-Match) for cheap revalidation.
-*   Works for any workload protocol. It's a plain HTTP call to a landscape-local service — HTTP services, gRPC services, Kafka consumers, batch jobs, cron jobs, anything that can do an HTTP request can ask for its config whenever it needs it. The only thing that's HTTP-specific is the X-Vector-ID header on inbound traffic; non-HTTP workloads obtain the vector-id from their own message metadata or context.
-*   Not available during deployment / migration. The bundle is guaranteed complete only after vector activation — deploy-time tasks (DB migrations etc.) cannot read it. Use the task spec for those; vector config is for running app code.
-*   Immutable per vector-id. Once fetched, the data for that vector never changes — cache for the lifetime of the vector, no invalidation, no polling. The service itself caches ConfigMaps in memory so repeated lookups stay cheap.
+This guide explains how running application code reads vector data, such as feature flags, authored config, and deployment results.
+
+Vector data is available after vector activation. Deploy-time tasks, such as database migrations, cannot read it. Use the task spec for deploy-time tasks, and use vector data for running application code.
+
+## Prerequisites
+
+- Your workload can determine the vector ID from `X-Vector-ID`, message metadata, or execution context.
+- The configuration service is available in the landscape.
+- Your application can make HTTP requests to the configuration service.
+
+## Get the vector ID
+
+For HTTP workloads, the ingress gateway sets the `X-Vector-ID` HTTP header on every routed request. Use this header to identify which vector's data your application must load.
+
+Forward `X-Vector-ID` on every outbound HTTP call. This is a mandatory contract because vector routing depends on the header at the next hop.
+
+For non-HTTP workloads, get the vector ID from the workload's message metadata or execution context.
+
+## Access vector data through OFREP
+
+The central, per-landscape configuration service exposes REST endpoints that implement the OpenFeature Remote Evaluation Protocol (OFREP).
+
+For most applications, use an OpenFeature client with a standard OFREP provider. This is the recommended integration, but it is not required. You can also call the OFREP REST endpoints directly without an OpenFeature client or OFREP provider. Konfidence does not provide a dedicated SDK for these lookups.
+
+In both cases, pass the vector ID as the `targetingKey` in the evaluation context. The default OFREP providers currently do not cache resolved values.
+
+## Choose an evaluation mode
+
+Use one of the following evaluation modes through an OFREP provider or by calling the REST endpoints directly:
+
+| Mode | Request | Result |
+| --- | --- | --- |
+| Single flag | `POST /ofrep/v1/evaluate/flags/{key}` with the flag name | Returns one value. |
+| Whole bundle | `POST /ofrep/v1/evaluate/flags/{key}` with the vector ID as the flag key | Returns the entire vector configuration object, including features, authored config, and deployment results. This is useful at application startup to prime a local view. |
+| Bulk | `POST /ofrep/v1/evaluate/flags` | Returns all features at once and supports ETag-based revalidation with `If-None-Match`. |
+
+## Use vector data from any workload protocol
+
+The lookup is an HTTP call to a landscape-local service. HTTP services, gRPC services, Kafka consumers, batch jobs, cron jobs, and other workloads can request their configuration whenever they need it, as long as they can make an HTTP request.
+
+Only inbound HTTP traffic uses the `X-Vector-ID` header directly. Non-HTTP workloads use their own metadata or context to determine the vector ID.
+
+## Cache vector data
+
+Vector data is immutable per vector ID. After your application fetches data for a vector, cache it for the lifetime of that vector. You do not need invalidation or polling.
+
+The configuration service caches `ConfigMap` resources in memory, so repeated lookups stay cheap.
