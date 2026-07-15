@@ -1,13 +1,17 @@
+[![REUSE status](https://api.reuse.software/badge/github.com/konfidence-project/konfidence-docs)](https://api.reuse.software/info/github.com/konfidence-project/konfidence-docs)
+
 # Konfidence Docs
 
-This is the working repository and contains the preview environment of the official documentation for the Konfidence project, built with [VitePress](https://vitepress.dev/).
+This is the official documentation for the Konfidence project, built with [VitePress](https://vitepress.dev/).
 
-## Development Setup
+## Requirements
 
 ### Prerequisites
 
-- Node.js (v22 or higher)
+- Node.js (v24 or higher)
 - pnpm
+
+## Download and Installation
 
 ### Getting Started
 
@@ -29,28 +33,22 @@ This is the working repository and contains the preview environment of the offic
 
    The docs will be available at `http://localhost:5173`
 
-### Build for Production
+## Support, Feedback, Contributing
 
-```bash
-pnpm build
-pnpm preview
-```
+This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/konfidence-project/konfidence-docs/issues).
+Contribution and feedback are encouraged and always welcome.
+For more information about how to contribute see our [Contribution Guidelines](https://github.com/konfidence-project/.github/blob/main/CONTRIBUTING.md).
 
-## Contributing
+## Security / Disclosure
 
-We welcome contributions! Here's how you can help:
+If you find any bug that may be a security problem, please follow our instructions at [in our security policy](https://github.com/konfidence-project/.github/blob/main/SECURITY.md) on how to report it. Please do not create GitHub issues for security-related doubts or problems.
 
-1. **Read the guidelines** - Check out [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed contribution guidelines
-2. **Find or create an issue** - Browse existing issues or create a new one
-3. **Make your changes** - Edit documentation files in the `docs/` directory
-4. **Test locally** - Run `pnpm dev` to preview your changes
-5. **Submit a PR** - Create a pull request with a clear description
+## Code of Conduct
 
-### Documentation Structure
+We as members, contributors, and leaders pledge to make participation in our community a harassment-free experience for everyone. By participating in this project, you agree to abide by its [Code of Conduct](https://github.com/konfidence-project/.github/blob/main/CODE_OF_CONDUCT.md) at all times.
 
-- `docs/` - Documentation content (Markdown files)
-- `.vitepress/` - VitePress configuration
+## Licensing
 
-## License
-
-This project is licensed under the Apache 2.0 License - see [LICENSE](./LICENSE) for details.
+Copyright 2026 SAP SE or an SAP affiliate company and konfidence-project contributors.
+Please see our [LICENSES](LICENSES) for copyright and license information.
+Detailed information including third-party components and their licensing/copyright information is available [via the REUSE tool](https://api.reuse.software/info/github.com/konfidence-project/konfidence-docs).
