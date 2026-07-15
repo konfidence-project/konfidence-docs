@@ -1,5 +1,5 @@
 ---
-title: Provide configuration to a vector
+title: Add configuration to a vector
 description: Learn how to use vector-scoped configuration to manage settings that are specific to individual vectors.
 ---
 
@@ -7,40 +7,85 @@ description: Learn how to use vector-scoped configuration to manage settings tha
   Content type (Diátaxis): How-to guide — developer wants to pass configuration values that are scoped to a specific vector
 -->
 
-# Provide configuration to a vector
+# Add configuration to a vector
 
+This guide explains how to add vector-scoped configuration to a vector. Use this configuration for feature flags and authored configuration values that must be versioned with the vector.
 
+Konfidence bakes the configuration into the vector at assembly time, so the vector ID uniquely determines its configuration. Provide it inline in the `VectorTemplate`.
 
+## Prerequisites
 
-Categories 1 (feature toggles) and 2 (arbitrary authored config) are shipped together in one vector-config.json file 
-  → published as one OCM artifact of type cloud.konfidence.vector.config 
-  → referenced by the VectorTemplate and baked into the vector at assembly time  
+- You have a `VectorTemplate` for the vector that should receive the configuration.
 
-Author workflow for categories 1 + 2 (recommended pipeline)
-*   Source of truth: keep vector-config.json in a Git repository (its own repo, or alongside your app code).
-*   CI on main: on every push to main, the pipeline runs kden push vector-config ./vector-config.json --component github.com///vector-config --version — same UX as kden push artifact.
-*   Versioning: bump version per release (semver, commit-sha, date, your call). Konfidence imposes nothing beyond the top-level schemaVersion field inside the file.
-*   VectorTemplate references it by alias: configuration.source: /.../vector-config:stable. Galaxy resolves the alias at assembly time, validates the artifact, and bakes a pinned reference into the resulting vector — so the vector-id always uniquely determines the exact config.
-*   Alias drift = new vector. Push a new version under the same alias, the next assembly produces a new vector version → "config is versioned with the vector" holds automatically, and rollback = redeploying the old vector.
+## Add the configuration
 
+Add `spec.vectorConfig` to the `VectorTemplate` custom resource:
 
-## Feature toggles
+```yaml
+spec:
+  vectorConfig:
+    features:
+      enableBeta: true
+      maxUsers: 150
+      ratio: 4.6
+      title: "TestLabel"
+    authored:
+      log-level: info
+      database:
+        host: "mysql-service"
+        port: 3306
+```
 
-*   Top-level features block — flat keys, any JSON value type (bool, number, string, array, object):  
-    "features": {  
-    "new-checkout": true,  
-    "max-users": 150,  
-    "experimental-payment-providers": \["stripe", "adyen"\]  
-    }
-*   No targeting / variants / rules. The vector is the targeting unit — flipping a toggle = new vector version. Auditable, atomic with code, reproducible.
-*   Read with stock OpenFeature: client.getBooleanValue("new-checkout", false, evaluationContext) where evaluationContext.targetingKey = X-Vector-ID.
+If the `VectorTemplate` is new or changed, assembly creates a new vector and adds the configuration as a local resource to the vector.
+
+## Feature flags
+
+Use the top-level `features` block for feature flags. The keys are flat, and values can use any JSON value type, such as Boolean, number, string, array, or object.
+
+```json
+{
+  "features": {
+    "new-checkout": true,
+    "max-users": 150,
+    "experimental-payment-providers": ["stripe", "adyen"]
+  }
+}
+```
+
+Konfidence does not add targeting, variants, or rules inside feature flags. The vector is the targeting unit. Changing a flag creates a new vector version, which keeps the change auditable, atomic with code, and reproducible.
+
+Use a standard [OpenFeature Remote Evaluation Protocol (OFREP) provider](https://openfeature.dev/ecosystem) or a custom OFREP-compatible provider to resolve flag values from the configuration service.
+
+Read a flag with a standard OpenFeature client:
+
+```js
+client.getBooleanValue("new-checkout", false, evaluationContext)
+```
+
+Set `evaluationContext.targetingKey` to the vector ID from the `X-Vector-ID` HTTP header.
 
 ## Authored config
 
-*   Top-level authored block — free-form JSON, Konfidence imposes no schema beyond schemaVersion. It's your contract with your own app:  
-    "authored": {  
-    "ui": { "theme": "dark", "locale": "en-US" },  
-    "limits": { "requestTimeoutMs": 5000 }  
+Use the top-level `authored` block for free-form JSON. Konfidence does not impose a schema on it. This block is a contract between you and your application.
+
+```json
+{
+  "authored": {
+    "ui": {
+      "theme": "dark",
+      "locale": "en-US"
+    },
+    "limits": {
+      "requestTimeoutMs": 5000
     }
-*   Singleton, optional, immutable per vector version. One vector-config.json per vector or none.
-*   Read with the same OFREP API (OpenFeature handles structured-object values), or grab the whole authored sub-tree by querying the vector-id-as-key shortcut.
+  }
+}
+```
+
+Authored config is optional, singleton, and immutable per vector version. Provide one `authored` block per vector, or none.
+
+Authored config is available through the whole-bundle response only. Query the vector ID as the flag key and read the `authored` subtree from the returned vector configuration object. The single-flag and bulk endpoints resolve feature flags only.
+
+## Next steps
+
+After you add configuration to a vector, [access vector data in your application](./access-vector-data.md).
