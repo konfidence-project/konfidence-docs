@@ -103,6 +103,10 @@ export default defineConfig({
               link: "/docs/develop-integrate/publish-artifacts",
             },
             {
+              text: "Configure signing and verification",
+              link: "/docs/develop-integrate/configure-signing-and-verification",
+            },
+            {
               text: "Run Migrations",
               link: "/docs/develop-integrate/run-migrations",
             },
