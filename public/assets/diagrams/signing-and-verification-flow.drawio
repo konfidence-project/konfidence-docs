@@ -1,0 +1,110 @@
+<mxfile host="app.diagrams.net" agent="Claude" version="21.0.0">
+  <diagram name="Signing and Verification Flow" id="signing-verification-flow">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1400" math="0" shadow="0" darkMode="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Developer workstation / CI pipeline -->
+        <mxCell id="box-dev" value="&lt;b&gt;Developer workstation / CI pipeline&lt;/b&gt;" style="swimlane;fontStyle=1;startSize=36;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="660" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="text-dev" value="kden artifact push --registry &amp;lt;reg&amp;gt; --file artifact.yaml&#xa;kden artifact sign &amp;lt;ref&amp;gt; --signature-name my-artifact-sig&#xa;kden artifact alias &amp;lt;ref&amp;gt; edge" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;spacingLeft=12;fontSize=11;fontFamily=Courier New;" vertex="1" parent="box-dev">
+          <mxGeometry x="10" y="36" width="640" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 1: signed OCM component descriptor -->
+        <mxCell id="edge1" value="signed OCM component descriptor" style="edgeStyle=orthogonalEdgeStyle;curved=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;fontSize=11;fontStyle=2;" edge="1" parent="1" source="box-dev" target="box-reg1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- OCI Registry (source) 1 -->
+        <mxCell id="box-reg1" value="&lt;b&gt;OCI Registry (source)&lt;/b&gt;" style="swimlane;fontStyle=1;startSize=36;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="240" width="660" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="text-reg1" value="konfidence.io/payment-tax-calculator-srv:edge&#xa;  signature: my-artifact-sig  [signed]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;spacingLeft=12;fontSize=11;fontFamily=Courier New;" vertex="1" parent="box-reg1">
+          <mxGeometry x="10" y="36" width="640" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 2: reconcile VectorTemplate CR -->
+        <mxCell id="edge2" value="reconcile: VectorTemplate CR" style="edgeStyle=orthogonalEdgeStyle;curved=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;fontSize=11;fontStyle=2;" edge="1" parent="1" source="box-reg1" target="box-va">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- VectorAssembly controller -->
+        <mxCell id="box-va" value="&lt;b&gt;VectorAssembly controller&lt;/b&gt;" style="swimlane;fontStyle=1;startSize=36;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="420" width="660" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="text-va" value="1. verify artifacts   (verifyArtifacts)  → pass or FAIL&#xa;2. verify base vector (verifyVector)     → pass or FAIL&#xa;3. assemble new vector&#xa;4. sign new vector    (signVector)       → [signed]&#xa;&#xa;Credentials: Secret(s) via spec.credentials" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;spacingLeft=12;fontSize=11;fontFamily=Courier New;" vertex="1" parent="box-va">
+          <mxGeometry x="10" y="36" width="640" height="112" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 3: signed vector pushed to OCI -->
+        <mxCell id="edge3" value="signed vector pushed to OCI" style="edgeStyle=orthogonalEdgeStyle;curved=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;fontSize=11;fontStyle=2;" edge="1" parent="1" source="box-va" target="box-reg2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- OCI Registry (source) 2 -->
+        <mxCell id="box-reg2" value="&lt;b&gt;OCI Registry (source)&lt;/b&gt;" style="swimlane;fontStyle=1;startSize=36;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="660" width="660" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="text-reg2" value="konfidence.io/payment-fleet:dev  [signed]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;spacingLeft=12;fontSize=11;fontFamily=Courier New;" vertex="1" parent="box-reg2">
+          <mxGeometry x="10" y="36" width="640" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 4: reconcile VectorPromotionConfig CR -->
+        <mxCell id="edge4" value="reconcile: VectorPromotionConfig CR" style="edgeStyle=orthogonalEdgeStyle;curved=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;fontSize=11;fontStyle=2;" edge="1" parent="1" source="box-reg2" target="box-promo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Promotion controller -->
+        <mxCell id="box-promo" value="&lt;b&gt;Promotion controller&lt;/b&gt;" style="swimlane;fontStyle=1;startSize=36;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="840" width="660" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="text-promo" value="verify source vector before promoting (verifyVector)  → pass or FAIL&#xa;&#xa;Credentials: spec.credentials" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;spacingLeft=12;fontSize=11;fontFamily=Courier New;" vertex="1" parent="box-promo">
+          <mxGeometry x="10" y="36" width="640" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 5: promoted vector -->
+        <mxCell id="edge5" value="promoted vector" style="edgeStyle=orthogonalEdgeStyle;curved=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;fontSize=11;fontStyle=2;" edge="1" parent="1" source="box-promo" target="box-reg3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- OCI Registry (target/prod) -->
+        <mxCell id="box-reg3" value="&lt;b&gt;OCI Registry (target / prod)&lt;/b&gt;" style="swimlane;fontStyle=1;startSize=36;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1020" width="660" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="text-reg3" value="konfidence.io/payment-fleet:stable  [signed]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;spacingLeft=12;fontSize=11;fontFamily=Courier New;" vertex="1" parent="box-reg3">
+          <mxGeometry x="10" y="36" width="640" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 6: reconcile StageConfiguration CR -->
+        <mxCell id="edge6" value="reconcile: StageConfiguration CR" style="edgeStyle=orthogonalEdgeStyle;curved=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;fontSize=11;fontStyle=2;" edge="1" parent="1" source="box-reg3" target="box-stage">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- StageConfig controller -->
+        <mxCell id="box-stage" value="&lt;b&gt;StageConfig controller&lt;/b&gt;" style="swimlane;fontStyle=1;startSize=36;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1200" width="660" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="text-stage" value="verify vector before writing Stage (verifyVector)  → pass or FAIL&#xa;&#xa;Credentials: spec.credentials" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;spacingLeft=12;fontSize=11;fontFamily=Courier New;" vertex="1" parent="box-stage">
+          <mxGeometry x="10" y="36" width="640" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow 7: reconcile VectorDeployment CR -->
+        <mxCell id="edge7" value="reconcile: VectorDeployment CR" style="edgeStyle=orthogonalEdgeStyle;curved=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;fontSize=11;fontStyle=2;" edge="1" parent="1" source="box-stage" target="box-deploy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- VectorDeployment controller -->
+        <mxCell id="box-deploy" value="&lt;b&gt;VectorDeployment controller&lt;/b&gt;" style="swimlane;fontStyle=1;startSize=36;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1380" width="660" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="text-deploy" value="verify vector     KONFIDENCE_DEPLOYMENT_VECTOR_SIGNATURES&#xa;verify artifacts  KONFIDENCE_DEPLOYMENT_ARTIFACT_SIGNATURES&#xa;→ pass or FAIL&#xa;&#xa;Credentials: Secret via env vars" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;spacingLeft=12;fontSize=11;fontFamily=Courier New;" vertex="1" parent="box-deploy">
+          <mxGeometry x="10" y="36" width="640" height="72" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
