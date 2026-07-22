@@ -292,12 +292,12 @@ spec:
 EOF
 ```
 
-Any verification or signing failure stops the reconcile. Check `kubectl describe vectortemplate <name>` for the condition and attached event.
+Any verification or signing failure stops the reconcile. Check `kubectl describe vectortemplate my-vector` for the condition and attached event.
 
 Verify the assembly succeeded:
 
 ```bash
-kubectl get vectortemplate <name> -n <cr-namespace> -o jsonpath='{.status.conditions}'
+kubectl get vectortemplate my-vector -n <cr-namespace> -o jsonpath='{.status.conditions}'
 ```
 
 A healthy assembly shows `type: Ready`, `status: True` — with `reason: VectorCreated` on the first reconcile and `reason: NoDriftDetected` on subsequent ones.
