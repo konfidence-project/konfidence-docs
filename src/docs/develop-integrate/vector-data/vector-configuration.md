@@ -54,7 +54,7 @@ Use the top-level `features` block for feature flags. The keys are flat, and val
 
 Konfidence does not add targeting, variants, or rules inside feature flags. The vector is the targeting unit. Changing a flag creates a new vector version, which keeps the change auditable, atomic with code, and reproducible.
 
-Use a standard [OpenFeature Remote Evaluation Protocol (OFREP) provider](https://openfeature.dev/ecosystem) or a custom OFREP-compatible provider to resolve flag values from the configuration service.
+Use a standard [OpenFeature Remote Evaluation Protocol (OFREP) provider](https://openfeature.dev/ecosystem) or a custom OFREP-compatible provider to resolve flag values from the vector data service.
 
 Read a flag with a standard OpenFeature client:
 

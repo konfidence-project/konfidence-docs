@@ -16,8 +16,8 @@ Vector data is available after vector activation. Deploy-time tasks, such as dat
 ## Prerequisites
 
 - Your workload can determine the vector ID from `X-Vector-ID`, message metadata, or execution context.
-- The configuration service is available in the landscape.
-- Your application can make HTTP requests to the configuration service.
+- The vector data service is available in the landscape.
+- Your application can make HTTP requests to the vector data service.
 
 ## Get the vector ID
 
@@ -29,7 +29,7 @@ For non-HTTP workloads, get the vector ID from the workload's message metadata o
 
 ## Access vector data through OFREP
 
-The central, per-landscape configuration service exposes REST endpoints that implement the OpenFeature Remote Evaluation Protocol (OFREP).
+The central, per-landscape vector data service exposes REST endpoints that implement the OpenFeature Remote Evaluation Protocol (OFREP).
 
 For most applications, use an OpenFeature client with a standard OFREP provider. This is the recommended integration, but it is not required. You can also call the OFREP REST endpoints directly without an OpenFeature client or OFREP provider. Konfidence does not provide a dedicated SDK for these lookups.
 
@@ -55,4 +55,4 @@ Only inbound HTTP traffic uses the `X-Vector-ID` header directly. Non-HTTP workl
 
 Vector data is immutable per vector ID. After your application fetches data for a vector, cache it for the lifetime of that vector. You do not need invalidation or polling.
 
-The configuration service caches `ConfigMap` resources in memory, so repeated lookups stay cheap.
+The vector data service caches `ConfigMap` resources in memory, so repeated lookups stay cheap.

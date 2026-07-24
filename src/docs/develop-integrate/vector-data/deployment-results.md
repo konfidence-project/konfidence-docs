@@ -22,7 +22,7 @@ You do not author deployment results in vector configuration. Konfidence compute
 
 - A deployer produces deployment results for an artifact in the vector.
 - The vector is activated before your application reads the results.
-- Your application can access vector data through the configuration service.
+- Your application can access vector data through the vector data service.
 
 ## Let deployers produce deployment results
 

@@ -26,4 +26,4 @@ This may change in future releases with automated installation options.
 
 | Component                                           | Purpose                                                                                               |
 |-----------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| [Configuration Service](./configuration-service.md) | Allows your app to access [Vector Data](/docs/develop-integrate/vector-data/overview) during runtime. |
+| [Vector Data Service](./vector-data-service.md) | Allows your app to access [Vector Data](/docs/develop-integrate/vector-data/overview) during runtime. |

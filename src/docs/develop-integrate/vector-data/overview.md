@@ -27,9 +27,9 @@ The runtime must provide a way for applications to read vector data by vector ID
 
 ## Kubernetes runtime
 
-In a Kubernetes runtime, an administrator installs the [configuration service](../../deploy-operate/runtime-components/configuration-service.md) in the landscape cluster. The Kubernetes landscape orchestrator pushes vector data to the landscape cluster as `ConfigMap` resources.
+In a Kubernetes runtime, an administrator installs the [vector data service](../../deploy-operate/runtime-components/vector-data-service.md) in the landscape cluster. The Kubernetes landscape orchestrator pushes vector data to the landscape cluster as `ConfigMap` resources.
 
-The configuration service reads those `ConfigMap` resources and provides an OpenFeature-compatible API. Workloads use that API to read vector data by vector ID.
+The vector data service reads those `ConfigMap` resources and provides an OpenFeature-compatible API. Workloads use that API to read vector data by vector ID.
 
 ## Data types
 
