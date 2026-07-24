@@ -175,8 +175,8 @@ export default defineConfig({
                         link: "/docs/deploy-operate/runtime-components/overview",
                     },
                     {
-                        text: "Configuration Service",
-                        link: "/docs/deploy-operate/runtime-components/configuration-service",
+                        text: "Vector Data Service",
+                        link: "/docs/deploy-operate/runtime-components/vector-data-service",
                     },
                 ],
             }
