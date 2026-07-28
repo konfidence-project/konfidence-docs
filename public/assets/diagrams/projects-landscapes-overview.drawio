@@ -1,0 +1,70 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Seite-1" id="Zby7LYNp_QtzsDos_vHx">
+    <mxGraphModel dx="-232" dy="326" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="UWO8zGuC12HLn4W64ue3-3" edge="1" parent="1" source="UWO8zGuC12HLn4W64ue3-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="UWO8zGuC12HLn4W64ue3-6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-4" connectable="0" parent="UWO8zGuC12HLn4W64ue3-3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="manages namespace" vertex="1">
+          <mxGeometry relative="1" x="-0.6496" y="-3" as="geometry">
+            <mxPoint x="40" y="-4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;i&gt;&amp;lt;cluster-scoped&amp;gt;&lt;/i&gt;&lt;/div&gt;Project&lt;div&gt;name: my-project&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="841" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-6" parent="1" style="whiteSpace=wrap;html=1;rounded=0;verticalAlign=top;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="namespace: kden-p-my-project" vertex="1">
+          <mxGeometry height="270" width="180" x="1101" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-110" edge="1" parent="1" source="UWO8zGuC12HLn4W64ue3-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="UWO8zGuC12HLn4W64ue3-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-120" connectable="0" parent="UWO8zGuC12HLn4W64ue3-110" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="manages namespace" vertex="1">
+          <mxGeometry relative="1" x="-0.0039" y="1" as="geometry">
+            <mxPoint x="-3" y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Landscape&lt;div&gt;name: dev&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="1131" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-15" parent="1" style="whiteSpace=wrap;html=1;rounded=0;verticalAlign=top;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="namespace: kden-l-dev-1blqhpe" vertex="1">
+          <mxGeometry height="120" width="200" x="1436" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-104" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="42" width="92" x="1494" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-17" parent="UWO8zGuC12HLn4W64ue3-104" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="36" width="86.25" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-102" parent="UWO8zGuC12HLn4W64ue3-104" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;i&gt;...&lt;/i&gt;" vertex="1">
+          <mxGeometry height="36" width="86.25" x="5.75" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-117" edge="1" parent="1" source="UWO8zGuC12HLn4W64ue3-109" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="UWO8zGuC12HLn4W64ue3-113">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-121" connectable="0" parent="UWO8zGuC12HLn4W64ue3-117" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="manages namespace" vertex="1">
+          <mxGeometry relative="1" x="0.0026" y="3" as="geometry">
+            <mxPoint x="-4" y="3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-109" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Landscape&lt;div&gt;name: prod&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="1131" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-113" parent="1" style="whiteSpace=wrap;html=1;rounded=0;verticalAlign=top;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="namespace: kden-l-prod-b8zy4q" vertex="1">
+          <mxGeometry height="120" width="200" x="1436" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-114" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="42" width="92" x="1494" y="248" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-115" parent="UWO8zGuC12HLn4W64ue3-114" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="36" width="86.25" as="geometry" />
+        </mxCell>
+        <mxCell id="UWO8zGuC12HLn4W64ue3-116" parent="UWO8zGuC12HLn4W64ue3-114" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;i&gt;...&lt;/i&gt;" vertex="1">
+          <mxGeometry height="36" width="86.25" x="5.75" y="6" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
