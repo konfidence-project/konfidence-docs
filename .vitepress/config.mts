@@ -170,6 +170,18 @@ export default defineConfig({
               link: "/docs/deploy-operate/konfidence-installation",
             },
             {
+              text: "Managing Projects",
+              link: "/docs/deploy-operate/projects",
+            },
+            {
+              text: "Managing Landscapes",
+              link: "/docs/deploy-operate/landscapes",
+            },
+            {
+              text: "Access Control (RBAC)",
+              link: "/docs/deploy-operate/access-control",
+            },
+            {
               text: "Upgrading Konfidence",
               link: "/docs/deploy-operate/upgrading-konfidence",
             },
