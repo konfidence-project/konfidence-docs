@@ -59,7 +59,7 @@
         <ul class="card-links">
           <li><a href="/docs/develop-integrate/observe-improve/" @click.stop>Observe & Deliver Overview</a></li>
           <li><a href="/docs/core-concepts/" @click.stop>Core Concepts</a></li>
-          <li><a href="/docs/core-concepts/glossary" @click.stop>Glossary</a></li>
+          <li><a href="/docs/reference/glossary" @click.stop>Glossary</a></li>
         </ul>
       </a>
       -->

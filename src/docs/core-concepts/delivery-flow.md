@@ -23,11 +23,11 @@ The main relationship to understand is:
 ## The delivery flow in Konfidence
 
 The delivery flow sits between artifact publishing and runtime deployment.
-It is part of the Galaxy-side control plane and describes how Konfidence turns build outputs into target stage state.
+It is part of the galaxy role of the control plane and describes how Konfidence turns build outputs into target stage state.
 
 This page focuses on the delivery state before runtime deployment starts.
 It does not describe how deployers create workloads in a landscape.
-That runtime lifecycle starts after a Star pulls the target stage state from Galaxy.
+That runtime lifecycle starts once the target stage state (`Stage` objects) has been written to the cluster.
 
 ### Delivery flow at a glance
 
@@ -81,7 +81,7 @@ This model supports controlled delivery because each stage can be tied back to a
 ## Runtime boundary
 
 The delivery flow described on this page ends before deployers act on workloads.
-At that boundary, Galaxy has produced the target stage state that a Star can pull and apply in its landscapes.
+At that boundary, the target stage state exists in the cluster and the runtime controllers act on it.
 
 After that point, the runtime deployment lifecycle starts.
 That lifecycle includes concepts such as vector deployments, artifact deployments, vector assignments, tasks, and activation.

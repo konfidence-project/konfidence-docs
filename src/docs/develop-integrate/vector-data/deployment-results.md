@@ -36,6 +36,12 @@ Use deployment results when one component in a vector needs an address, identity
 
 You do not need to know these values before deployment. The platform fills them in at deploy time, and your application reads them back by name at runtime.
 
+For `http-k8s-service` results, the deployer discovers the Kubernetes Service by its `appname` label. Make sure the Services you want to expose as deployment results carry that label.
+
+::: warning
+The deployment result schema is not final and may change in a future release.
+:::
+
 ## Next steps
 
 To read deployment results from application code, see [Access vector data in your application](./access-vector-data.md).

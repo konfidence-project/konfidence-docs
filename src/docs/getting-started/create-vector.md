@@ -28,7 +28,7 @@ steps:
 * in OCI registry, you should see a new artifact created for the vector
 
 what's happening now:
-* vector is available, StageConfig for dev stage can now pick it up and create the corresponding Stage in the cluster
+* vector is available, StageConfiguration for dev stage can now pick it up and create the corresponding Stage in the cluster
 * Stage reconciliation deploys all artifacts of the vector and assigns them dev stage
 * internal routing rules are rolled out and allow east-west traffic between artifacts in the dev stage
 * migrations are executed (skipped because we have no migration tasks in the quickstart app)
@@ -38,4 +38,4 @@ what's happening now:
 
 steps:
 * create a new VectorTemplate for the dev vector
-* assign to a stage with StageConfig
+* assign to a stage with StageConfiguration
