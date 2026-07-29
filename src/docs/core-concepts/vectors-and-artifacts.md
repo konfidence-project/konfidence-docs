@@ -72,13 +72,13 @@ The most important fields are:
 
 - `uploadTarget`, which defines where the assembled vector is stored.
 - `components`, which defines which previously built artifacts are part of the vector.
-- `config`, which references credentials used to access the required registries.
+- `credentials`, which references Secrets used to access the required registries.
 - `base`, which can optionally reference an existing vector to build on.
 
 The following example shows the relationship between those fields:
 
 ```yaml
-apiVersion: galaxy.konfidence.cloud/v1alpha1
+apiVersion: konfidence.cloud/v1alpha1
 kind: VectorTemplate
 metadata:
   name: example-vector
@@ -88,10 +88,10 @@ spec:
   components:
     - name: https://registry.kdenv.lab/sample-project//konfidence.project/sample-vector/service1:main
     - name: https://registry.example.com/sample-project//example.tools/dev/service2:stable
-  config:
-    - kind: Secret
-      apiVersion: v1
-      name: registry-credentials
+  credentials:
+    ocm:
+      refs:
+        - name: registry-credentials
 ```
 
 Both the `uploadTarget` and the entries under `components` use aliases so that Konfidence can resolve the referenced resources.

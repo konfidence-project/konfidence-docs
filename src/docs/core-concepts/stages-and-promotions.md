@@ -29,7 +29,7 @@ It defines the stage name, the vector assigned to that stage, and the target loc
 The following example shows the stage-to-vector relationship:
 
 ```yaml
-apiVersion: galaxy.konfidence.cloud/v1alpha1
+apiVersion: konfidence.cloud/v1alpha1
 kind: StageConfiguration
 metadata:
   name: stage-configuration-example
@@ -37,17 +37,16 @@ metadata:
 spec:
   name: example-stage
   vector: https://registry.kdenv.lab/sample-project//konfidence.project/constructed-vector:latest
-  targetWorkspace: root:sample-organization
   targetNamespace: dev-eu10
-  config:
-    - kind: Secret
-      apiVersion: v1
-      name: registry-credentials
+  credentials:
+    ocm:
+      refs:
+        - name: registry-credentials
 ```
 
 In this example, `vector` references the component that was configured as the `uploadTarget` in the `VectorTemplate`.
-The stage named `example-stage` is created in the Kubernetes namespace `dev-eu10` inside the KCP workspace `root:sample-organization`.
-The `config` section gives Konfidence the registry access information it needs to fetch the vector.
+The stage named `example-stage` is created in the Kubernetes namespace `dev-eu10`.
+The `credentials` section references the Secrets that give Konfidence the registry access information it needs to fetch the vector.
 
 ## Promotions
 
@@ -83,7 +82,7 @@ For concept pages, the main point is that the configuration defines the source a
 The `VectorPromotionConfig` custom resource defines where the vector comes from and where the promoted reference should be available:
 
 ```yaml
-apiVersion: galaxy.konfidence.cloud/v1alpha1
+apiVersion: konfidence.cloud/v1alpha1
 kind: VectorPromotionConfig
 metadata:
   name: example-vector-promotion-config
@@ -91,16 +90,16 @@ metadata:
 spec:
   source: https://registry.kdenv.lab/sample-project//konfidence.project/constructed-vector:latest
   target: https://registry.example.com/sample-project//example.tools/constructed-vector:stable
-  config:
-    - kind: Secret
-      apiVersion: v1
-      name: registry-credentials
+  credentials:
+    ocm:
+      refs:
+        - name: registry-credentials
 ```
 
 The `VectorPromotion` custom resource triggers one execution of that configuration:
 
 ```yaml
-apiVersion: galaxy.konfidence.cloud/v1alpha1
+apiVersion: konfidence.cloud/v1alpha1
 kind: VectorPromotion
 metadata:
   name: example-vector-promotion

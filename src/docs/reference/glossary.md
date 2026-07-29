@@ -48,9 +48,9 @@ The local control plane pulls its configuration and target deployment state from
 
 ## Promotion
 
-A promotion describes the action of moving a vector from one stage to another.
+A promotion makes a known vector available under another alias, registry location, or repository path, without changing the vector contents.
 
-It acts as a blueprint for how selected artifacts are expected to evolve as they progress towards production environments.
+Because stages resolve their vector through such references, promotion is the explicit action that makes a verified vector available for a later delivery target, such as production.
 
 ## Stage
 
@@ -59,6 +59,14 @@ A stage is a defined step in the delivery process, such as build, test, or relea
 A stage serves as a checkpoint for quality assurance and approval. In Konfidence, stages are a virtual concept. They are represented by a Kubernetes CRD.
 
 Deployments are executed in landscapes and mapped to stages. Through this, a deployment can be part of multiple stages of the same landscape.
+
+## StageVersion
+
+A Kubernetes CRD that captures one immutable rollout of a stage: the vector to deploy and the generation of the Stage that produced it. Stage versions track stage changes over time and enable zero-downtime switches between vector versions.
+
+## StageVersionUsage
+
+A Kubernetes CRD that marks one or more StageVersions as in use, either by direct reference or by label selector, with a human-readable reason. As long as a StageVersion is in use, its resources are kept alive; this controls the lifetime of deployed vectors.
 
 ## Task
 

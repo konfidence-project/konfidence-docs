@@ -23,7 +23,7 @@ Each promotion defines:
 
 ### VectorPromotion resource
 
-* define source/target vector in `PromotionConfig` resource
+* define source/target vector in `VectorPromotionConfig` resource
 * how to trigger manually with `VectorPromotion` resource
 
 ::: info

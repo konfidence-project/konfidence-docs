@@ -24,4 +24,4 @@ Before you can deploy your application using Konfidence, you need to prepare it 
 ## Vector Context
 
 * microservices need to be vector-aware
-* incoming requests have Vector-ID header that needs to be forwarded to all downstream service calls
+* incoming requests carry an `X-Vector-ID` header that needs to be forwarded to all downstream service calls
