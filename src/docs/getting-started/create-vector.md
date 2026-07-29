@@ -31,7 +31,6 @@ what's happening now:
 * vector is available, StageConfig for dev stage can now pick it up and create the corresponding Stage in the cluster
 * Stage reconciliation deploys all artifacts of the vector and assigns them dev stage
 * internal routing rules are rolled out and allow east-west traffic between artifacts in the dev stage
-* migrations are executed (skipped because we have no migration tasks in the quickstart app)
 * activation makes services externally available
 
 # Assemble a Vector

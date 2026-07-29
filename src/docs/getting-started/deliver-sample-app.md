@@ -68,4 +68,3 @@ results:
 # Next Steps
 
 * publish changes to an artifact to deploy a new vector to dev stage
-* add the ratings microservice to the app and experiment with database migrations

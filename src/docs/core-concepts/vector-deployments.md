@@ -13,7 +13,7 @@ lastUpdated: true
 3.  **Vector lifecycle begins:**
     * **Deployers** deploy the necessary artifacts.
     * **VectorAssignments** link these artifacts to the current vector.
-    * **Tasks** (like migrations) prepare the data.
+    * **Tasks** prepare the data.
     * **Activate:** Once everything is ready, traffic switches to the new version.
 
 A vector deployment represents the complete process of running a specific vector version in a target landscape. The following concepts govern how Konfidence tracks and controls this process.
