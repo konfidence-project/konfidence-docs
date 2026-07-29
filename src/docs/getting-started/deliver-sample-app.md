@@ -19,18 +19,7 @@ requirements:
 * product-page / reviews / details 
 * ratings not included in quickstart because of external database dependency
 
-<!-- 
-  Content type (Diátaxis): Tutorial — user follows a guided path to deploy a sample application through two stages (dev → production).
-  TW will structure this as: numbered steps, expected output after key steps, "what just happened" summaries, clear end state.
-
-  Dev input needed:
-  - Is this tutorial independent of "Create your own vector", or should one be done first?
-
-  Ticket: DOCS — Deliver a sample vector: Provide example YAML for StageConfig, VectorPromotion; confirm CRD names and tutorial sequence
--->
-
 # Define your Delivery Flow
-
 
 summary:
 * start with dev and production stage
@@ -50,7 +39,7 @@ what happened so far:
 # Access the app on the dev stage
 
 steps:
-* open http://stage-dev.example.com/productpage in your browser 
+* open the product page through your gateway's dev-stage hostname, e.g. `http://stage-dev.example.com/productpage` (the hostname depends on how your Gateway is configured — for local clusters, map it in `/etc/hosts` or use `kubectl port-forward`)
 * shows sample app product page, reviews and details have been fetched from the respective services
 * requests automatically go to the latest deployed vector in the stage
 
@@ -69,7 +58,7 @@ steps:
 * check promotion status with `kubectl get vectorpromotion vector-dev-to-prod` and wait for it to complete
 * now new promoted vector should be available in OCI
 * StageConfig for production stage picks up the new vector and creates a new Stage in the cluster
-* open http://stage-prod.example.com/productpage in your browser and see the app running in production
+* open the product page through your gateway's production-stage hostname (e.g. `http://stage-prod.example.com/productpage`) and see the app running in production
 
 results:
 * new vectordeployment for production stage
@@ -80,4 +69,3 @@ results:
 
 * publish changes to an artifact to deploy a new vector to dev stage
 * add the ratings microservice to the app and experiment with database migrations
-* install the star control plane on a second cluster and deploy the production stage there

@@ -6,15 +6,6 @@ editLink: true
 lastUpdated: true
 ---
 
-<!-- 
-  Content type (Diátaxis): Explanation — developer wants to pass configuration values that are scoped to a specific vector deployment.
-  * How to define config in the vector
-  * how Konfidence passes to config to the runtime
-  * how to read it in a running service
-
-  Ticket: https://github.com/konfidence-project/konfidence-project/issues/710
--->
-
 # Overview
 
 Vector data is runtime data that belongs to a specific vector deployment. Applications use it to resolve feature flags, authored configuration values, and deployment results by vector ID.

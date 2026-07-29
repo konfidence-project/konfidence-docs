@@ -16,7 +16,7 @@
             <span class="role-tag">Quality Engineer</span>
           </div>
         </div>
-        <p class="card-description">Integrate Konfidence into your dev workflow. Ship features fast with short feedback loops.</p>
+        <p class="card-description">Integrate Konfidence into your dev workflow. Publish artifacts, build vectors, and define promotions.</p>
         <ul class="card-links">
           <li><a href="/docs/develop-integrate/publish-artifacts/" @click.stop>Publish Artifacts</a></li>
           <li><a href="/docs/develop-integrate/observe-improve/build-vectors/" @click.stop>Build Vectors</a></li>
@@ -36,7 +36,7 @@
             <span class="role-tag">Infra Engineer</span>
           </div>
         </div>
-        <p class="card-description">Install, configure, and run Konfidence in production. Manage promotion flows and automate rollouts across regions.</p>
+        <p class="card-description">Install, configure, and run Konfidence. Manage installations and promotion flows.</p>
         <ul class="card-links">
           <li><a href="/docs/deploy-operate/installation-variants" @click.stop>Installation Variants</a></li>
         </ul>

@@ -12,9 +12,6 @@ Konfidence is a software delivery framework for microservice-based software-as-a
 
 Before you install Konfidence, it helps to know what this setup is for: teams promote the same verified application version across environments instead of rebuilding or reconfiguring it for each deployment. This makes releases easier to reason about as systems, teams, and release frequency grow.
 
-<!-- TODO @marco: check this introduction again before initial release, to make sure it accurately reflects the current state of the project and its goals -->
-<!-- DEV: Confirm whether feature toggles and ring deployments will be implemented in the first version or just planned for future releases, otherwise this should not be used as release benefit copy. -->
-
 ## Cluster setup
 
 You need a Kubernetes cluster with Konfidence and the Konfidence CLI installed.
@@ -29,9 +26,8 @@ This will:
 - spin up a kind cluster
 - install flux
 - install the GatewayAPI CRDs
-- install the Konfidence Galaxy+Star Helm Charts
+- install the Konfidence Helm chart
 - install a Deployer for Kubernetes target runtime
-
 
 ::: details Manual Setup
 If you already have a Kubernetes cluster, select it in your current kubeconfig context and install Konfidence manually with the following commands.
@@ -60,28 +56,15 @@ kubectl wait deployment/source-controller \
   --timeout=180s
 ```
 
-Install Galaxy:
+Install Konfidence:
 
 ```bash
-helm upgrade --install galaxy oci://ghcr.io/konfidence-project/charts/galaxy \
+helm upgrade --install konfidence oci://ghcr.io/konfidence-project/charts/konfidence \
   --version "$KONFIDENCE_VERSION" \
   --namespace "$KONFIDENCE_NAMESPACE" \
   --create-namespace \
-  --set image.repository=ghcr.io/konfidence-project/galaxy-operator \
+  --set image.repository=ghcr.io/konfidence-project/konfidence-operator \
   --set image.tag="$KONFIDENCE_VERSION" \
-  --wait
-```
-
-Install Star:
-
-```bash
-helm upgrade --install star oci://ghcr.io/konfidence-project/charts/star \
-  --version "$KONFIDENCE_VERSION" \
-  --namespace "$KONFIDENCE_NAMESPACE" \
-  --create-namespace \
-  --set image.repository=ghcr.io/konfidence-project/star-operator \
-  --set image.tag="$KONFIDENCE_VERSION" \
-  --set controller.controllerNamespace="$KONFIDENCE_NAMESPACE" \
   --wait
 ```
 
@@ -103,9 +86,9 @@ Verify the installation with:
 kubectl get deployments -n konfidence-system
 ```
 
-You should see `galaxy`, `star`, and `kubernetes-landscape-orchestrator`.
+You should see `konfidence` and `kubernetes-landscape-orchestrator`.
 
-See [Galaxy installation](/docs/deploy-operate/galaxy-installation) and [Star installation](/docs/deploy-operate/star-installation) for full details.
+See [Installing Konfidence](/docs/deploy-operate/konfidence-installation) for full details.
 :::
 
 ## Next steps

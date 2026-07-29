@@ -3,10 +3,6 @@ title: Add configuration to a vector
 description: Learn how to use vector-scoped configuration to manage settings that are specific to individual vectors.
 ---
 
-<!-- 
-  Content type (Diátaxis): How-to guide — developer wants to pass configuration values that are scoped to a specific vector
--->
-
 # Add configuration to a vector
 
 This guide explains how to add vector-scoped configuration to a vector. Use this configuration for feature flags and authored configuration values that must be versioned with the vector.

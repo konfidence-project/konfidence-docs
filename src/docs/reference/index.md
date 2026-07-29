@@ -8,12 +8,9 @@ lastUpdated: true
 
 # Reference
 
-Comprehensive reference documentation for Konfidence components, APIs, and tools.
+Reference material for Konfidence terminology.
 
 ## Documentation sections
 
-- [Releases](/docs/reference/releases) - Version history and release notes
-- [CLI](/docs/reference/cli) - Command-line interface reference
-- [CRD](/docs/reference/crd) - Custom Resource Definition specifications
 - [Glossary](/docs/reference/glossary) - Terminology and definitions
 

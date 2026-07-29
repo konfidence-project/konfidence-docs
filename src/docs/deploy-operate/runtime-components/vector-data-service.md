@@ -3,10 +3,6 @@ title: Vector data service
 description: Learn what the vector data service does and when to install it.
 ---
 
-<!-- 
-  Content type (Diátaxis): How-to guide — operator installs vector data service into their k8s runtime
--->
-
 # Vector data service
 
 This guide explains when to install the vector data service in a Kubernetes landscape and what it provides to workloads at runtime.

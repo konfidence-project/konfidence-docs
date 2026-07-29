@@ -1,6 +1,6 @@
 ---
 title: Observe & Deliver
-description: Track delivery performance and drive continuous improvement. DORA KPIs, release status, audit logs, and management insights for product managers, program managers, and delivery managers.
+description: Assemble vectors and define promotions to deliver your application through stages.
 outline: deep
 editLink: true
 lastUpdated: true
@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Observe & Deliver
 
-Oversee the planning, execution, and delivery of products aligned with stakeholder objectives. Track DORA KPIs, monitor feature rollout status, make informed release decisions, and prepare management reports.
+Plan and execute the delivery of your application: assemble [vectors](./build-vectors.md) from your artifacts and [define promotions](./define-promotions.md) that move them through your stages.
 
 ## Related
 

@@ -8,16 +8,6 @@ lastUpdated: true
 
 # Publish Artifacts
 
-<!-- 
-  Content type (Diátaxis): How-to guide — developer wants to publish a versioned artifact to an OCI registry so Konfidence can reference it in a vector.
-  TW will create structured guide for this
-
-  Dev input needed:
-  - Which steps need to be explainded to have a wholesome guide?
-
-  Ticket: DOCS — How to Publish Artifacts
--->
-
 ## Artifact manifest
 
 * OCM component-constructor + Konfidence-specific manifest

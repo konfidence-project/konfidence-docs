@@ -9,13 +9,15 @@ lastUpdated: true
 # Installation variants
 
 ## Single Cluster Installation
-* everything runs on a single Kubernetes cluster
-* only for demonstration purposes, not recommended for production
+
+Konfidence runs on a single Kubernetes cluster. The control plane, the Kubernetes landscape orchestrator, and your workloads share one cluster:
+
+* the Konfidence Helm chart installs the control plane
+* the kubernetes-landscape-orchestrator Helm chart installs the deployer for the Kubernetes target runtime
+* stages are separated by namespaces within the cluster
+
+See [Installing Konfidence](./konfidence-installation.md) for the installation steps.
 
 ## Multi-Cluster Installation
-* control plane and data plane are separated
-* flavors:
-  - three clusters: galaxy, star, landscape
-  - two clusters: one cluster for galaxy, one for star + landscape
-  - multiple clusters: one cluster for galaxy, one cluster for star, one cluster for landscape
-  - multiple clusters: one cluster for galaxy, many different star/landscape clusters
+
+Multi-cluster topologies, such as separating the control plane from the landscape clusters or running stages on dedicated clusters, are not available in the current release.
