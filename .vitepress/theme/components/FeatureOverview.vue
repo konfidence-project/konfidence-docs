@@ -66,9 +66,9 @@
         </div>
 
         <div class="feature-tile">
-          <span class="feature-label">Galaxy and Star</span>
+          <span class="feature-label">Unified control plane</span>
           <h3><Layers class="tile-icon" />Coordinate the landscape</h3>
-          <p>Let Galaxy manage desired delivery state while Star executes deployments close to the target environment.</p>
+          <p>One control plane manages the desired delivery state and executes deployments in the target environment.</p>
         </div>
       </div>
     </section>

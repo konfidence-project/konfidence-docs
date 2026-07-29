@@ -23,7 +23,7 @@ The main relationship to understand is:
 ## The delivery flow in Konfidence
 
 The delivery flow sits between artifact publishing and runtime deployment.
-It is part of the galaxy role of the control plane and describes how Konfidence turns build outputs into target stage state.
+It is part of the control plane and describes how Konfidence turns build outputs into target stage state.
 
 This page focuses on the delivery state before runtime deployment starts.
 It does not describe how deployers create workloads in a landscape.
@@ -93,7 +93,7 @@ Read these pages for the surrounding concepts and task-oriented guidance:
 
 - [Vectors and Artifacts](./vectors-and-artifacts.md) explains the package model behind artifacts, aliases, and immutable vectors.
 - [Stages and Promotions](./stages-and-promotions.md) explains how stages select vectors and how promotions prepare vectors for later targets.
-- [System Architecture](./system-architecture.md) explains how Galaxy, Star, and landscapes divide responsibility.
+- [System Architecture](./system-architecture.md) explains how the control plane and landscapes divide responsibility.
 - [Vector Deployments](./vector-deployments.md) explains the runtime deployment concepts that apply after a vector reaches a target landscape.
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.
 - [Define promotions](../develop-integrate/observe-improve/define-promotions.md) explains the task-oriented flow for promotion setup.

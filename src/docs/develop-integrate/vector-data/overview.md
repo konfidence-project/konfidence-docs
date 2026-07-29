@@ -12,7 +12,7 @@ Vector data is runtime data that belongs to a specific vector deployment. Applic
 
 ## How vector data reaches the runtime
 
-Konfidence stores vector data in the `VectorData` custom resource on the Landscape Control Plane (LCP). The landscape orchestrator reads the `VectorData` resource and passes the data to the target runtime.
+Konfidence stores vector data in the `VectorData` custom resource. The landscape orchestrator reads the `VectorData` resource and passes the data to the target runtime.
 
 The runtime must provide a way for applications to read vector data by vector ID. This keeps runtime data scoped to the vector that is currently handling the request or workload.
 

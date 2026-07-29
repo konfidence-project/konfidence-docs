@@ -23,28 +23,20 @@ The OCM artifact itself does not necessarily include the deployable content. Ins
 A Kubernetes CRD that contains the deployment information for a specific artifact.
 An artifact deployment can be reused by multiple vector deployments within a landscape if the corresponding vectors share the same artifact.
 
+## Control Plane
+
+The control plane is the primary interface to manage the software delivery process. It assembles and validates vectors, defines the target state for stages, and executes the resulting deployments in the connected landscapes.
+
+It runs as a single binary in the same Kubernetes cluster as the landscapes it manages.
+
 ## Deployer
 
 A controller responsible for executing the deployment of individual artifacts.
 A deployer acts upon ArtifactDeployment CRs and performs the deployment of an artifact for a specific runtime, e.g. Kubernetes.
 
-## Global Control Plane
-
-A global control plane is the primary interface to manage the software delivery process.
-
-It defines and distributes the desired state for multiple local control planes. The global control plane assembles, validates, and dispatches deployment configurations, such as software versions and stage resources.
-
-The global control plane also receives regular status updates from its connected local control planes, enabling centralized tracking and consistency of software delivery.
-
 ## Landscape
 
 A landscape is the logical grouping of multiple stages and deployment targets. In Konfidence, it is represented by a Kubernetes namespace. A landscape is where deployments are physically executed.
-
-## Local Control Plane
-
-A local control plane is a runtime orchestrator that manages and executes software deployments in one or more environments based on a specific target state, such as a stage resource.
-
-The local control plane pulls its configuration and target deployment state from the global control plane, applies those specifications to its managed resources, and regularly sends updates about its current status back to the global control plane. It belongs to at most one global control plane, but it can also act independently.
 
 ## Promotion
 
