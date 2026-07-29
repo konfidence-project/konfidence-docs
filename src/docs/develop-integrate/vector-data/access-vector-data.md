@@ -5,10 +5,6 @@ description: Learn how to access vector data in your application code.
 
 # Access vector data in your application
 
-<!-- 
-  Content type (Diátaxis): How-to guide — developer wants to access vector data in their code
--->
-
 This guide explains how running application code reads vector data, such as feature flags, authored config, and deployment results.
 
 Vector data is available before the vector's migration tasks run and stays available after activation. Deploy-time tasks, such as database migrations, can read it, for example to resolve service-to-service dependencies during migration.

@@ -6,17 +6,11 @@ editLink: true
 lastUpdated: true
 ---
 
-<!-- 
-  Content type (Diátaxis): How-to guide — developer wants to pass information that results out of a deployment into the landscape 
--->
-
 # Use deployment results
 
 This guide explains how to use deployment results in running application code. Deployment results are values that deployers produce while deploying a vector, such as service endpoints, generated URLs, identities, and allocated resources.
 
 You do not author deployment results in vector configuration. Konfidence computes them as a side effect of deploying the vector and merges them into the same vector data bundle that applications read at runtime.
-
-<!-- TODO: Add authoring details if deployer authors need to define deployment result outputs explicitly. -->
 
 ## Prerequisites
 

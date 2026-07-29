@@ -6,14 +6,6 @@ editLink: true
 lastUpdated: true
 ---
 
-<!-- 
-  Content type (Diátaxis): How-to guide — user wants to assemble a vector with own artifacts 
-
-  Dev input needed:
-
-  Ticket: DOCS — How to build vectors
--->
-
 # Build vectors
 
 * Vectors are the core deployment unit in Konfidence
@@ -36,23 +28,6 @@ lastUpdated: true
   - vector-dev, vector-test, vector-prod
   - vector-team-a, vector-team-b
   - vector-experimental, vector-stable
-
-## Managing vector versions
-
-### Vector lifecycle
-
-1. **Assembly:** Compose artifacts into a vector
-2. **Validation:** Ensure vector is deployable
-3. **Distribution:** Make vector available for deployment
-4. **Deployment:** Promote vector through stages
-5. **Archival:** Retain history for auditing
-
-### Best practices
-
-- Use semantic versioning for vectors
-- Document vector composition and purpose
-- Keep vector versions secure in your registry
-- Archive old vectors for compliance
 
 ## Next steps
 

@@ -1,6 +1,6 @@
 ---
 title: Extend & Customize
-description: Build on top of Konfidence and contribute to the community. Custom runtimes, ingress extensions, vector assembly, and OSS contributions for extension developers and open-source contributors.
+description: Contribute to Konfidence. Contribution guidelines, documentation style guide, and templates for open-source contributors.
 outline: deep
 editLink: true
 lastUpdated: true

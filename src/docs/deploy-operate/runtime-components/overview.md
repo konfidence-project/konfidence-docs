@@ -3,10 +3,6 @@ title: Overview
 description: 
 ---
 
-<!-- 
-  Content type (Diátaxis): Reference — lists all runtime components, their purpose, and when to install those components.
--->
-
 # Runtime Components Overview
 
 ## What Are Runtime Components?

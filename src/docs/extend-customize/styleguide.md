@@ -15,7 +15,7 @@ This style guide defines tone, structure, and formatting rules for writing and e
 ## Terminology
 
 - Use consistent vocabulary.
-- Refer to the Konfidence [glossary](../core-concepts/glossary.md) when writing or editing documentation.
+- Refer to the Konfidence [glossary](../reference/glossary.md) when writing or editing documentation.
 - Introduce abbreviations only after spelling them out:
     > Konfidence uses the Open Component Model (OCM) to describe vectors and artifacts stored in an Open Container Initiative (OCI) registry.
 

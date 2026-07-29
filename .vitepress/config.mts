@@ -22,7 +22,18 @@ export default defineConfig({
   ],
   title: "Konfidence",
   description: "Public Documentation for Project Konfidence",
-  ignoreDeadLinks: true,
+  // pages for features that are not part of the initial release; recoverable
+  // from git history / re-enabled by removing them here (issue #814)
+  srcExclude: [
+    "docs/deploy-operate/galaxy-installation.md",
+    "docs/deploy-operate/star-installation.md",
+    "docs/develop-integrate/observe-improve/paved-road.md",
+    "docs/extend-customize/create-deployer.md",
+    "docs/reference/deployer-specification.md",
+    "docs/reference/cli.md",
+    "docs/reference/crd.md",
+    "docs/reference/releases.md",
+  ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
 
@@ -33,10 +44,7 @@ export default defineConfig({
     siteTitle: false,
 
     // Navigation bar
-    nav: [
-      { text: "Docs", link: "/docs/" },
-      { text: "Releases", link: "/docs/reference/releases" },
-    ],
+    nav: [{ text: "Docs", link: "/docs/" }],
 
     socialLinks: [
       { icon: "github", link: "https://github.com/konfidence-project" },
@@ -140,10 +148,6 @@ export default defineConfig({
               text: "Define promotions",
               link: "/docs/develop-integrate/observe-improve/define-promotions",
             },
-            {
-              text: "Paved Road",
-              link: "/docs/develop-integrate/observe-improve/paved-road",
-            },
           ],
         },
         {
@@ -155,12 +159,8 @@ export default defineConfig({
               link: "/docs/deploy-operate/installation-variants",
             },
             {
-              text: "Galaxy installation",
-              link: "/docs/deploy-operate/galaxy-installation",
-            },
-            {
-              text: "Star installation",
-              link: "/docs/deploy-operate/star-installation",
+              text: "Installing Konfidence",
+              link: "/docs/deploy-operate/konfidence-installation",
             },
             {
               text: "Upgrading Konfidence",
@@ -190,10 +190,6 @@ export default defineConfig({
               text: "Contributing",
               link: "/docs/extend-customize/code-of-conduct",
             },
-            {
-              text: "Create your own deployer",
-              link: "/docs/extend-customize/create-deployer",
-            },
             { text: "Style guide", link: "/docs/extend-customize/styleguide" },
             {
               text: "Guide templates",
@@ -205,9 +201,6 @@ export default defineConfig({
           text: "Reference",
           collapsed: true,
           items: [
-            { text: "CLI", link: "/docs/reference/cli" },
-            { text: "CRD", link: "/docs/reference/crd" },
-            { text: "Deployer Specification", link: "/docs/reference/deployer-specification" },
             { text: "Glossary", link: "/docs/reference/glossary" },
           ],
         },

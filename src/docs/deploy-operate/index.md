@@ -1,6 +1,6 @@
 ---
 title: Deploy & Operate
-description: Install, configure, and operate Konfidence in production. Promotion flows, monitoring, and multi-region rollouts for DevOps engineers, Konfidence admins, and infrastructure engineers.
+description: Install, configure, and operate Konfidence. Installation and promotion flows for DevOps engineers, Konfidence admins, and infrastructure engineers.
 outline: deep
 editLink: true
 lastUpdated: true
@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Deploy & Operate
 
-Ensure the reliability, performance, and scalability of your Konfidence setup. Install and configure Konfidence, manage promotion flows, monitor environments, and automate multi-region rollouts.
+Ensure the reliability of your Konfidence setup. Install and configure Konfidence and manage promotion flows.
 
 ## Related
 
