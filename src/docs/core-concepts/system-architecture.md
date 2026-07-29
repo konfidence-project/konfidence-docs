@@ -1,6 +1,6 @@
 ---
 title: System Architecture
-description: Understand the architecture of Konfidence, including the galaxy and star roles of the control plane and the landscapes where applications run.
+description: Understand the architecture of Konfidence, including the control plane and the landscapes where applications run.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -12,19 +12,19 @@ Konfidence separates the definition of your delivery process from its execution 
 
 <DrawioDiagram src="/assets/diagrams/konfidence-architecture.drawio" />
 
-## Galaxy
+## Delivery management
 
-The galaxy is the delivery-definition role of the control plane and the primary interface for your project. It manages the delivery process but does not deploy workloads itself.
+Delivery management is the definition side of the control plane and the primary interface for your project. It manages the delivery process but does not deploy workloads itself.
 
-* **Definition:** The galaxy defines the desired delivery state: which vectors exist and which vector each stage should use.
+* **Definition:** It defines the desired delivery state: which vectors exist and which vector each stage should use.
 * **Role:** It assembles, validates, and publishes deployment configurations, such as software versions and stage resources. Its work ends when the target stage state exists in the cluster.
 
-## Star
+## Runtime orchestration
 
-The star is the runtime-orchestration role of the control plane.
+Runtime orchestration is the execution side of the control plane.
 
-* **Definition:** The star consumes the stage state that the galaxy produces and turns it into deployments.
-* **Role:** It manages and executes software deployments in one or more landscapes based on a specific target state, such as a stage resource. The hand-over between galaxy and star happens through Kubernetes resources in the same cluster; no cross-cluster synchronization is involved.
+* **Definition:** It consumes the stage state that delivery management produces and turns it into deployments.
+* **Role:** It manages and executes software deployments in one or more landscapes based on a specific target state, such as a stage resource. The hand-over between the two sides happens through Kubernetes resources in the same cluster; no cross-cluster synchronization is involved.
 
 ## Landscape
 

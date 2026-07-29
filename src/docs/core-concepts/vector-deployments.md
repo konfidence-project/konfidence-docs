@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Vector Deployments
 
-1.  **Pull:** The **star** tracks a `Stage` and pulls the vector which should be deployed. 
+1.  **Pull:** The control plane tracks a `Stage` and pulls the vector which should be deployed. 
 2.  **Snapshot:** The system creates a **StageVersion** to track this specific rollout.
 3.  **Vector lifecycle begins:**
     * **Deployers** deploy the necessary artifacts.

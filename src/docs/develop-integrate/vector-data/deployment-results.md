@@ -22,7 +22,7 @@ You do not author deployment results in vector configuration. Konfidence compute
 
 Each producing deployer writes deployment results to the corresponding `ArtifactDeployment`.
 
-Konfidence aggregates those deployment results into the `VectorData` custom resource on the Landscape Control Plane (LCP) through the `VectorDeployment` status. The landscape orchestrator reads the `VectorData` resource and passes the data to the landscape as a `ConfigMap`.
+Konfidence aggregates those deployment results into the `VectorData` custom resource through the `VectorDeployment` status. The landscape orchestrator reads the `VectorData` resource and passes the data to the landscape as a `ConfigMap`.
 
 ## Read deployment results at runtime
 
