@@ -28,6 +28,7 @@ export default defineConfig({
     "docs/deploy-operate/galaxy-installation.md",
     "docs/deploy-operate/star-installation.md",
     "docs/develop-integrate/observe-improve/paved-road.md",
+    "docs/develop-integrate/run-migrations.md",
     "docs/extend-customize/create-deployer.md",
     "docs/reference/deployer-specification.md",
     "docs/reference/cli.md",
@@ -113,10 +114,6 @@ export default defineConfig({
             {
               text: "Configure signing and verification",
               link: "/docs/develop-integrate/configure-signing-and-verification",
-            },
-            {
-              text: "Run Migrations",
-              link: "/docs/develop-integrate/run-migrations",
             },
             {
               text: "Build vectors",
