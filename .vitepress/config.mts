@@ -112,6 +112,16 @@ export default defineConfig({
               link: "/docs/develop-integrate/publish-artifacts",
             },
             {
+              text: "Deployers",
+              collapsed: true,
+              items: [
+                {
+                  text: "Kubernetes Deployer",
+                  link: "/docs/develop-integrate/deployers/kubernetes",
+                },
+              ],
+            },
+            {
               text: "Configure signing and verification",
               link: "/docs/develop-integrate/configure-signing-and-verification",
             },
