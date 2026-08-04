@@ -32,7 +32,6 @@ export default defineConfig({
     "docs/extend-customize/create-deployer.md",
     "docs/reference/deployer-specification.md",
     "docs/reference/cli.md",
-    "docs/reference/crd.md",
     "docs/reference/releases.md",
   ],
   themeConfig: {
@@ -221,6 +220,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: "Glossary", link: "/docs/reference/glossary" },
+            { text: "CRDs", link: "/docs/reference/crd" },
           ],
         },
       ],
