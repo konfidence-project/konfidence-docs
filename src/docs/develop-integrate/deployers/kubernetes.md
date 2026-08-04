@@ -190,5 +190,4 @@ component.
 ## Related
 
 - [Publish Artifacts](../publish-artifacts.md)
-- [Deployer Specification](../../reference/deployer-specification.md)
 - [Glossary — Deployer](../../reference/glossary.md#deployer)
