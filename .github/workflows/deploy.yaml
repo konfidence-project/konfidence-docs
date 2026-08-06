@@ -18,6 +18,10 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  reuse-lint:
+    name: REUSE
+    uses: konfidence-project/.github/.github/workflows/reuse-lint.yaml@v4
+
   build:
     runs-on: ubuntu-latest
     steps:
