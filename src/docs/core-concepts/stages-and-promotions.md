@@ -1,6 +1,6 @@
 ---
 title: Stages and Promotions
-description: Understand how a stage holds one concrete vector and how promotions move that vector to the next stage.
+description: Understand how a stage references one concrete vector and how promotions update that reference.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -9,17 +9,15 @@ lastUpdated: true
 # Stages and Promotions
 
 A stage holds exactly one vector at a time.
-A promotion is the record of one concrete vector version moving onto one stage.
+A promotion records an update of the target stage to reference one concrete vector version.
 Konfidence creates that record automatically when the vector it watches drifts from the vector on the stage.
-The vector itself is never changed by a promotion.
+No content is transferred, and the vector itself is never changed by a promotion.
 
 Code style marks Kubernetes custom resources, their fields, their conditions, and the states derived from those conditions.
 The concepts stage, vector, and promotion describe the delivery model that those resources configure.
 
 Every example on this page comes from one demo project.
 It has a `demo-vector` template, a development, test, and production chain, and the registry `registry.demo.local`.
-
-<DrawioDiagram src="/assets/diagrams/promotion-sources.drawio" />
 
 ## Stages
 
@@ -44,12 +42,12 @@ Promotions themselves are created in the project namespace next to their configu
 Konfidence never creates a stage as part of a promotion.
 A promotion configuration that points at a missing stage reports that on its own `Ready` condition and recovers as soon as the stage appears.
 
-You can also set `Stage.spec.vector` by hand.
+You can also set `Stage.spec.vector` manually.
 A configuration with a stage source sees that edit as drift and creates a promotion for the new version.
 
 ## Promotions
 
-A promotion is a declarative record that one pinned vector version moves to one target stage.
+A promotion is the declarative record that re-points one target stage at one pinned vector version.
 The `VectorPromotion` custom resource is that record.
 Its source reference, target reference, pinned vector, approval requirement, and ordinal are fixed when the promotion is created and cannot be edited afterwards.
 
@@ -64,10 +62,11 @@ Execution itself never reads the configuration.
 
 A promotion carries no credentials and no verification settings.
 It re-points the target stage at a component version that already exists in the registry, and never rebuilds or transfers OCM content.
-Signing, verification, and registry access all stay at assembly time, where the vector is built.
+Signing, verification, and registry credentials belong to vector assembly, where the vector is built and pushed.
+A promotion only changes which already-existing version a stage references.
 
 Two rules keep the model predictable.
-Only one promotion per configuration executes at a time, and the newest approved one wins.
+Only one promotion per configuration executes at a time, and the approved promotion with the highest sequence number executes next.
 Older promotions that have not finished are marked superseded when the winner starts.
 
 Supersession is scoped to a single configuration.
@@ -84,7 +83,9 @@ The `VectorPromotionConfig` custom resource holds that declaration.
 The target is always a `Stage`, because a stage is the only thing a promotion writes.
 The source is either a `VectorTemplate` or a `Stage`, and that single choice determines what kind of flow you get.
 
-The diagram at the top of this page shows both source kinds in one chain.
+The diagram shows both source kinds in one chain.
+
+<DrawioDiagram src="/assets/diagrams/promotion-sources.drawio" />
 
 ### Template sources
 
@@ -113,8 +114,8 @@ Templates live in the same project namespace as the configuration, so the name a
 
 ### Stage sources
 
-With a `Stage` source, the promotion tracks the vector currently active on that stage, which is `Stage.spec.vector`.
-This is the promotion between environments: whatever is running on development becomes the candidate for test.
+With a `Stage` source, the promotion tracks the vector selected on that stage, which is `Stage.spec.vector`.
+This is the promotion between environments: the vector referenced by the development stage becomes the candidate for test.
 Promotions from a stage source require approval, so moving a version forward is a deliberate act:
 
 ```yaml
@@ -134,9 +135,9 @@ spec:
     landscape: test
 ```
 
-Each configuration describes one hop.
-Chaining them builds a path: a template feeds development, development feeds test, and test feeds production.
-Because each hop names its own landscapes, the chain spans landscapes without any resource knowing about the chain as a whole.
+Each configuration defines one source and one target.
+Multiple configurations form a promotion chain: a template feeds development, development feeds test, and test feeds production.
+Because each configuration names its own landscapes, the chain spans landscapes without any resource knowing about the chain as a whole.
 
 The source kind fully determines `VectorPromotion.spec.requireApproval` for promotions the controller creates.
 A `Stage` source produces gated promotions, and a `VectorTemplate` source produces auto-approved ones.
@@ -150,18 +151,29 @@ References stay human-readable this way, and referencing a stage in another proj
 
 ### The promotion snapshot
 
-The source is only ever resolved on the configuration's side.
-The concrete vector it resolves to is pinned into the promotion at creation.
-The configuration's current source reference, target reference, and that concrete vector are snapshotted into the promotion together.
+A promotion follows a fixed sequence: resolve the source, snapshot the result, resolve the target during execution.
+
+At creation, the controller resolves the source and pins the concrete vector it finds into the new promotion.
+The source reference, the target reference, and that pinned vector are written together, and from then on the snapshot is immutable.
 Approving a promotion approves exactly the snapshotted vector for exactly the snapshotted destination, no matter how the configuration is edited afterwards.
 
-The target reference is snapshotted as well, but it is resolved again on every execution pass.
-Execution reads only the promotion, and walks from its `landscape` value to the managed namespace and then to the stage.
-A target that does not resolve at that moment is where `Blocked` comes from.
+The target is not resolved at creation.
+Execution resolves it from the snapshot on every pass, as the lifecycle below describes.
 
 ## The promotion lifecycle
 
 Every promotion follows the same path, whether it was auto-approved or waited for a person.
+
+Three kinds of value describe a promotion's progress, and they are not interchangeable.
+
+| Kind | Values | Role |
+| --- | --- | --- |
+| Condition | `Approved`, `Succeeded` | the source of truth, written by the controller |
+| Reason | `AutoApproved`, `ManuallyApproved`, `WaitingForApproval`, `PromotionSuperseded`, `PromotionTimedOut` | explains the condition it is attached to |
+| Derived state | `Pending`, `WaitingForApproval`, `Approved`, `InProgress`, `Blocked`, `Succeeded`, `Failed`, `Superseded` | `status.state`, one display value recomputed from the conditions whenever they change |
+
+Some names appear in more than one row.
+The lifecycle below uses the derived state names, and names a condition or reason where it is the underlying record.
 
 <DrawioDiagram src="/assets/diagrams/promotion-lifecycle.drawio" />
 
@@ -182,7 +194,7 @@ Creation timestamps only have second resolution.
 The ordinal is therefore what makes "newer" well defined during a burst of changes.
 
 Approval comes next.
-A promotion that does not require approval is approved by the controller immediately, with `AutoApproved` as the reason.
+A promotion that does not require approval gets its `Approved` condition from the controller immediately, with `AutoApproved` as the reason.
 Such a promotion reads as `Pending` until that condition is written.
 A promotion that requires approval sits in `WaitingForApproval` until the Konfidence API records a grant.
 
@@ -195,7 +207,7 @@ Every candidate stays visible instead of being silently collapsed into the lates
 
 Execution is serialized per configuration.
 At most one promotion for a configuration is `InProgress`.
-The newest `Approved` one is the one that runs.
+The approved promotion with the highest sequence number is the one that runs.
 
 When it starts, it supersedes every older sibling that has not finished.
 Promotions created after it keep their chance to run later.
@@ -203,24 +215,20 @@ Promotions created after it keep their chance to run later.
 Execution itself is one patch of the target stage.
 It sets the pinned vector and stamps which promotion wrote it.
 
-The promotion then reaches one of three ends.
+The promotion then reaches one of three terminal states.
 `Succeeded` means the target stage now carries the pinned vector.
 `Superseded` means a newer promotion for the same configuration took over.
 `Failed` means the promotion ended without writing the target stage.
 
-The reason you are most likely to see behind `Failed` is `PromotionTimedOut`.
-A promotion that stays in progress past the five-minute execution deadline is retired that way.
-The five-minute deadline is fixed, and no field on either resource changes it.
-A promotion that times out is a signal to investigate rather than a limit to raise.
+If a promotion exceeds the fixed five-minute execution deadline, it enters `Failed` with the reason `PromotionTimedOut`.
+No field on either resource changes that deadline.
 
 One state in the middle is worth naming.
-`Blocked` means an approved promotion whose target does not currently resolve, for example because the landscape has no managed namespace yet or the stage does not exist.
+Execution resolves the target from the snapshot on every pass: it walks from the snapshotted `landscape` value to the managed namespace and then to the stage.
+`Blocked` means an approved promotion whose target does not resolve at that moment, for example because the landscape has no managed namespace yet or the stage does not exist.
 A blocked promotion is not finished.
 It is retried until the target resolves.
 The configuration's `Ready` condition explains what is missing, as long as the configuration still points at the same target.
-
-The two conditions `Succeeded` and `Approved` are the source of truth for all of this.
-The `status.state` value you read in a listing is derived from those conditions and recomputed whenever they change.
 
 ### Recovery
 
@@ -239,7 +247,7 @@ Everything older than that bound is deleted.
 `VectorPromotionConfig.spec.ttlAfterFinished` is optional, and deletes a terminal promotion once the chosen duration has elapsed since it finished, whatever the count says.
 A promotion whose configuration sets no time-to-live is never deleted by time, and is trimmed by count alone.
 
-The two knobs are read at different moments.
+The two settings are read at different moments.
 The time-to-live is copied onto each promotion when that promotion is created, so a change to the configuration reaches only promotions created after it.
 The count bound is read from the current configuration on every retention pass.
 
@@ -247,29 +255,22 @@ Promotions still waiting for approval are not capped.
 The length of the approval queue is a signal worth seeing, not something to trim.
 Deleting a configuration removes the promotions its controller created, because those carry an owner reference back to it.
 
-## The replaced alias tag model
+## The previous alias-based promotion model
 
-Earlier versions of Konfidence promoted by moving alias tags in the registry.
-A `VectorTemplate` pushed a vector under an alias such as `latest`.
-A `StageConfiguration` resource polled the registry for changes on that alias.
-A promotion was performed implicitly, by repointing the alias that the target's `StageConfiguration` watched.
-
+Earlier versions of Konfidence promoted by moving alias tags in the registry: a `VectorTemplate` pushed a vector under an alias such as `latest`, and a `StageConfiguration` resource polled the registry and followed that alias.
 That model is replaced.
-Concrete vector versions are written to the `Stage` object directly, which makes `StageConfiguration` obsolete.
-A promotion references stages instead of tags.
-
-The change removes the propagation delay of polling.
-It removes the need to download a vector to detect drift.
-It also gives every promotion exactly one target stage, instead of a tag that may affect several stages or none.
+Concrete vector versions are written to the `Stage` object directly, `StageConfiguration` is obsolete, and a promotion references stages instead of tags.
+The change removes the polling delay, removes the need to download a vector to detect drift, and gives every promotion exactly one target stage.
+The architecture decision record ADR-0032 documents the full rationale.
 
 One capability is traded away with the alias tags.
 A registry alias could act as a source of truth between disconnected environments, which is useful in distributed and air-gapped setups.
-The simpler model was accepted because it is sufficient for non-distributed use cases.
-An Open Container Initiative (OCI) source kind, combined with letting a `VectorTemplate` publish a tagged vector again, could restore that flexibility later without bringing back a separate configuration resource.
+The current model does not cover that case.
+ADR-0032 names an Open Container Initiative (OCI) source kind as a possible future extension to restore it; it is not part of the current model.
 
 ## Related pages
 
-- [Vectors and Artifacts](./vectors-and-artifacts.md) explains how artifacts and vectors define the application version that a promotion moves.
+- [Vectors and Artifacts](./vectors-and-artifacts.md) explains how artifacts and vectors define the application version that a promotion pins to a stage.
 - [Delivery Flow](./delivery-flow.md) explains how assembly, promotion, and deployment fit together.
 - [Vector Deployments](./vector-deployments.md) explains what happens on a stage after its vector changes.
 - [Projects](../deploy-operate/projects.md) explains the project namespace that templates, promotion configurations, and promotions live in.
