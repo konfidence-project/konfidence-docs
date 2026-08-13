@@ -9,14 +9,14 @@ lastUpdated: true
 # Delivery Flow
 
 The Konfidence delivery flow describes how build outputs become controlled deployment state.
-It starts with artifacts published by CI pipelines, assembles those artifacts into an immutable vector, assigns that vector to a stage, and promotes vectors toward later delivery targets.
+It starts with artifacts published by CI pipelines, assembles those artifacts into an immutable vector, assigns that vector to a stage, and promotes it toward later stages.
 
 The main relationship to understand is:
 
 - Artifacts are the inputs.
 - A vector is the immutable application version assembled from those inputs.
 - A stage selects which vector should be delivered for a delivery checkpoint.
-- A promotion makes a vector available at another target location without changing the vector itself.
+- A promotion re-points a stage at a concrete vector version without changing the vector itself.
 
 <DrawioDiagram src="/assets/diagrams/delivery-flow.drawio" />
 
@@ -37,8 +37,8 @@ Read the flow as a progression of state:
 | --- | --- | --- |
 | Build | Build results are available as artifacts in an Open Component Model (OCM)-compliant repository. | Artifact |
 | Assemble | Selected artifacts are combined into one immutable vector. | Vector, `VectorTemplate` custom resource |
-| Assign | A stage points to the vector that should be delivered. | Stage, `StageConfiguration` custom resource |
-| Promote | The vector is re-aliased or copied to another registry location or path for a later target. | `VectorPromotionConfig`, `VectorPromotion` custom resources |
+| Assign | A stage points to the vector that should be delivered, written by a promotion or manually. | `Stage` custom resource |
+| Promote | A promotion re-points the target stage at a concrete vector version. | `VectorPromotionConfig`, `VectorPromotion` custom resources |
 
 Entries in code style are Kubernetes custom resources.
 Concepts such as artifact, vector, and stage describe the delivery model that those resources configure.
@@ -53,18 +53,18 @@ The most important references are:
 
 - `VectorTemplate.spec.components` points to the artifact aliases that should be part of the vector.
 - `VectorTemplate.spec.uploadTarget` defines the vector reference that assembly creates.
-- `StageConfiguration.spec.vector` points to the vector that a stage should use.
-- `VectorPromotionConfig.spec.source` points to the vector to promote.
-- `VectorPromotionConfig.spec.target` defines where the promoted vector should be available.
-- `VectorPromotion.spec.vectorPromotionConfigRef` points to the promotion configuration that should run once.
+- `Stage.spec.vector` holds the concrete vector selected for a stage.
+- `VectorPromotionConfig.spec.source` names the source being watched: a `VectorTemplate` or another `Stage`.
+- `VectorPromotionConfig.spec.target` names the target stage and its landscape.
+- `VectorPromotion.spec.vectorPromotionConfigRef` ties a promotion to the configuration it belongs to.
 
 Together, these references form a traceable chain.
 You can start at a stage and identify the exact vector assigned to it.
 From the vector, you can identify the artifacts that were assembled into it.
-From a promotion, you can identify which vector was made available for the next delivery target.
+From a promotion, you can identify which vector was written to which stage.
 
 This relationship model is the core idea behind a delivery flow in Konfidence.
-You build the flow by deciding which artifact aliases feed a vector, which stage selects that vector, and which promotion target should receive the vector next.
+You build the flow by deciding which artifact aliases feed a vector, which stage receives it first, and which stage it should reach next.
 
 ## Immutability and promotion state
 
@@ -72,10 +72,10 @@ Konfidence treats vectors as immutable application versions.
 When a service, configuration, or artifact reference changes, the result is a new vector instead of a mutation of an existing one.
 
 That immutability gives promotion a clear meaning.
-Promotion makes a known vector reference available at a target alias, repository, or registry.
-It does not rewrite the vector contents.
+A promotion re-points the target stage at a known vector version.
+It does not rewrite, copy, or move the vector contents.
 
-Because `VectorPromotion` resources are one-time triggers and promotion status is recorded on `VectorPromotionConfig`, teams can understand which vector was promoted and whether the latest promotion succeeded.
+Each `VectorPromotion` is an immutable record with its own status, so teams can see which vector reached which stage and whether the latest promotion succeeded.
 This model supports controlled delivery because each stage can be tied back to a specific vector and each vector can be tied back to the artifacts that were assembled into it.
 
 ## Runtime boundary
@@ -92,7 +92,7 @@ For those concepts, see [Vector Deployments](./vector-deployments.md).
 Read these pages for the surrounding concepts and task-oriented guidance:
 
 - [Vectors and Artifacts](./vectors-and-artifacts.md) explains the package model behind artifacts, aliases, and immutable vectors.
-- [Stages and Promotions](./stages-and-promotions.md) explains how stages select vectors and how promotions prepare vectors for later targets.
+- [Stages and Promotions](./stages-and-promotions.md) explains how stages select vectors and how promotions update that selection.
 - [System Architecture](./system-architecture.md) explains how the control plane and landscapes divide responsibility.
 - [Vector Deployments](./vector-deployments.md) explains the runtime deployment concepts that apply after a vector reaches a target landscape.
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.
