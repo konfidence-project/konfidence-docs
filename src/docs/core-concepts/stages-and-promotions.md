@@ -53,20 +53,13 @@ Its source reference, target reference, pinned vector, approval requirement, and
 
 Promotions are normally created automatically by the configuration's controller.
 When the vector a configuration watches differs from the vector on the target stage, that controller creates a promotion for the concrete version it found.
-There is no drift flag anywhere in status: the `VectorPromotion` object is the detected drift.
 
-A `VectorPromotion` is an ordinary API object, so the same self-contained record can also be created directly.
-Every promotion names the configuration it belongs to in `spec.vectorPromotionConfigRef`, including a hand-written one.
-That name is what groups promotions for serialization, supersession, and retention.
+A `VectorPromotion` can also be created directly.
+`spec.vectorPromotionConfigRef` is required either way: the configuration name is what groups promotions for serialization, supersession, and retention.
 Execution itself never reads the configuration.
 
-A promotion carries no credentials and no verification settings.
-It re-points the target stage at a component version that already exists in the registry, and never rebuilds or transfers OCM content.
-Signing, verification, and registry credentials belong to vector assembly, where the vector is built and pushed.
-A promotion only changes which already-existing version a stage references.
-
 Two rules keep the model predictable.
-Only one promotion per configuration executes at a time, and the approved promotion with the highest sequence number executes next.
+Only one promotion per configuration executes at a time, and the ready promotion with the highest sequence number executes next.
 Older promotions that have not finished are marked superseded when the winner starts.
 
 Supersession is scoped to a single configuration.
@@ -145,9 +138,8 @@ The configuration itself has no approval field, so other combinations appear onl
 
 ### Landscape references
 
-A stage reference carries a `landscape` value, which is the `metadata.name` of a `Landscape` object in the configuration's own namespace.
-The controller resolves that `Landscape` to the namespace it manages and looks for the stage there.
-References stay human-readable this way, and referencing a stage in another project becomes impossible by construction.
+A stage reference names a `Landscape` in the configuration's own namespace.
+The controller resolves it to the namespace that landscape manages and looks for the stage there, so stages in other projects are unreachable by construction.
 
 ### The promotion snapshot
 
@@ -158,9 +150,9 @@ The source reference, the target reference, and that pinned vector are written t
 Approving a promotion approves exactly the snapshotted vector for exactly the snapshotted destination, no matter how the configuration is edited afterwards.
 
 The target is not resolved at creation.
-Execution resolves it from the snapshot on every pass, as the lifecycle below describes.
+Execution resolves it from the snapshot on every pass.
 
-## The promotion lifecycle
+## Inner workings
 
 Every promotion follows the same path, whether it was auto-approved or waited for a person.
 
@@ -169,11 +161,11 @@ Three kinds of value describe a promotion's progress, and they are not interchan
 | Kind | Values | Role |
 | --- | --- | --- |
 | Condition | `Approved`, `Succeeded` | the source of truth, written by the controller |
-| Reason | `AutoApproved`, `ManuallyApproved`, `WaitingForApproval`, `PromotionSuperseded`, `PromotionTimedOut` | explains the condition it is attached to |
-| Derived state | `Pending`, `WaitingForApproval`, `Approved`, `InProgress`, `Blocked`, `Succeeded`, `Failed`, `Superseded` | `status.state`, one display value recomputed from the conditions whenever they change |
+| Reason | `WaitingForApproval`, `ManuallyApproved`, `PromotionRunning`, `PromotionTargetUnresolved`, `PromotionSucceeded`, `PromotionFailed`, `PromotionTimedOut`, `PromotionSuperseded` | explains the condition it is attached to |
+| Derived state | `Waiting`, `Ready`, `InProgress`, `Blocked`, `Succeeded`, `Failed`, `Superseded` | `status.state`, one display value recomputed from the conditions whenever they change |
 
 Some names appear in more than one row.
-The lifecycle below uses the derived state names, and names a condition or reason where it is the underlying record.
+This section uses the derived state names, and names a condition or reason where it is the underlying record.
 
 <DrawioDiagram src="/assets/diagrams/promotion-lifecycle.drawio" />
 
@@ -194,20 +186,19 @@ Creation timestamps only have second resolution.
 The ordinal is therefore what makes "newer" well defined during a burst of changes.
 
 Approval comes next.
-A promotion that does not require approval gets its `Approved` condition from the controller immediately, with `AutoApproved` as the reason.
-Such a promotion reads as `Pending` until that condition is written.
-A promotion that requires approval sits in `WaitingForApproval` until the Konfidence API records a grant.
+A promotion that requires no approval is `Ready` from its first reconcile.
+No `Approved` condition is written for it: an absent gate leaves no record.
+A promotion that requires approval sits in `Waiting` with the reason `WaitingForApproval` until the Konfidence API records a grant.
 
-Approvals are granted through the Konfidence API.
-The promotion's `status.approvals` list records who approved and when.
-The API's own authorization model decides who may approve.
+Approvals are granted through the Konfidence API, which records who approved and when in `status.approval`.
+A promotion is approved at most once, and the API's own authorization model decides who may approve.
 
 If the source produces several versions while one waits, each version gets its own promotion.
 Every candidate stays visible instead of being silently collapsed into the latest one.
 
 Execution is serialized per configuration.
 At most one promotion for a configuration is `InProgress`.
-The approved promotion with the highest sequence number is the one that runs.
+The `Ready` promotion with the highest sequence number is the one that runs.
 
 When it starts, it supersedes every older sibling that has not finished.
 Promotions created after it keep their chance to run later.
@@ -225,7 +216,7 @@ No field on either resource changes that deadline.
 
 One state in the middle is worth naming.
 Execution resolves the target from the snapshot on every pass: it walks from the snapshotted `landscape` value to the managed namespace and then to the stage.
-`Blocked` means an approved promotion whose target does not resolve at that moment, for example because the landscape has no managed namespace yet or the stage does not exist.
+`Blocked` means a ready promotion whose target does not resolve at that moment, for example because the landscape has no managed namespace yet or the stage does not exist.
 A blocked promotion is not finished.
 It is retried until the target resolves.
 The configuration's `Ready` condition explains what is missing, as long as the configuration still points at the same target.
@@ -254,19 +245,6 @@ The count bound is read from the current configuration on every retention pass.
 Promotions still waiting for approval are not capped.
 The length of the approval queue is a signal worth seeing, not something to trim.
 Deleting a configuration removes the promotions its controller created, because those carry an owner reference back to it.
-
-## The previous alias-based promotion model
-
-Earlier versions of Konfidence promoted by moving alias tags in the registry: a `VectorTemplate` pushed a vector under an alias such as `latest`, and a `StageConfiguration` resource polled the registry and followed that alias.
-That model is replaced.
-Concrete vector versions are written to the `Stage` object directly, `StageConfiguration` is obsolete, and a promotion references stages instead of tags.
-The change removes the polling delay, removes the need to download a vector to detect drift, and gives every promotion exactly one target stage.
-The architecture decision record ADR-0032 documents the full rationale.
-
-One capability is traded away with the alias tags.
-A registry alias could act as a source of truth between disconnected environments, which is useful in distributed and air-gapped setups.
-The current model does not cover that case.
-ADR-0032 names an Open Container Initiative (OCI) source kind as a possible future extension to restore it; it is not part of the current model.
 
 ## Related pages
 
