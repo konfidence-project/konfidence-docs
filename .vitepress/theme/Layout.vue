@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import VPFooter from './components/VPFooter.vue'
@@ -32,6 +32,21 @@ import PreReleaseBanner from './components/PreReleaseBanner.vue'
 
 const { frontmatter } = useData()
 const isHome = computed(() => frontmatter.value.layout === 'home')
+
+// the theme registers cmd/ctrl+k and / hotkeys for search even when the
+// search box is hidden; swallow them on the landing page (capture phase
+// runs before the theme's bubble-phase window listener)
+function blockSearchHotkey(e) {
+  if (!isHome.value) return
+  const cmdK = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'
+  const slash = e.key === '/' && !/^(?:input|textarea)$/i.test(e.target?.tagName ?? '')
+  if (!cmdK && !slash) return
+  e.preventDefault()
+  e.stopImmediatePropagation()
+}
+
+onMounted(() => window.addEventListener('keydown', blockSearchHotkey, true))
+onUnmounted(() => window.removeEventListener('keydown', blockSearchHotkey, true))
 </script>
 
 <style scoped>
