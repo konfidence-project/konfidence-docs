@@ -7,6 +7,8 @@ export default defineConfig({
     publicDir: "../public",
   },
   head: [
+    // pre-release: keep the site out of search indexes until APIs stabilize
+    ["meta", { name: "robots", content: "noindex" }],
     ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],
     [
       "link",
