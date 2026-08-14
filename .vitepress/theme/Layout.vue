@@ -1,5 +1,5 @@
 <template>
-  <DefaultTheme.Layout>
+  <DefaultTheme.Layout :class="{ 'landing-page': isHome }">
     <template #layout-top>
       <PreReleaseBanner />
     </template>
@@ -22,11 +22,16 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import VPFooter from './components/VPFooter.vue'
 import VPHeroInfo from './components/VPHeroInfo.vue'
 import FeatureOverview from './components/FeatureOverview.vue'
 import PreReleaseBanner from './components/PreReleaseBanner.vue'
+
+const { frontmatter } = useData()
+const isHome = computed(() => frontmatter.value.layout === 'home')
 </script>
 
 <style scoped>
@@ -45,6 +50,14 @@ import PreReleaseBanner from './components/PreReleaseBanner.vue'
 
 :global(.dark) .prerelease-badge {
   color: var(--konfidence-orange);
+}
+
+/* the landing page must not link into the unfinished docs: hide the
+   nav menu (desktop + mobile hamburger) and search there */
+:global(.landing-page .VPNavBarMenu),
+:global(.landing-page .VPNavBarSearch),
+:global(.landing-page .VPNavScreenMenu) {
+  display: none !important;
 }
 
 :global(.VPHome .VPHero) {
