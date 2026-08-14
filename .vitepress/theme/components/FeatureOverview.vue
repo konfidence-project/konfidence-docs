@@ -102,14 +102,21 @@
     </section>
 
     <section class="landing-section final-cta" aria-labelledby="next-step">
-      <div class="final-cta-copy">
+      <div v-if="prerelease" class="final-cta-copy">
         <h2 id="next-step">Follow the project as it takes shape.</h2>
         <p>
           Konfidence is under active development. Watch the repository on GitHub to follow progress and get notified as the concepts and APIs stabilize.
         </p>
       </div>
+      <div v-else class="final-cta-copy">
+        <h2 id="next-step">See the delivery model in a running setup.</h2>
+        <p>
+          Open the docs overview to understand the project structure and choose the path that fits your role.
+        </p>
+      </div>
       <div class="cta-actions">
-        <a href="https://github.com/konfidence-project" class="cta-button cta-button--primary">Follow on GitHub</a>
+        <a v-if="prerelease" href="https://github.com/konfidence-project" class="cta-button cta-button--primary">Follow on GitHub</a>
+        <a v-else href="/docs/" class="cta-button cta-button--primary">Explore Konfidence</a>
       </div>
     </section>
   </div>
@@ -117,6 +124,8 @@
 
 <script setup>
 import { RefreshCcw, TrendingUp, Zap, Layers } from 'lucide-vue-next'
+
+const prerelease = __PRERELEASE__
 </script>
 
 <style scoped>
