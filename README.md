@@ -33,6 +33,27 @@ This is the official documentation for the Konfidence project, built with [ViteP
 
    The docs will be available at `http://localhost:5173`
 
+## Pre-release mode
+
+The site currently builds in pre-release mode (the default). It:
+
+- shows a fixed "pre-release software" banner on every page (`.vitepress/theme/components/PreReleaseBanner.vue`)
+- shows a `pre-alpha` badge next to the navbar logo
+- adds a `<meta name="robots" content="noindex">` tag so search engines do not index the site
+- hides the nav menu and search on the landing page and removes all landing-page links into the docs (hero buttons, final CTA points to GitHub instead); the docs remain reachable via direct URL
+
+All of this is controlled by a single build-time flag in `.vitepress/config.mts`.
+
+**On release**, build with the flag off to restore the full site:
+
+```bash
+KONFIDENCE_PRERELEASE=false pnpm build
+```
+
+or flip the default in `.vitepress/config.mts` (`const prerelease = ...`) and delete this section. No other changes are needed — the hero buttons, docs CTA, nav, search and indexing all come back with the flag.
+
+Independently of the flag, `srcExclude` in `.vitepress/config.mts` lists unfinished pages that are excluded from the build; review that list on release as well.
+
 ## Support, Feedback, Contributing
 
 This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/konfidence-project/konfidence-docs/issues).

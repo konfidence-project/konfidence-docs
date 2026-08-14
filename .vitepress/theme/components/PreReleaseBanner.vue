@@ -5,12 +5,13 @@
 </template>
 
 <style>
-:root {
+/* only reserve layout space while the banner is actually rendered */
+:root:has(.prerelease-banner) {
   --vp-layout-top-height: 32px;
 }
 
 @media (max-width: 640px) {
-  :root {
+  :root:has(.prerelease-banner) {
     --vp-layout-top-height: 48px;
   }
 }

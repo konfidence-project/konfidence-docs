@@ -1,14 +1,25 @@
-import { defineConfig } from "vitepress";
+import { defineConfig, type HeadConfig } from "vitepress";
+
+// pre-release mode: adds the banner, pre-alpha badge and noindex tag, and
+// strips docs links, nav and search from the landing page; build with
+// KONFIDENCE_PRERELEASE=false to restore the normal site
+const prerelease = process.env.KONFIDENCE_PRERELEASE !== "false";
+
+const prereleaseHead: HeadConfig[] = prerelease
+  ? [["meta", { name: "robots", content: "noindex" }]]
+  : [];
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   srcDir: "./src",
   vite: {
     publicDir: "../public",
+    define: {
+      __PRERELEASE__: JSON.stringify(prerelease),
+    },
   },
   head: [
-    // pre-release: keep the site out of search indexes until APIs stabilize
-    ["meta", { name: "robots", content: "noindex" }],
+    ...prereleaseHead,
     ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],
     [
       "link",
