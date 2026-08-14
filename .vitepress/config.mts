@@ -45,6 +45,8 @@ export default defineConfig({
     },
     siteTitle: false,
 
+    // Navigation bar (hidden on the landing page, see Layout.vue)
+    nav: [{ text: "Docs", link: "/docs/" }],
 
     socialLinks: [
       { icon: "github", link: "https://github.com/konfidence-project" },
