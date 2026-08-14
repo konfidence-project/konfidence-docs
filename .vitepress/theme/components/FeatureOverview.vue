@@ -103,13 +103,13 @@
 
     <section class="landing-section final-cta" aria-labelledby="next-step">
       <div class="final-cta-copy">
-        <h2 id="next-step">See the delivery model in a running setup.</h2>
+        <h2 id="next-step">Follow the project as it takes shape.</h2>
         <p>
-          Open the docs overview to understand the project structure and choose the path that fits your role.
+          Konfidence is under active development. Watch the repository on GitHub to follow progress and get notified as the concepts and APIs stabilize.
         </p>
       </div>
       <div class="cta-actions">
-        <a href="/docs/" class="cta-button cta-button--primary">Explore Konfidence</a>
+        <a href="https://github.com/konfidence-project" class="cta-button cta-button--primary">Follow on GitHub</a>
       </div>
     </section>
   </div>

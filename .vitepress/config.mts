@@ -45,8 +45,6 @@ export default defineConfig({
     },
     siteTitle: false,
 
-    // Navigation bar
-    nav: [{ text: "Docs", link: "/docs/" }],
 
     socialLinks: [
       { icon: "github", link: "https://github.com/konfidence-project" },
