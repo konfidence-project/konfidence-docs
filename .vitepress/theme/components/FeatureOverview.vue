@@ -1,319 +1,399 @@
+<script setup>
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BookOpen,
+  Boxes,
+  Check,
+  CircleAlert,
+  Github,
+  Layers3,
+  Package,
+  Recycle,
+  Rocket,
+  ShieldCheck,
+  Users,
+} from 'lucide-vue-next'
+
+const prerelease = __PRERELEASE__
+</script>
+
 <template>
   <div class="feature-overview-wrapper">
-    <section class="landing-section mission-section" aria-labelledby="mission-heading">
-      <div class="mission-copy">
-        <h2 id="mission-heading">Keep every release on a known flight path.</h2>
-        <p>
-          Konfidence is a software delivery framework for microservice-based SaaS applications. It helps teams define exactly what gets delivered, validate that version, and promote it through environments with a clear, repeatable delivery model.
+    <section class="landing-section problem-section" aria-labelledby="problem-heading">
+      <div class="section-intro">
+        <p class="section-eyebrow">The delivery problem</p>
+        <h2 id="problem-heading">Every environment can become a different version of the truth.</h2>
+        <p class="section-lead">
+          As services, teams, and release frequency grow, it becomes harder to answer three basic questions: What was tested? What is running? What is ready to go next?
         </p>
       </div>
 
-      <div class="mission-strip" aria-label="Konfidence delivery model">
-        <div class="mission-step">
-          <span>01</span>
-          <strong>Artifacts</strong>
-          <p>Versioned build outputs and metadata.</p>
-        </div>
-        <div class="mission-step">
-          <span>02</span>
-          <strong>Vector</strong>
-          <p>One immutable application version.</p>
-        </div>
-        <div class="mission-step">
-          <span>03</span>
-          <strong>Stages</strong>
-          <p>The same verified version moves forward.</p>
-        </div>
+      <div class="truth-comparison">
+        <article class="truth-panel truth-panel--problem">
+          <CircleAlert aria-hidden="true" />
+          <div>
+            <span>Without a shared delivery model</span>
+            <h3>Builds and configuration drift between environments.</h3>
+            <p>Teams reconstruct application state for every target and lose confidence in the handoff to production.</p>
+          </div>
+        </article>
+        <ArrowRight class="comparison-arrow" aria-hidden="true" />
+        <article class="truth-panel truth-panel--solution">
+          <ShieldCheck aria-hidden="true" />
+          <div>
+            <span>With Konfidence</span>
+            <h3>One exact application version follows a controlled path.</h3>
+            <p>The tested version stays immutable while promotions make the next desired deployment explicit.</p>
+          </div>
+        </article>
       </div>
     </section>
 
-    <section class="landing-section orbit-section" aria-labelledby="problem-heading">
-      <div class="orbit-copy">
-        <h2 id="problem-heading">Enterprise delivery drifts when every environment becomes its own version of the truth.</h2>
-      </div>
-      <div class="orbit-points">
-        <p>
-          As services, teams, and release frequency grow, it becomes harder to know what was tested, what is running, and what is ready to promote.
+    <section class="landing-section capabilities-section" aria-labelledby="capabilities-heading">
+      <div class="section-intro section-intro--center">
+        <p class="section-eyebrow">Why Konfidence</p>
+        <h2 id="capabilities-heading">Keep application versions consistent and traceable.</h2>
+        <p class="section-lead">
+          Konfidence separates the application version from its target environment. Teams can promote the same version and see what should run at every stage.
         </p>
-        <p>
-          Konfidence counters that drift by making the application version immutable and moving the verified vector through a controlled stage model.
-        </p>
-      </div>
-    </section>
-
-    <section class="landing-section capabilities-section" aria-labelledby="capabilities">
-      <div class="section-header section-header--center">
-        <h2 id="capabilities">What teams get from Konfidence</h2>
       </div>
 
       <div class="feature-tiles">
-        <div class="feature-tile">
-          <span class="feature-label">Immutable versions</span>
-          <h3><RefreshCcw class="tile-icon" />Reuse verified releases</h3>
-          <p>Promote the same vector across environments and reuse shared service versions within a landscape when stages need the same artifact.</p>
-        </div>
+        <article class="feature-tile">
+          <span class="feature-icon"><ShieldCheck aria-hidden="true" /></span>
+          <span class="feature-label">Immutable application versions</span>
+          <h3>Know exactly what will be deployed</h3>
+          <p>Every application version is recorded as a fixed set of service outputs, configuration, and metadata. What was tested cannot silently change later.</p>
+        </article>
 
-        <div class="feature-tile">
-          <span class="feature-label">Stage-based flow</span>
-          <h3><TrendingUp class="tile-icon" />Scale release control</h3>
-          <p>Use stages and promotion flows to keep delivery understandable as systems, teams, and release frequency grow.</p>
-        </div>
+        <article class="feature-tile">
+          <span class="feature-icon"><ArrowUpRight aria-hidden="true" /></span>
+          <span class="feature-label">Controlled promotions</span>
+          <h3>Promote without rebuilding</h3>
+          <p>A promotion points the next delivery checkpoint to the same concrete application version. Nothing is copied, rebuilt, or modified along the way.</p>
+        </article>
 
-        <div class="feature-tile">
-          <span class="feature-label">Build/release split</span>
-          <h3><Zap class="tile-icon" />Reduce delivery friction</h3>
-          <p>Separate build and release concerns so teams can deploy the validated application state instead of rebuilding per environment.</p>
-        </div>
+        <article class="feature-tile">
+          <span class="feature-icon"><Recycle aria-hidden="true" /></span>
+          <span class="feature-label">Artifact reuse</span>
+          <h3>Reuse unchanged service deployments</h3>
+          <p>Konfidence can reuse an unchanged service deployment for multiple application versions in the same environment. This avoids duplicate deployments.</p>
+        </article>
 
-        <div class="feature-tile">
+        <article class="feature-tile">
+          <span class="feature-icon"><Layers3 aria-hidden="true" /></span>
           <span class="feature-label">Unified control plane</span>
-          <h3><Layers class="tile-icon" />Coordinate the landscape</h3>
-          <p>One control plane manages the desired delivery state and executes deployments in the target environment.</p>
-        </div>
+          <h3>See the intended and running state</h3>
+          <p>Define delivery centrally and let Konfidence coordinate execution in each target environment. Teams see the intended version and the running state in one model.</p>
+        </article>
       </div>
     </section>
 
-    <section class="landing-section control-section" aria-labelledby="control-heading">
-      <div class="control-copy">
-        <h2 id="control-heading">From build output to production without changing the payload.</h2>
-        <p>
-          Konfidence bridges CI/CD output and enterprise delivery governance by turning artifacts into a verifiable vector, then moving that vector through predefined stages after validation.
-        </p>
+    <section id="workflow" class="landing-section workflow-section" aria-labelledby="workflow-heading">
+      <div class="workflow-heading-row">
+        <div class="section-intro">
+          <p class="section-eyebrow">How it works</p>
+          <h2 id="workflow-heading">From build output to production in four steps.</h2>
+          <p class="section-lead">
+            Konfidence connects CI output with controlled deployment. A stage is a delivery checkpoint such as development, test, or production.
+          </p>
+        </div>
       </div>
 
-      <ol class="control-path" aria-label="Typical Konfidence delivery workflow">
+      <ol class="workflow-path" aria-label="Typical Konfidence delivery workflow">
         <li>
-          <span>Build</span>
-          <p>CI produces application outputs and registers Konfidence artifacts.</p>
+          <span class="workflow-number">01</span>
+          <span class="workflow-icon"><Package aria-hidden="true" /></span>
+          <div>
+            <h3>Build</h3>
+            <p>CI produces versioned service outputs and registers them with Konfidence.</p>
+          </div>
         </li>
         <li>
-          <span>Assemble</span>
-          <p>Artifacts become one immutable application vector.</p>
+          <span class="workflow-number">02</span>
+          <span class="workflow-icon"><Boxes aria-hidden="true" /></span>
+          <div>
+            <h3>Assemble</h3>
+            <p>Those outputs and configuration become one immutable application version.</p>
+          </div>
         </li>
         <li>
-          <span>Deploy</span>
-          <p>The vector is rolled out to a target stage in a coordinated way.</p>
+          <span class="workflow-number">03</span>
+          <span class="workflow-icon"><Rocket aria-hidden="true" /></span>
+          <div>
+            <h3>Deploy</h3>
+            <p>A stage declares which exact application version should run at that checkpoint.</p>
+          </div>
         </li>
         <li>
-          <span>Promote</span>
-          <p>The same verified vector moves forward without modification.</p>
+          <span class="workflow-number">04</span>
+          <span class="workflow-icon"><ArrowUpRight aria-hidden="true" /></span>
+          <div>
+            <h3>Promote</h3>
+            <p>The next stage is updated to reference that same version, which triggers deployment there. The application version itself remains unchanged.</p>
+          </div>
         </li>
       </ol>
     </section>
 
-    <section class="landing-section final-cta" aria-labelledby="next-step">
-      <div v-if="prerelease" class="final-cta-copy">
-        <h2 id="next-step">Follow the project as it takes shape.</h2>
-        <p>
-          Konfidence is under active development. Watch the repository on GitHub to follow progress and get notified as the concepts and APIs stabilize.
+    <section class="landing-section audience-section" aria-labelledby="audience-heading">
+      <div class="audience-copy">
+        <p class="section-eyebrow">Who it is for</p>
+        <h2 id="audience-heading">For teams that own reliable software delivery.</h2>
+        <p class="section-lead">
+          Konfidence is designed for organizations that operate complex SaaS products across multiple environments.
         </p>
       </div>
-      <div v-else class="final-cta-copy">
-        <h2 id="next-step">See the delivery model in a running setup.</h2>
-        <p>
-          Open the docs overview to understand the project structure and choose the path that fits your role.
-        </p>
+
+      <div class="audience-list">
+        <div>
+          <Users aria-hidden="true" />
+          <span><strong>Platform teams</strong> standardizing how applications are delivered.</span>
+        </div>
+        <div>
+          <Check aria-hidden="true" />
+          <span><strong>Release and delivery teams</strong> coordinating safe production changes.</span>
+        </div>
+        <div>
+          <Layers3 aria-hidden="true" />
+          <span><strong>Engineering leaders</strong> who need traceability across services and environments.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section final-cta" aria-labelledby="next-step">
+      <div class="final-cta-copy">
+        <p class="section-eyebrow">Next step</p>
+        <template v-if="prerelease">
+          <h2 id="next-step">Follow the project or explore the documentation.</h2>
+          <p>Konfidence is under active development. Watch the project on GitHub or read the documentation to understand the current delivery model.</p>
+        </template>
+        <template v-else>
+          <h2 id="next-step">Start with Konfidence.</h2>
+          <p>Run the quickstart or explore the documentation to understand the delivery model.</p>
+        </template>
       </div>
       <div class="cta-actions">
-        <a v-if="prerelease" href="https://github.com/konfidence-project" class="cta-button cta-button--primary">Follow on GitHub</a>
-        <a v-else href="/docs/" class="cta-button cta-button--primary">Explore Konfidence</a>
+        <a v-if="prerelease" href="https://github.com/konfidence-project" class="cta-button cta-button--primary">
+          <Github aria-hidden="true" />
+          Follow on GitHub
+        </a>
+        <a v-else href="/docs/getting-started/quickstart" class="cta-button cta-button--primary">
+          Get Konfidence running
+          <ArrowRight aria-hidden="true" />
+        </a>
+        <a href="/docs/" class="cta-button cta-button--secondary">
+          <BookOpen aria-hidden="true" />
+          Read the docs
+        </a>
       </div>
     </section>
   </div>
 </template>
 
-<script setup>
-import { RefreshCcw, TrendingUp, Zap, Layers } from 'lucide-vue-next'
-
-const prerelease = __PRERELEASE__
-</script>
-
 <style scoped>
 .feature-overview-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem 6rem;
+  padding: 0 1.5rem 6.5rem;
 }
 
 .landing-section {
-  margin-top: 6rem;
+  margin-top: clamp(5.5rem, 10vw, 9rem);
 }
 
 .landing-section:first-child {
   margin-top: 0;
 }
 
+.section-intro {
+  max-width: 720px;
+}
+
+.section-intro--center {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.section-eyebrow {
+  margin: 0 0 1rem;
+  color: var(--konfidence-blue-dark) !important;
+  font-size: 0.75rem !important;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  line-height: 1.4 !important;
+  text-transform: uppercase;
+}
+
+:global(.dark .section-eyebrow) {
+  color: var(--konfidence-blue-light) !important;
+}
+
 .landing-section h2 {
-  color: var(--vp-c-text-1);
-  font-size: 2.05rem;
-  line-height: 1.16;
   margin: 0;
-  max-width: 760px;
+  color: var(--vp-c-text-1);
+  font-size: clamp(2.15rem, 4vw, 3.65rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.04;
+  text-wrap: balance;
 }
 
 .landing-section p {
   color: var(--vp-c-text-2);
-  font-size: 1rem;
-  line-height: 1.7;
 }
 
-.mission-section {
+.section-lead {
+  max-width: 64ch;
+  margin: 1.35rem 0 0;
+  font-size: 1.04rem;
+  line-height: 1.72;
+}
+
+.section-intro--center .section-lead {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.problem-section {
+  padding: clamp(3rem, 6vw, 5rem);
+  overflow: hidden;
+  border: 1px solid var(--konfidence-surface-border);
+  border-radius: 28px;
+  background: var(--konfidence-gradient-surface);
+}
+
+.truth-comparison {
   display: grid;
-  grid-template-columns: minmax(0, 0.96fr) minmax(320px, 1.04fr);
-  gap: 2.75rem;
-  align-items: center;
-  padding: 3rem;
-  border: 1px solid rgba(255, 170, 0, 0.32);
-  border-radius: 8px;
-  background:
-    linear-gradient(135deg, rgba(255, 170, 0, 0.14), rgba(19, 156, 199, 0.09)),
-    var(--vp-c-bg);
-  box-shadow: 0 24px 70px rgba(19, 156, 199, 0.10);
-}
-
-:global(.dark .mission-section) {
-  border-color: rgba(255, 170, 0, 0.30);
-  background:
-    linear-gradient(135deg, rgba(255, 170, 0, 0.14), rgba(31, 172, 208, 0.14)),
-    var(--vp-c-bg);
-}
-
-.mission-copy p {
-  max-width: 62ch;
-  margin: 1.1rem 0 0;
-}
-
-.mission-strip {
-  position: relative;
-  display: grid;
-  gap: 1rem;
-  padding-left: 1.25rem;
-}
-
-.mission-strip::before {
-  content: '';
-  position: absolute;
-  top: 0.45rem;
-  bottom: 0.45rem;
-  left: 0;
-  width: 3px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, var(--konfidence-orange), var(--konfidence-blue));
-}
-
-.mission-step {
-  display: grid;
-  grid-template-columns: 3.2rem minmax(0, 1fr);
-  gap: 0.35rem 1rem;
-  align-items: start;
-  padding: 1rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.50);
-}
-
-:global(.dark .mission-step) {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.mission-step span {
-  grid-row: 1 / 3;
-  color: var(--konfidence-blue-dark);
-  font-size: 0.82rem;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-:global(.dark .mission-step span) {
-  color: var(--konfidence-blue-light);
-}
-
-.mission-step strong {
-  color: var(--vp-c-text-1);
-  font-size: 1rem;
-  line-height: 1.3;
-}
-
-.mission-step p {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.orbit-section {
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  gap: 3.25rem;
-  align-items: start;
-  padding: 4rem 0;
-  border-top: 1px solid var(--vp-c-divider);
-  border-bottom: 1px solid var(--vp-c-divider);
-}
-
-.orbit-points {
-  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 1.25rem;
+  align-items: stretch;
+  margin-top: 3rem;
 }
 
-.orbit-points p {
-  margin: 0;
+.truth-panel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 18px;
+  background: var(--konfidence-gradient-card);
 }
 
-.section-header {
-  max-width: 760px;
+.truth-panel > svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.1rem;
 }
 
-.section-header--center {
-  margin: 0 auto 2.75rem;
-  text-align: center;
+.truth-panel--problem > svg {
+  color: var(--vp-c-text-3);
 }
 
-.section-header--center h2 {
-  margin: 0 auto;
+.truth-panel--solution {
+  border-color: rgba(19, 156, 199, 0.30);
+  box-shadow: 0 18px 45px rgba(19, 156, 199, 0.09);
+}
+
+.truth-panel--solution > svg {
+  color: var(--konfidence-blue);
+}
+
+.truth-panel span {
+  color: var(--vp-c-text-3);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.truth-panel h3 {
+  margin: 0.55rem 0 0;
+  color: var(--vp-c-text-1);
+  font-size: 1.05rem;
+  line-height: 1.38;
+}
+
+.truth-panel p {
+  margin: 0.75rem 0 0;
+  font-size: 0.87rem;
+  line-height: 1.62;
+}
+
+.comparison-arrow {
+  width: 1.25rem;
+  color: var(--konfidence-orange);
+  align-self: center;
 }
 
 .feature-tiles {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 3.25rem;
 }
 
 .feature-tile {
-  display: flex;
-  flex-direction: column;
-  min-height: 252px;
-  padding: 1.5rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  background: var(--vp-c-bg);
-  box-shadow: 0 14px 34px rgba(19, 156, 199, 0.08);
   position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr;
+  gap: 0 1rem;
+  min-height: 230px;
+  padding: 1.75rem;
   overflow: hidden;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 20px;
+  background: var(--konfidence-gradient-card);
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.feature-tile::before {
+.feature-tile::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--konfidence-orange), var(--konfidence-blue));
+  inset: auto -10% -55% 48%;
+  height: 75%;
+  border-radius: 50%;
+  background: rgba(19, 156, 199, 0.08);
+  filter: blur(26px);
+  pointer-events: none;
 }
 
 .feature-tile:hover {
-  border-color: rgba(19, 156, 199, 0.50);
-  box-shadow: 0 18px 42px rgba(19, 156, 199, 0.12);
-  transform: translateY(-2px);
+  border-color: rgba(19, 156, 199, 0.35);
+  box-shadow: 0 22px 54px rgba(19, 156, 199, 0.10);
+  transform: translateY(-3px);
+}
+
+.feature-icon {
+  display: inline-flex;
+  grid-row: 1 / 4;
+  align-items: center;
+  justify-content: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 13px;
+  color: var(--konfidence-blue-dark);
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.16), rgba(19, 156, 199, 0.14));
+}
+
+:global(.dark .feature-icon) {
+  color: var(--konfidence-blue-light);
+}
+
+.feature-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .feature-label {
   color: var(--konfidence-blue-dark);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 800;
+  letter-spacing: 0.055em;
   line-height: 1.35;
-  margin-bottom: 1rem;
   text-transform: uppercase;
 }
 
@@ -322,243 +402,339 @@ const prerelease = __PRERELEASE__
 }
 
 .feature-tile h3 {
+  margin: 0.55rem 0 0;
   color: var(--vp-c-text-1);
-  display: flex;
-  align-items: flex-start;
-  gap: 0.55rem;
-  font-size: 1.04rem;
-  font-weight: 700;
-  line-height: 1.32;
-  margin: 0 0 1rem;
-}
-
-.tile-icon {
-  width: 1.18rem;
-  height: 1.18rem;
-  flex-shrink: 0;
-  color: var(--konfidence-blue);
-  margin-top: 0.08rem;
+  font-size: 1.25rem;
+  line-height: 1.3;
 }
 
 .feature-tile p {
-  color: var(--vp-c-text-2);
-  flex-grow: 1;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  margin: 0;
+  position: relative;
+  z-index: 1;
+  margin: 0.85rem 0 0;
+  font-size: 0.91rem;
+  line-height: 1.65;
 }
 
-.control-section {
+.workflow-section {
+  scroll-margin-top: 7rem;
+}
+
+.workflow-heading-row {
+  max-width: 780px;
+}
+
+.workflow-path {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 3rem;
-  align-items: start;
-}
-
-.control-copy p {
-  max-width: 60ch;
-  margin: 1rem 0 0;
-}
-
-.control-path {
-  display: grid;
-  gap: 0.8rem;
-  list-style: none;
-  margin: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 3.5rem 0 0;
   padding: 0;
+  list-style: none;
+  counter-reset: workflow;
 }
 
-.control-path li {
+.workflow-path li {
+  position: relative;
   display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr);
-  gap: 1rem;
-  align-items: baseline;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--vp-c-divider);
-}
-
-.control-path li:first-child {
+  align-content: start;
+  min-height: 260px;
+  padding: 1.45rem;
   border-top: 1px solid var(--vp-c-divider);
+  border-bottom: 1px solid var(--vp-c-divider);
+  border-left: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
 }
 
-.control-path span {
-  color: var(--konfidence-orange);
-  font-size: 0.82rem;
+.workflow-path li:first-child {
+  border-radius: 18px 0 0 18px;
+}
+
+.workflow-path li:last-child {
+  border-right: 1px solid var(--vp-c-divider);
+  border-radius: 0 18px 18px 0;
+}
+
+.workflow-path li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 3.25rem;
+  right: -0.36rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-top: 1px solid var(--vp-c-divider);
+  border-right: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+  transform: rotate(45deg);
+}
+
+.workflow-number {
+  color: var(--vp-c-text-3);
+  font-size: 0.69rem;
   font-weight: 800;
-  line-height: 1.3;
-  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-.control-path p {
-  font-size: 0.92rem;
-  line-height: 1.58;
-  margin: 0;
+.workflow-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  margin-top: 1.4rem;
+  border-radius: 50%;
+  color: var(--konfidence-blue-dark);
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.18), rgba(19, 156, 199, 0.15));
+}
+
+:global(.dark .workflow-icon) {
+  color: var(--konfidence-blue-light);
+}
+
+.workflow-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.workflow-path h3 {
+  margin: 1.25rem 0 0;
+  color: var(--vp-c-text-1);
+  font-size: 1.15rem;
+}
+
+.workflow-path p {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.62;
+}
+
+.audience-section {
+  padding: clamp(3rem, 6vw, 5rem);
+  border: 1px solid var(--konfidence-surface-border);
+  border-radius: 28px;
+  background: var(--konfidence-gradient-surface);
+}
+
+.audience-copy {
+  max-width: 780px;
+}
+
+.audience-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.audience-list > div {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  align-items: start;
+  min-height: 180px;
+  padding: 1.35rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 16px;
+  background: var(--konfidence-gradient-card);
+}
+
+.audience-list svg {
+  box-sizing: border-box;
+  width: 2.65rem;
+  height: 2.65rem;
+  padding: 0.7rem;
+  border-radius: 12px;
+  color: var(--konfidence-blue-dark);
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.16), rgba(19, 156, 199, 0.14));
+}
+
+:global(.dark .audience-list svg) {
+  color: var(--konfidence-blue-light);
+}
+
+.audience-list span {
+  color: var(--vp-c-text-2);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.audience-list strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--vp-c-text-1);
+  font-size: 1rem;
 }
 
 .final-cta {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 2.5rem;
+  gap: 3rem;
   align-items: center;
-  padding: 2.5rem;
-  border: 1px solid rgba(255, 170, 0, 0.38);
-  border-radius: 8px;
-  background:
-    linear-gradient(135deg, rgba(255, 170, 0, 0.18), rgba(19, 156, 199, 0.11)),
-    var(--vp-c-bg);
-}
-
-:global(.dark .final-cta) {
-  background:
-    linear-gradient(135deg, rgba(255, 170, 0, 0.14), rgba(31, 172, 208, 0.14)),
-    var(--vp-c-bg);
+  padding: clamp(2.25rem, 5vw, 4rem);
+  overflow: hidden;
+  border: 1px solid var(--konfidence-surface-border);
+  border-radius: 28px;
+  background: var(--konfidence-gradient-surface);
 }
 
 .final-cta-copy {
-  max-width: 760px;
+  max-width: 780px;
 }
 
-.final-cta p {
+.final-cta-copy > p:last-child {
+  max-width: 62ch;
   margin: 1rem 0 0;
+  font-size: 0.98rem;
+  line-height: 1.65;
 }
 
 .cta-actions {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  min-width: 220px;
+  min-width: 210px;
 }
 
 .cta-button {
   display: inline-flex;
+  align-items: center;
   justify-content: center;
-  padding: 0.78rem 1.2rem;
+  gap: 0.55rem;
+  min-height: 48px;
+  padding: 0.8rem 1.35rem;
   border-radius: 999px;
-  font-weight: 700;
+  font-size: 0.96rem;
+  font-weight: 750;
   line-height: 1.2;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-button svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .cta-button--primary {
-  background: linear-gradient(135deg, var(--konfidence-orange), #FF960C);
-  color: #211100;
-  box-shadow: 0 12px 26px rgba(255, 150, 12, 0.24);
+  color: #241300;
+  background: var(--konfidence-gradient-action);
+  box-shadow: 0 14px 30px rgba(255, 150, 12, 0.24);
 }
 
 .cta-button--secondary {
   color: var(--konfidence-blue-dark);
-  border: 1px solid rgba(19, 156, 199, 0.45);
+  border: 1px solid rgba(19, 156, 199, 0.38);
   background: rgba(128, 210, 224, 0.10);
 }
 
 :global(.dark .cta-button--secondary) {
   color: var(--konfidence-blue-light);
-  border-color: rgba(185, 230, 235, 0.38);
-  background: rgba(31, 172, 208, 0.16);
+  border-color: rgba(185, 230, 235, 0.30);
+  background: rgba(31, 172, 208, 0.12);
 }
 
 .cta-button:hover {
+  box-shadow: 0 18px 38px rgba(255, 150, 12, 0.32);
   transform: translateY(-2px);
 }
 
-.cta-button--primary:hover {
-  box-shadow: 0 16px 34px rgba(255, 150, 12, 0.32);
+@media (max-width: 960px) {
+  .final-cta {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-path {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .workflow-path li,
+  .workflow-path li:first-child,
+  .workflow-path li:last-child {
+    min-height: 235px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 16px;
+  }
+
+  .workflow-path li::after {
+    display: none;
+  }
+
+  .cta-actions {
+    min-width: 0;
+  }
 }
 
-.cta-button--secondary:hover {
-  border-color: var(--konfidence-blue);
-  color: var(--konfidence-blue);
-}
+@media (max-width: 720px) {
+  .feature-overview-wrapper {
+    padding: 0 1.25rem 4.5rem;
+  }
 
-@media (max-width: 1024px) {
   .landing-section {
     margin-top: 5rem;
   }
 
-  .landing-section:first-child {
-    margin-top: 0;
-  }
-
-  .mission-section,
-  .orbit-section,
-  .control-section,
-  .final-cta {
-    grid-template-columns: 1fr;
-  }
-
-  .feature-tiles {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .cta-actions {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 640px) {
-  .feature-overview-wrapper {
-    padding: 0 1.5rem 4.5rem;
-  }
-
-  .landing-section {
-    margin-top: 3.75rem;
-  }
-
-  .landing-section:first-child {
-    margin-top: 0;
-  }
-
-  .mission-section,
-  .final-cta {
+  .problem-section {
     padding: 1.5rem;
+    border-radius: 20px;
   }
 
-  .mission-section,
-  .orbit-section,
-  .control-section,
-  .final-cta {
-    gap: 1.75rem;
-  }
-
-  .orbit-section {
-    padding: 3rem 0;
-  }
-
-  .landing-section h2 {
-    font-size: 1.48rem;
-    line-height: 1.22;
-  }
-
-  .mission-step,
-  .control-path li {
+  .truth-comparison,
+  .feature-tiles,
+  .workflow-path,
+  .audience-list {
     grid-template-columns: 1fr;
   }
 
-  .mission-step span {
-    grid-row: auto;
+  .comparison-arrow {
+    justify-self: center;
+    transform: rotate(90deg);
   }
 
-  .feature-tiles {
-    grid-template-columns: 1fr;
+  .truth-panel {
+    padding: 1.2rem;
   }
 
   .feature-tile {
     min-height: 0;
+    padding: 1.4rem;
   }
 
-  .section-header--center {
-    margin-bottom: 1.75rem;
-    text-align: left;
+  .workflow-path {
+    margin-top: 2.5rem;
   }
 
-  .section-header--center h2 {
-    margin: 0;
+  .workflow-path li,
+  .workflow-path li:first-child,
+  .workflow-path li:last-child {
+    min-height: 0;
   }
 
-  .cta-actions {
-    flex-direction: column;
+  .audience-section {
+    padding: 1.5rem;
+    border-radius: 20px;
+  }
+
+  .audience-list > div {
+    min-height: 0;
+  }
+
+  .final-cta {
+    gap: 2rem;
+    padding: 1.6rem;
+    border-radius: 20px;
+  }
+
+  .cta-button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-tile,
+  .cta-button {
+    transition: none;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="prerelease-banner">
-    Konfidence is pre-release software — concepts and APIs are unstable and subject to change.
+    Konfidence is pre-release software. Concepts and APIs are unstable and subject to change.
   </div>
 </template>
 
@@ -31,7 +31,7 @@
   font-size: 13px;
   font-weight: 600;
   line-height: 1.3;
-  background: linear-gradient(135deg, var(--konfidence-orange), #FF960C);
+  background: var(--konfidence-gradient-action);
   color: #201100;
 }
 </style>
