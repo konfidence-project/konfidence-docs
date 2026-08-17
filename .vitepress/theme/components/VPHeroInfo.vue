@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { BookOpen, Check, Github } from 'lucide-vue-next'
+import { Check, Github } from 'lucide-vue-next'
 import { withBase } from 'vitepress'
 
 const logoUrl = withBase('/assets/logo/Icon_only/SVG/512_konfidence_icon_color.svg')
-const prerelease = __PRERELEASE__
 </script>
 
 <template>
@@ -18,10 +17,6 @@ const prerelease = __PRERELEASE__
         <a href="https://github.com/konfidence-project" class="hero-button hero-button--primary">
           <Github aria-hidden="true" />
           Follow on GitHub
-        </a>
-        <a v-if="!prerelease" href="/docs/" class="hero-button hero-button--secondary">
-          <BookOpen aria-hidden="true" />
-          Read the docs
         </a>
       </div>
 
@@ -129,28 +124,12 @@ const prerelease = __PRERELEASE__
   box-shadow: 0 14px 30px rgba(255, 150, 12, 0.24);
 }
 
-.hero-button--secondary {
-  color: var(--konfidence-blue-dark);
-  border-color: rgba(19, 156, 199, 0.38);
-  background: rgba(128, 210, 224, 0.10);
-}
-
-:global(.dark .hero-button--secondary) {
-  color: var(--konfidence-blue-light);
-  border-color: rgba(185, 230, 235, 0.30);
-  background: rgba(31, 172, 208, 0.12);
-}
-
 .hero-button:hover {
   transform: translateY(-2px);
 }
 
 .hero-button--primary:hover {
   box-shadow: 0 18px 38px rgba(255, 150, 12, 0.32);
-}
-
-.hero-button--secondary:hover {
-  border-color: var(--konfidence-blue);
 }
 
 .hero-assurances {

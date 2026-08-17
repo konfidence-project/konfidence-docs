@@ -2,7 +2,6 @@
 import {
   ArrowRight,
   ArrowUpRight,
-  BookOpen,
   Boxes,
   Check,
   CircleAlert,
@@ -179,13 +178,9 @@ const prerelease = __PRERELEASE__
           <Github aria-hidden="true" />
           Follow on GitHub
         </a>
-        <a v-else href="/docs/getting-started/quickstart" class="cta-button cta-button--primary">
-          Get Konfidence running
+        <a v-else href="/docs/" class="cta-button cta-button--primary">
+          Explore Konfidence
           <ArrowRight aria-hidden="true" />
-        </a>
-        <a v-if="!prerelease" href="/docs/" class="cta-button cta-button--secondary">
-          <BookOpen aria-hidden="true" />
-          Read the docs
         </a>
       </div>
     </section>
@@ -620,18 +615,6 @@ const prerelease = __PRERELEASE__
   color: #241300;
   background: var(--konfidence-gradient-action);
   box-shadow: 0 14px 30px rgba(255, 150, 12, 0.24);
-}
-
-.cta-button--secondary {
-  color: var(--konfidence-blue-dark);
-  border: 1px solid rgba(19, 156, 199, 0.38);
-  background: rgba(128, 210, 224, 0.10);
-}
-
-:global(.dark .cta-button--secondary) {
-  color: var(--konfidence-blue-light);
-  border-color: rgba(185, 230, 235, 0.30);
-  background: rgba(31, 172, 208, 0.12);
 }
 
 .cta-button:hover {
