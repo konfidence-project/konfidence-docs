@@ -166,8 +166,8 @@ const prerelease = __PRERELEASE__
       <div class="final-cta-copy">
         <p class="section-eyebrow">Next step</p>
         <template v-if="prerelease">
-          <h2 id="next-step">Follow the project or explore the documentation.</h2>
-          <p>Konfidence is under active development. Watch the project on GitHub or read the documentation to understand the current delivery model.</p>
+          <h2 id="next-step">Follow Konfidence as the platform takes shape.</h2>
+          <p>Konfidence is under active development. Watch the project on GitHub for progress and release updates.</p>
         </template>
         <template v-else>
           <h2 id="next-step">Start with Konfidence.</h2>
@@ -183,7 +183,7 @@ const prerelease = __PRERELEASE__
           Get Konfidence running
           <ArrowRight aria-hidden="true" />
         </a>
-        <a href="/docs/" class="cta-button cta-button--secondary">
+        <a v-if="!prerelease" href="/docs/" class="cta-button cta-button--secondary">
           <BookOpen aria-hidden="true" />
           Read the docs
         </a>

@@ -3,6 +3,7 @@ import { BookOpen, Check, Github } from 'lucide-vue-next'
 import { withBase } from 'vitepress'
 
 const logoUrl = withBase('/assets/logo/Icon_only/SVG/512_konfidence_icon_color.svg')
+const prerelease = __PRERELEASE__
 </script>
 
 <template>
@@ -18,7 +19,7 @@ const logoUrl = withBase('/assets/logo/Icon_only/SVG/512_konfidence_icon_color.s
           <Github aria-hidden="true" />
           Follow on GitHub
         </a>
-        <a href="/docs/" class="hero-button hero-button--secondary">
+        <a v-if="!prerelease" href="/docs/" class="hero-button hero-button--secondary">
           <BookOpen aria-hidden="true" />
           Read the docs
         </a>
