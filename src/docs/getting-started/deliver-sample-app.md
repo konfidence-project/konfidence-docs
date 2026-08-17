@@ -27,9 +27,8 @@ summary:
 * manual promotion brings vectors to production stage
 
 steps:
-* create a StageConfiguration assigning the dev vector to the dev stage
-* define a VectorPromotionConfig that uses dev vector as source and production vector as destination
-* create a StageConfiguration assigning the production vector to the production stage
+* define a VectorPromotionConfig with the dev vector template as source and the dev stage as target
+* define a VectorPromotionConfig with the dev stage as source and the production stage as target
 * apply all resources with `kubectl apply -f <resource>.yaml`
 
 what happened so far:
@@ -57,7 +56,7 @@ steps:
 * apply with `kubectl apply -f vector-promotion.yaml`
 * check promotion status with `kubectl get vectorpromotion vector-dev-to-prod` and wait for it to complete
 * now new promoted vector should be available in OCI
-* StageConfiguration for production stage picks up the new vector and creates a new Stage in the cluster
+* the production-stage promotion writes the new vector to the production stage's `Stage.spec.vector`
 * open the product page through your gateway's production-stage hostname (e.g. `http://stage-prod.example.com/productpage`) and see the app running in production
 
 results:
