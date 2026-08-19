@@ -1,6 +1,6 @@
 ---
 title: Stages and Promotions
-description: Understand how a stage selects the vector that runs in an environment and how a promotion moves a vector forward.
+description: Understand how a stage references the vector that should be deployed and how a promotion updates that reference.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -8,19 +8,14 @@ lastUpdated: true
 
 # Stages and Promotions
 
-A [vector](./vectors-and-artifacts.md) is an immutable snapshot of an application.
-Once a vector has been assembled, two decisions remain: *where it runs* and *how it moves forward*.
-Stages and promotions govern those two decisions.
-
-Stages correspond to environments such as development, test, and production.
-A **stage** defines which vector should be live in a given environment.
-A **promotion** advances a vector from one environment to the next.
+A [vector](./vectors-and-artifacts.md) is an immutable snapshot of the artifacts that make up an application.
+Once a vector has been assembled, it needs to be deployed to different environments as part of a delivery flow.
+Stages and promotions govern that flow.
 
 ## Stages
 
-A stage is a delivery checkpoint, usually an environment such as development, test, or production.
-It names exactly one vector: the version that should be delivered there.
-A stage can be pictured as a labeled slot that holds a single vector at a time.
+A stage is a logical checkpoint in a delivery flow, such as development, test, or production.
+It references one concrete vector version as its desired delivery state:
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -31,21 +26,23 @@ spec:
   vector: registry.example.com//konfidence.cloud/demo-vector:3.0.0
 ```
 
-Each stage runs on a [landscape](../deploy-operate/landscapes.md): the concrete infrastructure, such as a Kubernetes cluster, on which the application is deployed.
-A single landscape can host several stages. For example, the development stages of multiple teams might share one cluster. The stage is the logical delivery checkpoint, and the landscape is the infrastructure beneath it.
-Changing the vector on a stage changes what is delivered there.
-A promotion normally makes that change, though `spec.vector` can also be set manually.
+A stage exists in the namespace managed by a [landscape](../deploy-operate/landscapes.md). A landscape represents a deployment environment and can contain several stages, each referencing the vector that should be deployed there. The landscape targets the concrete infrastructure, such as a Kubernetes cluster, where those vectors are deployed.
+
+For example, a development landscape could contain several stages that reference vectors with different feature sets enabled. One stage references vectors with experimental features, while another references only vectors with stable features. That stable stage can then be the starting point of a larger delivery flow that includes the test and production stages.
+
+Separate teams can also share one development landscape, each with its own development stage. Each team's stage references a separate vector that contains a development version of that team's microservice alongside stable versions of the others. This lets each team test its changes without affecting the other teams' development.
+
+When two stages in the same landscape reference vectors that share some artifacts, those artifacts are deployed only once and are reused, keeping the deployment footprint small.
 
 ## Promotions
 
-A promotion moves a vector forward by re-pointing a stage at a specific vector version.
+A promotion re-points a stage to a specific vector version, updating which vector that stage references.
 
-Because a vector is immutable, a promotion is a lightweight operation: nothing is rebuilt, copied, or moved.
-The vector already exists in the OCI registry, and the promotion only updates which vector the stage points to.
+Because a vector is immutable, a promotion is a lightweight operation: the vector already exists in the OCI registry, so nothing is rebuilt, copied, or moved.
 
 A `VectorPromotionConfig` connects one source to one target stage. The source is either a `VectorTemplate` or another `Stage` object.
 
-With a template source, a `VectorPromotionConfig` forms the start of a delivery path: when an artifact change produces a newly assembled vector, that vector is moved to the first stage (typically development) automatically.
+With a template source, a `VectorPromotionConfig` forms the start of a delivery flow. The source resolves to the template's most recently assembled vector (`status.latestVector`), so whenever an artifact change produces a new one, the target stage (typically development) is automatically re-pointed to that vector.
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -62,7 +59,7 @@ spec:
     landscape: dev
 ```
 
-With a stage source, a `VectorPromotionConfig` defines how a vector should advance from one stage to the next, gated by approval:
+With a stage source, a `VectorPromotionConfig` connects one stage to the next in the delivery flow. The source resolves to the vector the stage currently references (`spec.vector`) and the target specifies which stage should be re-pointed to that vector, gated by approval.
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -80,58 +77,30 @@ spec:
     landscape: test
 ```
 
-Chaining several configurations together forms a delivery path: a template feeds development, development feeds test, and test feeds production.
+Chaining several configurations together forms a delivery flow: the template is the source for the development stage, the development stage is the source for the test stage, and the test stage is the source for the production stage.
 
 <DrawioDiagram src="/assets/diagrams/promotion-sources.drawio" />
 
 ## How a promotion runs
 
 Konfidence watches the defined `VectorPromotionConfig` objects.
-When a source holds a newer vector than its target stage, Konfidence creates a `VectorPromotion` object: an immutable record of moving that exact vector to that stage.
-If the promotion requires approval, it waits until it is approved. Otherwise, it proceeds automatically.
-Konfidence then writes the vector onto the target stage.
-
-A `VectorPromotion` references the configuration it came from, snapshots the source and target, and pins the concrete vector version. Its status reports how far the promotion has progressed:
-
-```yaml
-apiVersion: konfidence.cloud/v1alpha1
-kind: VectorPromotion
-metadata:
-  name: dev-to-test-1
-  namespace: kden-p-demo
-spec:
-  vectorPromotionConfigName: dev-to-test
-  source:
-    kind: Stage
-    name: dev-stage
-    landscape: dev
-  target:
-    kind: Stage
-    name: test-stage
-    landscape: test
-  vector: registry.example.com//konfidence.cloud/demo-vector:3.0.0
-  requireApproval: true
-  sequence: 1
-status:
-  state: Succeeded
-```
-
-Konfidence normally creates these records automatically, but a `VectorPromotion` can also be created by hand for a one-off promotion.
-Because every promotion is a distinct record, the history of which vector reached which stage remains traceable.
+When a source references a different vector than its target stage, a `VectorPromotion` object is automatically created. It is an immutable record of re-pointing the target stage to the source vector.
+Whether a promotion requires approval is recorded in its `requireApproval` property, which Konfidence defaults from the config's source: a `Stage` source requires approval, a `VectorTemplate` source does not. A promotion that requires approval waits until it is approved; otherwise it proceeds automatically by re-pointing the target stage.
+Because every promotion is a distinct record, the history of which vector each stage referenced remains traceable.
 
 ## Promotion lifecycle
 
 A promotion moves through a small set of states from creation to a terminal outcome.
-On creation, it either waits for approval (`Waiting`) or becomes `Ready` immediately, depending on its source.
-A ready promotion executes (`InProgress`) and writes the vector to the target stage, reaching `Succeeded`.
-If the target stage cannot be resolved yet, the promotion is `Blocked` and retried until the target appears.
+On creation, a promotion waits for approval (`Waiting`) when its `requireApproval` property is set, or becomes `Ready` immediately when it is not.
+A `Ready` promotion is queued for execution. When Konfidence executes it, the promotion becomes `InProgress` and re-points the target stage to the vector specified in the promotion's spec. It then reaches `Succeeded`, or `Failed` if execution cannot complete.
+If the target stage cannot be resolved yet, the promotion is `Blocked` and execution is retried until the target appears.
 Whenever a newer promotion for the same configuration starts, any earlier promotion that has not finished is `Superseded`.
 
 <DrawioDiagram src="/assets/diagrams/promotion-lifecycle.drawio" />
 
 `Succeeded`, `Failed`, and `Superseded` are terminal.
 
-For a task-oriented walkthrough of setting promotions up, reference the [Develop & Integrate guide](../develop-integrate/observe-improve/define-promotions.md).
+For step-by-step instructions, see [Define promotions](../develop-integrate/observe-improve/define-promotions.md).
 
 ## Related pages
 
