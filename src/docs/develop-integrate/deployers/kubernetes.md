@@ -187,6 +187,46 @@ chart is deployed at two versions on the same landscape, or when two
 `VectorDeployment` instances (with `allowReuse: false`) reference the same
 component.
 
+## Exposing a Service as a deployment result
+
+By default the Services in your bundle or chart are internal. To let other
+components in the same vector discover and call a Service, annotate it:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: candidates
+  annotations:
+    konfidence.cloud/deployment-result: candidates
+spec:
+  ports:
+    - name: http
+      port: 80
+```
+
+**Why the annotation is required.** The deployer applies a per-vector
+`nameSuffix` (kustomize) or `releaseName` (Helm), so the Service's deployed name
+is not known ahead of time and a caller cannot hard-code it. The annotation both
+opts the Service in and supplies the **stable name** (its value) that consumers
+look up. Services without the annotation are never exposed.
+
+**How the deployer processes it.** After the artifact is deployed, the deployer
+lists the Services it created and, for each one carrying the annotation, records
+a deployment result on the `ArtifactDeployment` containing:
+
+- the annotation value as the result name,
+- the Service's namespace and its actual (suffixed) name,
+- the Service's ports verbatim (multi-port Services are supported as-is).
+
+Konfidence aggregates these into the vector's `VectorData`, keyed by artifact
+component, so every component in the vector can resolve the Service by its stable
+name at runtime — see [Use deployment results](../vector-data/deployment-results.md).
+
+**Scope.** Only Kubernetes `Service` objects can be exposed this way today
+(deployment-result type `http-k8s-service`). Other resource kinds are not yet
+supported.
+
 ## Related
 
 - [Publish Artifacts](../publish-artifacts.md)
