@@ -41,7 +41,7 @@ A promotion normally makes that change, though `spec.vector` can also be set man
 A promotion moves a vector forward by re-pointing a stage at a specific vector version.
 
 Because a vector is immutable, a promotion is a lightweight operation: nothing is rebuilt, copied, or moved.
-The vector already exists in the registry, and the promotion only updates which vector the stage points to.
+The vector already exists in the OCI registry, and the promotion only updates which vector the stage points to.
 
 A `VectorPromotionConfig` connects one source to one target stage. The source is either a `VectorTemplate` or another `Stage` object.
 
