@@ -1,6 +1,6 @@
 ---
 title: Configure signing and verification
-description: Set up cryptographic signing and verification across the Konfidence delivery pipeline — from artifact signing through VectorAssembly, Promotion, StageConfiguration, and VectorDeployment.
+description: Set up cryptographic signing and verification across the Konfidence delivery pipeline — from artifact signing through VectorAssembly, Promotion, and VectorDeployment.
 ---
 
 # Configure signing and verification
@@ -264,7 +264,7 @@ metadata:
   name: my-vector
   namespace: <cr-namespace>
 spec:
-  uploadTarget: registry.example.com//konfidence.io/my-app/vector:latest
+  uploadTarget: registry.example.com//konfidence.io/my-app/vector
   components:
     - name: registry.example.com//konfidence.io/my-app/backend:stable
     - name: registry.example.com//konfidence.io/my-app/frontend:stable
@@ -302,72 +302,16 @@ kubectl get vectortemplate my-vector -n <cr-namespace> -o jsonpath='{.status.con
 
 A healthy assembly shows `type: Ready`, `status: True` — with `reason: VectorCreated` on the first reconcile and `reason: NoDriftDetected` on subsequent ones.
 
-## Configure VectorPromotion verification
+## Promotions do not verify
 
-```bash
-kubectl apply -n <cr-namespace> -f - <<'EOF'
-apiVersion: konfidence.cloud/v1alpha1
-kind: VectorPromotionConfig
-metadata:
-  name: prod-promotion
-  namespace: <cr-namespace>
-spec:
-  source: registry.example.com//konfidence.io/my-app/vector:latest
-  target: registry-prod.example.com//konfidence.io/my-app/vector:promoted
+A promotion re-points a target stage at a vector version that already exists in the registry. It never rebuilds, re-signs, or transfers OCM content, so there is nothing to verify and no registry access to authenticate at promotion time. `VectorPromotionConfig` and `VectorPromotion` therefore carry no `credentials`, `signVector`, or `verifyVector` fields.
 
-  credentials:
-    ocm:
-      refs:
-        - name: my-signing-creds
-        - name: my-registry-creds
+Verification still guards both ends of every promotion chain:
 
-  verifyVector:
-    signatures:
-      - name: my-vector-sig
-EOF
-```
+- **At assembly** — the `VectorTemplate` verifies its artifacts (and optionally its base vector) and signs the assembled vector, as shown above.
+- **At deployment** — the `VectorDeployment` controller re-verifies the vector and its artifacts before rollout, as shown below.
 
-Verify promotion ran:
-
-```bash
-kubectl get vectorpromotionconfig prod-promotion -n <cr-namespace> -o jsonpath='{.status.lastPromotionConditions}'
-```
-
-A successful promotion shows `type: Succeeded`, `status: True`, `reason: PromotionSucceeded`.
-
-## Configure StageConfiguration verification
-
-```bash
-kubectl apply -n <cr-namespace> -f - <<'EOF'
-apiVersion: konfidence.cloud/v1alpha1
-kind: StageConfiguration
-metadata:
-  name: prod-stage
-  namespace: <cr-namespace>
-spec:
-  name: prod
-  targetNamespace: prod
-  vector: registry-prod.example.com//konfidence.io/my-app/vector:promoted
-
-  credentials:
-    ocm:
-      refs:
-        - name: my-signing-creds
-        - name: my-registry-creds
-
-  verifyVector:
-    signatures:
-      - name: my-vector-sig
-EOF
-```
-
-Verify the stage configuration is ready:
-
-```bash
-kubectl get stageconfiguration prod-stage -n <cr-namespace> -o jsonpath='{.status.conditions}'
-```
-
-A healthy configuration shows `type: Ready`, `status: True`, `reason: Ready`.
+Because the selected vector was signed at assembly and is re-verified at deployment, moving it between stages needs no additional signature check.
 
 ## Configure VectorDeployment verification
 
@@ -419,8 +363,6 @@ All fields are optional besides `name`. For valid values see [OCM signing and ve
 | Symptom | Likely cause | Where to look |
 |---|---|---|
 | VectorTemplate `Ready=Unknown`, reason `DriftDetectionFailed` | Credential Secret missing, wrong key name, or not in same namespace | `kubectl describe vectortemplate <name>` → Events |
-| VectorPromotion `Succeeded=False`, reason `PromotionSourceVerificationFailed` | Source vector unsigned or signature name mismatch | `kubectl describe vectorpromotionconfig <name>` → `lastPromotionConditions` |
-| StageConfiguration `Ready=False`, reason `Ready` | Vector unsigned or credential Secret missing | `kubectl describe stageconfiguration <name>` → Conditions |
 | VectorDeployment `VectorDownloaded` never `True` | Env vars not set or credential Secret not found | `kubectl logs deployment/<operator-deployment> -n <operator-namespace>` |
 | `algorithm` pin rejection | Signed with `RSASSA-PKCS1-V1_5` but CRD pins `RSASSA-PSS` | Align `algorithm` in Secret consumer identity and CRD `Signature` entry |
 

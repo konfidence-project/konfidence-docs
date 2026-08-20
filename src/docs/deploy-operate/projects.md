@@ -10,7 +10,7 @@ lastUpdated: true
 
 ## Overview
 
-Projects provide organizational boundaries and access control for Konfidence deployments. Each project automatically creates a dedicated namespace that contains Landscape resources as well as other project-scoped resources like VectorTemplate, VectorPromotionConfig, and StageConfiguration.
+Projects provide organizational boundaries and access control for Konfidence deployments. Each project automatically creates a dedicated namespace that contains Landscape resources as well as other project-scoped resources like VectorTemplate and VectorPromotionConfig.
 
 ## Creating a Project
 

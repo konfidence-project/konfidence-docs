@@ -28,7 +28,7 @@ steps:
 * in OCI registry, you should see a new artifact created for the vector
 
 what's happening now:
-* vector is available, StageConfiguration for dev stage can now pick it up and create the corresponding Stage in the cluster
+* vector is available, a VectorPromotionConfig targeting the dev stage picks it up and writes the concrete version to `Stage.spec.vector`
 * Stage reconciliation deploys all artifacts of the vector and assigns them dev stage
 * internal routing rules are rolled out and allow east-west traffic between artifacts in the dev stage
 * activation makes services externally available
@@ -37,4 +37,4 @@ what's happening now:
 
 steps:
 * create a new VectorTemplate for the dev vector
-* assign to a stage with StageConfiguration
+* assign it to a stage with a VectorPromotionConfig
