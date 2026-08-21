@@ -1,0 +1,69 @@
+name: Sync CRD reference from konfidence
+
+# Pulls the generated CRD reference (api/docs/crd.md) from the konfidence repo
+# and opens (or force-updates) a single PR against this repo. konfidence is the
+# source of truth; crd.md here is 100% generated, so the sync branch is owned
+# unconditionally by this workflow — any divergence is reset to the latest
+# fetched state (peter-evans/create-pull-request force-updates the branch).
+#
+# See docs/crd-reference-workflow slides in the konfidence repo for the design.
+
+on:
+  schedule:
+    # Every 6 hours (offset off the hour to avoid the top-of-hour stampede).
+    - cron: "17 */6 * * *"
+  # Manual trigger for the first run and for testing the loop end to end.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  # Never run two syncs at once — they'd race on the sync branch.
+  group: sync-crd-reference
+  cancel-in-progress: false
+
+jobs:
+  sync-crd-reference:
+    name: Sync / CRD Reference
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout konfidence-docs
+        uses: actions/checkout@v7
+
+      - name: Fetch latest crd.md from konfidence
+        env:
+          # konfidence is public, so the default token can read its contents.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p src/docs/reference
+          # The Contents API base64-decode appends a trailing newline; strip any
+          # trailing blank lines and re-terminate with exactly one so the file is
+          # byte-stable across ticks (otherwise every sync sees a phantom diff and
+          # the "no change => no PR" guarantee breaks).
+          gh api \
+            repos/konfidence-project/konfidence/contents/api/docs/crd.md \
+            --jq '.content | @base64d' \
+            | awk 'NF {last=NR} {lines[NR]=$0} END {for (i=1;i<=last;i++) print lines[i]}' \
+            > src/docs/reference/crd.md
+          echo "Fetched $(wc -l < src/docs/reference/crd.md) lines."
+
+      - name: Open or update sync PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: sync/crd-reference
+          # Deterministic branch + force-update => always exactly one open PR
+          # showing the current konfidence main state.
+          title: "docs: sync CRD reference from konfidence"
+          commit-message: "docs(crd): pull latest crd.md from konfidence"
+          body: |
+            Automated sync of `src/docs/reference/crd.md` from
+            [`konfidence-project/konfidence`](https://github.com/konfidence-project/konfidence/blob/main/api/docs/crd.md).
+
+            This file is generated (`make generate` in konfidence). Do not edit it
+            here — fix the Go type comment, sample, or transform upstream.
+          labels: |
+            documentation
+            automated
