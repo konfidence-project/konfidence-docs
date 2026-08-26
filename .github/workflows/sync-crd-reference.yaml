@@ -57,10 +57,17 @@ jobs:
         env:
           COMMIT: ${{ steps.upstream.outputs.commit }}
 
+      - name: Authenticate as konfidence-bot
+        uses: konfidence-project/.github/.github/actions/github-app-auth@v4
+        with:
+          client-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.KONFIDENCE_PROJECT_REPO_ACCESS_PRIVATE_KEY }}
+
       - name: Open or update sync PR
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
+          token: ${{ env.GH_TOKEN }}
           branch: sync/crd-reference
           title: "docs: sync CRD reference from konfidence @ ${{ steps.copy.outputs.short_sha }}"
           commit-message: "docs(crd): pull latest crd.md from konfidence"
@@ -75,17 +82,14 @@ jobs:
             automated
             reference-sync
 
-      - name: Authenticate as konfidence-bot
-        if: steps.cpr.outputs.pull-request-number
-        uses: konfidence-project/.github/.github/actions/github-app-auth@v4
-        with:
-          client-id: ${{ vars.GH_APP_ID }}
-          private-key: ${{ secrets.KONFIDENCE_PROJECT_REPO_ACCESS_PRIVATE_KEY }}
-
       - name: Auto-approve sync PR
         if: steps.cpr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr review --approve ${{ steps.cpr.outputs.pull-request-number }}
 
       - name: Enable auto-merge
         if: steps.cpr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr merge --auto --rebase ${{ steps.cpr.outputs.pull-request-number }}
