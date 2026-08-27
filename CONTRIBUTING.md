@@ -6,20 +6,93 @@ You are welcome to contribute content (code, documentation etc.) to this open so
 
 There are some important things to know:
 
-1. You must **comply to the license of this project**, **accept the Developer Certificate of Origin** (see below) before being able to contribute. The acknowledgement to the DCO will usually be requested from you as part of your first pull request to this project.
+1. You must **comply with the license of this project** and **accept the Developer Certificate of Origin** (see below) before being able to contribute. The acknowledgement to the DCO will usually be requested from you as part of your first pull request to this project.
 2. Please **adhere to our [Code of Conduct](https://github.com/konfidence-project/.github/blob/main/CODE_OF_CONDUCT.md)**.
 3. If you plan to use **generative AI for your contribution**, please see our guideline below.
 4. **Not all proposed contributions can be accepted**. Some features may fit another project better or don't fit the general direction of this project. Of course, this doesn't apply to most bug fixes, but a major feature implementation for instance needs to be discussed with one of the maintainers first. Possibly, one who touched the related code or module recently. The more effort you invest, the better you should clarify in advance whether the contribution will match the project's direction. The best way would be to just open an issue to discuss the feature you plan to implement (make it clear that you intend to contribute). We will then forward the proposal to the respective code owner. This avoids disappointment.
 
 ## Developer Certificate of Origin (DCO)
 
-Contributors will be asked to accept a DCO before they submit the first pull request to this projects, this happens in an automated fashion during the submission process. SAP uses [the standard DCO text of the Linux Foundation](https://developercertificate.org/).
+Contributors will be asked to accept a DCO before they submit their first pull request to this project. This happens automatically during the submission process. SAP uses [the standard DCO text of the Linux Foundation](https://developercertificate.org/).
 
-## Contributing with AI-generated code
+## Contributing with generative AI
 
-As artificial intelligence evolves, AI-generated code is becoming valuable for many software projects, including open-source initiatives. While we recognize the potential benefits of incorporating AI-generated content into our open-source projects there a certain requirements that need to be reflected and adhered to when making contributions.
+Generative AI can support both code and documentation contributions. Contributors remain responsible for everything they submit, regardless of whether an AI tool helped create it.
 
-Please see our [guideline for AI-generated code contributions to SAP Open Source Software Projects](https://github.com/konfidence-project/.github/blob/main/CONTRIBUTING_USING_GENAI.md) for these requirements.
+Read the [guideline for AI-generated code contributions to SAP Open Source Software Projects](https://github.com/konfidence-project/.github/blob/main/CONTRIBUTING_USING_GENAI.md) before using AI-generated code or content. It defines requirements for tool terms, similarity filtering, third-party materials, attribution, and employer policies.
+
+For AI-assisted documentation contributions:
+
+- Verify every technical statement, command, example, link, and source.
+- Review the final text for accuracy, readability, and compliance with the [documentation style guide](/docs/extend-customize/styleguide).
+- Follow project and employer rules for confidential, personal, or otherwise non-public information. Do not provide this information to an AI tool unless those rules and the approved tool explicitly allow it.
+- Provide any notices, attribution, or license information required by the linked SAP guideline.
+
+## Contributing documentation
+
+Documentation is part of the product. Update it when a change affects how users learn about, integrate, configure, operate, or extend Konfidence.
+
+### When documentation is needed
+
+Use the following table to identify common documentation impacts.
+
+| Change | Documentation impact |
+| --- | --- |
+| New user-facing feature or workflow | Add or update a tutorial, how-to guide, or concept guide as needed. |
+| Changed behavior or user workflow | Update every affected task and explanation. |
+| Changed CLI option, API field, or CRD | Update the technical source of truth and any guide that uses it. |
+| Deprecated, removed, or breaking behavior | Update affected pages and explain the supported replacement or migration path. |
+
+For substantial new content or a new documentation area, [open an issue](https://github.com/konfidence-project/konfidence-docs/issues) before writing. Maintainers can help confirm the scope and placement.
+
+### Documentation workflow
+
+1. **Plan the impact.** Identify the user-visible change and every page it affects.
+2. **Frame the page.** Choose the primary audience, state their user job, and select a content type using the [guide templates](/docs/extend-customize/guide-templates#start-writing-in-three-steps).
+3. **Write.** Copy the matching template and follow the [documentation style guide](/docs/extend-customize/styleguide).
+4. **Validate the content.** Ask the contributor or feature owner to confirm technical statements. Run commands and examples in the documented environment and check the expected results.
+5. **Preview the page.** Install the dependencies with `pnpm install`, start the site with `pnpm dev`, and inspect the rendered page. Run `pnpm build` before submitting the change.
+6. **Submit the change.** Include documentation with the related code change when the repository structure permits it. Otherwise, create a separate documentation pull request and link the related issue or code pull request.
+7. **Address both reviews.** Resolve feedback about technical accuracy as well as audience, structure, clarity, and style.
+
+Do not edit `src/docs/reference/crd.md` directly. The file is generated from the Konfidence source repository. Update the upstream API or CRD descriptions so the automated synchronization can publish the correction.
+
+### Responsibilities
+
+Documentation quality is a shared responsibility.
+
+| Role | Responsibility |
+| --- | --- |
+| Contributor or feature owner | Defines the user-visible behavior, verifies technical accuracy, and tests examples and expected results. |
+| Maintainer | Confirms that the contribution fits the project, checks technical scope, and approves the change. |
+| Technical writer or documentation reviewer | Reviews the primary audience, user journey, content type, structure, clarity, terminology, and style. |
+
+External contributors do not need access to internal planning processes or a specific technical writer. Use a public issue or pull request to ask for guidance.
+
+### Before opening a documentation pull request
+
+Confirm that:
+
+- [ ] The page identifies one primary audience, user job, and content type.
+- [ ] The content follows the matching template and the documentation style guide.
+- [ ] A feature owner or other subject-matter expert has confirmed the technical statements.
+- [ ] Commands, code, manifests, and expected results have been tested.
+- [ ] Prerequisites, permissions, limitations, and known relevant failure modes are documented.
+- [ ] Links work, link text is descriptive, and visuals have an equivalent text explanation.
+- [ ] `pnpm build` completes successfully.
+- [ ] Generated reference files have not been edited directly.
+- [ ] AI-assisted content follows the project guideline and has been reviewed by a human.
+
+### Pull request titles
+
+Pull request titles must follow the [Conventional Commits](https://www.conventionalcommits.org/) format. The project validates the title because it becomes the default commit message for squash merges.
+
+For example:
+
+```text
+docs: explain vector configuration
+docs(getting-started): add first deployment tutorial
+```
 
 ## How to Contribute
 
