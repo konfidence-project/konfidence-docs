@@ -18,45 +18,26 @@ Package v1alpha1 contains API Schema definitions for the konfidence v1alpha1 API
 
 ### Resource Types
 - [ActivationTaskExecution](#activationtaskexecution)
-- [ActivationTaskExecutionList](#activationtaskexecutionlist)
 - [ActivationTaskRegistration](#activationtaskregistration)
-- [ActivationTaskRegistrationList](#activationtaskregistrationlist)
 - [ArtifactDeployment](#artifactdeployment)
-- [ArtifactDeploymentList](#artifactdeploymentlist)
 - [Landscape](#landscape)
-- [LandscapeList](#landscapelist)
 - [Project](#project)
-- [ProjectList](#projectlist)
 - [Stage](#stage)
-- [StageConfiguration](#stageconfiguration)
-- [StageConfigurationList](#stageconfigurationlist)
-- [StageList](#stagelist)
 - [StageVersion](#stageversion)
-- [StageVersionList](#stageversionlist)
 - [StageVersionUsage](#stageversionusage)
-- [StageVersionUsageList](#stageversionusagelist)
 - [TaskExecution](#taskexecution)
-- [TaskExecutionList](#taskexecutionlist)
 - [VectorActivation](#vectoractivation)
-- [VectorActivationList](#vectoractivationlist)
 - [VectorAssignment](#vectorassignment)
-- [VectorAssignmentList](#vectorassignmentlist)
 - [VectorData](#vectordata)
-- [VectorDataList](#vectordatalist)
 - [VectorDeployment](#vectordeployment)
-- [VectorDeploymentList](#vectordeploymentlist)
 - [VectorMigration](#vectormigration)
-- [VectorMigrationList](#vectormigrationlist)
 - [VectorPromotion](#vectorpromotion)
 - [VectorPromotionConfig](#vectorpromotionconfig)
-- [VectorPromotionConfigList](#vectorpromotionconfiglist)
-- [VectorPromotionList](#vectorpromotionlist)
 - [VectorTemplate](#vectortemplate)
-- [VectorTemplateList](#vectortemplatelist)
 
 
 
-#### ActivationTaskExecution
+### ActivationTaskExecution
 
 
 
@@ -65,7 +46,6 @@ ActivationTaskExecution is the Schema for the ActivationTaskExecutions API
 
 
 _Appears in:_
-- [ActivationTaskExecutionList](#activationtaskexecutionlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -78,27 +58,24 @@ _Appears in:_
 | `status` _[ActivationTaskExecutionStatus](#activationtaskexecutionstatus)_ | status defines the observed state of ActivationTaskExecution |  | Optional: \{\} <br /> |
 
 
-#### ActivationTaskExecutionList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: ActivationTaskExecution
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: activationtaskexecution-sample
+spec:
+  type: k8s-job
+  spec: {
+    "template": "refine-me"
+  }
+  vectorActivation: "activation-1"
+```
 
-
-ActivationTaskExecutionList contains a list of ActivationTaskExecution
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `ActivationTaskExecutionList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[ActivationTaskExecution](#activationtaskexecution) array_ |  |  |  |
-
-
-#### ActivationTaskExecutionSpec
+### ActivationTaskExecutionSpec
 
 
 
@@ -116,7 +93,7 @@ _Appears in:_
 | `vectorActivation` _string_ | VectorActivation is a temporary field that contains the name of the associated vectorActivation |  |  |
 
 
-#### ActivationTaskExecutionStatus
+### ActivationTaskExecutionStatus
 
 
 
@@ -132,7 +109,7 @@ _Appears in:_
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  |  |
 
 
-#### ActivationTaskRegistration
+### ActivationTaskRegistration
 
 
 
@@ -141,7 +118,6 @@ ActivationTaskRegistration is the Schema for the activationtaskregistrations API
 
 
 _Appears in:_
-- [ActivationTaskRegistrationList](#activationtaskregistrationlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -154,27 +130,26 @@ _Appears in:_
 | `status` _[ActivationTaskRegistrationStatus](#activationtaskregistrationstatus)_ | status defines the observed state of ActivationTaskRegistration |  | Optional: \{\} <br /> |
 
 
-#### ActivationTaskRegistrationList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: ActivationTaskRegistration
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: activationtaskregistration-sample
+spec:
+  type: custom-k8s-activation
+  spec: {}
+  succeeds:
+    - activation-A
+    - activation-B
+  precedes:
+    - activation-C
+```
 
-
-ActivationTaskRegistrationList contains a list of ActivationTaskRegistration
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `ActivationTaskRegistrationList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[ActivationTaskRegistration](#activationtaskregistration) array_ |  |  |  |
-
-
-#### ActivationTaskRegistrationSpec
+### ActivationTaskRegistrationSpec
 
 
 
@@ -193,7 +168,7 @@ _Appears in:_
 | `precedes` _string array_ |  |  |  |
 
 
-#### ActivationTaskRegistrationStatus
+### ActivationTaskRegistrationStatus
 
 
 
@@ -209,7 +184,7 @@ _Appears in:_
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ | conditions represent the current state of the ActivationTaskRegistration resource.<br />Each condition has a unique type and reflects the status of a specific aspect of the resource.<br />Standard condition types include:<br />- "Available": the resource is fully functional<br />- "Progressing": the resource is being created or updated<br />- "Degraded": the resource failed to reach or maintain its desired state<br />The status of each condition is one of True, False, or Unknown. |  | Optional: \{\} <br /> |
 
 
-#### ArtifactDeployment
+### ArtifactDeployment
 
 
 
@@ -218,7 +193,6 @@ ArtifactDeployment is the Schema for the artifactdeployments API.
 
 
 _Appears in:_
-- [ArtifactDeploymentList](#artifactdeploymentlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -231,27 +205,32 @@ _Appears in:_
 | `status` _[ArtifactDeploymentStatus](#artifactdeploymentstatus)_ |  |  |  |
 
 
-#### ArtifactDeploymentList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: ArtifactDeployment
+metadata:
+  name: e9cea9b3764b9adda065f85acd63a42f04b69de2d42e9b7e4f9556913bb37abb
+  namespace: default
+spec:
+  component:
+    name: cloud.konfidence.flux.helm
+    resources:
+      - content:
+          helmChart: podinfo:6.9.1
+          helmRepository: https://stefanprodan.github.io/podinfo
+          type: helm
+        name: sample-service-1-helm-chart
+        type: helmChart
+    version: 1.0.0
+  manifest:
+    allowReuse: true
+    type: cloud.konfidence.flux.helm
+  taskManifests: [ ]
+```
 
-
-ArtifactDeploymentList contains a list of ArtifactDeployment.
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `ArtifactDeploymentList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[ArtifactDeployment](#artifactdeployment) array_ |  |  |  |
-
-
-#### ArtifactDeploymentSpec
+### ArtifactDeploymentSpec
 
 
 
@@ -271,7 +250,7 @@ _Appears in:_
 | `component` _[OCMComponent](#ocmcomponent)_ | Component contains OCM metadata associated with the artifact. This is a simplified mapping of the OCM ComponentVersion. |  |  |
 
 
-#### ArtifactDeploymentStatus
+### ArtifactDeploymentStatus
 
 
 
@@ -286,10 +265,10 @@ _Appears in:_
 | --- | --- | --- | --- |
 | `observedGeneration` _integer_ | ObservedGeneration is the last observed generation. |  | Optional: \{\} <br /> |
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ | Conditions describes the state of the deployment lifecycle. The following conditions are expected:<br />  - ArtifactFetched: the artifact was successfully retrieved<br />  - ArtifactDeployed: the artifact was successfully deployed<br />  - AppHealthy: the deployer reports the workload as healthy<br />Conditions progress in a linear order:<br />ArtifactFetched -> ArtifactDeployed -> AppHealthy |  | Optional: \{\} <br /> |
-| `deploymentResult` _[DeploymentResult](#deploymentresult) array_ | DeploymentResults captures structured outputs produced by the deployer during the deployment process—such as<br />computed DNS names, service endpoints, generated configuration, or other workload-specific details.<br />Results should be treated as immutable for a given generation and may be consumed by later stages of a vector<br />rollout (e.g., routing configuration).<br />Each result must have a unique Name. |  | Optional: \{\} <br /> |
+| `deploymentResult` _[DeploymentResult](#deploymentresult) array_ | DeploymentResults captures structured outputs produced by the deployer during the deployment process—such as<br />computed DNS names, service endpoints, generated configuration, or other workload-specific details.<br />Results should be treated as immutable for a given generation and may be consumed by later stages of a vector<br />rollout (e.g., routing configuration).<br />Results are unique by (name, type). |  | Optional: \{\} <br /> |
 
 
-#### ArtifactManifest
+### ArtifactManifest
 
 
 
@@ -308,7 +287,7 @@ _Appears in:_
 | `allowReuse` _boolean_ | AllowReuse indicates whether the deployed artifact instance may be shared across multiple VectorDeployments.<br />Reuse allows more efficient resource consumption but requires the artifact to be independent of vector-specific<br />runtime context. |  |  |
 
 
-#### Component
+### Component
 
 
 
@@ -325,7 +304,27 @@ _Appears in:_
 | `name` _string_ |  |  |  |
 
 
-#### CredentialRef
+### ComponentDeploymentResults
+
+_Underlying type:_ _[DeploymentResult](#deploymentresult)_
+
+ComponentDeploymentResults lists the deployment results emitted by a single component.
+
+_Validation:_
+- MaxItems: 16
+
+_Appears in:_
+- [VectorDataSpec](#vectordataspec)
+- [VectorDeploymentStatus](#vectordeploymentstatus)
+
+| Field | Description | Default | Validation |
+| --- | --- | --- | --- |
+| `name` _string_ | Name identifies the result. |  | MaxLength: 253 <br /> |
+| `type` _string_ | Type describes the structure contained in Spec. Each deployer may define multiple result types. |  | MaxLength: 63 <br /> |
+| `spec` _[RawExtension](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#rawextension-runtime-pkg)_ | Spec contains deployer-specific structured data. Its format is determined by the Type field. |  |  |
+
+
+### CredentialRef
 
 
 
@@ -341,7 +340,7 @@ _Appears in:_
 | `name` _string_ |  |  | MinLength: 1 <br /> |
 
 
-#### Credentials
+### Credentials
 
 
 
@@ -351,8 +350,6 @@ repository access and signing/verification key material.
 
 
 _Appears in:_
-- [StageConfigurationSpec](#stageconfigurationspec)
-- [VectorPromotionConfigSpec](#vectorpromotionconfigspec)
 - [VectorTemplateSpec](#vectortemplatespec)
 
 | Field | Description | Default | Validation |
@@ -360,7 +357,7 @@ _Appears in:_
 | `ocm` _[OCMCredentials](#ocmcredentials)_ |  |  | Optional: \{\} <br /> |
 
 
-#### DeploymentResult
+### DeploymentResult
 
 
 
@@ -371,17 +368,16 @@ from the deployer to later phases of the vector lifecycle.
 
 _Appears in:_
 - [ArtifactDeploymentStatus](#artifactdeploymentstatus)
-- [VectorDataSpec](#vectordataspec)
-- [VectorDeploymentStatus](#vectordeploymentstatus)
+- [ComponentDeploymentResults](#componentdeploymentresults)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
-| `name` _string_ | Name is a unique identifier for the result within an ArtifactDeploymentStatus. |  |  |
-| `type` _string_ | Type describes the structure contained in Spec. Each deployer may define multiple result types. |  |  |
+| `name` _string_ | Name identifies the result. |  | MaxLength: 253 <br /> |
+| `type` _string_ | Type describes the structure contained in Spec. Each deployer may define multiple result types. |  | MaxLength: 63 <br /> |
 | `spec` _[RawExtension](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#rawextension-runtime-pkg)_ | Spec contains deployer-specific structured data. Its format is determined by the Type field. |  |  |
 
 
-#### GlobMatch
+### GlobMatch
 
 _Underlying type:_ _string_
 
@@ -396,7 +392,7 @@ _Appears in:_
 
 
 
-#### JWKSSubject
+### JWKSSubject
 
 
 
@@ -415,7 +411,7 @@ _Appears in:_
 | `claims` _object (keys:string, values:[GlobMatch](#globmatch))_ | Claims narrows the match to tokens whose claims match the given patterns.<br />It maps a claim name (for example "sub", "repository" or "ref") to a<br />glob pattern the claim value must match; all listed claims must match<br />(AND). At least one claim is required so a subject cannot inadvertently<br />match every token a provider issues. |  | MaxProperties: 32 <br />MinProperties: 1 <br /> |
 
 
-#### Landscape
+### Landscape
 
 
 
@@ -427,7 +423,6 @@ so the derived namespace name stays within the 63-character Kubernetes limits.
 
 
 _Appears in:_
-- [LandscapeList](#landscapelist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -440,27 +435,22 @@ _Appears in:_
 | `status` _[LandscapeStatus](#landscapestatus)_ |  |  |  |
 
 
-#### LandscapeList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: Landscape
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: sample-landscape
+  namespace: kden-p-sample-project  # Must be created in a project namespace
+spec:
+  displayName: Sample Development Landscape
+  # namespace: my-custom-landscape-namespace  # overrides the default "kden-l-sample-landscape-<hash>"
+```
 
-
-LandscapeList contains a list of Landscape.
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `LandscapeList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[Landscape](#landscape) array_ |  |  |  |
-
-
-#### LandscapeSpec
+### LandscapeSpec
 
 
 
@@ -481,7 +471,7 @@ _Appears in:_
 | `namespace` _string_ | Namespace overrides the name of the namespace created for this landscape.<br />When unset it defaults to `kden-l-<landscape-name>-<hash>`. It is<br />immutable once the Landscape exists, because the namespace and everything<br />it holds are bound to this name. |  | MaxLength: 63 <br />Pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$` <br />Optional: \{\} <br /> |
 
 
-#### LandscapeStatus
+### LandscapeStatus
 
 
 
@@ -499,7 +489,7 @@ _Appears in:_
 | `projectName` _string_ | ProjectName is the name of the project this landscape belongs to,<br />derived from the namespace where the Landscape CR was created. |  | Optional: \{\} <br /> |
 
 
-#### LocalArtifactDeploymentReference
+### LocalArtifactDeploymentReference
 
 
 
@@ -517,7 +507,7 @@ _Appears in:_
 | `collisionCount` _integer_ | CollisionCount salts the ArtifactDeployment name hash to recover from a<br />(rare) hash collision with a different artifact. nil and 0 both mean "no<br />salt" and yield the original, unsalted name. Once bumped it is permanent<br />for this artifact slot. Mirrors Deployment.Status.CollisionCount. |  | Optional: \{\} <br /> |
 
 
-#### LocalObjectReference
+### LocalObjectReference
 
 
 
@@ -533,7 +523,7 @@ _Appears in:_
 | `name` _string_ | Name of the referenced object. |  |  |
 
 
-#### LocalVectorAssignmentReference
+### LocalVectorAssignmentReference
 
 
 
@@ -549,7 +539,7 @@ _Appears in:_
 | `name` _string_ | Name	is the name of the VectorAssignment. Required. |  |  |
 
 
-#### LocalVectorDeploymentReference
+### LocalVectorDeploymentReference
 
 
 
@@ -565,7 +555,7 @@ _Appears in:_
 | `name` _string_ | Name	is the name of the VectorDeployment. Required. |  |  |
 
 
-#### OCMComponent
+### OCMComponent
 
 
 
@@ -584,7 +574,7 @@ _Appears in:_
 | `resources` _[OCMResource](#ocmresource) array_ | Resources contains OCM resources belonging to this component. The structure is intentionally generic to support<br />the requirements of deployers targeting different runtimes. |  | Optional: \{\} <br /> |
 
 
-#### OCMCredentials
+### OCMCredentials
 
 
 
@@ -601,7 +591,7 @@ _Appears in:_
 | `refs` _[CredentialRef](#credentialref) array_ |  |  | MinItems: 1 <br /> |
 
 
-#### OCMResource
+### OCMResource
 
 
 
@@ -620,7 +610,7 @@ _Appears in:_
 | `type` _string_ | Type describes the resource type, following OCM conventions. |  |  |
 
 
-#### Project
+### Project
 
 
 
@@ -632,7 +622,6 @@ stay within the 63-character Kubernetes limits.
 
 
 _Appears in:_
-- [ProjectList](#projectlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -645,27 +634,39 @@ _Appears in:_
 | `status` _[ProjectStatus](#projectstatus)_ |  |  |  |
 
 
-#### ProjectList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: Project
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: sample-project
+spec:
+  displayName: Sample Project
+  # namespace: my-custom-namespace  # overrides the default "kden-p-sample-project"
+  roleBindings:
+    admin:
+      - session:
+          memberOf:
+            - platform-admins
+      - jwks:
+          endpoint: https://token.actions.githubusercontent.com/.well-known/openid-configuration
+          audience: https://konfidence.example/api
+          claims:
+            sub: repo:konfidence-project/konfidence:*
+    pm:
+      - session:
+          memberOf:
+            - sample-project-pms
+    dev:
+      - session:
+          memberOf:
+            - sample-project-devs
+```
 
-
-ProjectList contains a list of Project.
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `ProjectList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[Project](#project) array_ |  |  |  |
-
-
-#### ProjectSpec
+### ProjectSpec
 
 
 
@@ -687,7 +688,7 @@ _Appears in:_
 | `roleBindings` _object (keys:string, values:[Subjects](#subjects))_ | RoleBindings grants project roles to callers. It maps a role name to the<br />list of subjects that hold that role; a caller holds the role if any<br />subject in the list matches (OR). The role names are a fixed, well-known<br />set for now (for example "admin", "pm", "dev"), but the field is a map so<br />the set can be extended without a schema change. See the Project<br />multi-tenancy ADR for the meaning of each role and the authorization flow.<br />RoleBindings is currently schema-only: no authorization is enforced yet. |  | MaxProperties: 32 <br />Optional: \{\} <br /> |
 
 
-#### ProjectStatus
+### ProjectStatus
 
 
 
@@ -704,7 +705,66 @@ _Appears in:_
 | `namespace` _string_ | Namespace is the name of the namespace managed for this project. |  | Optional: \{\} <br /> |
 
 
-#### SessionSubject
+### PromotionApproval
+
+
+
+PromotionApproval records the granted approval.
+
+
+
+_Appears in:_
+- [VectorPromotionStatus](#vectorpromotionstatus)
+
+| Field | Description | Default | Validation |
+| --- | --- | --- | --- |
+| `approvedBy` _string_ | ApprovedBy is the identity that granted the approval, as reported by the<br />konfidence API. The value is an opaque, arbitrary string (username,<br />email, subject, ...); it is recorded verbatim and never interpreted. |  | MinLength: 1 <br /> |
+| `approvedAt` _[Time](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#time-v1-meta)_ | ApprovedAt is the time the approval was granted. |  |  |
+
+
+### PromotionSourceReference
+
+
+
+PromotionSourceReference identifies the in-cluster resource whose current
+vector is promoted from. The source is resolved by the config reconciler,
+which pins the concrete vector into `VectorPromotionSpec.Vector`; the
+execution controller never reads it.
+
+
+
+_Appears in:_
+- [VectorPromotionConfigSpec](#vectorpromotionconfigspec)
+- [VectorPromotionSpec](#vectorpromotionspec)
+
+| Field | Description | Default | Validation |
+| --- | --- | --- | --- |
+| `kind` _string_ | Kind is the kind of the source resource. A `VectorTemplate` source<br />promotes its latest assembled vector; a `Stage` source promotes the<br />vector currently configured on that stage (`spec.vector`). Whether the resulting promotion<br />requires approval is recorded on the promotion itself<br />(`VectorPromotionSpec.RequireApproval`); the controller defaults it<br />from the source kind. |  | Enum: [VectorTemplate Stage] <br /> |
+| `name` _string_ | Name is the name of the source resource. |  | MaxLength: 253 <br />MinLength: 1 <br /> |
+| `landscape` _string_ | Landscape is the `metadata.name` of the `Landscape` in the config's<br />namespace (not its managed namespace) whose namespace hosts the<br />referenced `Stage`. Required for `Stage` references; must be omitted<br />for `VectorTemplate` references, which are resolved in the config's<br />namespace. |  | MaxLength: 63 <br />MinLength: 1 <br />Optional: \{\} <br /> |
+
+
+### PromotionTargetReference
+
+
+
+PromotionTargetReference identifies the `Stage` whose `spec.vector` is the
+promotion target.
+
+
+
+_Appears in:_
+- [VectorPromotionConfigSpec](#vectorpromotionconfigspec)
+- [VectorPromotionSpec](#vectorpromotionspec)
+
+| Field | Description | Default | Validation |
+| --- | --- | --- | --- |
+| `kind` _string_ | Kind is the kind of the target resource. Only `Stage` is supported. |  | Enum: [Stage] <br /> |
+| `name` _string_ | Name is the name of the target `Stage`. |  | MaxLength: 253 <br />MinLength: 1 <br /> |
+| `landscape` _string_ | Landscape is the `metadata.name` of the `Landscape` in the config's<br />namespace (not its managed namespace) whose namespace hosts the target<br />`Stage`. |  | MaxLength: 63 <br />MinLength: 1 <br /> |
+
+
+### SessionSubject
 
 
 
@@ -720,7 +780,7 @@ _Appears in:_
 | `memberOf` _string array_ | MemberOf lists the groups that grant the role. Membership in any one of<br />the listed groups is sufficient to match (OR). |  | MaxItems: 64 <br />MinItems: 1 <br />items:MaxLength: 253 <br /> |
 
 
-#### Sign
+### Sign
 
 
 
@@ -737,7 +797,7 @@ _Appears in:_
 | `signatures` _[Signature](#signature) array_ |  |  | MinItems: 1 <br /> |
 
 
-#### Signature
+### Signature
 
 
 
@@ -762,7 +822,7 @@ _Appears in:_
 | `issuer` _string_ | Issuer pins the expected certificate issuer DN for PEM-encoded signatures.<br />On the sign path the value is stamped into the descriptor alongside the signature,<br />so it is enforced automatically on the verify path even without an explicit pin here.<br />On the verify path, when set, this value overrides whatever the descriptor stored and<br />the handler rejects any signature whose leaf certificate issuer DN does not match.<br />When omitted on both paths the issuer field stays empty and no DN check is performed.<br />Must be non-empty when present. |  | Optional: \{\} <br /> |
 
 
-#### Stage
+### Stage
 
 
 
@@ -771,7 +831,6 @@ Stage is the Schema for the stages API.
 
 
 _Appears in:_
-- [StageList](#stagelist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -784,105 +843,18 @@ _Appears in:_
 | `status` _[StageStatus](#stagestatus)_ |  |  |  |
 
 
-#### StageConfiguration
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: Stage
+metadata:
+  name: stage-dev
+spec:
+  vector: https://registry.kdenv.lab/ocm/vector//common.konfidence.cloud/example/vector:0.0.1
+```
 
-
-StageConfiguration is the Schema for the stageConfigurations API.
-
-
-
-_Appears in:_
-- [StageConfigurationList](#stageconfigurationlist)
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `StageConfiguration` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#objectmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `spec` _[StageConfigurationSpec](#stageconfigurationspec)_ |  |  |  |
-| `status` _[StageConfigurationStatus](#stageconfigurationstatus)_ |  |  |  |
-
-
-#### StageConfigurationList
-
-
-
-StageConfigurationList contains a list of StageConfiguration.
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `StageConfigurationList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[StageConfiguration](#stageconfiguration) array_ |  |  |  |
-
-
-#### StageConfigurationSpec
-
-
-
-StageConfigurationSpec defines the desired state of StageConfiguration.
-
-
-
-_Appears in:_
-- [StageConfiguration](#stageconfiguration)
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `name` _string_ | Name is the stage name. |  |  |
-| `vector` _string_ | Vector points to the OCM component that contains the deployment vector for this stage. |  |  |
-| `targetNamespace` _string_ | TargetNamespace is the target namespace where the associated stage is created or updated |  |  |
-| `credentials` _[Credentials](#credentials)_ | Credentials supplies credentials for OCM repository access<br />and vector verification key material. |  | Optional: \{\} <br /> |
-| `verifyVector` _[Verify](#verify)_ | VerifyVector lists candidate signatures evaluated against the<br />fetched vector descriptor. Absence disables vector verification. |  | Optional: \{\} <br /> |
-
-
-#### StageConfigurationStatus
-
-
-
-StageConfigurationStatus defines the observed state of StageConfiguration.
-
-
-
-_Appears in:_
-- [StageConfiguration](#stageconfiguration)
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  |  |
-
-
-#### StageList
-
-
-
-StageList contains a list of Stage.
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `StageList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[Stage](#stage) array_ |  |  |  |
-
-
-#### StageReference
+### StageReference
 
 
 
@@ -898,7 +870,7 @@ _Appears in:_
 | `name` _string_ | Name is the name of the Stage. Required. |  |  |
 
 
-#### StageSpec
+### StageSpec
 
 
 
@@ -914,7 +886,7 @@ _Appears in:_
 | `vector` _string_ | Vector points to the OCM component version that contains the deployment vector for this stage. |  |  |
 
 
-#### StageStatus
+### StageStatus
 
 
 
@@ -932,7 +904,7 @@ _Appears in:_
 | `latestVectorDeploymentRef` _[TypedObjectReference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#typedobjectreference-v1-core)_ |  |  |  |
 
 
-#### StageVersion
+### StageVersion
 
 
 
@@ -941,7 +913,6 @@ StageVersion is the Schema for the stageversions API
 
 
 _Appears in:_
-- [StageVersionList](#stageversionlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -954,27 +925,28 @@ _Appears in:_
 | `status` _[StageVersionStatus](#stageversionstatus)_ | status defines the observed state of StageVersion |  | Optional: \{\} <br /> |
 
 
-#### StageVersionList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: StageVersion
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: stageversion-dev-475124
+  ownerReferences:
+    - apiVersion: konfidence.cloud/v1alpha1
+      kind: Stage
+      name: stage-dev
+      uid: # TODO: add owner uid here after creating Stage resource
+spec:
+  vector: https://registry.kdenv.lab/ocm/vector//common.konfidence.cloud/example/vector:0.0.1
+  stageGeneration: 1
+  stageRef:
+    name: stage-dev
+```
 
-
-StageVersionList contains a list of StageVersion
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `StageVersionList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[StageVersion](#stageversion) array_ |  |  |  |
-
-
-#### StageVersionReference
+### StageVersionReference
 
 
 
@@ -990,7 +962,7 @@ _Appears in:_
 | `name` _string_ | Name is the name of the StageVersion. Required. |  |  |
 
 
-#### StageVersionSpec
+### StageVersionSpec
 
 
 
@@ -1008,7 +980,7 @@ _Appears in:_
 | `stageRef` _[StageReference](#stagereference)_ | stageRef references the Stage this StageVersion belongs to |  |  |
 
 
-#### StageVersionStatus
+### StageVersionStatus
 
 
 
@@ -1024,7 +996,7 @@ _Appears in:_
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  |  |
 
 
-#### StageVersionUsage
+### StageVersionUsage
 
 
 
@@ -1033,7 +1005,6 @@ StageVersionUsage is the Schema for the stageversionusages API
 
 
 _Appears in:_
-- [StageVersionUsageList](#stageversionusagelist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -1046,27 +1017,22 @@ _Appears in:_
 | `status` _[StageVersionUsageStatus](#stageversionusagestatus)_ | status defines the observed state of StageVersionUsage |  | Optional: \{\} <br /> |
 
 
-#### StageVersionUsageList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: StageVersionUsage
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: stageversionusage-sample
+spec:
+  reason: Target usage for stage 'stage-dev'
+  stageVersionRef:
+    name: stageversion-dev-475124
+```
 
-
-StageVersionUsageList contains a list of StageVersionUsage
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `StageVersionUsageList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[StageVersionUsage](#stageversionusage) array_ |  |  |  |
-
-
-#### StageVersionUsageSpec
+### StageVersionUsageSpec
 
 
 
@@ -1085,7 +1051,7 @@ _Appears in:_
 | `stageVersionSelector` _[LabelSelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#labelselector-v1-meta)_ | StageVersionSelector is a label selector to find a StageVersion when name is not provided. |  | Optional: \{\} <br /> |
 
 
-#### StageVersionUsageStatus
+### StageVersionUsageStatus
 
 
 
@@ -1102,7 +1068,7 @@ _Appears in:_
 | `resolvedStageVersions` _string array_ | ResolvedStageVersions contains the names of all resolved stageVersion resources specified by either stageVersionRef or StageVersionSelector |  |  |
 
 
-#### Subject
+### Subject
 
 
 
@@ -1120,7 +1086,7 @@ _Appears in:_
 | `jwks` _[JWKSSubject](#jwkssubject)_ | JWKS matches a workload identity presenting a token signed by a trusted<br />OIDC provider, for example a CI pipeline's OIDC token. |  | Optional: \{\} <br /> |
 
 
-#### Subjects
+### Subjects
 
 _Underlying type:_ _[Subject](#subject)_
 
@@ -1140,7 +1106,7 @@ _Appears in:_
 | `jwks` _[JWKSSubject](#jwkssubject)_ | JWKS matches a workload identity presenting a token signed by a trusted<br />OIDC provider, for example a CI pipeline's OIDC token. |  | Optional: \{\} <br /> |
 
 
-#### TaskExecution
+### TaskExecution
 
 
 
@@ -1149,7 +1115,6 @@ TaskExecution is the Schema for the taskexecutions API
 
 
 _Appears in:_
-- [TaskExecutionList](#taskexecutionlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -1162,27 +1127,40 @@ _Appears in:_
 | `status` _[TaskExecutionStatus](#taskexecutionstatus)_ | status defines the observed state of TaskExecution |  | Optional: \{\} <br /> |
 
 
-#### TaskExecutionList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: TaskExecution
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: taskexecution-sample
+spec:
+  name: service2-task-1
+  type: k8s-job
+  dependsOn: [ ]
+  spec: {
+    "template": {
+      "spec": {
+        "containers": [
+          {
+            "name": "service1-task-1-container",
+            "image": "registry.kdenv.lab/docker/sample-project/service1-task-1:0.0.1",
+            "command": [
+              "echo",
+              "I am task 1 of service 1"
+            ]
+          }
+        ]
+      },
+      "restartPolicy": "Never"
+    },
+    "backoffLimit": 4
+  }
+```
 
-
-TaskExecutionList contains a list of TaskExecution
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `TaskExecutionList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[TaskExecution](#taskexecution) array_ |  |  |  |
-
-
-#### TaskExecutionSpec
+### TaskExecutionSpec
 
 
 
@@ -1201,7 +1179,7 @@ _Appears in:_
 | `spec` _[RawExtension](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#rawextension-runtime-pkg)_ |  |  |  |
 
 
-#### TaskExecutionStatus
+### TaskExecutionStatus
 
 
 
@@ -1217,7 +1195,7 @@ _Appears in:_
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  |  |
 
 
-#### TaskManifest
+### TaskManifest
 
 
 
@@ -1244,7 +1222,7 @@ _Appears in:_
 | `spec` _[RawExtension](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#rawextension-runtime-pkg)_ | Spec contains task-specific configuration. The structure depends on the task Type and is interpreted by the<br />corresponding task controller. |  |  |
 
 
-#### VectorActivation
+### VectorActivation
 
 
 
@@ -1253,7 +1231,6 @@ VectorActivation is the Schema for the vectoractivations API
 
 
 _Appears in:_
-- [VectorActivationList](#vectoractivationlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -1266,27 +1243,29 @@ _Appears in:_
 | `status` _[VectorActivationStatus](#vectoractivationstatus)_ | status defines the observed state of VectorActivation |  | Optional: \{\} <br /> |
 
 
-#### VectorActivationList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: VectorActivation
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: vectoractivation-sample
+  ownerReferences:
+    - apiVersion: konfidence.cloud/v1alpha1
+      kind: StageVersion
+      name: <OWNER-NAME> # TODO: add stage version name here
+      uid: <OWNER-UID>‚ # TODO: add stage version uid here
+spec:
+  # TODO: clarify if stageVersion is required here since it is also in OwnerReferences
+  stage: stage-dev
+  stageVersion: <STAGE-VERSION-NAME> # TODO: add stage version name here
+  vector: https://registry.kdenv.lab/ocm/vector//common.konfidence.cloud/example/vector:0.0.1
+  vectorDeployment: common.konfidence.cloud.example.vector-0.0.1
+```
 
-
-VectorActivationList contains a list of VectorActivation
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `VectorActivationList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[VectorActivation](#vectoractivation) array_ |  |  |  |
-
-
-#### VectorActivationSpec
+### VectorActivationSpec
 
 
 
@@ -1305,7 +1284,7 @@ _Appears in:_
 | `vectorDeployment` _string_ |  |  |  |
 
 
-#### VectorActivationStatus
+### VectorActivationStatus
 
 
 
@@ -1321,7 +1300,7 @@ _Appears in:_
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  |  |
 
 
-#### VectorAssignment
+### VectorAssignment
 
 
 
@@ -1334,7 +1313,6 @@ managed by the vector-deployment-controller and reconciled by deployers to apply
 
 
 _Appears in:_
-- [VectorAssignmentList](#vectorassignmentlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -1347,27 +1325,26 @@ _Appears in:_
 | `status` _[VectorAssignmentStatus](#vectorassignmentstatus)_ |  |  |  |
 
 
-#### VectorAssignmentList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: VectorAssignment
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: vectorassignment-sample
+spec:
+  manifest:
+    type: cloud.konfidence.flux.helm
+    allowReuse: true
+  artifactDeploymentRef:
+    name: artifactdeployment-1
+  vectorDeploymentRef:
+    name: vectordeployment-1
+```
 
-
-VectorAssignmentList contains a list of VectorAssignment.
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `VectorAssignmentList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[VectorAssignment](#vectorassignment) array_ |  |  |  |
-
-
-#### VectorAssignmentSpec
+### VectorAssignmentSpec
 
 
 
@@ -1396,7 +1373,7 @@ _Appears in:_
 | `vectorDeploymentRef` _[LocalVectorDeploymentReference](#localvectordeploymentreference)_ | VectorDeploymentRef references the VectorDeployment that this artifact is assigned to. This creates the explicit<br />mapping "artifact X belongs to vector Y". |  |  |
 
 
-#### VectorAssignmentStatus
+### VectorAssignmentStatus
 
 
 
@@ -1404,9 +1381,9 @@ VectorAssignmentStatus defines the observed state of a VectorAssignment.
 
 A VectorAssignment progresses through a simple lifecycle driven by the deployer:
 
-1. VectorAssignment is created by the vector-deployment-controller.
-2. deployer reconciles it and configures vector-specific integration
-3. VectorAssignmentReadyCondition is set to True
+ 1. VectorAssignment is created by the vector-deployment-controller.
+ 2. deployer reconciles it and configures vector-specific integration
+ 3. VectorAssignmentReadyCondition is set to True
 
 
 
@@ -1418,7 +1395,7 @@ _Appears in:_
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ | Conditions describes the latest observed state of the assignment. The primary condition is<br />VectorAssignmentReadyCondition, which becomes True once the deployer has finished processing the VectorAssignment. |  | Optional: \{\} <br /> |
 
 
-#### VectorConfig
+### VectorConfig
 
 
 
@@ -1435,7 +1412,7 @@ _Appears in:_
 | `authored` _[RawExtension](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#rawextension-runtime-pkg)_ | Authored define the authored configuration values. |  |  |
 
 
-#### VectorData
+### VectorData
 
 
 
@@ -1444,7 +1421,6 @@ VectorData is the schema for the vectordata API.
 
 
 _Appears in:_
-- [VectorDataList](#vectordatalist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -1457,27 +1433,32 @@ _Appears in:_
 | `status` _[VectorDataStatus](#vectordatastatus)_ |  |  |  |
 
 
-#### VectorDataList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: VectorData
+metadata:
+  name: vectordata-sample
+spec:
+  features:
+    checkout-v2:
+      enabled: true
+  authored:
+    replicas: 3
+  deploymentResults:
+    https://registry.kdenv.lab/ocm/vector//common.konfidence.cloud/example/vector/service1:
+      - name: candidates
+        type: http-k8s-service
+        spec:
+          namespace: dev
+          k8sName: candidates
+          servicePorts:
+            - name: http
+              port: 80
+```
 
-
-
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `VectorDataList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[VectorData](#vectordata) array_ |  |  |  |
-
-
-#### VectorDataSpec
+### VectorDataSpec
 
 
 
@@ -1495,10 +1476,10 @@ _Appears in:_
 | --- | --- | --- | --- |
 | `features` _[RawExtension](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#rawextension-runtime-pkg)_ | Features carries the optional "features" subset of the OCM envelope, verbatim JSON. |  | Optional: \{\} <br /> |
 | `authored` _[RawExtension](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#rawextension-runtime-pkg)_ | Authored carries the optional "authored" subset of the OCM envelope, verbatim JSON. |  | Optional: \{\} <br /> |
-| `deploymentResults` _object (keys:string, values:[DeploymentResult](#deploymentresult))_ | DeploymentResults aggregated from underlying ArtifactDeployments, keyed<br />`<componentName>/<resultName>`. |  | Optional: \{\} <br /> |
+| `deploymentResults` _object (keys:string, values:[ComponentDeploymentResults](#componentdeploymentresults))_ | DeploymentResults aggregated from underlying ArtifactDeployments, keyed by artifact<br />component name; the value lists every result emitted by that component. Within a<br />component's list, results are unique by (name, type). |  | MaxProperties: 64 <br />Optional: \{\} <br /> |
 
 
-#### VectorDataStatus
+### VectorDataStatus
 
 
 
@@ -1514,7 +1495,7 @@ _Appears in:_
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  | Optional: \{\} <br /> |
 
 
-#### VectorDeployment
+### VectorDeployment
 
 
 
@@ -1525,7 +1506,6 @@ VectorDeployment represents the deployment of an immutable vector of artifacts i
 
 
 _Appears in:_
-- [VectorDeploymentList](#vectordeploymentlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -1538,27 +1518,20 @@ _Appears in:_
 | `status` _[VectorDeploymentStatus](#vectordeploymentstatus)_ |  |  |  |
 
 
-#### VectorDeploymentList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: VectorDeployment
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: common.konfidence.cloud.example.vector-0.0.1
+spec:
+  vector: https://registry.konfidence.cloud/ocm/vector//common.konfidence.cloud/example/vector:0.0.1
+```
 
-
-VectorDeploymentList contains a list of VectorDeployment.
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `VectorDeploymentList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[VectorDeployment](#vectordeployment) array_ |  |  |  |
-
-
-#### VectorDeploymentSpec
+### VectorDeploymentSpec
 
 
 
@@ -1581,7 +1554,7 @@ _Appears in:_
 | `vector` _string_ | Vector is a fully qualified URL pointing to an OCM ComponentVersion stored in an OCI registry. The referenced<br />component contains the deployment vector, which includes the complete list of artifacts and their versions. |  |  |
 
 
-#### VectorDeploymentStatus
+### VectorDeploymentStatus
 
 
 
@@ -1589,13 +1562,13 @@ VectorDeploymentStatus represents the observed state of a VectorDeployment as it
 deployment lifecycle.
 
 The lifecycle consists of:
-1. Pulling the vector from the OCI registry and parsing its contents -> VectorDownloadedCondition
-2. Creating (or re-using) one ArtifactDeployment per artifact in the vector -> ArtifactDeploymentsCreatedCondition
-3. Waiting until all ArtifactDeployments have successfully deployed -> VectorDeployedCondition
-4. Creating all VectorAssignment resources associated with this vector -> VectorAssignmentsCreatedCondition
-5. Creating the VectorData CR with the resolved authored configuration + aggregated DeploymentResults; the
-   runtime-specific implementor then materialises it (e.g. as a ConfigMap on Kubernetes) -> VectorDataCreatedCondition
-6. Marking the vector as ready for use once VectorData reports its own Ready=True -> VectorReadyCondition
+ 1. Pulling the vector from the OCI registry and parsing its contents -> VectorDownloadedCondition
+ 2. Creating (or re-using) one ArtifactDeployment per artifact in the vector -> ArtifactDeploymentsCreatedCondition
+ 3. Waiting until all ArtifactDeployments have successfully deployed -> VectorDeployedCondition
+ 4. Creating all VectorAssignment resources associated with this vector -> VectorAssignmentsCreatedCondition
+ 5. Creating the VectorData CR with the resolved authored configuration + aggregated DeploymentResults; the
+    runtime-specific implementor then materialises it (e.g. as a ConfigMap on Kubernetes) -> VectorDataCreatedCondition
+ 6. Marking the vector as ready for use once VectorData reports its own Ready=True -> VectorReadyCondition
 
 
 
@@ -1609,10 +1582,10 @@ _Appears in:_
 | `resultingVectorData` _[LocalObjectReference](#localobjectreference)_ | ResultingVectorData records the name of the VectorData object created for this VectorDeployment. The VectorData<br />CR is the contract between the vector deployment controller (which resolves the OCM payload) and the runtime-specific implementor<br />(which materialises it on the target runtime). The field is empty until step 5 of the lifecycle has produced the<br />CR. Names are stable across reconciliations. |  |  |
 | `resultingArtifactDeployments` _object (keys:string, values:[LocalArtifactDeploymentReference](#localartifactdeploymentreference))_ | ResultingArtifactDeployments lists the ArtifactDeployment resources created (or re-used) for this vector. The<br />map key is the component name of the artifact as defined inside the vector. Keys remain stable across<br />reconciliations and re-creations. |  |  |
 | `resultingVectorAssignments` _object (keys:string, values:[LocalVectorAssignmentReference](#localvectorassignmentreference))_ | ResultingVectorAssignments lists all VectorAssignment resources created for this vector. VectorAssignments are<br />not re-used like ArtifactDeployments, but instead each VectorDeployment results in a complete new set of<br />assignments.<br />The map key is the component name of the artifact. Keys are stable across reconcilations. |  |  |
-| `deploymentResults` _object (keys:string, values:[DeploymentResult](#deploymentresult))_ | DeploymentResults exposes an aggregated view of the deployment results produced<br />by all underlying ArtifactDeployments. The map key is composed of the component<br />name and the individual result name, ensuring uniqueness. |  |  |
+| `deploymentResults` _object (keys:string, values:[ComponentDeploymentResults](#componentdeploymentresults))_ | DeploymentResults exposes an aggregated view of the deployment results produced<br />by all underlying ArtifactDeployments. The map key is the artifact component name;<br />the value lists every result emitted by that ArtifactDeployment. Within a component's<br />list, results are unique by (name, type). |  | MaxProperties: 64 <br /> |
 
 
-#### VectorMigration
+### VectorMigration
 
 
 
@@ -1621,7 +1594,6 @@ VectorMigration is the Schema for the vectormigrations API
 
 
 _Appears in:_
-- [VectorMigrationList](#vectormigrationlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -1634,27 +1606,21 @@ _Appears in:_
 | `status` _[VectorMigrationStatus](#vectormigrationstatus)_ | status defines the observed state of VectorMigration |  | Optional: \{\} <br /> |
 
 
-#### VectorMigrationList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: VectorMigration
+metadata:
+  labels:
+    app.kubernetes.io/name: crds
+  name: vectormigration-dev-985434
+spec:
+  stageVersion: stageversion-dev-475124
+  vector: https://registry.konfidence.cloud/ocm/vector//common.konfidence.cloud/example/vector:0.0.1
+```
 
-
-VectorMigrationList contains a list of VectorMigration
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `VectorMigrationList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[VectorMigration](#vectormigration) array_ |  |  |  |
-
-
-#### VectorMigrationSpec
+### VectorMigrationSpec
 
 
 
@@ -1671,7 +1637,7 @@ _Appears in:_
 | `vector` _string_ | Vector points to the OCM component version that contains the deployment vector for this stage. |  |  |
 
 
-#### VectorMigrationStatus
+### VectorMigrationStatus
 
 
 
@@ -1687,7 +1653,7 @@ _Appears in:_
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  |  |
 
 
-#### VectorPromotion
+### VectorPromotion
 
 
 
@@ -1696,7 +1662,6 @@ VectorPromotion triggers a one-time execution of a promotion flow defined by a V
 
 
 _Appears in:_
-- [VectorPromotionList](#vectorpromotionlist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -1709,7 +1674,30 @@ _Appears in:_
 | `status` _[VectorPromotionStatus](#vectorpromotionstatus)_ |  |  |  |
 
 
-#### VectorPromotionConfig
+#### Example
+
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: VectorPromotion
+metadata:
+  namespace: default
+  name: sample-vector-promotion
+spec:
+  vectorPromotionConfigName: sample-promotion-config
+  source:
+    kind: VectorTemplate
+    name: sample-vector-template
+  target:
+    kind: Stage
+    name: sample-stage
+    landscape: sample-landscape
+  vector: registry.kdenv.lab/sample-project//konfidence-project.com/constructed-vector:2026.8.5-090000000Z
+  requireApproval: false
+  sequence: 1
+  ttlAfterFinished: 1h
+```
+
+### VectorPromotionConfig
 
 
 
@@ -1718,7 +1706,6 @@ VectorPromotionConfig describes a promotion flow for a vector between a source a
 
 
 _Appears in:_
-- [VectorPromotionConfigList](#vectorpromotionconfiglist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -1731,27 +1718,26 @@ _Appears in:_
 | `status` _[VectorPromotionConfigStatus](#vectorpromotionconfigstatus)_ |  |  |  |
 
 
-#### VectorPromotionConfigList
+#### Example
 
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: VectorPromotionConfig
+metadata:
+  namespace: kden-p-sample
+  name: sample-promotion-config
+spec:
+  source:
+    kind: VectorTemplate
+    name: sample-vector-template
+  target:
+    kind: Stage
+    name: sample-stage
+    landscape: sample-landscape
+  ttlAfterFinished: 1h
+```
 
-
-VectorPromotionConfigList contains a list of VectorPromotionConfig.
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `VectorPromotionConfigList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[VectorPromotionConfig](#vectorpromotionconfig) array_ |  |  |  |
-
-
-#### VectorPromotionConfigSpec
+### VectorPromotionConfigSpec
 
 
 
@@ -1764,13 +1750,13 @@ _Appears in:_
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
-| `source` _string_ | Source is the OCM component reference to promote from.<br />This usually points to a version alias (e.g. :latest) that resolves to the component version to be promoted.<br />The format is `<registry>//<component-name>:<version>`. |  | MinLength: 1 <br />Pattern: `^[^/].+//.+:.+$` <br /> |
-| `target` _string_ | Target is the OCM component reference to promote to.<br />This usually points to a version alias (e.g. :promoted). The actual version string is taken from the source component version.<br />The format is `<registry>//<component-name>:<version>`. |  | MinLength: 1 <br />Pattern: `^[^/].+//.+:.+$` <br /> |
-| `credentials` _[Credentials](#credentials)_ | Credentials supplies credentials for OCM repository access and vector verification key material. |  | Optional: \{\} <br /> |
-| `verifyVector` _[Verify](#verify)_ | VerifyVector lists candidate signatures evaluated against the<br />source vector before promotion proceeds. Absence disables vector<br />verification. |  | Optional: \{\} <br /> |
+| `source` _[PromotionSourceReference](#promotionsourcereference)_ | Source references the resource to promote from. |  |  |
+| `target` _[PromotionTargetReference](#promotiontargetreference)_ | Target references the Stage to promote to. |  |  |
+| `ttlAfterFinished` _[Duration](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#duration-v1-meta)_ | TTLAfterFinished will be copied onto every VectorPromotion the drift<br />controller creates for this config. See<br />`VectorPromotionSpec.TTLAfterFinished`. |  | Optional: \{\} <br /> |
+| `keepLastPromotions` _integer_ | KeepLastPromotions bounds how many terminal VectorPromotions are<br />retained per config; the oldest beyond the bound are deleted. Retention<br />by count keeps an audit trail even when `ttlAfterFinished` is short.<br />Non-terminal promotions are never deleted and do not count toward the<br />bound. | 10 | Minimum: 0 <br />Optional: \{\} <br /> |
 
 
-#### VectorPromotionConfigStatus
+### VectorPromotionConfigStatus
 
 
 
@@ -1783,31 +1769,13 @@ _Appears in:_
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
+| `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ | Conditions reports on the config itself, e.g. whether its references<br />resolve to existing resources. Promotion results are reported separately<br />in `LastPromotionConditions`. |  |  |
 | `lastPromotionConditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ | LastPromotionConditions contains the result of the most recent VectorPromotion execution |  |  |
 | `lastSuccessfulPromotionConditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ | LastSuccessfulPromotionConditions contains the result of the most recent VectorPromotion execution, that was successful |  |  |
+| `sequence` _integer_ | Sequence is the monotonic counter of promotions created for this config.<br />The config reconciler increments it and stamps the value into each<br />created promotion's `spec.sequence`. |  | Optional: \{\} <br /> |
 
 
-#### VectorPromotionList
-
-
-
-VectorPromotionList contains a list of VectorPromotion.
-
-
-
-
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `VectorPromotionList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[VectorPromotion](#vectorpromotion) array_ |  |  |  |
-
-
-#### VectorPromotionSpec
+### VectorPromotionSpec
 
 
 
@@ -1820,11 +1788,39 @@ _Appears in:_
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
-| `vectorPromotionConfigRef` _string_ | VectorPromotionConfigRef is the name of the VectorPromotionConfig that defines the promotion flow to execute. |  | MinLength: 1 <br /> |
+| `vectorPromotionConfigName` _string_ | VectorPromotionConfigName is the name of the VectorPromotionConfig that defines the promotion flow to execute. |  | MinLength: 1 <br /> |
+| `source` _[PromotionSourceReference](#promotionsourcereference)_ | Source is a snapshot of the config's source reference at creation time,<br />recorded so a promotion is self-describing. |  |  |
+| `target` _[PromotionTargetReference](#promotiontargetreference)_ | Target is a snapshot of the config's target reference at creation time.<br />Execution resolves and writes this target: approving a promotion approves<br />exactly this destination, regardless of later config edits. |  |  |
+| `vector` _string_ | Vector is the concrete OCM component version reference<br />(`<registry>//<component>:<version>`) pinned when the promotion was created. |  | MinLength: 1 <br /> |
+| `requireApproval` _boolean_ | RequireApproval is true when the promotion must be approved before<br />execution; false means the promotion is approved automatically. It is<br />independent of the source kind: the config controller defaults it to<br />true for `Stage` sources, but any combination is valid. | false | Optional: \{\} <br /> |
 | `ttlAfterFinished` _[Duration](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#duration-v1-meta)_ | TTLAfterFinished defines how long the VectorPromotion should be kept after completion.<br />Once the TTL expires after the promotion reaches a terminal state (Completed or Failed),<br />the resource is eligible for automatic deletion. If no TTL is set, no deletion happens. |  | Optional: \{\} <br /> |
+| `sequence` _integer_ | Sequence is a monotonic ordinal assigned by the creator (the config<br />reconciler, from the config's `status.sequence`). It is the sole<br />ordering between promotions of the same config; creation timestamps<br />only have second resolution and are never consulted. |  | Minimum: 0 <br /> |
 
 
-#### VectorPromotionStatus
+### VectorPromotionState
+
+_Underlying type:_ _string_
+
+VectorPromotionState summarizes the promotion lifecycle for display.
+Conditions are the source of truth; the state is derived from them.
+
+
+
+_Appears in:_
+- [VectorPromotionStatus](#vectorpromotionstatus)
+
+| Field | Description |
+| --- | --- |
+| `Waiting` | PromotionStateWaiting means at least one gate is still open: the<br />promotion requires approval and has not been approved yet.<br /> |
+| `Ready` | PromotionStateReady means every gate has passed and the promotion is<br />queued for execution. Promotions that require no approval are Ready<br />from their first reconcile.<br /> |
+| `InProgress` | PromotionStateInProgress means the promotion is executing.<br /> |
+| `Blocked` | PromotionStateBlocked means the promotion is ready but cannot execute<br />because its target does not resolve; see the config's Ready condition.<br /> |
+| `Succeeded` | PromotionStateSucceeded means the promotion completed successfully.<br /> |
+| `Failed` | PromotionStateFailed means the promotion reached a terminal state without success.<br /> |
+| `Superseded` | PromotionStateSuperseded means a newer promotion replaced this one.<br />Superseded promotions are locked: they can never be approved or<br />executed afterwards. The newer promotion is the one to act on.<br /> |
+
+
+### VectorPromotionStatus
 
 
 
@@ -1838,9 +1834,12 @@ _Appears in:_
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  |  |
+| `state` _[VectorPromotionState](#vectorpromotionstate)_ | State summarizes Conditions for display. Conditions are the source of<br />truth; State is recomputed whenever conditions are written. `Superseded`<br />is a locked terminal state: a superseded promotion can never be<br />approved or executed afterwards, only its successor can. |  | Enum: [Waiting Ready InProgress Blocked Succeeded Failed Superseded] <br />Optional: \{\} <br /> |
+| `approval` _[PromotionApproval](#promotionapproval)_ | Approval records the granted approval. A promotion is approved at most<br />once; re-approval attempts are rejected. |  | Optional: \{\} <br /> |
+| `promotedStageRef` _[TypedObjectReference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#typedobjectreference-v1-core)_ | PromotedStageRef records the Stage this promotion actually wrote its<br />vector to, so the promotion is self-describing even after the config<br />changed or was deleted. |  | Optional: \{\} <br /> |
 
 
-#### VectorTemplate
+### VectorTemplate
 
 
 
@@ -1850,7 +1849,6 @@ that represents a vector.
 
 
 _Appears in:_
-- [VectorTemplateList](#vectortemplatelist)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
@@ -1863,27 +1861,49 @@ _Appears in:_
 | `status` _[VectorTemplateStatus](#vectortemplatestatus)_ | status defines the observed state of VectorTemplate |  | Optional: \{\} <br /> |
 
 
-#### VectorTemplateList
+#### Example
+
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: VectorTemplate
+metadata:
+  namespace: dev
+  name: shopping-app-latest
+spec:
+  base:
+    kind: VectorTemplate
+    name: shopping-app-base
+  uploadTarget: https://registry.kdenv.lab/sample-project//konfidence-project/constructed-vector
+  components:
+    - name: https://registry.kdenv.lab/sample-project//konfidence-project/sample-vector/service1
+    - name: https://registry.kdenv.lab/sample-project//konfidence-project/sample-vector/service1
+    - name: https://registry.dwc.com/sample-project//dwc.tools.sap/dwc-project/dev/service2
+    - name: https://registry.example.lab/sample-project//dwc.tools.sap/dwc-project/dev/service3
+  config:
+    - kind: Secret
+      apiVersion: v1
+      name: registry-credentials
+```
+
+### VectorTemplateReference
 
 
 
-VectorTemplateList contains a list of VectorTemplate
+VectorTemplateReference holds a reference to a VectorTemplate in the same namespace,
+used as the base of another VectorTemplate.
 
 
 
-
+_Appears in:_
+- [VectorTemplateSpec](#vectortemplatespec)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `VectorTemplateList` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ListMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#listmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `items` _[VectorTemplate](#vectortemplate) array_ |  |  |  |
+| `kind` _string_ | Kind is the kind of the referenced object. Only VectorTemplate is supported for now. | VectorTemplate | Enum: [VectorTemplate] <br /> |
+| `name` _string_ | Name is the name of the referenced VectorTemplate. Required. |  | MinLength: 1 <br /> |
 
 
-#### VectorTemplateSpec
+### VectorTemplateSpec
 
 
 
@@ -1900,7 +1920,7 @@ _Appears in:_
 | --- | --- | --- | --- |
 | `reconcileInterval` _[Duration](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#duration-v1-meta)_ | ReconcileInterval defines how often the assembly controller should check for drift.<br />If not set, the controller's default reconcile interval will be used. |  | Optional: \{\} <br /> |
 | `uploadTarget` _string_ | UploadTarget defines the target OCM component where the assembled vector will be uploaded. |  |  |
-| `base` _string_ | Base represents an optional base component version to build upon. |  | Optional: \{\} <br />Optional: \{\} <br /> |
+| `base` _[VectorTemplateReference](#vectortemplatereference)_ | Base references another VectorTemplate whose most recently assembled vector<br />(status.latestVector) is used as the base for this vector's assembly. |  | Optional: \{\} <br />Optional: \{\} <br /> |
 | `components` _[Component](#component) array_ | Components lists the components to be included in the vector. |  | MinItems: 1 <br /> |
 | `credentials` _[Credentials](#credentials)_ | Credentials supplies credentials for OCM repositories<br />and signing/verification key material. |  | Optional: \{\} <br /> |
 | `verifyArtifacts` _[Verify](#verify)_ | VerifyArtifacts lists candidate signatures evaluated against every<br />artifact pulled into the assembly. Absence disables artifact<br />verification. |  | Optional: \{\} <br /> |
@@ -1909,7 +1929,7 @@ _Appears in:_
 | `vectorConfig` _[VectorConfig](#vectorconfig)_ |  |  | Optional: \{\} <br /> |
 
 
-#### VectorTemplateStatus
+### VectorTemplateStatus
 
 
 
@@ -1923,9 +1943,10 @@ _Appears in:_
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  |  |
+| `latestVector` _string_ | LatestVector is the concrete OCM component version of the most recently<br />assembled vector, in the form `<repository>//<component>:<version>`. It is<br />empty until the first successful assembly. |  | Optional: \{\} <br /> |
 
 
-#### Verify
+### Verify
 
 
 
@@ -1935,12 +1956,8 @@ descriptor. Absence on a spec disables verification.
 
 
 _Appears in:_
-- [StageConfigurationSpec](#stageconfigurationspec)
-- [VectorPromotionConfigSpec](#vectorpromotionconfigspec)
 - [VectorTemplateSpec](#vectortemplatespec)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
 | `signatures` _[Signature](#signature) array_ |  |  | MinItems: 1 <br /> |
-
-
