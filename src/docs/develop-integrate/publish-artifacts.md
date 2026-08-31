@@ -1,47 +1,59 @@
 ---
-title: Publish Artifacts
-description: Learn how to publish and version your application artifacts using Konfidence and the Open Component Model.
+title: Publish artifacts
+description: Publish an application artifact to an OCI registry so that Konfidence can include it in a vector.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Publish Artifacts
+# Publish artifacts
 
-This guide walks you through publishing a deployable artifact using Konfidence and the Open Component Model (OCM).
-The document shows how to create an OCM component constructor with a Konfidence manifest file, how to validate your artifact configuration and publish your artifact to an OCI registry.
-You can also add a mutable alias for easy version tracking of artifacts.
+<!--
+  Content type (Diátaxis): How-to guide — an application developer publishes
+  a deployable artifact so that Konfidence can include it in a vector.
+-->
+
+This guide explains how to publish a deployable artifact as an Open Component Model (OCM) component version to an OCI registry.
+After you publish it, you can reference the component version or an alias in a `VectorTemplate`.
+
+For background about artifacts, aliases, and vectors, see [Vectors and artifacts](../core-concepts/vectors-and-artifacts.md).
 
 ## Prerequisites
 
-- **kden CLI** - Install the Konfidence CLI tool (see [installation docs](../getting-started/quickstart.md))
-- **OCI registry access** - An OCI-compliant registry (e.g., Docker Hub, Artifactory)
-  - Registry URL and credentials for authentication
-  - Push permissions for your repository path
-- **Deployable content** - Need to be prepared and pushed to your registry:
-  - For Helm: A Helm chart pushed as an OCI artifact
-  - For Kustomize: A Kustomize bundle pushed as an OCI artifact
-- **OCM knowledge** - Basic understanding of OCM component versions (see [OCM documentation](https://ocm.software/docs/getting-started/create-component-versions/))
+- The `kden` CLI is installed.
+- You have the registry URL, configured credentials, and permission to push to the target OCI registry.
+- Your deployable content is already available in an OCI registry. For example:
+  - A Helm chart published as an OCI artifact.
+  - A Kustomize bundle published as an OCI artifact.
+- Your deployable content follows the [Kubernetes Deployer authoring rules](./deployers/kubernetes.md).
 
-## Artifact manifest
+## Create the Konfidence manifest file
 
-An artifact manifest is an [OCM](https://ocm.software/docs/getting-started/create-component-versions/) YAML file that
-describes what your artifact contains and how it is accessed. It follows the standard OCM format and adds Konfidence-specific logic on top of it.
+Create a file named `manifest.json`.
+It tells Konfidence how to deploy the artifact and whether an artifact instance can be reused across deployments.
 
-OCM declares one or more components, each with a `name`, `version`, `provider`, and `resources` values.
-Typically `ociArtifact` references point to container images, Helm charts, or Kustomize bundles, already pushed to an `OCI registry`.
-OCM resolves artifact references through standard OCI registries, which support both HTTP and HTTPS transports.
-The registry URL in `imageReference` automatically determines the transport (e.g. `http://registry:5000` uses HTTP, `registry.example.com` uses HTTPS by default).
+For a Helm chart, add:
 
-Konfidence requires that each deployable resource carries a `cloud.konfidence.artifact.manifest`
-resource of input type `file/v1`, referencing a local manifest file that declares a `type` field (e.g. `cloud.konfidence.flux.kustomize` or `cloud.konfidence.flux.helm`),
-which tells the [Kubernetes Deployer](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) how to handle the resource.
+```json
+{
+  "type": "cloud.konfidence.flux.helm",
+  "allowReuse": true
+}
+```
 
-## Create the OCM Component Constructor
+For a Kustomize bundle, use `cloud.konfidence.flux.kustomize` as the `type` value.
 
-The OCM component constructor is a YAML file that describes your artifact and references the deployable content in your registry:
+Set `allowReuse` based on how the artifact should be deployed:
 
-### Example
+- Set it to `true` when the same artifact instance can be shared across multiple `VectorDeployment` resources.
+- Set it to `false` when each `VectorDeployment` needs its own artifact instance.
+
+Only reuse artifacts that do not depend on vector-specific runtime context.
+For more information, see [A note on artifact reuse](./deployers/kubernetes.md#a-note-on-artifact-reuse).
+
+## Create the OCM component constructor
+
+Create `component-constructor.yaml` in the same directory as `manifest.json`:
 
 ```yaml
 components:
@@ -50,14 +62,14 @@ components:
     provider:
       name: my-org
     resources:
-      - name: my-service-manifest          # Required Konfidence-specific manifest
+      - name: my-service-manifest
         type: cloud.konfidence.artifact.manifest
         version: 1.0.0
         relation: local
         input:
           type: file/v1
-          path: ./manifest.json            # points to a manifest file as shown below in the Helm and Kustomize examples
-      - name: my-service-chart             # Optional standard OCM resource
+          path: ./manifest.json
+      - name: my-service-chart
         type: helmChart
         version: 1.0.0
         relation: external
@@ -66,172 +78,78 @@ components:
           imageReference: registry.example.com/my-org/my-service:1.0.0
 ```
 
-Field definitions:
-- name/version - Uniquely identifies the artifact
-- First resource (`cloud.konfidence.artifact.manifest`) - Required by Konfidence to define how the artifact is deployed
-- Second resource (`helmChart` or `kustomize`) - The actual deployable content from your registry
-- `input.path `- Connects to the manifest file created in Step 2
+The component constructor contains two resources:
 
-Resources other than the manifest resource (e.g. `helmChart` or `kustomize`) referencing OCI artifacts must comply to the following criteria:
-- Access type must be `ociArtifact`
-- Image reference must be a fully qualified OCI image path (e.g. `registry.example.com/my-org/my-service:1.0.0`)
+- `my-service-manifest` connects the component to `manifest.json` through `input.path`. Each component must contain exactly one resource of type `cloud.konfidence.artifact.manifest`.
+- `my-service-chart` references the deployable content that already exists in the OCI registry. Its access type must be `ociArtifact`, and `imageReference` must contain the full OCI path.
 
-## Create the Konfidence Manifest File
+## Validate the artifact files
 
-A JSON file that tells Konfidence how to deploy this artifact and whether it can be reused across multiple deployments.
-Create a file named `manifest.json` in the same directory as your component constructor:
-
-### Example (Helm)
-
-```json
-{
-"type": "cloud.konfidence.flux.helm",
-"allowReuse": true
-}
-```
-
-The `allowReuse` field indicates whether the artifact instance can be shared across multiple `VectorDeployments`.
-When the value is set to `true`, Konfidence may deploy a single artifact instance to serve multiple vectors.
-Otherwise, each `VectorDeployment` gets its own isolated artifact instance. Note that reuse requires the artifact to be independent of vector-specific runtime context.
-
-For Kustomize deployments, use `type: cloud.konfidence.flux.kustomize` instead.
-
-## Validate Your Configuration
-
-Before publishing, validate that your component constructor conforms to OCM and Konfidence requirements:
+Validate the component constructor before you publish it:
 
 ```bash
-  kden artifact validate --files ./component-constructor.yaml
+kden artifact validate --files ./component-constructor.yaml
 ```
 
-This CLI command which enforces OCM schema validity first, and then Konfidence-specific constraints on manifest resources before push is attempted on a comma-separated list of artifact path files.
+The command checks the OCM schema and the Konfidence-specific artifact requirements.
+If validation succeeds, the command completes without output.
+Fix any reported errors before you continue.
 
-Expected output on success:
-- Exit code: 0
-- Console output: No output printed (silent - validation passed)
-- Command completes without errors
+## Publish the artifact
 
-## Publish Your Artifact
-
-Publishing uploads your component descriptor to the OCI registry where it can be used in vectors:
+Publish the component version to the OCI registry:
 
 ```bash
-  kden artifact push --file ./component-constructor.yaml  --registry registry.example.com
+kden artifact push \
+  --file ./component-constructor.yaml \
+  --registry registry.example.com
 ```
 
-This CLI command  validates the manifest, resolves all ociArtifact resource references, computes their digests, and writes the OCM component descriptor to the registry.
-A `component` is a versioned software unit (e.g. `github.com/my-org/my-service:1.2.3`). An artifact is an OCM component version which is stored in an OCI registry with OCM metadata.
-Components use `Semantic versioning` (semver) which is a versioning scheme: MAJOR.MINOR.PATCH (e.g. 1.2.3).
+The command validates the files, resolves the referenced OCI resources, calculates their digests, and writes the OCM component descriptor to the registry.
+If the command completes without an error, the component version is available as:
 
-Expected output on success:
-- Exit code: 0
-- Component available at registry path: `registry.example.com//github.com/my-org/my-service:1.0.0`
-- Can be immediately used in `VectorTemplate`
+```text
+registry.example.com//github.com/my-org/my-service:1.0.0
+```
 
-## Sign Your Artifact (Optional)
+You can use this component version in a `VectorTemplate`.
 
-Cryptographically signing your artifact verifies that it hasn't been tampered with. This step is optional but recommended for production scenarios:
+## Optional: Sign the artifact
+
+Signing is optional and recommended for production environments.
+Sign the component version before you create an alias:
 
 ```bash
-kden artifact sign  registry.example.com//github.com/my-org/my-service:1.0.0  --signer-spec ./signer-spec.yaml  --signature-name default
+kden artifact sign \
+  registry.example.com//github.com/my-org/my-service:1.0.0 \
+  --signer-spec ./signer-spec.yaml \
+  --signature-name default
 ```
 
-This CLI command  creates an OCM signature that binds the component descriptor to a signing key, enabling verification of artifact's authenticity and integrity.
+The command prints the signature as JSON and stores it with the component descriptor in the registry.
+For signer configuration and verification steps, see [Configure signing and verification](./configure-signing-and-verification.md).
 
-The command requires:
-- A component reference (e.g. registry.example.com//github.com/my-org/my-service:1.2.3)
-- A signer specification file (YAML with signing algorithm and encoding policy, default: RSA-PSS)
-- A signature name (e.g. default) - multiple signatures can coexist on one component
+## Optional: Create an alias
 
-The signature is stored in the OCM registry alongside the component descriptor. 
-It is available for verification against a trusted public key. Signing is optional but recommended.
-
-Expected output on success:
-- Exit code: 0
-- Signature printed to console in JSON format
-- Signature persisted in registry
-- Component has signature metadata
-
-## Alias Your Artifact (Optional)
-
-Aliases let your vectors reference a mutable tag instead of a specific version:
+Create an alias when you want a `VectorTemplate` to track a moving artifact version, such as the latest build from the main branch:
 
 ```bash
-kden artifact alias  registry.example.com//github.com/my-org/my-service:1.0.0  main
+kden artifact alias \
+  registry.example.com//github.com/my-org/my-service:1.0.0 \
+  main
 ```
 
-This CLI command is used to create or update a mutable tag (e.g. `main`, `latest`, `edge`).
-`VectorTemplate` allows your vector to reference the alias and automatically pick up the latest build from that branch without requiring a manual template change.
-Alias a mutable tag to the signed version. Aliases must be non-semver strings.
+If the command completes without an error, it has created or updated the `main` alias.
+The alias must not use semantic version format.
+You can then use this reference in a `VectorTemplate`:
 
-Expected output on success:
-- Exit code: 0
-- Alias `main` created in registry
-- `registry.example.com//github.com/my-org/my-service:main` now resolves to `1.0.0`
-- Can be used immediately in `VectorTemplate`
+```text
+registry.example.com//github.com/my-org/my-service:main
+```
 
-For a detailed explanation on signing and aliasing, reference the [signing and verification doc](./configure-signing-and-verification.md)
+## Next steps
 
-## Deployer-specific authoring rules
-
-The [Deployer](../reference/glossary.md#deployer) consuming your artifact
-imposes conventions on how it must be packaged. See:
-
-- [Kubernetes Deployer](./deployers/kubernetes.md) - supported manifest types
-  (`cloud.konfidence.flux.kustomize`, `cloud.konfidence.flux.helm`), OCM
-  content requirements, and templating rules for kustomize bundles and Helm
-  charts.
-
-## OCM Schema Constraints
-
-1. Exactly one `cloud.konfidence.artifact.manifest` resource per component:
-  - Enforced by JSON schema: `minContains: 1` and `maxContains: 1`
-  - This means you MUST have one and only one manifest resource
-  - Validation fails if you have zero or more than one manifest resource
-
-2. Input type: `file/v1` or `File/v1`:
-  - Enum constraint in schema: only these two values allowed
-  - Other input types like `ociArtifact` are NOT valid for manifest resources
-
-3. Input path: Must point to a valid manifest file on disk:
-  - Path is relative to `component-constructor.yaml` location
-  - File must contain valid JSON with `type` field
-  - Valid JSON paths: `./manifest.json`, `./config/manifest.json`
-
-See the [Konfidence artifact schema definition](https://github.com/konfidence-project/konfidence/blob/main/internal/kden/validation/resources/konfidence-artifact-schema.json)
-and [schema implementation](https://github.com/konfidence-project/konfidence/blob/main/internal/kden/validation/schema/definition.go) for complete details.
-
-
-### Deployment Handler Types
-
-The manifest file's `type` field specifies how Konfidence deploys the artifact:
-
-- `cloud.konfidence.flux.helm` - Deploy using Helm charts
-- `cloud.konfidence.flux.kustomize` - Deploy using Kustomize bundles
-
-### Other Resources in the Component
-
-Resources other than the manifest resource (e.g., `helmChart` or `kustomize`) reference OCI artifacts:
-
-- **Access type:** Must be `ociArtifact`
-- **Image reference:** Fully qualified OCI image path
-  - Example: `registry.example.com/my-org/my-service:1.0.0`
-  - Must already exist in the registry before publishing
-- **API Version:**
-  - Current supported version: `konfidence.cloud/v1alpha1`
-  - All examples in this guide use this version
-
-## Terminology
-
-In order to understand how the publishing of artifacts works, you must be familiar with some of the Konfidence terminology:
-- `Vector immutability` in [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md) - vectors are complete,
-immutable snapshots. Once a vector is created with a specific set of artifacts, it never changes - new changes create new vectors instead
-- `Artifact deployment reuse` in [Kubernetes Deployer](./deployers/kubernetes.md) - The same artifact can be deployed across multiple `VectorDeployments`
-or have an isolated instance (depending on the value of `allowReuse` field). Each instance uses `nameSuffix` (Kustomize) or `releaseName` (Helm) to uniquely scope each instance.
-- Additional Konfidence terminology in [Glossary](../reference/glossary.md) - for stages, environments, and landscapes
-  
-## Next Steps
-
-- For details on signing and verification, see [Configure signing and verification](./configure-signing-and-verification.md)
-- To understand deployer-specific conventions, see [Kubernetes Deployer](./deployers/kubernetes.md)
-- For more information on Konfidence concepts, see the [Glossary](../reference/glossary.md)
+- [Build vectors](./observe-improve/build-vectors.md) from your published artifacts.
+- Read [Vectors and artifacts](../core-concepts/vectors-and-artifacts.md) to understand how component versions and aliases become part of a vector.
+- Check the [Kubernetes Deployer authoring rules](./deployers/kubernetes.md) for Helm and Kustomize packaging requirements.
+- [Configure signing and verification](./configure-signing-and-verification.md) if your environment requires signed artifacts.
