@@ -15,26 +15,24 @@ Before you copy a template, identify the primary audience, describe what they ne
 
 Choose the person who must use the documentation successfully. This might not be the person who developed the feature.
 
-| User cluster | Typical goals |
+| Audience | Description |
 | --- | --- |
-| **Application Development** | Develop, test, and integrate applications with fast feedback and minimal infrastructure overhead. |
-| **Product and Program Management** | Plan releases, track feature and quality status, and make release or demo decisions. |
-| **DevOps** | Install and operate Konfidence, manage landscapes and access, and troubleshoot operational problems. |
-| **Open Source and Extension Development** | Contribute to Konfidence, build extensions, and adapt Konfidence to additional technical workflows. |
+| **Application Developer** | Builds applications on top of Konfidence and interacts with its public interfaces without managing the underlying Konfidence infrastructure. |
+| **Product Manager** | Plans releases, tracks feature and quality status, and makes release or demonstration decisions. |
+| **Administrator or Operator** | Installs and operates Konfidence, manages landscapes and access, and investigates operational problems. |
+| **Contributor or Extension Developer** | Contributes to Konfidence, develops extensions, or adapts Konfidence to additional technical workflows. |
 
 If a page seems to address multiple audiences, choose the audience with the primary user job. Include another perspective only when it supports the same job. Otherwise, create separate pages and connect them with descriptive links.
 
 The audience does not determine where a page appears in the navigation. If no existing section supports the user job, discuss the placement with a maintainer before writing a new page.
 
-### 2. Describe the user job
+### 2. Clarify the reader's goal
 
-Complete this sentence before you start writing:
+Before you start writing, ask yourself:
 
-> For [primary audience] who wants to [user job], this page helps them [expected outcome].
+> Who am I writing for, what do they want to achieve, and what should they be able to do or understand after reading this page?
 
-Use one specific job and an outcome the reader can recognize. For example:
-
-> For an application developer who wants to publish a build result, this page helps them make the artifact available for use in a Konfidence vector.
+Use your answer as a planning aid. It helps you choose a content type, decide which information belongs on the page, and check whether the page gives the reader a clear outcome. You do not need to add the question or your answer to the document.
 
 ### 3. Choose the content type
 
@@ -69,13 +67,6 @@ outline: deep
 editLink: true
 lastUpdated: true
 ---
-
-<!--
-Primary audience: [User cluster]
-User job: For [audience] who wants to [job], this page helps them [outcome].
-Expected outcome: [Observable result]
-Content type: How-to
--->
 
 # [Action-focused title]
 
@@ -145,13 +136,6 @@ outline: deep
 editLink: true
 lastUpdated: true
 ---
-
-<!--
-Primary audience: [User cluster]
-User job: For [audience] who wants to learn [skill], this tutorial helps them build [result].
-Learning outcome: [Knowledge or skill the completed experience develops]
-Content type: Tutorial
--->
 
 # [Title that describes what the reader builds]
 
@@ -242,13 +226,6 @@ outline: deep
 editLink: true
 lastUpdated: true
 ---
-
-<!--
-Primary audience: [User cluster]
-User job: For [audience] who wants to understand [question], this page explains [expected understanding].
-Reader question: [How or why does this work?]
-Content type: Concept (Diátaxis: Explanation)
--->
 
 # [Concept name]
 

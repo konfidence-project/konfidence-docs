@@ -57,18 +57,6 @@ For substantial new content or a new documentation area, [open an issue](https:/
 
 Do not edit `src/docs/reference/crd.md` directly. The file is generated from the Konfidence source repository. Update the upstream API or CRD descriptions so the automated synchronization can publish the correction.
 
-### Responsibilities
-
-Documentation quality is a shared responsibility.
-
-| Role | Responsibility |
-| --- | --- |
-| Contributor or feature owner | Defines the user-visible behavior, verifies technical accuracy, and tests examples and expected results. |
-| Maintainer | Confirms that the contribution fits the project, checks technical scope, and approves the change. |
-| Technical writer or documentation reviewer | Reviews the primary audience, user journey, content type, structure, clarity, terminology, and style. |
-
-External contributors do not need access to internal planning processes or a specific technical writer. Use a public issue or pull request to ask for guidance.
-
 ### Before opening a documentation pull request
 
 Confirm that:
