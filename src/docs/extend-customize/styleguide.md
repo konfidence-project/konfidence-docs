@@ -9,6 +9,8 @@ Use this style guide after you have identified the primary audience, user job, a
 
 The rules on this page help you write Konfidence documentation that is clear, consistent, accessible, and easy to use. Keep each page focused on one primary user job.
 
+Use this page as a reference while writing and reviewing documentation. You do not need to read it from beginning to end. Start with the appropriate template and consult the relevant sections when needed.
+
 ## Spelling and grammar
 
 - Use US English spelling and vocabulary.
