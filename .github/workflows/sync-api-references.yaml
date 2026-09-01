@@ -43,7 +43,7 @@ jobs:
           sparse-checkout: |
             api/docs/crd.md
             api/docs/cli.md
-            api/docs/api.md
+            api/docs/api.json
           sparse-checkout-cone-mode: false
           fetch-depth: 1
           persist-credentials: false
@@ -55,7 +55,7 @@ jobs:
           mkdir -p src/docs/reference
           cp .upstream/api/docs/crd.md src/docs/reference/crd.md
           cp .upstream/api/docs/cli.md src/docs/reference/cli.md
-          cp .upstream/api/docs/api.md src/docs/reference/api.md
+          cp .upstream/api/docs/api.json src/docs/reference/api.json
           rm -rf .upstream
           echo "short_sha=${COMMIT::7}" >> "$GITHUB_OUTPUT"
         env:

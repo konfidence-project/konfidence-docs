@@ -19,7 +19,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^26.3.0",
-    "vitepress": "2.0.0-alpha.19"
+    "vitepress": "2.0.0-alpha.19",
+    "vitepress-openapi": "^0.2.4"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0"
