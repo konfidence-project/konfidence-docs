@@ -234,6 +234,7 @@ export default defineConfig({
             { text: "Glossary", link: "/docs/reference/glossary" },
             { text: "CRDs", link: "/docs/reference/crd" },
             { text: "CLI", link: "/docs/reference/cli" },
+            { text: "API", link: "/docs/reference/api" },
           ],
         },
       ],
