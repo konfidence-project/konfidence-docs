@@ -44,7 +44,6 @@ export default defineConfig({
     "docs/develop-integrate/run-migrations.md",
     "docs/extend-customize/create-deployer.md",
     "docs/reference/deployer-specification.md",
-    "docs/reference/cli.md",
     "docs/reference/releases.md",
   ],
   themeConfig: {
