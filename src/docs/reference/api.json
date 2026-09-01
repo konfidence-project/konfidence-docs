@@ -451,7 +451,7 @@
   "info": {
     "description": "HTTP gateway between CLI/UI clients and the Konfidence CRDs.\n",
     "title": "Konfidence API",
-    "version": "v1"
+    "version": "1"
   },
   "openapi": "3.0.3",
   "paths": {
