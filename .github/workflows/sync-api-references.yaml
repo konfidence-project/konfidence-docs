@@ -43,6 +43,7 @@ jobs:
           sparse-checkout: |
             api/docs/crd.md
             api/docs/cli.md
+            api/openapi.yaml
           sparse-checkout-cone-mode: false
           fetch-depth: 1
           persist-credentials: false
@@ -54,6 +55,10 @@ jobs:
           mkdir -p src/docs/reference
           cp .upstream/api/docs/crd.md src/docs/reference/crd.md
           cp .upstream/api/docs/cli.md src/docs/reference/cli.md
+          yq -o=json -I=2 '
+            .servers = [{"url": "https://your-konfidence-api/api", "description": "Replace with your Konfidence API base URL"}]
+            | sort_keys(..)
+          ' .upstream/api/openapi.yaml > src/docs/reference/api.json
           rm -rf .upstream
           echo "short_sha=${COMMIT::7}" >> "$GITHUB_OUTPUT"
         env:

@@ -35,3 +35,6 @@ __all-authors.txt
 __authors.txt
 __co-authors.txt
 __message.txt
+
+# Local tooling
+.serena/

@@ -1,0 +1,29 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Konfidence API",
+    "version": "1",
+    "description": "Placeholder — replaced by the sync-api-references workflow, which bundles the live spec from konfidence. If you see this text on the rendered page, the sync has not run yet."
+  },
+  "servers": [
+    {
+      "url": "https://your-konfidence-api/api",
+      "description": "Replace with your Konfidence API base URL"
+    }
+  ],
+  "paths": {
+    "/pending-sync": {
+      "get": {
+        "operationId": "pendingSync",
+        "summary": "Awaiting first sync",
+        "description": "This placeholder operation is overwritten by the sync-api-references workflow with the real Konfidence API spec.",
+        "tags": ["placeholder"],
+        "responses": {
+          "200": {
+            "description": "Placeholder response."
+          }
+        }
+      }
+    }
+  }
+}
