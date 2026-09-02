@@ -15,10 +15,6 @@ export default {
     app.component('DocsCards', DocsCards)
     app.component('DrawioDiagram', DrawioDiagram)
     app.component('FeatureOverview', FeatureOverview)
-    // Live OpenAPI reference. The API is OIDC-cookie-gated and CORS-blocked
-    // from the docs origin, so an in-page request sender can never work here —
-    // hide the playground/try-it slots and keep schemas, responses, and static
-    // code samples. Base URL comes from the spec's placeholder servers block.
     useOpenapi({
       spec,
       config: {
