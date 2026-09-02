@@ -43,7 +43,7 @@ jobs:
           sparse-checkout: |
             api/docs/crd.md
             api/docs/cli.md
-            api/docs/api.json
+            api/openapi.yaml
           sparse-checkout-cone-mode: false
           fetch-depth: 1
           persist-credentials: false
@@ -55,8 +55,17 @@ jobs:
           mkdir -p src/docs/reference
           cp .upstream/api/docs/crd.md src/docs/reference/crd.md
           cp .upstream/api/docs/cli.md src/docs/reference/cli.md
-          cp .upstream/api/docs/api.json src/docs/reference/api.json
-          rm -rf .upstream
+          # The REST reference is rendered live from the spec. Bundle the
+          # upstream OpenAPI source to JSON and swap its relative "/api" server
+          # for an obvious-but-valid placeholder, so the reference's code
+          # samples read https://your-konfidence-api/... instead of resolving
+          # to http://localhost. The source spec is the codegen input and is
+          # left untouched upstream; this transform lives only in the docs sync.
+          npx --yes @redocly/cli@2 bundle .upstream/api/openapi.yaml -o /tmp/api.json
+          jq --sort-keys \
+            '.servers = [{"url": "https://your-konfidence-api/api", "description": "Replace with your Konfidence API base URL"}]' \
+            /tmp/api.json > src/docs/reference/api.json
+          rm -rf .upstream /tmp/api.json
           echo "short_sha=${COMMIT::7}" >> "$GITHUB_OUTPUT"
         env:
           COMMIT: ${{ steps.upstream.outputs.commit }}
