@@ -55,14 +55,6 @@ jobs:
           mkdir -p src/docs/reference
           cp .upstream/api/docs/crd.md src/docs/reference/crd.md
           cp .upstream/api/docs/cli.md src/docs/reference/cli.md
-          # The REST reference is rendered live from the spec. Convert the
-          # upstream OpenAPI source to JSON and swap its relative "/api" server
-          # for an obvious-but-valid placeholder, so the reference's code
-          # samples read https://your-konfidence-api/... instead of resolving
-          # to http://localhost. The source spec is the codegen input and is
-          # left untouched upstream; this transform lives only in the docs sync.
-          # sort_keys keeps the output deterministic so unchanged specs don't
-          # produce a spurious sync diff.
           yq -o=json -I=2 '
             .servers = [{"url": "https://your-konfidence-api/api", "description": "Replace with your Konfidence API base URL"}]
             | sort_keys(..)
