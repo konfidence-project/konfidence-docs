@@ -1,29 +1,1264 @@
 {
-  "openapi": "3.0.3",
-  "info": {
-    "title": "Konfidence API",
-    "version": "1",
-    "description": "Placeholder — replaced by the sync-api-references workflow, which bundles the live spec from konfidence. If you see this text on the rendered page, the sync has not run yet."
-  },
-  "servers": [
-    {
-      "url": "https://your-konfidence-api/api",
-      "description": "Replace with your Konfidence API base URL"
-    }
-  ],
-  "paths": {
-    "/pending-sync": {
-      "get": {
-        "operationId": "pendingSync",
-        "summary": "Awaiting first sync",
-        "description": "This placeholder operation is overwritten by the sync-api-references workflow with the real Konfidence API spec.",
-        "tags": ["placeholder"],
-        "responses": {
-          "200": {
-            "description": "Placeholder response."
-          }
+  "components": {
+    "parameters": {
+      "LandscapePathId": {
+        "description": "Landscape Id",
+        "in": "path",
+        "name": "landscapeId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "LandscapeQueryId": {
+        "description": "Filter by landscapeId",
+        "in": "query",
+        "name": "landscapeId",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ProjectPathId": {
+        "description": "Project Id",
+        "in": "path",
+        "name": "projectId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "VectorDeploymentQueryId": {
+        "description": "Filter by vectorDeploymentId",
+        "in": "query",
+        "name": "vectorDeploymentId",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "VectorPromotionConfigPathId": {
+        "description": "VectorPromotionConfig Id",
+        "in": "path",
+        "name": "vectorPromotionConfigId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "VectorPromotionPathId": {
+        "description": "VectorPromotion Id",
+        "in": "path",
+        "name": "vectorPromotionId",
+        "required": true,
+        "schema": {
+          "type": "string"
         }
       }
+    },
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Invalid request parameters."
+      },
+      "Conflict": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "The request conflicts with the current state of the resource."
+      },
+      "Forbidden": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Access not allowed."
+      },
+      "InternalError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "An unexpected server error occurred."
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "The requested resource was not found."
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Authentication required or session expired."
+      }
+    },
+    "schemas": {
+      "ArtifactDeployment": {
+        "properties": {
+          "artifact": {
+            "$ref": "#/components/schemas/ArtifactReference"
+          },
+          "id": {
+            "$ref": "#/components/schemas/ArtifactDeploymentId"
+          },
+          "landscapeId": {
+            "$ref": "#/components/schemas/LandscapeId"
+          },
+          "stageIds": {
+            "items": {
+              "$ref": "#/components/schemas/StageId"
+            },
+            "minLength": 1,
+            "type": "array"
+          },
+          "status": {
+            "description": "The artifactDeployment status",
+            "enum": [
+              "ArtifactFetched",
+              "ArtifactDeployed"
+            ],
+            "type": "string"
+          },
+          "vectorDeploymentIds": {
+            "items": {
+              "$ref": "#/components/schemas/VectorDeploymentId"
+            },
+            "minLength": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "landscapeId",
+          "vectorDeploymentIds",
+          "stageIds",
+          "artifact",
+          "status"
+        ],
+        "type": "object"
+      },
+      "ArtifactDeploymentId": {
+        "description": "The artifactDeployment id",
+        "type": "string"
+      },
+      "ArtifactDeploymentList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ArtifactDeployment"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "ArtifactReference": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ComponentReference"
+          }
+        ]
+      },
+      "ComponentReference": {
+        "properties": {
+          "componentName": {
+            "type": "string"
+          },
+          "componentVersion": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "repository",
+          "componentName",
+          "componentVersion"
+        ],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "Identity": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "familyName": {
+            "type": "string"
+          },
+          "givenName": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "projectRoles": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "name",
+          "givenName",
+          "familyName",
+          "email",
+          "projectRoles"
+        ],
+        "type": "object"
+      },
+      "Landscape": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/LandscapeId"
+          },
+          "name": {
+            "description": "The name of the landscape",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object"
+      },
+      "LandscapeId": {
+        "description": "The landscape id",
+        "type": "string"
+      },
+      "LandscapeList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Landscape"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "Project": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "name": {
+            "description": "The name of the project",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object"
+      },
+      "ProjectId": {
+        "description": "The project id",
+        "type": "string"
+      },
+      "ProjectList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Project"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "PromotionApproval": {
+        "properties": {
+          "approvedAt": {
+            "description": "Time the approval was granted",
+            "format": "date-time",
+            "type": "string"
+          },
+          "approvedBy": {
+            "description": "Identity that granted the approval",
+            "type": "string"
+          }
+        },
+        "required": [
+          "approvedBy",
+          "approvedAt"
+        ],
+        "type": "object"
+      },
+      "PromotionSourceReference": {
+        "properties": {
+          "kind": {
+            "description": "Promotion source kind",
+            "enum": [
+              "Stage",
+              "VectorTemplate"
+            ],
+            "type": "string"
+          },
+          "landscape": {
+            "description": "Promotion source landscape",
+            "type": "string"
+          },
+          "name": {
+            "description": "Promotion source name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "name"
+        ],
+        "type": "object"
+      },
+      "PromotionTargetReference": {
+        "properties": {
+          "kind": {
+            "description": "Promotion target kind",
+            "enum": [
+              "Stage"
+            ],
+            "type": "string"
+          },
+          "landscape": {
+            "description": "Promotion target landscape",
+            "type": "string"
+          },
+          "name": {
+            "description": "Promotion target name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "name",
+          "landscape"
+        ],
+        "type": "object"
+      },
+      "Stage": {
+        "properties": {
+          "activeStageVersion": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StageVersion"
+              }
+            ],
+            "description": "The currently active StageVersion. Absent while nothing has been activated."
+          },
+          "id": {
+            "$ref": "#/components/schemas/StageId"
+          },
+          "landscapeId": {
+            "$ref": "#/components/schemas/LandscapeId"
+          },
+          "name": {
+            "description": "The stage name",
+            "type": "string"
+          },
+          "targetStageVersion": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StageVersion"
+              }
+            ],
+            "description": "The StageVersion the stage's current spec is converging to. Absent while it has not been created yet."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "landscapeId"
+        ],
+        "type": "object"
+      },
+      "StageId": {
+        "description": "The stage id",
+        "type": "string"
+      },
+      "StageList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Stage"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "StageVersion": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/StageVersionId"
+          },
+          "stageGeneration": {
+            "description": "Generation of the parent stage",
+            "type": "integer"
+          },
+          "status": {
+            "description": "Derived rollout state of the stageVersion. PendingDeployment: created, vector deployment not yet started. DeployingVector: vector deployment in progress. MigratingVector: migration tasks running. ActivatingVector: activation tasks running (transient). Ready: fully rolled out. Failed: reserved for failure detection; not emitted yet.\n",
+            "enum": [
+              "PendingDeployment",
+              "DeployingVector",
+              "MigratingVector",
+              "ActivatingVector",
+              "Ready",
+              "Failed"
+            ],
+            "type": "string"
+          },
+          "vector": {
+            "description": "StageVersion vector",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "vector",
+          "stageGeneration",
+          "status"
+        ],
+        "type": "object"
+      },
+      "StageVersionId": {
+        "description": "The stageVersion id",
+        "type": "string"
+      },
+      "VectorDeployment": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/VectorDeploymentId"
+          },
+          "landscapeId": {
+            "$ref": "#/components/schemas/LandscapeId"
+          },
+          "stageId": {
+            "$ref": "#/components/schemas/StageId"
+          },
+          "status": {
+            "description": "The vectorDeployment status",
+            "enum": [
+              "VectorDownloaded",
+              "ArtifactDeploymentCreated"
+            ],
+            "type": "string"
+          },
+          "vector": {
+            "$ref": "#/components/schemas/VectorReference"
+          }
+        },
+        "required": [
+          "id",
+          "landscapeId",
+          "stageId",
+          "vector",
+          "status"
+        ],
+        "type": "object"
+      },
+      "VectorDeploymentId": {
+        "description": "The vectorDeployment id",
+        "type": "string"
+      },
+      "VectorDeploymentList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/VectorDeployment"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "VectorPromotion": {
+        "properties": {
+          "approval": {
+            "$ref": "#/components/schemas/PromotionApproval"
+          },
+          "id": {
+            "$ref": "#/components/schemas/VectorPromotionId"
+          },
+          "requireApproval": {
+            "type": "boolean"
+          },
+          "sequence": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source": {
+            "$ref": "#/components/schemas/PromotionSourceReference"
+          },
+          "status": {
+            "enum": [
+              "Waiting",
+              "Ready",
+              "InProgress",
+              "Blocked",
+              "Succeeded",
+              "Failed",
+              "Superseded"
+            ],
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/PromotionTargetReference"
+          },
+          "ttlAfterFinished": {
+            "type": "string"
+          },
+          "vector": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "target",
+          "vector"
+        ],
+        "type": "object"
+      },
+      "VectorPromotionConfig": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/VectorPromotionConfigId"
+          },
+          "keepLastPromotions": {
+            "type": "integer"
+          },
+          "promotions": {
+            "items": {
+              "$ref": "#/components/schemas/VectorPromotion"
+            },
+            "type": "array"
+          },
+          "source": {
+            "$ref": "#/components/schemas/PromotionSourceReference"
+          },
+          "target": {
+            "$ref": "#/components/schemas/PromotionTargetReference"
+          },
+          "ttlAfterFinished": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "target",
+          "promotions"
+        ],
+        "type": "object"
+      },
+      "VectorPromotionConfigId": {
+        "description": "The vectorPromotionConfig id",
+        "type": "string"
+      },
+      "VectorPromotionConfigList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/VectorPromotionConfig"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "VectorPromotionId": {
+        "description": "The vectorPromotion id",
+        "type": "string"
+      },
+      "VectorReference": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ComponentReference"
+          }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "sessionCookie": {
+        "in": "cookie",
+        "name": "kden-session",
+        "type": "apiKey"
+      }
     }
-  }
+  },
+  "info": {
+    "description": "HTTP gateway between CLI/UI clients and the Konfidence CRDs.\n",
+    "title": "Konfidence API",
+    "version": "1"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/auth/callback": {
+      "get": {
+        "description": "Receives the authorization code from the IDP after successful login. Exchanges the code for tokens and establishes a session cookie.\n",
+        "operationId": "authCallbackV1",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "code",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "error",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "error_description",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to the application after successful authentication.",
+            "headers": {
+              "Location": {
+                "description": "Redirect url",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Set-Cookie": {
+                "description": "Contains the session ID.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "security": [],
+        "summary": "OIDC callback",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/exchange": {
+      "post": {
+        "description": "Validates code and verifier and returns session if valid.",
+        "operationId": "postExchangeCodeV1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "verifier": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "code",
+                  "verifier"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Session established.",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Contains the session id.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "security": [],
+        "summary": "Send temp exchange code and PKCE verifier to get session",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/identity": {
+      "get": {
+        "description": "Returns identity claims for the authenticated session.",
+        "operationId": "getIdentityV1",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get the current user identity",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/login": {
+      "get": {
+        "description": "Redirects the browser to the IDP authorization endpoint, beginning the PKCE auth flow. On successful authentication the IDP redirects back to /api/v1/auth/callback.\n",
+        "operationId": "loginV1",
+        "parameters": [
+          {
+            "description": "Fully qualified URL to redirect to after login. The URL must be present in the API server allowlist.",
+            "in": "query",
+            "name": "return_url",
+            "required": true,
+            "schema": {
+              "format": "uri",
+              "type": "string"
+            }
+          },
+          {
+            "description": "PKCE S256 challenge used for CLI login.",
+            "in": "query",
+            "name": "code_challenge",
+            "required": false,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 43,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to IDP authorization endpoint.",
+            "headers": {
+              "Location": {
+                "description": "Redirect url",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "security": [],
+        "summary": "Initiate OIDC login",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/logout": {
+      "post": {
+        "description": "Clears the session cookie. Requires an active session.",
+        "operationId": "logoutV1",
+        "responses": {
+          "200": {
+            "description": "Session terminated successfully.",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Removes the session cookie.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "summary": "Terminate the current session",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/projects": {
+      "get": {
+        "description": "Returns all Project resources visible to the authenticated user.",
+        "operationId": "listProjectsV1",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "List all projects",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/artifactDeployments": {
+      "get": {
+        "description": "Returns all artifactDeployments resources for a project. Can be filtered by landscape or vectorDeployment.",
+        "operationId": "listArtifactDeploymentsV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/LandscapeQueryId"
+          },
+          {
+            "$ref": "#/components/parameters/VectorDeploymentQueryId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactDeploymentList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "List all artifactDeployments for a project.",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/landscapes": {
+      "get": {
+        "description": "Returns all landscape resources for a project.",
+        "operationId": "listLandscapesV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LandscapeList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "List all landscapes for a specific project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/stages": {
+      "get": {
+        "description": "Returns all stage resources for a project. Can be filtered by landscape: a landscapeId that does not name a landscape of the project is reported as 404, while a landscape that exists but holds no stages returns an empty list.\n",
+        "operationId": "listStagesV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/LandscapeQueryId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StageList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "List all stages for a project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectorDeployments": {
+      "get": {
+        "description": "Returns all vectorDeployments resources for a project. Can be filtered by landscape.",
+        "operationId": "listVectorDeploymentsV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/LandscapeQueryId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorDeploymentList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "List all vectorDeployments for a project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectorPromotionConfigs": {
+      "get": {
+        "description": "Returns all vectorPromotionConfigs resources for a project.",
+        "operationId": "listVectorPromotionConfigsV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorPromotionConfigList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "List all vectorPromotionConfigs for a project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectorPromotionConfigs/{vectorPromotionConfigId}": {
+      "get": {
+        "description": "Returns a vectorPromotionConfig resource for a project.",
+        "operationId": "getVectorPromotionConfigV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/VectorPromotionConfigPathId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorPromotionConfig"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get a single vectorPromotionConfig for a project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}": {
+      "get": {
+        "description": "Returns a single vectorPromotion resource for a project.",
+        "operationId": "getVectorPromotionV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/VectorPromotionPathId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorPromotion"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get a single vectorPromotion for a project.",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/approve": {
+      "post": {
+        "description": "Grants approval for a vectorPromotion that has an approval gate. Approving an already-approved promotion is idempotent and returns 204. Returns 409 when the promotion is superseded, finished, or requires no approval.\n",
+        "operationId": "approveVectorPromotionV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/VectorPromotionPathId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "VectorPromotion successfully approved."
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Approves the given vectorPromotion for the specified project",
+        "tags": [
+          "projects"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "sessionCookie": []
+    }
+  ],
+  "servers": [
+    {
+      "description": "Replace with your Konfidence API base URL",
+      "url": "https://your-konfidence-api/api"
+    }
+  ]
 }
