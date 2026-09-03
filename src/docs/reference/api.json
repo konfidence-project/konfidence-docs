@@ -505,8 +505,9 @@
           "status": {
             "description": "The vectorDeployment status",
             "enum": [
-              "VectorDownloaded",
-              "ArtifactDeploymentCreated"
+              "DeployingVector",
+              "DeploymentReady",
+              "DeploymentFailed"
             ],
             "type": "string"
           },
@@ -1077,6 +1078,9 @@
           },
           "403": {
             "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
           },
           "500": {
             "$ref": "#/components/responses/InternalError"
