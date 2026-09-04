@@ -52,27 +52,28 @@ curl -fsSL https://konfidence.cloud/install.sh | KDEN_INSTALL_DIR=/usr/local/bin
 
 ## Keep it up to date
 
-`kden` self-updates in place — no need to re-run the installer:
+To update, **re-run the installer** — the same command you used to install:
 
 ```bash
-kden upgrade
+curl -fsSL https://konfidence.cloud/install.sh | sh
 ```
 
-This downloads the latest release, verifies its checksum, and atomically replaces the running
-binary. Use `KDEN_VERSION` to upgrade (or downgrade) to a specific release.
+`kden` does not update itself. Because the CLI talks to the Konfidence API and controllers
+in your cluster, updating is left to you: a CLI that silently jumped ahead of an older
+server could break in confusing ways. Re-running the installer lets you update deliberately,
+when it suits your environment. Pin a specific release with `KDEN_VERSION` if you need to
+match a particular server version.
 
-When a newer release is available, `kden` prints a one-line reminder to stderr at most once a
-day. To silence it, set `KDEN_NO_UPDATE_NOTIFIER` in your environment:
+Check what you're running — including build metadata and the update command — with:
 
 ```bash
-export KDEN_NO_UPDATE_NOTIFIER=1
+kden version                 # JSON by default
+kden version --output pretty # human-readable
 ```
-
-The reminder is automatically suppressed in CI and when output is not an interactive terminal.
 
 ## Windows
 
-The installer and `kden upgrade` support Linux and macOS. On Windows, download the `kden`
+The installer supports Linux and macOS. On Windows, download the `kden`
 archive for your platform from the
 [latest release](https://github.com/konfidence-project/konfidence/releases/latest) and place the
 extracted binary on your `PATH`.
