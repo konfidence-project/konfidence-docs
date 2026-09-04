@@ -304,7 +304,7 @@ A healthy assembly shows `type: Ready`, `status: True` — with `reason: VectorC
 
 ## Promotions do not verify
 
-A promotion re-points a target stage at a vector version that already exists in the registry. It never rebuilds, re-signs, or transfers OCM content, so there is nothing to verify and no registry access to authenticate at promotion time. `VectorPromotionConfig` and `VectorPromotion` therefore carry no `credentials`, `signVector`, or `verifyVector` fields.
+A promotion re-points a target stage at a vector version that already exists in the registry. It never rebuilds, re-signs, or transfers OCM content, so there is nothing to verify and no registry access to authenticate at promotion time. 
 
 Verification still guards both ends of every promotion chain:
 
