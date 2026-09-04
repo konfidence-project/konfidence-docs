@@ -14,7 +14,7 @@ Before you install Konfidence, it helps to know what this setup is for: teams pr
 
 ## Cluster setup
 
-You need a Kubernetes cluster with Konfidence and the Konfidence CLI installed.
+You need a Kubernetes cluster with Konfidence and the [Konfidence CLI](/docs/getting-started/install-cli) installed.
 
 For a quick test, you can start a local kind cluster with Konfidence installed:
 
