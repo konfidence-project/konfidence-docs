@@ -92,5 +92,5 @@ For more deployment target examples and detailed configuration options, see the 
 
 ## Next Steps
 
-- [Stages and Promotions](/docs/core-concepts/stages-and-promotions): Deploy vectors to your landscapes
+- [Landscapes and Stages](/docs/core-concepts/landscapes-and-stages): Deploy vectors to your landscapes
 - [Access Control](/docs/deploy-operate/access-control): Control who can manage landscapes

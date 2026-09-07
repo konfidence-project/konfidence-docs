@@ -106,6 +106,6 @@ For step-by-step instructions, see [Define promotions](../develop-integrate/obse
 
 - [Vectors and Artifacts](./vectors-and-artifacts.md) explains how artifacts and vectors define the application version that a promotion pins to a stage.
 - [Delivery Flow](./delivery-flow.md) explains how assembly, promotion, and deployment fit together.
-- [Vector Deployments](./vector-deployments.md) explains what happens on a stage after its vector changes.
+- [Vector Deployments](../deploy-operate/vector-deployments.md) explains what happens on a stage after its vector changes.
 - [Projects](../deploy-operate/projects.md) explains the project namespace that templates and promotion configurations live in.
 - [Landscapes](../deploy-operate/landscapes.md) explains the namespace each landscape manages, where stages live.

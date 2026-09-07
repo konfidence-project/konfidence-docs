@@ -85,15 +85,15 @@ At that boundary, the target stage state exists in the cluster and the runtime c
 
 After that point, the runtime deployment lifecycle starts.
 That lifecycle includes concepts such as vector deployments, artifact deployments, vector assignments, tasks, and activation.
-For those concepts, see [Vector Deployments](./vector-deployments.md).
+For those concepts, see [Vector Deployments](../deploy-operate/vector-deployments.md).
 
 ## Related pages
 
 Read these pages for the surrounding concepts and task-oriented guidance:
 
 - [Vectors and Artifacts](./vectors-and-artifacts.md) explains the package model behind artifacts, aliases, and immutable vectors.
-- [Stages and Promotions](./stages-and-promotions.md) explains how stages select vectors and how promotions update that selection.
-- [System Architecture](./system-architecture.md) explains how the control plane and landscapes divide responsibility.
-- [Vector Deployments](./vector-deployments.md) explains the runtime deployment concepts that apply after a vector reaches a target landscape.
+- [Landscapes and Stages](./landscapes-and-stages.md) explains how stages select vectors and how promotions update that selection.
+- [System Architecture](../deploy-operate/system-architecture.md) explains how the control plane and landscapes divide responsibility.
+- [Vector Deployments](../deploy-operate/vector-deployments.md) explains the runtime deployment concepts that apply after a vector reaches a target landscape.
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.
 - [Define promotions](../develop-integrate/observe-improve/define-promotions.md) explains the task-oriented flow for promotion setup.
