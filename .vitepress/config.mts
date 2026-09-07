@@ -89,24 +89,16 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "System Architecture",
-              link: "/docs/core-concepts/system-architecture",
-            },
-            {
               text: "Vectors and Artifacts",
               link: "/docs/core-concepts/vectors-and-artifacts",
             },
             {
-              text: "Stages and Promotions",
-              link: "/docs/core-concepts/stages-and-promotions",
+              text: "Landscapes and Stages",
+              link: "/docs/core-concepts/landscapes-and-stages",
             },
             {
-              text: "Delivery Flow",
+              text: "Promotions and Delivery Flow",
               link: "/docs/core-concepts/delivery-flow",
-            },
-            {
-              text: "Vector Deployments",
-              link: "/docs/core-concepts/vector-deployments",
             },
           ],
         },
@@ -173,6 +165,10 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text: "System Architecture",
+              link: "/docs/deploy-operate/system-architecture",
+            },
+            {
               text: "Installation variants",
               link: "/docs/deploy-operate/installation-variants",
             },
@@ -209,7 +205,11 @@ export default defineConfig({
                         link: "/docs/deploy-operate/runtime-components/vector-data-service",
                     },
                 ],
-            }
+            },
+            {
+              text: "Vector Deployments",
+              link: "/docs/deploy-operate/vector-deployments",
+            },
           ],
         },
         {
