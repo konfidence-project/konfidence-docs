@@ -653,6 +653,11 @@
       }
     },
     "securitySchemes": {
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      },
       "sessionCookie": {
         "in": "cookie",
         "name": "kden-session",
@@ -794,7 +799,7 @@
     },
     "/v1/identity": {
       "get": {
-        "description": "Returns identity claims for the authenticated session.",
+        "description": "Returns identity information for the authenticated caller.",
         "operationId": "getIdentityV1",
         "responses": {
           "200": {
@@ -893,6 +898,11 @@
             "$ref": "#/components/responses/Unauthorized"
           }
         },
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
         "summary": "Terminate the current session",
         "tags": [
           "auth"
@@ -1257,6 +1267,9 @@
   "security": [
     {
       "sessionCookie": []
+    },
+    {
+      "bearerAuth": []
     }
   ],
   "servers": [
