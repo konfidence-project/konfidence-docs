@@ -104,5 +104,5 @@ This lets teams derive a new vector from an existing vector without redefining e
 ## Related pages
 
 - [Delivery Flow](./delivery-flow.md) explains how vectors move from build outputs to controlled stage state.
-- [Stages and Promotions](./stages-and-promotions.md) explains how stages select vectors and how promotions prepare vectors for later targets.
+- [Landscapes and Stages](./landscapes-and-stages.md) explains how stages select vectors and how promotions prepare vectors for later targets.
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.
