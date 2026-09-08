@@ -143,6 +143,14 @@ export default defineConfig({
                 text: "Advanced features",
                 items: [
                     {
+                        text: "Read feature flags in your application",
+                        link: "/docs/develop-integrate/advanced-features/feature-flags",
+                    },
+                    {
+                        text: "Configure signing and verification",
+                        link: "/docs/develop-integrate/advanced-features/configure-signing-and-verification",
+                    },
+                    {
                         text: "Vector Data / Configuration",
                         collapsed: true,
                         items: [
@@ -163,18 +171,6 @@ export default defineConfig({
                                 link: "/docs/develop-integrate/vector-data/access-vector-data",
                             },
                         ],
-                    },
-                    {
-                        text: "Read feature flags in your application",
-                        link: "/docs/develop-integrate/advanced-features/feature-flags",
-                    },
-                    {
-                        text: "Configure signing and verification",
-                        link: "/docs/develop-integrate/advanced-features/configure-signing-and-verification",
-                    },
-                    {
-                        text: "Define promotions",
-                        link: "/docs/develop-integrate/advanced-features/define-promotions",
                     },
                 ],
             },
@@ -225,6 +221,10 @@ export default defineConfig({
                         link: "/docs/deploy-operate/runtime-components/vector-data-service",
                     },
                 ],
+            },
+            {
+              text: "Define promotions",
+              link: "/docs/deploy-operate/define-promotions",
             },
             {
               text: "Vector Deployments",

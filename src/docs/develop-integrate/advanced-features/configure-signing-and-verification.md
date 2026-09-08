@@ -369,5 +369,5 @@ All fields are optional besides `name`. For valid values see [OCM signing and ve
 ## Next steps
 
 - [Build vectors](../observe-improve/build-vectors.md)
-- [Define promotions](./define-promotions.md)
+- [Define promotions](../../deploy-operate/define-promotions.md)
 - [Landscapes and Stages — security boundaries](../../core-concepts/landscapes-and-stages.md)
