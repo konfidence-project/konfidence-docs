@@ -17,7 +17,7 @@ The [Vector Concept](/docs/core-concepts/vectors-and-artifacts), introduced by K
 
 ## Prerequisites
 
-Package your deployment code as a supported [Artifact](/docs/develop-integrate/artifact-types).
+Package your deployment code as a supported [Artifact](./artifact-types/index.md).
 
 ## Konfidence fits microservice applications
 

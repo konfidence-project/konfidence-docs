@@ -25,7 +25,7 @@ For background about artifacts, aliases, and vectors, see [Vectors and artifacts
 - Your deployable content is already available in an OCI registry. For example:
   - A Helm chart published as an OCI artifact.
   - A Kustomize bundle published as an OCI artifact.
-- Your deployable content follows the [Kubernetes Deployer authoring rules](./deployers/kubernetes.md).
+- Your deployable content follows the [Kubernetes Deployer authoring rules](../deploy-operate/deployer/overview.md).
 
 ## Create the Konfidence manifest file
 
@@ -49,7 +49,7 @@ Set `allowReuse` based on how the artifact should be deployed:
 - Set it to `false` when each `VectorDeployment` needs its own artifact instance.
 
 Only reuse artifacts that do not depend on vector-specific runtime context.
-For more information, see [A note on artifact reuse](./deployers/kubernetes.md#a-note-on-artifact-reuse).
+For more information, see [A note on artifact reuse](../deploy-operate/deployer/overview.md#a-note-on-artifact-reuse).
 
 ## Create the OCM component constructor
 
@@ -151,5 +151,5 @@ registry.example.com//github.com/my-org/my-service:main
 
 - [Build vectors](./observe-improve/build-vectors.md) from your published artifacts.
 - Read [Vectors and artifacts](../core-concepts/vectors-and-artifacts.md) to understand how component versions and aliases become part of a vector.
-- Check the [Kubernetes Deployer authoring rules](./deployers/kubernetes.md) for Helm and Kustomize packaging requirements.
+- Check the [Kubernetes Deployer authoring rules](../deploy-operate/deployer/overview.md) for Helm and Kustomize packaging requirements.
 - [Configure signing and verification](./advanced-features/configure-signing-and-verification.md) if your environment requires signed artifacts.

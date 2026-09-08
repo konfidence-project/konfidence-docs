@@ -221,7 +221,7 @@ a deployment result on the `ArtifactDeployment` containing:
 
 Konfidence aggregates these into the vector's `VectorData`, keyed by artifact
 component, so every component in the vector can resolve the Service by its stable
-name at runtime — see [Use deployment results](../vector-data/deployment-results.md).
+name at runtime — see [Use deployment results](../../develop-integrate/vector-data/deployment-results.md).
 
 **Scope.** Only Kubernetes `Service` objects can be exposed this way today
 (deployment-result type `http-k8s-service`). Other resource kinds are not yet
@@ -229,5 +229,5 @@ supported.
 
 ## Related
 
-- [Publish Artifacts](../publish-artifacts.md)
+- [Publish Artifacts](../../develop-integrate/publish-artifacts.md)
 - [Glossary — Deployer](../../reference/glossary.md#deployer)
