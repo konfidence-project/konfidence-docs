@@ -286,7 +286,7 @@ If verification credentials contain no RSA key material, verification falls back
 
 ## Configure artifact verification and vector signing
 
-Before VectorAssembly can verify an artifact, it must carry a signature. Run these steps locally or in CI — see [Publish Artifacts](../publish-artifacts.md) for the full artifact publishing workflow.
+Before VectorAssembly can verify an artifact, it must carry a signature. Run these steps locally or in CI — see [Publish Artifacts](../artifact-types/publish-artifacts.md) for the full artifact publishing workflow.
 
 Configure your `VectorTemplate` to verify its artifacts and sign the assembled vector.
 Each signing and verification phase is optional.
