@@ -509,5 +509,5 @@ Retained for reuse: background reading moved out of the prerequisites; credentia
 ## Next steps
 
 - [Build vectors](./observe-improve/build-vectors.md)
-- [Define promotions](./observe-improve/define-promotions.md)
+- [Define promotions](../../deploy-operate/observe-improve/define-promotions.md)
 - [Landscapes and Stages — security boundaries](../core-concepts/landscapes-and-stages.md)
