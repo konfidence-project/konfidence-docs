@@ -167,7 +167,7 @@ credentials:
 
 ## Push, sign, and alias artifacts
 
-Before VectorAssembly can verify an artifact, it must carry a signature. Run these steps locally or in CI — see [Publish Artifacts](../publish-artifacts.md) for the full artifact publishing workflow.
+Before VectorAssembly can verify an artifact, it must carry a signature. Run these steps locally or in CI — see [Publish Artifacts](../artifact-types/publish-artifacts.md) for the full artifact publishing workflow.
 
 **Push** an artifact constructor YAML to the registry:
 

@@ -1,233 +1,51 @@
 ---
-title: Kubernetes Deployer
-description: Reference for the built-in Kubernetes Deployer — supported manifest types and authoring conventions for artifacts consumed by it.
-outline: [2, 3]
+title: "Deployers"
+description: "What a deployer does, how a landscape selects one, and how to find out which deployer serves your landscape."
+outline: deep
 editLink: true
 lastUpdated: true
 ---
 
-# Kubernetes Deployer
+# Deployers
 
-The **Kubernetes Deployer** is the reference implementation of Konfidence's
-Deployer interface.
+A deployer turns the artifacts of a vector into running workloads in a landscape. Konfidence ships the Kubernetes deployer and accepts custom deployers for other platforms.
 
-<!-- TODO: link to the Deployer interface specification once available; see
-[Deployer Specification](../../reference/deployer-specification.md). -->
+## A deployer renders artifacts into a landscape
 
-This page documents the manifest types this deployer supports and the
-authoring rules an artifact author must follow so that artifacts consumed by
-this deployer render correctly.
+Konfidence decides which vector belongs in which stage. The deployer does the platform-specific work. It reads each artifact of the vector, renders the deployable content, and applies it to the target infrastructure. It also runs migration tasks and activation steps for that platform.
 
-## Supported manifest types
+Each deployer handles a fixed set of artifact types. The artifact's manifest names its type, and only the deployer that supports this type picks the artifact up.
 
-The value of `.spec.manifest.type` on an `ArtifactDeployment` selects the
-sub-controller that reconciles it. This deployer handles the following types:
+## A landscape selects its deployer through a deployment class
 
-| `manifest.type`                    | OCM resource type | Flux resources created                                    |
-| :--------------------------------- | :---------------- | :-------------------------------------------------------- |
-| `cloud.konfidence.flux.kustomize`  | `kustomize`       | `OCIRepository` (source) + `Kustomization` (kustomize.toolkit.fluxcd.io) |
-| `cloud.konfidence.flux.helm`       | `helmChart`       | `HelmRepository` (source) + `HelmRelease` (helm.toolkit.fluxcd.io)       |
+A deployer installs one cluster-scoped `DeploymentClass` per artifact type it supports. A landscape holds one or more `DeploymentTarget` resources. Each target references one `DeploymentClass` and carries the connection to the target infrastructure. This is how a landscape binds an artifact type to a deployer and a cluster.
 
-An `ArtifactDeployment` whose `manifest.type` does not match either value is
-ignored by this deployer.
+Administrators create deployment targets when they set up a landscape. See [Managing Landscapes](../landscapes.md#deployment-targets).
 
-Each `ArtifactDeployment` must carry **at most one** OCM resource of the
-matching type. Deployments with more than one matching resource are rejected
-with `[Ready=False] MultipleKustomizeResources` (kustomize path) or
-`[Ready=False] MultipleHelmChartResources` (helm path). Deployments with zero
-matching resources produce no Flux resources.
+## Find out which deployer serves your landscape
 
-## Referencing the deployable artifact in OCM
+Ask your administrator, or query the cluster where Konfidence runs.
 
-Reference the pushed OCI artifact from the component constructor as an
-external OCM resource. The `type:` must match the manifest type (`kustomize`
-or `helmChart`).
+1. List the deployment classes. Each class names its deployer in `spec.controller`:
 
-**Kustomize bundle:**
+   ```bash
+   kubectl get deploymentclass
+   ```
 
-```yaml
-resources:
-  - name: manifests
-    type: kustomize
-    version: v1.0.0
-    relation: external
-    access:
-      type: ociArtifact
-      imageReference: registry.example.com/path/to/bundle:v1.0.0
-```
+2. List the deployment targets of your landscape. Each target names the class it uses in `spec.deploymentClass`:
 
-**Helm chart:**
+   ```bash
+   kubectl get deploymenttarget -n <landscape-namespace>
+   ```
 
-```yaml
-resources:
-  - name: chart
-    type: helmChart
-    version: v1.0.0
-    relation: external
-    access:
-      type: ociArtifact
-      imageReference: registry.example.com/path/to/chart:1.0.0
-```
+An artifact type without a matching deployment target in the landscape does not deploy there.
 
-## A note on artifact reuse
+<!-- TODO(fkasper): verify the DeploymentClass names shown in Managing Landscapes (`konfidence.cloud/helm`, `konfidence.cloud/kustomize`) against the orchestrator. -->
 
-Konfidence may create multiple parallel instances of the same artifact — one
-per version, or one per `VectorDeployment` when the artifact manifest sets
-`allowReuse: false`. Each instance is scoped by kustomize `nameSuffix` or Helm
-`releaseName` so its resources can coexist on the cluster.
+## Available deployers
 
-When authoring, keep in mind that anything you include in the bundle or chart
-will be duplicated per instance. Resources for which duplicate application
-does not make sense (`CustomResourceDefinition` is the canonical example) must
-be shipped through a separate delivery path.
+| Deployer | Platform | Artifact types |
+| --- | --- | --- |
+| [Kubernetes deployer](./kubernetes.md) | Kubernetes, through Flux | Helm charts, Kustomize bundles |
 
-## Kustomize authoring (`cloud.konfidence.flux.kustomize`)
-
-### Packaging
-
-The OCI artifact referenced by `imageReference` must be a Flux-compatible OCI
-artifact containing a `kustomization.yaml` at its root, alongside any manifest
-files it lists under `resources:`. Typically produced with:
-
-```bash
-flux push artifact oci://registry.example.com/path:tag \
-  --path=./manifests --source=<git-repo> --revision=<rev>
-```
-
-### Fields set by the deployer on the Flux `Kustomization`
-
-The deployer sets the following fields on every `Kustomization` it creates:
-
-| Field                | Value                                                                |
-| :------------------- | :------------------------------------------------------------------- |
-| `metadata.name`      | The `ArtifactDeployment` name                                        |
-| `spec.sourceRef`     | Points to the sibling `OCIRepository` (same name)                    |
-| `spec.targetNamespace` | The landscape namespace                                            |
-| `spec.nameSuffix`    | `-<sanitized-artifact-version>-<hash>` — derived from the AD's `konfidence.cloud/artifact-version` and `-hash` annotations |
-| `spec.commonMetadata.labels` | Includes `konfidence.cloud/artifact-deployment=<AD-name>`    |
-
-### Fields that must not be set in the bundle's `kustomization.yaml`
-
-The following fields, if present in the artifact author's own
-`kustomization.yaml`, are **overwritten** by the deployer before
-`kustomize build` runs and their values are silently discarded:
-
-- `nameSuffix`
-- `namespace`
-
-### Resulting resource names
-
-The final `metadata.name` of every resource produced by `kustomize build`
-follows the pattern:
-
-```
-<name-declared-in-your-manifest><nameSuffix>
-```
-
-For a manifest named `hello` in an artifact with version `v1.0.0` and hash
-`abc12345`, the applied resource is named `hello-v1-0-0-abc12345`.
-
-## Helm authoring (`cloud.konfidence.flux.helm`)
-
-### Packaging
-
-The OCI artifact referenced by `imageReference` must be a Helm OCI chart,
-typically produced with:
-
-```bash
-helm package <chart-dir>
-helm push <chart>-<version>.tgz oci://registry.example.com/path
-```
-
-### Fields set by the deployer on the Flux `HelmRelease`
-
-The deployer sets the following fields on every `HelmRelease` it creates:
-
-| Field                          | Value                                                             |
-| :----------------------------- | :---------------------------------------------------------------- |
-| `metadata.name`                | The `ArtifactDeployment` name                                     |
-| `spec.releaseName`             | The `ArtifactDeployment` name                                     |
-| `spec.chart.spec.sourceRef`    | Points to the sibling `HelmRepository` (same name)                |
-| `spec.targetNamespace`         | The landscape namespace                                           |
-| `spec.storageNamespace`        | The landscape namespace                                           |
-| `spec.commonMetadata.labels`   | Includes `konfidence.cloud/artifact-deployment=<AD-name>`         |
-
-The Helm release name is therefore identical to the `ArtifactDeployment`
-name — deterministic per (component, version, `allowReuse`, VectorDeployment).
-
-### Chart template requirement
-
-Every resource in the chart must derive its `metadata.name` from
-<code v-pre>{{ .Release.Name }}</code>.
-
-**Supported:**
-
-<div v-pre>
-
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}
-```
-
-</div>
-
-**Not supported:**
-
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: my-service           # hard-coded — will collide across versions or VDs
-```
-
-A chart with hard-coded resource names produces name collisions when the same
-chart is deployed at two versions on the same landscape, or when two
-`VectorDeployment` instances (with `allowReuse: false`) reference the same
-component.
-
-## Exposing a Service as a deployment result
-
-By default the Services in your bundle or chart are internal. To let other
-components in the same vector discover and call a Service, annotate it:
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: candidates
-  annotations:
-    konfidence.cloud/deployment-result: candidates
-spec:
-  ports:
-    - name: http
-      port: 80
-```
-
-**Why the annotation is required.** The deployer applies a per-vector
-`nameSuffix` (kustomize) or `releaseName` (Helm), so the Service's deployed name
-is not known ahead of time and a caller cannot hard-code it. The annotation both
-opts the Service in and supplies the **stable name** (its value) that consumers
-look up. Services without the annotation are never exposed.
-
-**How the deployer processes it.** After the artifact is deployed, the deployer
-lists the Services it created and, for each one carrying the annotation, records
-a deployment result on the `ArtifactDeployment` containing:
-
-- the annotation value as the result name,
-- the Service's namespace and its actual (suffixed) name,
-- the Service's ports verbatim (multi-port Services are supported as-is).
-
-Konfidence aggregates these into the vector's `VectorData`, keyed by artifact
-component, so every component in the vector can resolve the Service by its stable
-name at runtime — see [Use deployment results](../../develop-integrate/vector-data/deployment-results.md).
-
-**Scope.** Only Kubernetes `Service` objects can be exposed this way today
-(deployment-result type `http-k8s-service`). Other resource kinds are not yet
-supported.
-
-## Related
-
-- [Publish Artifacts](../../develop-integrate/publish-artifacts.md)
-- [Glossary — Deployer](../../reference/glossary.md#deployer)
+Deployers are extensible. To support another platform or deployment method, see [Extend & Customize](../../extend-customize/index.md).

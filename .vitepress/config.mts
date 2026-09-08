@@ -115,16 +115,20 @@ export default defineConfig({
               link: "/docs/develop-integrate/artifact-types/",
               items: [
                 {
-                  text: "Author a Kustomize artifact",
+                  text: "Types of artifacts",
+                  link: "/docs/develop-integrate/artifact-types/",
+                },
+                {
+                  text: "Kustomize",
                   link: "/docs/develop-integrate/artifact-types/kustomize",
                 },
                 {
-                  text: "Author a Helm artifact",
+                  text: "Helm",
                   link: "/docs/develop-integrate/artifact-types/helm",
                 },
                 {
-                  text: "Packaging and Publishing",
-                  link: "/docs/develop-integrate/publish-artifacts",
+                  text: "Publish artifacts",
+                  link: "/docs/develop-integrate/artifact-types/publish-artifacts",
                 },
               ],
             },
@@ -134,6 +138,7 @@ export default defineConfig({
             },
             {
                 text: "Advanced features",
+                link: "/docs/develop-integrate/advanced-features",
                 items: [
                     {
                         text: "Read feature flags in your application",
@@ -222,6 +227,10 @@ export default defineConfig({
                     {
                         text: "Overview",
                         link: "/docs/deploy-operate/deployer/overview",
+                    },
+                    {
+                        text: "Kubernetes",
+                        link: "/docs/deploy-operate/deployer/kubernetes",
                     },
                 ],
             },
