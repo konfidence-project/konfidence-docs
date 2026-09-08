@@ -107,12 +107,23 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "Prepare your Application",
+              text: "Your Application in Konfidence",
               link: "/docs/develop-integrate/prepare-your-application",
             },
             {
-              text: "Publish Artifacts",
-              link: "/docs/develop-integrate/publish-artifacts",
+              text: "Artifacts",
+              link: "/docs/develop-integrate/artifact-types",
+              items: [
+
+                {
+                  text: "Packaging and Publishing",
+                  link: "/docs/develop-integrate/publish-artifacts",
+                },
+                {
+                  text: "Helm and Kustomize",
+                  link: "/docs/develop-integrate/publish-artifacts",
+                },
+              ],
             },
             {
               text: "Deployers",
@@ -125,38 +136,47 @@ export default defineConfig({
               ],
             },
             {
-              text: "Configure signing and verification",
-              link: "/docs/develop-integrate/configure-signing-and-verification",
-            },
-            {
               text: "Build vectors",
               link: "/docs/develop-integrate/observe-improve/build-vectors",
             },
             {
-                text: "Vector Data / Configuration",
-                collapsed: true,
+                text: "Advanced features",
                 items: [
                     {
-                        text: "Overview",
-                        link: "/docs/develop-integrate/vector-data/overview",
+                        text: "Vector Data / Configuration",
+                        collapsed: true,
+                        items: [
+                            {
+                                text: "Overview",
+                                link: "/docs/develop-integrate/vector-data/overview",
+                            },
+                            {
+                                text: "Add configuration to a vector",
+                                link: "/docs/develop-integrate/vector-data/vector-configuration",
+                            },
+                            {
+                                text: "Add deployment results to an artifact",
+                                link: "/docs/develop-integrate/vector-data/deployment-results",
+                            },
+                            {
+                                text: "Access vector data in your application",
+                                link: "/docs/develop-integrate/vector-data/access-vector-data",
+                            },
+                        ],
                     },
                     {
-                        text: "Add configuration to a vector",
-                        link: "/docs/develop-integrate/vector-data/vector-configuration",
+                        text: "Read feature flags in your application",
+                        link: "/docs/develop-integrate/advanced-features/feature-flags",
                     },
                     {
-                        text: "Add deployment results to an artifact",
-                        link: "/docs/develop-integrate/vector-data/deployment-results",
+                        text: "Configure signing and verification",
+                        link: "/docs/develop-integrate/advanced-features/configure-signing-and-verification",
                     },
                     {
-                        text: "Access vector data in your application",
-                        link: "/docs/develop-integrate/vector-data/access-vector-data",
+                        text: "Define promotions",
+                        link: "/docs/develop-integrate/advanced-features/define-promotions",
                     },
                 ],
-            },
-            {
-              text: "Define promotions",
-              link: "/docs/develop-integrate/observe-improve/define-promotions",
             },
           ],
         },

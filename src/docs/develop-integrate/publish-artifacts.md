@@ -127,7 +127,7 @@ kden artifact sign \
 ```
 
 The command prints the signature as JSON and stores it with the component descriptor in the registry.
-For signer configuration and verification steps, see [Configure signing and verification](./configure-signing-and-verification.md).
+For signer configuration and verification steps, see [Configure signing and verification](./advanced-features/configure-signing-and-verification.md).
 
 ## Optional: Create an alias
 
@@ -152,4 +152,4 @@ registry.example.com//github.com/my-org/my-service:main
 - [Build vectors](./observe-improve/build-vectors.md) from your published artifacts.
 - Read [Vectors and artifacts](../core-concepts/vectors-and-artifacts.md) to understand how component versions and aliases become part of a vector.
 - Check the [Kubernetes Deployer authoring rules](./deployers/kubernetes.md) for Helm and Kustomize packaging requirements.
-- [Configure signing and verification](./configure-signing-and-verification.md) if your environment requires signed artifacts.
+- [Configure signing and verification](./advanced-features/configure-signing-and-verification.md) if your environment requires signed artifacts.
