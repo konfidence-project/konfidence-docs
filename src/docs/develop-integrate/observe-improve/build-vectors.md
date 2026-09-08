@@ -31,5 +31,5 @@ lastUpdated: true
 
 ## Next steps
 
-After creating vectors, [define promotions](/docs/develop-integrate/observe-improve/define-promotions) to deploy them through your stages.
+After creating vectors, [define promotions](/docs/develop-integrate/advanced-features/define-promotions) to deploy them through your stages.
 

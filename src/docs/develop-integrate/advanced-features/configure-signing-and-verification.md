@@ -286,6 +286,8 @@ If verification credentials contain no RSA key material, verification falls back
 
 ## Configure artifact verification and vector signing
 
+Before VectorAssembly can verify an artifact, it must carry a signature. Run these steps locally or in CI — see [Publish Artifacts](../publish-artifacts.md) for the full artifact publishing workflow.
+
 Configure your `VectorTemplate` to verify its artifacts and sign the assembled vector.
 Each signing and verification phase is optional.
 If you omit `verifyArtifacts`, `verifyVector`, or `signVector`, the corresponding check or signing action is skipped.
@@ -504,5 +506,8 @@ Retained for reuse: the default-behavior table is reference material; its task-r
 <!--
 Retained for reuse: background reading moved out of the prerequisites; credential resolution is linked beside CLI configuration.
 
-- For background on how credential resolution works, see the [OCM credential system concepts](https://ocm.software/docs/concepts/credential-system/)
--->
+## Next steps
+
+- [Build vectors](./observe-improve/build-vectors.md)
+- [Define promotions](./observe-improve/define-promotions.md)
+- [Landscapes and Stages — security boundaries](../core-concepts/landscapes-and-stages.md)
