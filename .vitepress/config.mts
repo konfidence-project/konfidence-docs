@@ -112,26 +112,19 @@ export default defineConfig({
             },
             {
               text: "Artifacts",
-              link: "/docs/develop-integrate/artifact-types",
+              link: "/docs/develop-integrate/artifact-types/",
               items: [
-
+                {
+                  text: "Author a Kustomize artifact",
+                  link: "/docs/develop-integrate/artifact-types/kustomize",
+                },
+                {
+                  text: "Author a Helm artifact",
+                  link: "/docs/develop-integrate/artifact-types/helm",
+                },
                 {
                   text: "Packaging and Publishing",
                   link: "/docs/develop-integrate/publish-artifacts",
-                },
-                {
-                  text: "Helm and Kustomize",
-                  link: "/docs/develop-integrate/publish-artifacts",
-                },
-              ],
-            },
-            {
-              text: "Deployers",
-              collapsed: true,
-              items: [
-                {
-                  text: "Kubernetes Deployer",
-                  link: "/docs/develop-integrate/deployers/kubernetes",
                 },
               ],
             },
@@ -219,6 +212,16 @@ export default defineConfig({
                     {
                         text: "Vector Data Service",
                         link: "/docs/deploy-operate/runtime-components/vector-data-service",
+                    },
+                ],
+            },
+            {
+                text: "Deployer",
+                collapsed: true,
+                items: [
+                    {
+                        text: "Overview",
+                        link: "/docs/deploy-operate/deployer/overview",
                     },
                 ],
             },
