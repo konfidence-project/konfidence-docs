@@ -16,11 +16,11 @@ The examples build a service named `my-service` and push everything to `registry
 
 Before you begin, make sure you have:
 
-- A container build tool such as `docker` and Helm 3.8 or later with OCI support.
+- A container build tool such as `docker` and Helm 3.8 or later with Open Container Initiative (OCI) support.
 - Push access to an OCI registry for the image, the chart, and the artifact.
-- The `kden` CLI. See [Publish artifacts](./publish-artifacts.md).
+- The `kden` command-line tool. See [Publish artifacts](./publish-artifacts.md).
 - A landscape served by the Kubernetes deployer. See [Find out which deployer serves your landscape](../../deploy-operate/deployer/overview.md#find-out-which-deployer-serves-your-landscape).
-- A service that reads and forwards `X-Vector-ID`. See [Prepare your Application](../prepare-your-application.md).
+- A service that reads and forwards `X-Vector-ID`. See [Prepare your application](../prepare-your-application.md).
 
 ## Build and push the container image
 
@@ -33,14 +33,14 @@ Before you begin, make sure you have:
    ENTRYPOINT ["my-service"]
    ```
 
-2. Build and push the image with the version you plan to ship:
+2. Build and push the image with the version you plan to release:
 
    ```bash
    docker build -t registry.example.com/my-org/my-service:1.0.0 .
    docker push registry.example.com/my-org/my-service:1.0.0
    ```
 
-The registry lists `my-service:1.0.0` afterwards.
+The registry lists `my-service:1.0.0` afterward.
 
 ## Create a minimal chart
 
@@ -205,7 +205,7 @@ metadata:
 
 Do not set `metadata.namespace` in templates. The deployer installs every release into the landscape namespace.
 
-The deployer owns the release itself: its name, its namespace, and its labels. Everything in the chart is duplicated per instance. Ship resources that must exist once per cluster, such as a `CustomResourceDefinition`, through a separate delivery path.
+The deployer owns the release itself: its name, its namespace, and its labels. Everything in the chart is duplicated per instance. Deliver resources that must exist once per cluster, such as a `CustomResourceDefinition`, through a separate delivery path.
 
 ::: details Fields the deployer sets on the HelmRelease
 
@@ -215,7 +215,7 @@ The deployer creates one Flux `HelmRelease` per artifact instance and sets these
 | --- | --- |
 | `metadata.name` | The `ArtifactDeployment` name |
 | `spec.releaseName` | The `ArtifactDeployment` name |
-| `spec.chart.spec.sourceRef` | The sibling `HelmRepository` with the same name |
+| `spec.chart.spec.sourceRef` | The `HelmRepository` with the same name |
 | `spec.targetNamespace` | The landscape namespace |
 | `spec.storageNamespace` | The landscape namespace |
 | `spec.commonMetadata.labels` | `konfidence.cloud/artifact-deployment=<artifact-deployment-name>` |
@@ -237,6 +237,8 @@ Every name in the first output starts with `vector-a`, and every name in the sec
 
 ## Next steps
 
+Use the following guides to publish your artifact and expose its Service:
+
 - [Publish artifacts](./publish-artifacts.md) to validate, sign, and push the artifact.
-- [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to sibling services.
-- [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) for the fields it sets on the release.
+- [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to other services in the vector.
+- Read [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.

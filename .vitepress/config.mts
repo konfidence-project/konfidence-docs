@@ -111,7 +111,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "Your Application in Konfidence",
+              text: "Your application in Konfidence",
               link: "/docs/develop-integrate/prepare-your-application",
             },
             {
@@ -142,7 +142,7 @@ export default defineConfig({
             },
             {
                 text: "Advanced features",
-                link: "/docs/develop-integrate/advanced-features",
+                link: "/docs/develop-integrate/advanced-features/",
                 items: [
                     {
                         text: "Read feature flags in your application",

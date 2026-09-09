@@ -8,18 +8,18 @@ lastUpdated: true
 
 # Read feature flags in your application
 
-After this guide, your service evaluates a feature flag for the current [vector](../../reference/glossary.md#vector). Use it when your code must switch behavior per vector without a redeploy of your own.
+After this guide, your service evaluates a feature flag for the current [vector](../../reference/glossary.md#vector). Use it when your code must switch behavior per vector without redeploying your service.
 
-Your service reads the vector ID from the `X-Vector-ID` header and asks the vector data service for the flag value. The vector data service speaks the OpenFeature Remote Evaluation Protocol (OFREP), so any OpenFeature client with an OFREP provider works.
+Your service reads the vector ID from the `X-Vector-ID` header and asks the vector data service for the flag value. The vector data service implements the OpenFeature Remote Evaluation Protocol (OFREP), so any OpenFeature client with an OFREP provider works.
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
 - A flag in the `features` configuration of your vector. See [Add configuration to a vector](../vector-data/vector-configuration.md) for both the template and the manual path.
-- A service that reads `X-Vector-ID` from every incoming request. See [Prepare your Application](../prepare-your-application.md).
+- A service that reads `X-Vector-ID` from every incoming request. See [Prepare your application](../prepare-your-application.md).
 - The vector data service reachable from your workload at `http://vector-data-service`. Konfidence provides this URL in every [landscape](../../reference/glossary.md#landscape), independent of the artifact type.
-- An OpenFeature SDK and an OFREP provider for your language, listed in the [OpenFeature ecosystem](https://openfeature.dev/ecosystem).
+- An OpenFeature software development kit (SDK) and an OFREP provider for your language, listed in the [OpenFeature ecosystem](https://openfeature.dev/ecosystem).
 
 The examples use a flag named `new-checkout` with the value `true`. Pick your language in each code block.
 
@@ -144,5 +144,7 @@ Flag values never change for a given vector ID. Cache them per vector ID for as 
 
 ## Next steps
 
-- [Access vector data in your application](../vector-data/access-vector-data.md) reads authored configuration and sibling addresses from the same endpoint.
+Use the following guides to read other vector data or update your flags:
+
+- [Access vector data in your application](../vector-data/access-vector-data.md) to read authored configuration and the addresses of other services from the same endpoint.
 - [Add configuration to a vector](../vector-data/vector-configuration.md) to change a flag and create a new vector.
