@@ -23,15 +23,15 @@ You will sign published artifacts, configure artifact verification and vector si
 Before you begin, make sure you have:
 
 - A running Kubernetes cluster with Konfidence custom resource definitions (CRDs) installed.
+- Global administrator permissions for the current workflow. Konfidence administrator permissions alone are not sufficient.
 - The `kden` and `kubectl` command-line tools.
 - Published application artifacts in an Open Container Initiative (OCI) registry. Follow [Publish artifacts](./publish-artifacts.md) to create and publish their Open Component Model (OCM) component versions.
 - The registry address and credentials for accessing your artifacts and uploading the vector.
 - An RSA key pair for artifact signing and a separate RSA key pair for vector signing.
-- The namespace in which you will configure the credential Secrets and `VectorTemplate`.
+- An existing Konfidence project and its namespace for the credential Secrets and `VectorTemplate`. See [Managing Projects](../deploy-operate/projects.md).
 
-The artifact-signing example uses `payment-hub:1.0.0` and the alias `edge`.
-The separate assembly example uses `backend:stable` and `frontend:stable`.
-Adapt each example to your own artifacts and replace the registry addresses, key paths, key material, and namespace placeholders before using it.
+The examples sign `payment-hub:1.0.0`, point the `edge` alias to that version, and reference `payment-hub:edge` during assembly.
+Adapt the examples to your own artifacts and replace the registry addresses, key paths, key material, and namespace placeholders before using them.
 
 ## Configure CLI credentials
 
@@ -102,6 +102,9 @@ Signing creates a new manifest digest, so repeat this command after every sign:
 kden artifact alias registry.example.com//konfidence.io/payment-hub:1.0.0 edge
 ```
 
+The assembly example below uses this alias.
+If you skip this step, use the signed component version `registry.example.com//konfidence.io/payment-hub:1.0.0` in the `VectorTemplate` instead.
+
 ## Create credential Secrets for assembly
 
 Store key material and registry credentials in Kubernetes Secrets.
@@ -109,7 +112,21 @@ Choose either one combined Secret or separate Secrets, then reference them throu
 Konfidence merges the listed Secrets into a single credential graph.
 
 Secrets must be in the same namespace as the custom resource that references them.
-The following examples use `<cr-namespace>` for that namespace.
+Use your project namespace for both the Secrets and the `VectorTemplate`.
+To identify your project, list the available projects:
+
+```bash
+kubectl get project -A
+```
+
+Use the namespace assigned to your project wherever the examples show `<project-namespace>`.
+Read it from the project's `status.namespace` field:
+
+```bash
+kubectl get project <project-name> -o jsonpath='{.status.namespace}'
+```
+
+For details about project namespaces, see [Managing Projects](../deploy-operate/projects.md).
 
 Signing requires a private key and fails immediately if it is missing.
 If verification credentials contain no RSA key material, verification falls back to the system root trust store: CA-issued signatures pass, while self-signed or internal keys fail.
@@ -119,12 +136,12 @@ If verification credentials contain no RSA key material, verification falls back
 1. Create a Secret containing both signing key pairs and the registry credentials:
 
    ```bash
-   kubectl apply -n <cr-namespace> -f - <<'EOF'
+   kubectl apply -n <project-namespace> -f - <<'EOF'
    apiVersion: v1
    kind: Secret
    metadata:
      name: my-creds
-     namespace: <cr-namespace>
+     namespace: <project-namespace>
    stringData:
      .ocmconfig: |
        type: generic.config.ocm.software/v1
@@ -185,12 +202,12 @@ If verification credentials contain no RSA key material, verification falls back
 
    ```bash
    # Signing keys
-   kubectl apply -n <cr-namespace> -f - <<'EOF'
+   kubectl apply -n <project-namespace> -f - <<'EOF'
    apiVersion: v1
    kind: Secret
    metadata:
      name: my-signing-creds
-     namespace: <cr-namespace>
+     namespace: <project-namespace>
    stringData:
      .ocmconfig: |
        type: generic.config.ocm.software/v1
@@ -228,12 +245,12 @@ If verification credentials contain no RSA key material, verification falls back
    EOF
 
    # OCI registry credentials
-   kubectl apply -n <cr-namespace> -f - <<'EOF'
+   kubectl apply -n <project-namespace> -f - <<'EOF'
    apiVersion: v1
    kind: Secret
    metadata:
      name: my-registry-creds
-     namespace: <cr-namespace>
+     namespace: <project-namespace>
    type: kubernetes.io/dockerconfigjson
    stringData:
      .dockerconfigjson: |
@@ -270,20 +287,19 @@ If you omit `verifyArtifacts`, `verifyVector`, or `signVector`, the correspondin
 
 The following assembly example uses the separate Secrets from Option B.
 If you chose Option A, use its credential reference instead.
-The example references two artifacts independently of the earlier `payment-hub` example; sign the artifacts you reference before enabling their verification.
+The example references the `edge` alias of the `payment-hub` artifact signed earlier.
 
 ```bash
-kubectl apply -n <cr-namespace> -f - <<'EOF'
+kubectl apply -n <project-namespace> -f - <<'EOF'
 apiVersion: konfidence.cloud/v1alpha1
 kind: VectorTemplate
 metadata:
   name: my-vector
-  namespace: <cr-namespace>
+  namespace: <project-namespace>
 spec:
   uploadTarget: registry.example.com//konfidence.io/my-app/vector
   components:
-    - name: registry.example.com//konfidence.io/my-app/backend:stable
-    - name: registry.example.com//konfidence.io/my-app/frontend:stable
+    - name: registry.example.com//konfidence.io/payment-hub:edge
 
   credentials:
     ocm:
@@ -313,6 +329,7 @@ Any verification or signing failure stops reconciliation.
 ### Optional: Verify a base vector
 
 If you inherit artifacts from an existing base vector, enable the commented `verifyVector` block in the example to verify that vector.
+For the vector-building workflow, see [Build vectors](./observe-improve/build-vectors.md).
 
 ### Optional: Pin signature parameters
 
@@ -338,13 +355,13 @@ For valid values, see [OCM signing and verification concepts](https://ocm.softwa
 Check the conditions of your `VectorTemplate` to confirm that assembly succeeded:
 
 ```bash
-kubectl get vectortemplate my-vector -n <cr-namespace> -o jsonpath='{.status.conditions}'
+kubectl get vectortemplate my-vector -n <project-namespace> -o jsonpath='{.status.conditions}'
 ```
 
 A successful assembly shows `type: Ready` and `status: True`.
 The reason is `VectorCreated` on the first reconciliation and `NoDriftDetected` on subsequent reconciliations.
 
-If assembly fails, check `kubectl describe vectortemplate my-vector` for the condition and attached event.
+If assembly fails, check `kubectl describe vectortemplate my-vector -n <project-namespace>` for the condition and attached event.
 
 ## Troubleshooting
 
@@ -352,7 +369,7 @@ Use the following checks for known assembly and signature-configuration problems
 
 | Symptom | Likely cause | Resolution or diagnostic check |
 | --- | --- | --- |
-| `VectorTemplate` `Ready=Unknown`, reason `DriftDetectionFailed` | Credential Secret missing, wrong key name, or not in the same namespace | Check Events with `kubectl describe vectortemplate <name>`. |
+| `VectorTemplate` `Ready=Unknown`, reason `DriftDetectionFailed` | Credential Secret missing, wrong key name, or not in the same namespace | Check Events with `kubectl describe vectortemplate my-vector -n <project-namespace>`. |
 | `algorithm` pin rejection | Signed with `RSASSA-PKCS1-V1_5` but the CRD pins `RSASSA-PSS` | Align `algorithm` in the Secret consumer identity and CRD `Signature` entry. |
 
 ## Next steps
