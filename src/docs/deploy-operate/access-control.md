@@ -96,4 +96,4 @@ For complete CRD specification details, see the [Project CRD Reference](/docs/re
 ## Next Steps
 
 - [Managing Projects](/docs/deploy-operate/projects): Create projects with role bindings
-- [Managing Landscapes](/docs/deploy-operate/landscapes): Control landscape access via project roles
+- [Managing Landscapes](/docs/deploy-operate/landscapes): Establish landscape boundaries governed by project roles

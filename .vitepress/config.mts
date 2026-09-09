@@ -199,6 +199,14 @@ export default defineConfig({
               link: "/docs/deploy-operate/landscapes",
             },
             {
+              text: "Managing Deployment Targets",
+              link: "/docs/deploy-operate/deployment-targets",
+            },
+            {
+              text: "Managing Stages",
+              link: "/docs/deploy-operate/stages",
+            },
+            {
               text: "Access Control (RBAC)",
               link: "/docs/deploy-operate/access-control",
             },

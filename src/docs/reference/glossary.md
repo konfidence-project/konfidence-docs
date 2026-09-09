@@ -36,21 +36,19 @@ A deployer acts upon ArtifactDeployment CRs and performs the deployment of an ar
 
 ## Landscape
 
-A landscape is the logical grouping of multiple stages and deployment targets. In Konfidence, it is represented by a Kubernetes namespace. A landscape is where deployments are physically executed.
+A landscape is an operational boundary that groups stages, deployment targets, credentials, and deployment resources with common ownership, security, compliance, or reliability requirements. Konfidence manages a dedicated Kubernetes namespace for each landscape. Concrete deployment destinations are represented by deployment targets and can be local, remote, or based on non-Kubernetes platforms.
 
 ## Promotion
 
-A promotion makes a known vector available under another alias, registry location, or repository path, without changing the vector contents.
-
-Because stages resolve their vector through such references, promotion is the explicit action that makes a verified vector available for a later delivery target, such as production.
+A promotion selects a concrete, immutable vector for a target stage by updating the stage's desired vector reference. It does not rebuild, copy, or change the vector contents. Each promotion provides a traceable record of which vector was offered to which delivery checkpoint.
 
 ## Stage
 
-A stage is a defined step in the delivery process, such as build, test, or release. It references exactly one vector at a time, which is a specific version of the application.
+A stage is a logical checkpoint in the delivery process, such as development, verification, demonstration, or production. It references exactly one desired vector at a time, which is a specific immutable version of the application.
 
 A stage serves as a checkpoint for quality assurance and approval. In Konfidence, stages are a virtual concept. They are represented by a Kubernetes CRD.
 
-Deployments are executed in landscapes and mapped to stages. Through this, a deployment can be part of multiple stages of the same landscape.
+Stages belong to landscapes and use the deployment targets configured there. Multiple stages in one landscape can reuse deployments of artifacts they have in common.
 
 ## StageVersion
 

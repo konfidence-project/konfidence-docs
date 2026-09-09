@@ -77,5 +77,5 @@ See [Access Control](/docs/deploy-operate/access-control) for complete details a
 
 ## Next Steps
 
-- [Managing Landscapes](/docs/deploy-operate/landscapes): Create deployment environments within your project
+- [Managing Landscapes](/docs/deploy-operate/landscapes): Establish operational boundaries within your project
 - [Access Control](/docs/deploy-operate/access-control): Configure detailed RBAC policies
