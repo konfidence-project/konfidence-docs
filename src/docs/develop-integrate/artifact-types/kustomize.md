@@ -16,11 +16,11 @@ The examples build a service named `my-service` and push everything to `registry
 
 Before you begin, make sure you have:
 
-- A container build tool such as `docker` and the `flux` CLI for pushing OCI artifacts.
+- A container build tool such as `docker` and the `flux` command-line tool for pushing Open Container Initiative (OCI) artifacts.
 - Push access to an OCI registry for the image, the bundle, and the artifact.
-- The `kden` CLI. See [Publish artifacts](./publish-artifacts.md).
+- The `kden` command-line tool. See [Publish artifacts](./publish-artifacts.md).
 - A landscape served by the Kubernetes deployer. See [Find out which deployer serves your landscape](../../deploy-operate/deployer/overview.md#find-out-which-deployer-serves-your-landscape).
-- A service that reads and forwards `X-Vector-ID`. See [Prepare your Application](../prepare-your-application.md).
+- A service that reads and forwards `X-Vector-ID`. See [Prepare your application](../prepare-your-application.md).
 
 ## Build and push the container image
 
@@ -33,14 +33,14 @@ Before you begin, make sure you have:
    ENTRYPOINT ["my-service"]
    ```
 
-2. Build and push the image with the version you plan to ship:
+2. Build and push the image with the version you plan to release:
 
    ```bash
    docker build -t registry.example.com/my-org/my-service:1.0.0 .
    docker push registry.example.com/my-org/my-service:1.0.0
    ```
 
-The registry lists `my-service:1.0.0` afterwards.
+The registry lists `my-service:1.0.0` afterward.
 
 ## Create a minimal bundle
 
@@ -164,11 +164,11 @@ Several vectors deploy the same bundle into one landscape namespace. The deploye
 
 For the Service `my-service` in artifact version `v1.0.0` with hash `abc12345`, the applied Service is named `my-service-v1-0-0-abc12345`. Kustomize updates references between resources in the bundle, so a Deployment that mounts a ConfigMap by name keeps working.
 
-The suffix changes the DNS name of your Service. Do not hard-code sibling Service names in your code. Read them at runtime as described in [Add deployment results to an artifact](../vector-data/deployment-results.md).
+The suffix changes the DNS name of your Service. Do not hard-code the names of other Services in your code. Read them at runtime as described in [Add deployment results to an artifact](../vector-data/deployment-results.md).
 
 Do not set `nameSuffix` or `namespace` in your `kustomization.yaml`. The deployer overwrites both before it renders the bundle and discards your values.
 
-The deployer owns the rendered instance: its name suffix, its namespace, and its labels. Everything in the bundle is duplicated per instance. Ship resources that must exist once per cluster, such as a `CustomResourceDefinition`, through a separate delivery path.
+The deployer owns the rendered instance: its name suffix, its namespace, and its labels. Everything in the bundle is duplicated per instance. Deliver resources that must exist once per cluster, such as a `CustomResourceDefinition`, through a separate delivery path.
 
 ::: details Fields the deployer sets on the Kustomization
 
@@ -177,7 +177,7 @@ The deployer creates one Flux `Kustomization` per artifact instance and sets the
 | Field | Value |
 | --- | --- |
 | `metadata.name` | The `ArtifactDeployment` name |
-| `spec.sourceRef` | The sibling `OCIRepository` with the same name |
+| `spec.sourceRef` | The `OCIRepository` with the same name |
 | `spec.targetNamespace` | The landscape namespace |
 | `spec.nameSuffix` | `-<sanitized-artifact-version>-<hash>`, derived from the artifact version and hash |
 | `spec.commonMetadata.labels` | `konfidence.cloud/artifact-deployment=<artifact-deployment-name>` |
@@ -197,6 +197,8 @@ The first command prints the Deployment and the Service. The second command prin
 
 ## Next steps
 
+Use the following guides to publish your artifact and expose its Service:
+
 - [Publish artifacts](./publish-artifacts.md) to validate, sign, and push the artifact.
-- [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to sibling services.
-- [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) for the fields it sets on the rendered resources.
+- [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to other services in the vector.
+- Read [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.

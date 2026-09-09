@@ -13,19 +13,21 @@ lastUpdated: true
   a deployable artifact so that Konfidence can include it in a vector.
 -->
 
-This guide explains how to publish a deployable artifact as an Open Component Model (OCM) component version to an OCI registry.
+This guide explains how to publish a deployable artifact as an Open Component Model (OCM) component version to an Open Container Initiative (OCI) registry.
 After you publish it, you can reference the component version or an alias in a `VectorTemplate`.
 
 For background about artifacts, aliases, and vectors, see [Vectors and artifacts](../../core-concepts/vectors-and-artifacts.md).
 
 ## Prerequisites
 
+Before you begin, make sure you meet these requirements:
+
 - The `kden` CLI is installed.
 - You have the registry URL, configured credentials, and permission to push to the target OCI registry.
 - Your deployable content is already available in an OCI registry. For example:
   - A Helm chart published as an OCI artifact.
   - A Kustomize bundle published as an OCI artifact.
-- Your deployable content follows the [Kubernetes Deployer authoring rules](../../deploy-operate/deployer/kubernetes.md).
+- Your deployable content follows the requirements in [Author a Helm artifact](./helm.md) or [Author a Kustomize artifact](./kustomize.md).
 
 ## Create the Konfidence manifest file
 
@@ -149,7 +151,9 @@ registry.example.com//github.com/my-org/my-service:main
 
 ## Next steps
 
+Use the following guides to build vectors and review related artifact requirements:
+
 - [Build vectors](../observe-improve/build-vectors.md) from your published artifacts.
 - Read [Vectors and artifacts](../../core-concepts/vectors-and-artifacts.md) to understand how component versions and aliases become part of a vector.
-- Check the [Kubernetes Deployer authoring rules](../../deploy-operate/deployer/kubernetes.md) for Helm and Kustomize packaging requirements.
+- Check [Author a Helm artifact](./helm.md) or [Author a Kustomize artifact](./kustomize.md) for packaging requirements.
 - [Configure signing and verification](../advanced-features/configure-signing-and-verification.md) if your environment requires signed artifacts.

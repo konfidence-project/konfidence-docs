@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Deployers
 
-A deployer turns the artifacts of a vector into running workloads in a landscape. Konfidence ships the Kubernetes deployer and accepts custom deployers for other platforms.
+A deployer turns the artifacts of a vector into running workloads in a landscape. Konfidence provides the Kubernetes deployer and accepts custom deployers for other platforms.
 
 ## A deployer renders artifacts into a landscape
 
@@ -43,6 +43,8 @@ An artifact type without a matching deployment target in the landscape does not 
 <!-- TODO(fkasper): verify the DeploymentClass names shown in Managing Landscapes (`konfidence.cloud/helm`, `konfidence.cloud/kustomize`) against the orchestrator. -->
 
 ## Available deployers
+
+The following table lists the available deployer, its platform, and its supported artifact types:
 
 | Deployer | Platform | Artifact types |
 | --- | --- | --- |

@@ -7,9 +7,11 @@ description: Learn how to use vector-scoped configuration to manage settings tha
 
 Add vector-scoped configuration to a vector. Use it for feature flags and authored configuration values that Konfidence versions together with the vector.
 
-Konfidence bakes the configuration into the vector, so the vector ID uniquely determines its configuration. Two paths lead there: Konfidence assembles the vector from a `VectorTemplate`, or you build the vector yourself with the `kden` CLI.
+Konfidence includes the configuration in the vector, so the vector ID uniquely determines its configuration. You can add it in two ways: Konfidence assembles the vector from a `VectorTemplate`, or you build the vector yourself with the `kden` command-line tool.
 
 ## Prerequisites
+
+Before you begin, make sure you meet these requirements:
 
 - You know which path builds your vectors. See [Build vectors](../observe-improve/build-vectors.md).
 - For the template path: a `VectorTemplate` for the vector that receives the configuration.
@@ -17,7 +19,7 @@ Konfidence bakes the configuration into the vector, so the vector ID uniquely de
 
 ## Choose how the configuration enters the vector
 
-Both paths produce the same result: an OCM resource named `cloud-konfidence-vector-config` on the vector. Pick the path that matches how you build vectors.
+Both paths produce the same result: an Open Component Model (OCM) resource named `cloud-konfidence-vector-config` on the vector. Choose the path that matches how you build vectors.
 
 | You build vectors with | Path | Where the configuration lives |
 | --- | --- | --- |
@@ -47,7 +49,7 @@ If the `VectorTemplate` is new or changed, assembly creates a new vector. The co
 
 ## Add the configuration to a manually built vector
 
-Ship the configuration as one JSON file and reference it from the vector's component constructor.
+Store the configuration in one JSON file and reference it from the vector's component constructor.
 
 1. Write the configuration file next to the constructor file, for example `vector-config.json`:
 
@@ -136,7 +138,7 @@ Use the top-level `authored` block for free-form JSON. Konfidence does not impos
 }
 ```
 
-Authored config is optional, singleton, and immutable per vector version. Provide one `authored` block per vector, or none.
+Authored config is optional and immutable per vector version. Provide one `authored` block per vector, or none.
 
 Authored config is available through the whole-bundle response only. Query the vector ID as the flag key and read the `authored` subtree from the returned vector configuration object. The single-flag and bulk endpoints resolve feature flags only.
 
