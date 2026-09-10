@@ -19,7 +19,7 @@ Application delivery usually has two different kinds of boundaries:
 * **Operational boundaries** separate deployments by ownership, access, security, compliance, region, cost, or reliability requirements. Those boundaries focus on the question: Which deployments share the same operational rules and infrastructure context?
 * **Delivery boundaries** represent checkpoints at which an application version is developed, evaluated, or released. The driving key question here is: Which application version should be present at this checkpoint?
 
-Konfidence separates those boundaries into landscapes and stages. A landscape forms an operational boundary and described the underlying infrastructure. A stage represents a checkpoint in the delivery flow and focuses on the purpose it serves in the delivery flow and also which application version is served at this checkpoint
+Konfidence separates those boundaries into landscapes and stages. A landscape forms an operational boundary and contains resources to describe the underlying infrastructure. A stage represents a checkpoint in the delivery flow and focuses on the purpose it serves in the delivery flow and also which application version is served at this checkpoint
 
 ## Landscapes organize deployment contexts
 

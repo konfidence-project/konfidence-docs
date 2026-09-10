@@ -22,7 +22,7 @@ kubectl get deploymentclasses
 ```
 
 The resource name is the class identifier used by artifact manifests and deployment targets. 
-The `controller` field identifies the deployer responsible for the class.
+The `spec.controller` field identifies the deployer responsible for the class.
 
 Deployment classes are installed and owned by their deployer. 
 Do not create or modify them to configure an individual landscape.
@@ -35,7 +35,7 @@ List the targets in the landscape namespace:
 kubectl get deploymenttargets --namespace=<landscape-namespace>
 ```
 
-The `class` field identifies the capability each target makes available. 
+The `spec.deploymentClassName` field identifies the capability each target makes available. 
 The landscape can deploy an artifact only when it contains a ready target whose class matches the artifact manifest type.
 
 Use [Managing Deployment Targets](../deployment-targets.md) to add a missing capability or investigate a target that is not ready.
