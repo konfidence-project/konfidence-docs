@@ -10,29 +10,29 @@ lastUpdated: true
 
 An artifact is one deployable microservice packaged as an Open Component Model (OCM) component. A vector references artifacts by version, and a deployer renders each one into a landscape.
 
-The component holds your deployable content, such as a Helm chart or a Kustomize bundle, and a small manifest. The manifest names the deployment method and states whether one running instance may serve several vectors. The authoring guides show both.
+The component holds your deployable content, such as a Helm chart or a Kustomize bundle, and a small manifest. The manifest names the required deployment class and states whether one running instance may serve several vectors. The authoring guides show both.
 
 <figure>
   <img src="../img/artifact-vector.drawio.svg" alt="A vector named shop 1.4.0 contains two artifacts and an optional vector configuration. Each artifact contains a manifest with the deployment method and its deployable content: a Helm chart or a Kustomize bundle in a registry. The vector configuration holds feature flags and authored settings.">
   <figcaption>A vector bundles artifacts. Each artifact bundles a manifest and its deployable content.</figcaption>
 </figure>
 
-## Your landscape must offer a deployer for the type
+## Choose a deployment class
 
-Each artifact type deploys only where a deployer for it serves the landscape. Before you pick a type, check which deployer serves your landscape. See [Find out which deployer serves your landscape](../../deploy-operate/deployer/overview.md#find-out-which-deployer-serves-your-landscape).
+The artifact manifest's `type` is a deployment-class identifier. It selects both the deployer that understands the artifact and the capability a target landscape must provide.
+
+Before choosing a class, confirm that the landscapes where the artifact will run have a matching deployment target. See the [Deployment Model](../../core-concepts/deployment-model.md) for the complete relationship and [Managing Deployment Targets](../../deploy-operate/deployment-targets.md) for the operator workflow.
 
 ## Konfidence deploys these artifact types
 
 The following table lists each deployment method, the deployer that handles it, and where the deployer lives.
 
-| Deployment method | Responsible deployer | Deployer repository |
+| Deployment class | Artifact guide | Responsible deployer |
 | --- | --- | --- |
-| [Kustomize](./kustomize.md) | Kubernetes deployer | [kubernetes-landscape-orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) |
-| [Helm](./helm.md) | Kubernetes deployer | [kubernetes-landscape-orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) |
+| `kustomize.konfidence.cloud` | [Kustomize](./kustomize.md) | [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) |
+| `helm.konfidence.cloud` | [Helm](./helm.md) | [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) |
 
 Deployers are extensible. To add a deployment method or a target platform, see [Extend & Customize](../../extend-customize/index.md).
-
-<!-- TODO(fkasper): confirm the type identifiers. The deployer page says `cloud.konfidence.flux.kustomize` and `cloud.konfidence.flux.helm`; the orchestrator source accepts `kustomize.konfidence.cloud` and `helm.konfidence.cloud`. -->
 
 ## Choose whether vectors share one instance of your artifact
 

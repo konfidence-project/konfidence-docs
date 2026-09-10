@@ -8,7 +8,9 @@ lastUpdated: true
 
 # Managing Deployment Targets
 
-Configure a deployment target to tell a deployer where artifacts of a particular deployment class should run. A target belongs to one landscape and contains the connection information required by its deployer.
+Configure deployment targets to make installed deployment capabilities available in a landscape. This guide covers discovering deployment classes, connecting them to infrastructure, and verifying that their targets are ready.
+
+For the relationship between artifacts, deployment classes, deployers, targets, and landscapes, see the [Deployment Model](../core-concepts/deployment-model.md).
 
 ## Prerequisites
 
@@ -21,13 +23,13 @@ Before you begin, make sure you have:
 
 ## Discover available deployment classes
 
-Deployers advertise their capabilities through cluster-scoped `DeploymentClass` resources:
+List the deployment capabilities advertised by installed deployers:
 
 ```bash
 kubectl get deploymentclasses
 ```
 
-The Kubernetes landscape orchestrator commonly provides classes such as `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. Use the exact value from the `NAME` column as `spec.deploymentClassName`.
+The Kubernetes deployer commonly provides classes such as `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. Use the exact value from the `NAME` column as `spec.deploymentClassName`.
 
 Each artifact identifies the deployment class it requires. A landscape needs one ready target for every class used by the vectors delivered to its stages.
 
@@ -131,5 +133,6 @@ kubectl describe deploymenttarget helm-prod-eu \
 ## Next steps
 
 - [Managing Stages](./stages.md) explains how to create stages that use the landscape's deployment targets.
-- [Prepare your application](../develop-integrate/prepare-your-application.md) to select appropriate deployment classes for its artifacts.
+- [Managing Deployers](./deployer/overview.md) explains how to inspect the controllers that provide deployment classes.
+- [Types of artifacts](../develop-integrate/artifact-types/index.md) explains how application developers select a class for an artifact.
 - Consult the [DeploymentTarget CRD reference](../reference/crd.md#deploymenttarget) for all fields.

@@ -33,7 +33,7 @@ Organizations choose landscape boundaries according to their needs. A boundary m
 - resource quotas, cost controls, and service levels;
 - the infrastructure and deployers available to the application.
 
-Common designs use landscapes for development and production, for geographic regions, or for combinations such as production in the EU. These are conventions rather than fixed environment types. Two landscapes can use the same underlying infrastructure, while one landscape can provide several kinds of deployment target.
+Common designs use landscapes for development and production, for geographic regions, or for combinations such as production in the EU. These are conventions rather than fixed environment types. Two landscapes can use the same underlying infrastructure, while one landscape can provide several kinds of [deployment target](./deployment-model.md#deployment-targets-configure-destinations).
 
 Each landscape belongs to a [project](../deploy-operate/projects.md). Konfidence gives the landscape a dedicated scope for its stages, target configuration, credentials, and deployment resources. This keeps independently operated contexts separate while allowing one Konfidence control plane to manage them consistently.
 
@@ -83,6 +83,7 @@ Do not create a new landscape solely because a stage has a different name in the
 
 - [Vectors and Artifacts](./vectors-and-artifacts.md) explains the immutable application versions selected by stages.
 - [Promotions and Delivery Flow](./delivery-flow.md) explains how vectors move between delivery checkpoints.
+- [Deployment Model](./deployment-model.md) explains how artifacts, deployment classes, deployers, and targets connect.
 - [Managing Landscapes](../deploy-operate/landscapes.md) explains how operators establish landscape boundaries.
 - [Managing Deployment Targets](../deploy-operate/deployment-targets.md) explains how a landscape is connected to infrastructure.
 - [Managing Stages](../deploy-operate/stages.md) explains how to define and inspect delivery checkpoints.

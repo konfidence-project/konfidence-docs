@@ -38,12 +38,12 @@ For a Helm chart, add:
 
 ```json
 {
-  "type": "cloud.konfidence.flux.helm",
+  "type": "helm.konfidence.cloud",
   "allowReuse": true
 }
 ```
 
-For a Kustomize bundle, use `cloud.konfidence.flux.kustomize` as the `type` value.
+For a Kustomize bundle, use `kustomize.konfidence.cloud` as the `type` value.
 
 Set `allowReuse` based on how the artifact should be deployed:
 

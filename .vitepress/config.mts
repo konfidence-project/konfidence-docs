@@ -97,6 +97,10 @@ export default defineConfig({
               link: "/docs/core-concepts/landscapes-and-stages",
             },
             {
+              text: "Deployment Model",
+              link: "/docs/core-concepts/deployment-model",
+            },
+            {
               text: "Promotions and Delivery Flow",
               link: "/docs/core-concepts/delivery-flow",
             },
@@ -229,11 +233,11 @@ export default defineConfig({
                 ],
             },
             {
-                text: "Deployer",
+                text: "Deployers",
                 collapsed: true,
                 items: [
                     {
-                        text: "Overview",
+                        text: "Managing Deployers",
                         link: "/docs/deploy-operate/deployer/overview",
                     },
                     {

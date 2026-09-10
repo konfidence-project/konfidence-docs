@@ -8,9 +8,9 @@ lastUpdated: true
 
 # Managing Landscapes
 
-Create a landscape to establish an operational boundary for stages, deployment targets, credentials, and deployment resources. Konfidence manages a dedicated namespace for each landscape.
+Create a landscape to establish an operational boundary for stages and their deployment resources. Konfidence manages a dedicated namespace for each landscape.
 
-For the design model and guidance on choosing boundaries, see [Landscapes and Stages](../core-concepts/landscapes-and-stages.md).
+For guidance on choosing landscape boundaries, see [Landscapes and Stages](../core-concepts/landscapes-and-stages.md). To understand how a landscape connects artifacts to infrastructure, see the [Deployment Model](../core-concepts/deployment-model.md).
 
 ## Prerequisites
 
