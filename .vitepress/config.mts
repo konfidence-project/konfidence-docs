@@ -193,6 +193,10 @@ export default defineConfig({
               link: "/docs/deploy-operate/access-control",
             },
             {
+              text: "Local Development (No-Auth Mode)",
+              link: "/docs/deploy-operate/local-development",
+            },
+            {
               text: "Upgrading Konfidence",
               link: "/docs/deploy-operate/upgrading-konfidence",
             },
