@@ -81,7 +81,7 @@ Now run the operator and the API server on your host. They restart in seconds, w
 
    The expected response is `{"status":"ok"}`.
 
-The `kden` CLI talks to `http://localhost:8090` by default, so it works against this API server without configuration. If you run the API server elsewhere, point the CLI at it with `kden config set api-endpoint <url>`. `make test-operators` uses the same envtest binaries, so the controller tests need nothing beyond this section.
+Build the `kden` CLI once with `make build-kden-cli`; the binary lands in `bin/kden`. It talks to `http://localhost:8090` by default, so it works against this API server without configuration. If you run the API server elsewhere, point it there with `kden config set api-endpoint <url>`. `make test-operators` uses the same envtest binaries, so the controller tests need nothing beyond this section.
 
 To serve the dashboard from the API server as in production, build it once with `pnpm ui:build` and point the API server at the result:
 
@@ -109,13 +109,41 @@ Vectors and artifacts are OCI objects, and so are the container images. Start a 
 make dev-registry
 ```
 
-Push a vector to it with `kden`. The registry speaks plain HTTP, and `kden` assumes HTTPS, so give the scheme explicitly:
+A vector is pushed from a constructor file that lists its components and resources. Create a minimal one in an empty directory, together with the config file it references:
 
 ```bash
-kden vector push --file vector.yaml --registry=http://localhost:5001/<subpath>
+mkdir demo-vector && cd demo-vector
+echo '{"description": "demo vector for local development"}' > vector-config.json
+cat > vector-constructor.yaml <<'EOF'
+components:
+  - name: example.com/demo/vector
+    version: 0.1.0
+    provider:
+      name: konfidence
+    resources:
+      - name: cloud-konfidence-vector-config
+        type: json
+        version: 0.1.0
+        relation: local
+        input:
+          type: file/v1
+          path: ./vector-config.json
+EOF
 ```
 
-Replace `<subpath>` with any repository name, for example `vectors/demo`.
+Push it with `kden`. The registry speaks plain HTTP and `kden` assumes HTTPS, so the scheme is required. The path after the port is the repository the vector goes into and can be anything:
+
+```bash
+kden vector push --file vector-constructor.yaml --registry=http://localhost:5001/vectors/demo
+```
+
+Two log lines about missing OCM configuration and credentials are expected; the local registry needs neither. Verify the vector is in the registry:
+
+```bash
+curl http://localhost:5001/v2/_catalog
+```
+
+The output lists `vectors/demo/component-descriptors/example.com/demo/vector`.
 
 ## Identity provider
 
