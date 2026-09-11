@@ -89,7 +89,13 @@ To serve the dashboard from the API server as in production, build it once with 
 API_UI_ASSET_PATH=apps/konfidence-ui/build make run-kden-api
 ```
 
-For dashboard work itself, `pnpm ui:dev` runs a dev server that proxies to the API server, and `pnpm ui:dev:mock` runs it against a mock API instead, so no Kubernetes is needed at all. The design system is a workspace package that the dashboard imports from source, so changes to it show up live in the same dev server. See the [`konfidence` README](https://github.com/konfidence-project/konfidence#dashboard-development).
+For dashboard work itself, run the dev server and point its API proxy at the API server from step 3:
+
+```bash
+KONFIDENCE_API_URL=http://127.0.0.1:8090 pnpm ui:dev
+```
+
+Open the printed URL and sign in. With OIDC off you land on the local admin session without a password. Without `KONFIDENCE_API_URL` the proxy targets the mock API on port 8091, which `pnpm ui:dev:mock` starts together with the dashboard when you want no Kubernetes at all. The design system is a workspace package that the dashboard imports from source, so changes to it show up live in the same dev server. See the [`konfidence` README](https://github.com/konfidence-project/konfidence#dashboard-development).
 
 ::: tip Any cluster works
 If you already have a cluster, point `KUBECONFIG` at it and install the CRDs with `make install`. Everything else on this page is the same.
