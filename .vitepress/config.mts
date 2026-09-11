@@ -224,6 +224,10 @@ export default defineConfig({
               text: "Contributing",
               link: "/docs/extend-customize/code-of-conduct",
             },
+            {
+              text: "Local development",
+              link: "/docs/extend-customize/local-development",
+            },
             { text: "Style guide", link: "/docs/extend-customize/styleguide" },
             {
               text: "Guide templates",
