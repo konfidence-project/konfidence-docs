@@ -14,84 +14,84 @@ Before you install Konfidence, it helps to know what this setup is for: teams pr
 
 ## Cluster setup
 
-You need a Kubernetes cluster with Konfidence and the [Konfidence CLI](/docs/getting-started/install-cli) installed.
+Use the Quickstart script to create a local Kubernetes cluster with Konfidence installed. By the end of this setup, you’ll have a running instance and access to its dashboard.
 
-For a quick test, you can start a local kind cluster with Konfidence installed:
+Before you begin, install the following tools:
 
-```bash
-curl -L https://raw.githubusercontent.com/konfidence-project/konfidence/main/hack/quickstart/kind.sh | sh
-```
+- [Docker](https://docs.docker.com/get-started/get-docker/) — make sure the Docker engine is running.
+- [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) — creates the local Kubernetes cluster.
+- [kubectl](https://kubernetes.io/docs/tasks/tools/) — lets you interact with the cluster.
+- [Helm](https://helm.sh/docs/intro/install/) — installs the Konfidence components.
 
-This will:
-- spin up a kind cluster
-- install flux
-- install the GatewayAPI CRDs
-- install the Konfidence Helm chart
-- install a Deployer for Kubernetes target runtime
-
-::: details Manual Setup
-If you already have a Kubernetes cluster, select it in your current kubeconfig context and install Konfidence manually with the following commands.
-
-Set the Konfidence version and target namespace:
+Run the installation:
 
 ```bash
-export KONFIDENCE_VERSION=0.0.1-alpha.1
-export KONFIDENCE_NAMESPACE=konfidence-system
+curl -fsSL https://raw.githubusercontent.com/konfidence-project/konfidence/main/hack/quickstart/quickstart.sh | sh
 ```
 
-Install the Gateway API CRDs:
+The script creates a kind cluster named `konfidence-quickstart` and selects it as your current kubeconfig context. It then installs these components in order:
 
-```bash
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
-```
+1. **Flux** — controllers that reconcile Helm and Kustomize deployments.
+2. **Konfidence** — the controller and API, which also serves the dashboard.
+3. **Kubernetes Landscape Orchestrator** — uses Flux to deploy Helm charts and Kustomize configurations for Konfidence.
+4. **Vector Data Service** — lets applications read configuration and deployment results for a vector at runtime.
 
-Install Flux and wait for the source controller to become available:
+The script waits for the Flux deployments and Helm releases to become ready. Running it again reuses the cluster and updates the existing installation.
 
-```bash
-kubectl apply -f https://github.com/fluxcd/flux2/releases/latest/download/install.yaml
+If you’d like to explore how the installation works or try the steps manually, take a look at the [Quickstart script](https://github.com/konfidence-project/konfidence/blob/main/hack/quickstart/quickstart.sh). Its comments explain each step and the components being installed.
 
-kubectl wait deployment/source-controller \
-  --namespace flux-system \
-  --for=condition=Available \
-  --timeout=180s
-```
-
-Install Konfidence:
-
-```bash
-helm upgrade --install konfidence oci://ghcr.io/konfidence-project/charts/konfidence \
-  --version "$KONFIDENCE_VERSION" \
-  --namespace "$KONFIDENCE_NAMESPACE" \
-  --create-namespace \
-  --set image.repository=ghcr.io/konfidence-project/konfidence-operator \
-  --set image.tag="$KONFIDENCE_VERSION" \
-  --wait
-```
-
-Install the Kubernetes landscape orchestrator:
-
-```bash
-helm upgrade --install kubernetes-landscape-orchestrator oci://ghcr.io/konfidence-project/charts/kubernetes-landscape-orchestrator \
-  --version "$KONFIDENCE_VERSION" \
-  --namespace "$KONFIDENCE_NAMESPACE" \
-  --create-namespace \
-  --set image.repository=ghcr.io/konfidence-project/kubernetes-landscape-orchestrator \
-  --set image.tag="$KONFIDENCE_VERSION" \
-  --wait
-```
-
-Verify the installation with:
+Once the installation completes, check the Konfidence deployments:
 
 ```bash
 kubectl get deployments -n konfidence-system
 ```
 
-You should see `konfidence` and `kubernetes-landscape-orchestrator`.
+You should see output similar to this:
 
-See [Installing Konfidence](/docs/deploy-operate/konfidence-installation) for full details.
-:::
+```text
+NAME                                READY   UP-TO-DATE   AVAILABLE   AGE
+konfidence                          1/1     1            1           61s
+konfidence-api                      1/1     1            1           61s
+kubernetes-landscape-orchestrator   1/1     1            1           42s
+vector-data-service                 1/1     1            1           27s
+```
+
+The `AGE` values depend on when you created the cluster. The `READY` column should show that all replicas are ready.
+
+Check that the Flux controllers are also ready:
+
+```bash
+kubectl get deployments -n flux-system
+```
+
+For every Flux deployment, the `READY` column should show that all replicas are ready.
+
+### Open the dashboard
+
+The local Quickstart does not yet include an ingress setup for the dashboard. To access it from your computer, use port-forwarding to connect to the Konfidence API, which also serves the dashboard:
+
+```bash
+kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
+```
+
+Keep this command running and open `http://localhost:8090` in your browser. You should see the Konfidence sign-in page:
+
+![Konfidence sign-in page with the Continue with SSO button.](./screenshot_dashboard_login.png)
+
+Select **Continue with SSO** to sign in as **Local Admin**. No external identity provider is required.
+
+Sessions are stored in memory, so you’ll need to sign in again if the API restarts.
+
+### Clean up
+
+Keep the cluster running if you’re continuing with **Deliver an application**. When you’re finished exploring Konfidence, stop the port-forward with `Ctrl+C` and remove the cluster:
+
+```bash
+kind delete cluster --name konfidence-quickstart
+```
+
+This deletes the `konfidence-quickstart` cluster and all workloads and data stored in it.
 
 ## Next steps
 
-* [create your own vector and deploy it to dev stage](/docs/getting-started/create-vector) 
-* [create a delivery flow across multiple stages](/docs/getting-started/deliver-sample-app)
+Your local Konfidence instance is ready. Continue with [Deliver an application](/docs/getting-started/deliver-sample-app) to run a sample application in development and approve its promotion to production.
