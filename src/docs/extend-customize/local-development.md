@@ -1,25 +1,25 @@
 ---
 title: "Local development"
-description: "Set up a local Konfidence development environment, from an envtest apiserver on your host to a kind cluster, adding only the pieces your change needs."
+description: "Run Konfidence locally while you change it: an envtest apiserver on your host, and a registry, identity provider, kind cluster or deployer when your change needs them."
 editLink: true
 lastUpdated: true
 ---
 
 # Local development
 
-This page explains how to run Konfidence locally while you change it. It's for contributors to the [`konfidence`](https://github.com/konfidence-project/konfidence) repository. If you want to try Konfidence rather than change it, follow the [Quickstart](../getting-started/quickstart.md) instead.
+This page is for contributors to the [`konfidence`](https://github.com/konfidence-project/konfidence) repository. To try Konfidence without changing it, follow the [Quickstart](../getting-started/quickstart.md) instead.
 
-The setup is a handful of independent pieces. Which ones you need depends on how far your change has to reach before you can trust it:
+The local setup consists of independent pieces. Which ones you need depends on what your change touches:
 
 | You are changing | You need |
 | --- | --- |
 | Controller logic, API handlers, the CLI, the dashboard | A Kubernetes API with the Konfidence CRDs. envtest provides one on your host. |
 | Vector or artifact handling, image builds | The above plus a local OCI registry |
 | Login and sessions | The above plus a local identity provider |
-| The Helm chart, Dockerfiles, RBAC or webhooks as deployed | A real kind cluster with the registry |
+| The Helm chart, Dockerfiles, RBAC or webhook wiring | A kind cluster with the registry |
 | End-to-end delivery into workloads | The cluster plus a deployer |
 
-Start with the Kubernetes API. Add a piece only when your change reaches it.
+Start with the Kubernetes API and add pieces as you need them.
 
 ## Prerequisites
 
@@ -31,17 +31,17 @@ Start with the Kubernetes API. Add a piece only when your change reaches it.
   source ./bin/activate-hermit
   ```
 
-Run every command on this page from the repository root with Hermit active. `make help` lists all targets. The first `make` target you run downloads the pinned tools and regenerates manifests, which takes a minute and prints a lot of output. That's normal.
+Run every command on this page from the repository root with Hermit active. `make help` lists all targets. The first `make` target you run downloads the pinned tools and regenerates manifests, so expect a minute of output before anything else happens.
 
 ## Kubernetes API
 
-The operator, the API server and `kden` only read and write custom resources. They don't need nodes, scheduling or pods, so a bare API server is enough. [envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest) starts one on your host, with the Konfidence CRDs installed:
+The operator, the API server and `kden` read and write custom resources and need nothing else from a cluster. A bare API server is enough, and [envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest) starts one on your host with the Konfidence CRDs installed:
 
 ```bash
 make dev-apiserver
 ```
 
-After the generator output it prints an `export KUBECONFIG=...` line. Paste that line into every other terminal you use for the steps below, then leave the apiserver running. `Ctrl`+`C` stops it.
+Once the generators are done it prints an `export KUBECONFIG=...` line. Paste that line into every other terminal you use for the steps below and leave the apiserver running. `Ctrl`+`C` stops it.
 
 Verify the CRDs are present:
 
@@ -71,7 +71,7 @@ Now run the operator and the API server on your host. Both regenerate manifests 
    make run-kden-api
    ```
 
-   OIDC is off by default. The login flow still runs, but it needs no identity provider: logging in through the dashboard or `kden login` gives you a local admin session as `admin@local` in the group `local-admin`. A project is visible to that user only if one of its role bindings references that group.
+   OIDC is off by default. The login flow still runs without an identity provider: signing in through the dashboard or `kden login` gives you a local admin session as `admin@local` in the group `local-admin`. Projects become visible to that user through a role binding on that group.
 
 4. Verify the API server answers:
 
@@ -133,20 +133,20 @@ components:
 EOF
 ```
 
-Push it with `kden` from inside that directory, since the constructor's file paths are resolved relative to where you run the command. The registry speaks plain HTTP and `kden` assumes HTTPS, so the scheme is required. The path after the port is the repository the vector goes into and can be anything:
+Push it with `kden` from inside that directory, because the constructor's file paths are relative to the working directory. The registry speaks plain HTTP and `kden` assumes HTTPS, so the scheme is required. The path after the port names the repository the vector goes into:
 
 ```bash
 kden vector push --file vector-constructor.yaml --registry=http://localhost:5001/vectors/demo
 cd ../..
 ```
 
-On success the command prints only two log lines about missing OCM configuration and credentials. The local registry needs neither. Verify the vector is in the registry:
+On success the command prints two log lines about missing OCM configuration and credentials and nothing else. Verify the vector is in the registry:
 
 ```bash
 curl http://localhost:5001/v2/_catalog
 ```
 
-The output lists `vectors/demo/component-descriptors/example.com/demo/vector`. The registry keeps its contents until `make dev-cluster-down` deletes it, together with the kind cluster.
+The output lists `vectors/demo/component-descriptors/example.com/demo/vector`. The registry keeps its contents until `make dev-cluster-down` deletes it along with the kind cluster.
 
 ## Identity provider
 
@@ -156,29 +156,29 @@ Only the login flow touches an identity provider. The repository ships a Docker 
 make dev-up
 ```
 
-Start the API server with `API_OIDC_ENABLED=true` to use it. Your operating system must trust Caddy's local certificate authority for this to work, otherwise the API server exits with a certificate error at startup. Export the root certificate from the running Caddy container and add it to your system trust store once. On macOS that is a system keychain change and asks for your password:
+Start the API server with `API_OIDC_ENABLED=true` to use it. Your operating system must trust Caddy's local certificate authority, or the API server exits with a certificate error at startup. Export the root certificate from the running Caddy container and add it to your system trust store once. On macOS this changes the system keychain and asks for your password:
 
 ```bash
 docker cp caddy:/data/caddy/pki/authorities/local/root.crt .tmp/caddy-root.crt
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain .tmp/caddy-root.crt
 ```
 
-On Linux, copy the file to `/usr/local/share/ca-certificates/caddy-root.crt` and run `sudo update-ca-certificates`. The API server checks the system trust store on macOS, not `SSL_CERT_FILE`.
+On Linux, copy the file to `/usr/local/share/ca-certificates/caddy-root.crt` and run `sudo update-ca-certificates`. Setting `SSL_CERT_FILE` instead has no effect on macOS, where Go uses the system trust store.
 
-To see what the stack is doing, run `make dev-logs` and stop tailing with `Ctrl`+`C`. To stop the stack, run `make dev-down`. Its data survives that; `make dev-reset` stops it and deletes the data too.
+`make dev-logs` tails the stack's logs until you press `Ctrl`+`C`. `make dev-down` stops the stack and keeps its data. `make dev-reset` stops it and deletes the data.
 
-The stack also starts Postgres. Sessions default to in-memory storage, so it's only needed when you work on session storage itself. Apply the API server's migrations to it once, then start the API server in database mode. Stop the API server from step 3 first, since both listen on port 8090:
+The stack also starts Postgres. Sessions default to in-memory storage, so you need it when you work on session storage itself. Apply the API server's migrations once, then start the API server in database mode. Stop the API server from step 3 first, since both listen on port 8090:
 
 ```bash
 make dev-db-migrate
 API_SESSION_STORAGE_TYPE=db-pg make run-kden-api
 ```
 
-`make dev-db-migrate` is safe to rerun and only applies migrations that are missing. The connection string defaults to the compose credentials; override it with `API_DB_CONNECTION`.
+`make dev-db-migrate` can be rerun; it applies whatever migrations are missing. The connection string defaults to the compose credentials and can be overridden with `API_DB_CONNECTION`.
 
 ## Real cluster
 
-Use a kind cluster when your change is about how Konfidence runs *in* a cluster: the Helm chart, the Dockerfiles, RBAC or the webhook wiring. Stop `make dev-apiserver`, `make run` and `make run-kden-api` first, and use a terminal without the envtest `KUBECONFIG`. kind writes its context into whatever `KUBECONFIG` points at, and the envtest file is rewritten on every `make dev-apiserver`, so `make dev-cluster` refuses to run while it's set.
+Use a kind cluster when your change concerns how Konfidence runs inside a cluster: the Helm chart, the Dockerfiles, RBAC or the webhook wiring. Stop `make dev-apiserver`, `make run` and `make run-kden-api` first, and use a terminal without the envtest `KUBECONFIG`. kind writes its context into whatever `KUBECONFIG` points at, and every `make dev-apiserver` rewrites the envtest file, so `make dev-cluster` refuses to run while it's set.
 
 1. Create the cluster. It is wired to the local registry and starts it if needed. Your `kubectl` context switches to `kind-konfidence-dev`:
 
@@ -211,7 +211,7 @@ Use a kind cluster when your change is about how Konfidence runs *in* a cluster:
    make deploy
    ```
 
-   The issuer is `host.docker.internal` because the pod has to reach Authelia on your host. `make deploy` takes care of the rest: it rewrites the browser-facing URLs to `auth.localhost` and mounts Caddy's local CA into the pod so it trusts Authelia's certificate.
+   The issuer is `host.docker.internal` because the pod talks to Authelia on your host. `make deploy` rewrites the browser-facing URLs to `auth.localhost` and mounts Caddy's local CA into the pod so it trusts Authelia's certificate.
 
 5. Verify the pods are running:
 
@@ -221,7 +221,7 @@ Use a kind cluster when your change is about how Konfidence runs *in* a cluster:
 
    Both `konfidence` and `konfidence-api` should reach `1/1 Running`.
 
-6. To reach the in-cluster API server from your host, forward its service and check the health endpoint:
+6. To call the in-cluster API server from your host, forward its service and check the health endpoint:
 
    ```bash
    kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
@@ -242,9 +242,9 @@ make install-konfidence-crds
 REGISTRY=localhost:5001 make docker-build docker-push dev-install
 ```
 
-The first target installs Gateway API and Flux into the kind cluster. The second installs the Konfidence CRDs from the sibling clone, which the deployer's controllers need before they start. It does nothing if the CRDs are already there, for example after `make deploy` or `make install` in `konfidence`. The last line builds the deployer image for your host's architecture, pushes it to the local registry and installs the chart with it.
+The first target installs Gateway API and Flux into the kind cluster. The second installs the Konfidence CRDs from the sibling clone, which the deployer's controllers need before they start; it skips the install when the CRDs are already present, for example after `make deploy` in `konfidence`. The last line builds the deployer image for your host's architecture, pushes it to the local registry and installs the chart with it.
 
-The chart installs into your current namespace, `default` unless you changed it. Verify the deployer is running:
+The chart installs into your current namespace, normally `default`. Verify the deployer is running:
 
 ```bash
 kubectl get pods -l app.kubernetes.io/name=kubernetes-landscape-orchestrator
