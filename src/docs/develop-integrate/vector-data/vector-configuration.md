@@ -5,15 +5,28 @@ description: Learn how to use vector-scoped configuration to manage settings tha
 
 # Add configuration to a vector
 
-This guide explains how to add vector-scoped configuration to a vector. Use this configuration for feature flags and authored configuration values that must be versioned with the vector.
+Add vector-scoped configuration to a vector. Use it for feature flags and authored configuration values that Konfidence versions together with the vector.
 
-Konfidence bakes the configuration into the vector at assembly time, so the vector ID uniquely determines its configuration. Provide it inline in the `VectorTemplate`.
+Konfidence includes the configuration in the vector, so the vector ID uniquely determines its configuration. You can add it in two ways: Konfidence assembles the vector from a `VectorTemplate`, or you build the vector yourself with the `kden` command-line tool.
 
 ## Prerequisites
 
-- You have a `VectorTemplate` for the vector that should receive the configuration.
+Before you begin, make sure you meet these requirements:
 
-## Add the configuration
+- You know which path builds your vectors. See [Build vectors](../observe-improve/build-vectors.md).
+- For the template path: a `VectorTemplate` for the vector that receives the configuration.
+- For the manual path: the vector's component constructor file and the `kden` CLI.
+
+## Choose how the configuration enters the vector
+
+Both paths produce the same result: an Open Component Model (OCM) resource named `cloud-konfidence-vector-config` on the vector. Choose the path that matches how you build vectors.
+
+| You build vectors with | Path | Where the configuration lives |
+| --- | --- | --- |
+| A `VectorTemplate` and Konfidence assembly | [Add the configuration to a VectorTemplate](#add-the-configuration-to-a-vectortemplate) | `spec.vectorConfig` of the template |
+| `kden vector push` from a constructor file | [Add the configuration to a manually built vector](#add-the-configuration-to-a-manually-built-vector) | A JSON file referenced as a resource in the constructor file |
+
+## Add the configuration to a VectorTemplate
 
 Add `spec.vectorConfig` to the `VectorTemplate` custom resource:
 
@@ -32,7 +45,62 @@ spec:
         port: 3306
 ```
 
-If the `VectorTemplate` is new or changed, assembly creates a new vector and adds the configuration as a local resource to the vector.
+If the `VectorTemplate` is new or changed, assembly creates a new vector. The configuration becomes a local resource of that vector.
+
+## Add the configuration to a manually built vector
+
+Store the configuration in one JSON file and reference it from the vector's component constructor.
+
+1. Write the configuration file next to the constructor file, for example `vector-config.json`:
+
+   ```json
+   {
+     "schemaVersion": "v1",
+     "features": {
+       "enableBeta": true,
+       "maxUsers": 150
+     },
+     "authored": {
+       "log-level": "info"
+     }
+   }
+   ```
+
+   `schemaVersion` must be `v1`. Both `features` and `authored` are optional.
+
+2. Add the file as a local resource named `cloud-konfidence-vector-config` to the vector component:
+
+   ```yaml
+   components:
+     - name: github.com/example/shop/vector
+       version: v1.0.0
+       provider:
+         name: example
+       componentReferences:
+         - componentName: github.com/example/shop/checkout
+           name: checkout
+           version: v1.0.0
+       resources:
+         - name: cloud-konfidence-vector-config
+           type: json
+           version: 1.0.0
+           relation: local
+           input:
+             type: file/v1
+             path: ./vector-config.json
+             mediaType: application/json
+   ```
+
+   Konfidence matches the resource by its name, not by its type. A vector carries at most one resource with this name. A second one fails the deployment.
+
+3. Validate and push the vector:
+
+   ```bash
+   kden vector validate --files ./component.yaml
+   kden vector push --file ./component.yaml --registry <registry>/<subpath>
+   ```
+
+   The command pushes the vector component version with the configuration resource. See [kden vector push](../../reference/cli.md#kden-vector-push) for all flags.
 
 ## Feature flags
 
@@ -50,15 +118,7 @@ Use the top-level `features` block for feature flags. The keys are flat, and val
 
 Konfidence does not add targeting, variants, or rules inside feature flags. The vector is the targeting unit. Changing a flag creates a new vector version, which keeps the change auditable, atomic with code, and reproducible.
 
-Use a standard [OpenFeature Remote Evaluation Protocol (OFREP) provider](https://openfeature.dev/ecosystem) or a custom OFREP-compatible provider to resolve flag values from the vector data service.
-
-Read a flag with a standard OpenFeature client:
-
-```js
-client.getBooleanValue("new-checkout", false, evaluationContext)
-```
-
-Set `evaluationContext.targetingKey` to the vector ID from the `X-Vector-ID` HTTP header.
+To read flags from your application, see [Read feature flags in your application](../advanced-features/feature-flags.md).
 
 ## Authored config
 
@@ -78,7 +138,7 @@ Use the top-level `authored` block for free-form JSON. Konfidence does not impos
 }
 ```
 
-Authored config is optional, singleton, and immutable per vector version. Provide one `authored` block per vector, or none.
+Authored config is optional and immutable per vector version. Provide one `authored` block per vector, or none.
 
 Authored config is available through the whole-bundle response only. Query the vector ID as the flag key and read the `authored` subtree from the returned vector configuration object. The single-flag and bulk endpoints resolve feature flags only.
 

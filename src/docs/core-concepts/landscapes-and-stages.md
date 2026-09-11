@@ -100,7 +100,7 @@ Whenever a newer promotion for the same configuration starts, any earlier promot
 
 `Succeeded`, `Failed`, and `Superseded` are terminal.
 
-For step-by-step instructions, see [Define promotions](../develop-integrate/observe-improve/define-promotions.md).
+For step-by-step instructions, see [Define promotions](../deploy-operate/define-promotions.md).
 
 ## Related pages
 

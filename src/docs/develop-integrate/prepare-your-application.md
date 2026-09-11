@@ -1,27 +1,29 @@
 ---
-title: Prepare your Application
+title: Prepare your application
 description: Learn how to prepare your application for integration with Konfidence.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Prepare your Application
+# Prepare your application
 
-Before you can deploy your application using Konfidence, you need to prepare it for integration with the framework.
+Konfidence's [vector model](../core-concepts/vectors-and-artifacts.md) requires changes to your application. These changes let your services communicate with the other services in their vector. They also let your services receive [runtime configuration](./vector-data/overview.md) <!-- values like [feature flags]() -->.
+
+<figure>
+  <img src="./img/vector-traffic.drawio.svg" alt="A request reaches the gateway, which adds the x-vector-id header and forwards it to Service A inside the vector. Service A queries the vector-data-service over OFREP for flags, config and sibling addresses, then forwards x-vector-id to Service B.">
+  <figcaption>An incoming request flows through Konfidence to your services.</figcaption>
+</figure>
 
 ## Prerequisites
 
-* app should be ready for target platform deployment
-* for k8s, that means having a OCI image and Kubernetes manifests (or Helm charts, Kustomize, etc.)
+Package your deployment code as a supported [artifact](./artifact-types/index.md).
 
-## Application structure
+## Konfidence fits microservice applications
 
-* Konfidence is designed for microservices architectures
-* each microservice should be one artifact
-* artifacts should be independently versioned and deployable
+Konfidence targets distributed applications. Use it if your application meets these requirements:
 
-## Vector Context
+* Your application uses a microservice architecture.
+* You package each service as its own artifact.
 
-* microservices need to be vector-aware
-* incoming requests carry an `X-Vector-ID` header that needs to be forwarded to all downstream service calls
+Packaging and integration add overhead for your engineering team. Evaluate carefully whether Konfidence fits your use case.

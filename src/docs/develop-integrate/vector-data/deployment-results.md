@@ -37,7 +37,7 @@ metadata:
     konfidence.cloud/deployment-result: candidates
 ```
 
-Only Kubernetes Services can be exposed this way today. For how the deployer turns the annotation into a deployment result, see [Kubernetes Deployer — Exposing a Service as a deployment result](../deployers/kubernetes.md#exposing-a-service-as-a-deployment-result).
+Only Kubernetes Services can be exposed this way today. For how the deployer turns the annotation into a deployment result, see [Exposing a Service as a deployment result](../../deploy-operate/deployer/kubernetes.md#exposing-a-service-as-a-deployment-result).
 
 A deployment result is identified by the pair `(name, type)`, which must be unique within a component. Giving two Services in the same component the same annotation value is rejected at deploy time.
 
