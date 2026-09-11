@@ -101,6 +101,10 @@ export default defineConfig({
               link: "/docs/core-concepts/landscapes-and-stages",
             },
             {
+              text: "Deployment Model",
+              link: "/docs/core-concepts/deployment-model",
+            },
+            {
               text: "Promotions and Delivery Flow",
               link: "/docs/core-concepts/delivery-flow",
             },
@@ -203,6 +207,14 @@ export default defineConfig({
               link: "/docs/deploy-operate/landscapes",
             },
             {
+              text: "Managing Deployment Targets",
+              link: "/docs/deploy-operate/deployment-targets",
+            },
+            {
+              text: "Managing Stages",
+              link: "/docs/deploy-operate/stages",
+            },
+            {
               text: "Access Control (RBAC)",
               link: "/docs/deploy-operate/access-control",
             },
@@ -225,11 +237,11 @@ export default defineConfig({
                 ],
             },
             {
-                text: "Deployer",
+                text: "Deployers",
                 collapsed: true,
                 items: [
                     {
-                        text: "Overview",
+                        text: "Managing Deployers",
                         link: "/docs/deploy-operate/deployer/overview",
                     },
                     {

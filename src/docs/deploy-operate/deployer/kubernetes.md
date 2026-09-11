@@ -8,8 +8,7 @@ lastUpdated: true
 
 # Kubernetes deployer
 
-The **Kubernetes deployer** is the reference implementation of Konfidence's
-deployer interface.
+The **Kubernetes deployer** is the reference implementation of Konfidence's deployer interface. It provides the deployment classes `helm.konfidence.cloud` and `kustomize.konfidence.cloud` and realizes them through Flux.
 
 <!-- TODO: link to the Deployer interface specification once available; see
 [Deployer Specification](../../reference/deployer-specification.md). -->
@@ -21,10 +20,10 @@ This page lists the manifest types this deployer supports and how it turns an an
 The value of `.spec.manifest.type` on an `ArtifactDeployment` selects the
 sub-controller that reconciles it. The following table lists the supported manifest types, their Open Component Model (OCM) resource types, and the Flux resources the deployer creates:
 
-| `manifest.type`                    | OCM resource type | Flux resources created                                    |
-| :--------------------------------- | :---------------- | :-------------------------------------------------------- |
-| `cloud.konfidence.flux.kustomize`  | `kustomize`       | `OCIRepository` (source) + `Kustomization` (kustomize.toolkit.fluxcd.io) |
-| `cloud.konfidence.flux.helm`       | `helmChart`       | `HelmRepository` (source) + `HelmRelease` (helm.toolkit.fluxcd.io)       |
+| Deployment class | OCM resource type | Flux resources created |
+| :--- | :--- | :--- |
+| `kustomize.konfidence.cloud` | `kustomize` | `OCIRepository` (source) + `Kustomization` (kustomize.toolkit.fluxcd.io) |
+| `helm.konfidence.cloud` | `helmChart` | `HelmRepository` (source) + `HelmRelease` (helm.toolkit.fluxcd.io) |
 
 An `ArtifactDeployment` whose `manifest.type` does not match either value is
 ignored by this deployer.
@@ -86,4 +85,6 @@ supported.
 Use these pages for publishing instructions and the definition of a deployer:
 
 - [Publish artifacts](../../develop-integrate/artifact-types/publish-artifacts.md)
-- [Deployer definition](../../reference/glossary.md#deployer)
+- [Deployment Model](../../core-concepts/deployment-model.md)
+- [Managing Deployers](./overview.md)
+- [Managing Deployment Targets](../deployment-targets.md)

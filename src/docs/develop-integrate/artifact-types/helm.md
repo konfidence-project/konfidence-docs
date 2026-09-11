@@ -19,7 +19,7 @@ Before you begin, make sure you have:
 - A container build tool such as `docker` and Helm 3.8 or later with Open Container Initiative (OCI) support.
 - Push access to an OCI registry for the image, the chart, and the artifact.
 - The `kden` command-line tool. See [Publish artifacts](./publish-artifacts.md).
-- A landscape served by the Kubernetes deployer. See [Find out which deployer serves your landscape](../../deploy-operate/deployer/overview.md#find-out-which-deployer-serves-your-landscape).
+- A landscape with a ready `helm.konfidence.cloud` target. See [Managing Deployment Targets](../../deploy-operate/deployment-targets.md).
 - A service that reads and forwards `X-Vector-ID`. See [Prepare your application](../prepare-your-application.md).
 
 ## Build and push the container image
@@ -134,7 +134,7 @@ The chart is available as `registry.example.com/my-org/my-service:1.0.0`.
 
    ```json
    {
-     "type": "cloud.konfidence.flux.helm",
+     "type": "helm.konfidence.cloud",
      "allowReuse": false
    }
    ```

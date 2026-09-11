@@ -1,6 +1,6 @@
 ---
 title: Managing Landscapes
-description: Create and manage Landscapes as deployment targets for your vectors within Projects.
+description: Create a landscape within a project and verify its managed deployment scope.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -8,89 +8,101 @@ lastUpdated: true
 
 # Managing Landscapes
 
-## Overview
+Create a landscape to establish an operational boundary for stages and their deployment resources. Konfidence manages a dedicated namespace for each landscape.
 
-A Landscape represents an environment where you deploy your applications, such as development, staging, or production. When you create a Landscape, Konfidence automatically provisions a dedicated namespace to organize all the deployment resources for that environment. Inside this namespace, you define Stages (your deployment pipelines) and Konfidence manages the resources needed to deploy your applications to the actual infrastructure.
+For guidance on choosing landscape boundaries, see [Landscapes and Stages](../core-concepts/landscapes-and-stages.md). To understand how a landscape connects artifacts to infrastructure, see the [Deployment Model](../core-concepts/deployment-model.md).
 
-Landscapes can target any platform that has a landscape orchestrator available. Konfidence provides the `kubernetes-landscape-orchestrator` for Kubernetes deployments. Third-party orchestrators may be available for other platforms, or you can build your own custom orchestrator to support additional deployment targets.
+## Prerequisites
 
-The actual deployment targets are configured via **DeploymentTarget** resources created within the landscape namespace.
+Before you begin, make sure you have:
 
-## Creating a Landscape
+- a [project](./projects.md) in which to create the landscape;
+- permission to create `Landscape` resources in the project's namespace;
+- `kubectl` access to the Konfidence cluster.
 
-Landscapes always belong to a Project, so you must create a Project first. Landscapes are created in the project namespace, and Konfidence automatically generates the landscape namespace based on the project and landscape names.
+## Create a landscape
 
-**Example:**
+Create the `Landscape` resource in the namespace managed by its project:
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
 kind: Landscape
 metadata:
   name: prod-eu
-  namespace: kden-p-ecommerce-platform  # ← Must be a project namespace
+  namespace: kden-p-ecommerce-platform
 spec:
   displayName: Production - EU Region
 ```
 
-This creates:
-- A Landscape resource named `prod-eu` in the project namespace `kden-p-ecommerce-platform`
-- A landscape namespace: `kden-l-prod-eu-1ogisnw` (name generated from project and landscape names with hash suffix)
-
-After creating the Landscape, check its status to ensure the namespace was successfully created. Look for a `Ready` condition with status `True`.
+Apply the manifest:
 
 ```bash
-kubectl get landscape prod-eu -n kden-p-ecommerce-platform -o jsonpath='{.status.conditions[?(@.type=="Ready")]}'
+kubectl apply -f landscape.yaml
 ```
 
-For full CRD specification details, see the [Landscape CRD Reference](/docs/reference/crd#landscape).
+Konfidence creates and manages a namespace for the landscape. By default, its name starts with `kden-l-` and includes the landscape name and a stable suffix.
 
-## Deployment Targets
+::: details Use a specific namespace name
 
-Each landscape can have one or more **DeploymentTarget** resources that define where and how artifacts are deployed. DeploymentTargets reference a **DeploymentClass** (provided by deployer implementations) and include connection details.
-
-### DeploymentClass
-
-Deployers (like `kubernetes-landscape-orchestrator`) install cluster-scoped **DeploymentClass** resources that declare their capabilities. The Kubernetes landscape orchestrator currently supports:
-
-- `konfidence.cloud/helm` - Kubernetes Helm deployments
-- `konfidence.cloud/kustomize` - Kubernetes Kustomize deployments
-
-**Example:**
+Konfidence normally generates a collision-resistant namespace name. If an integration requires a predetermined name, set `spec.namespace` when creating the landscape:
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
-kind: DeploymentClass
+kind: Landscape
 metadata:
-  name: konfidence.cloud/helm
+  name: prod-eu
+  namespace: kden-p-ecommerce-platform
 spec:
-  type: konfidence.cloud/helm
-  controller: kubernetes-landscape-orchestrator
+  displayName: Production - EU Region
+  namespace: ecommerce-prod-eu
 ```
 
-### DeploymentTarget Configuration
+The namespace setting is immutable. Decide whether an override is necessary before creating the landscape.
 
-Create **DeploymentTarget** resources in your landscape namespace to configure deployment destinations. Here's a Kubernetes example using Helm:
+:::
 
-```yaml
-apiVersion: konfidence.cloud/v1alpha1
-kind: DeploymentTarget
-metadata:
-  name: kubernetes-helm-prod
-  namespace: kden-l-prod-eu-1ogisnw  # Landscape namespace
-spec:
-  deploymentClass: konfidence.cloud/helm
-  connection:
-    type: kubeconfig
-    ref:
-      kind: Secret
-      name: prod-cluster-kubeconfig  # Secret containing kubeconfig
+## Verify the landscape
+
+Have a look at the landscape to find its managed namespace:
+
+```bash
+kubectl get landscape prod-eu -n kden-p-ecommerce-platform 
 ```
 
-The `connection` field specifies how to connect to the target infrastructure. For Kubernetes deployments, this typically references a Secret containing a kubeconfig that grants access to the target cluster.
+The output should look like this:
 
-For more deployment target examples and detailed configuration options, see the [DeploymentTarget CRD Reference](/docs/reference/crd#deploymenttarget).
+```text
+NAME       DISPLAY NAME             PROJECT              NAMESPACE                 READY   AGE
+prod-eu    Production - EU Region   ecommerce-platform   kden-l-prod-eu-5w54scz7   True    46h
+```
 
-## Next Steps
+As soon as the landscape is `Ready`, it will show the name of the managed namespace.
 
-- [Landscapes and Stages](/docs/core-concepts/landscapes-and-stages): Deploy vectors to your landscapes
-- [Access Control](/docs/deploy-operate/access-control): Control who can manage landscapes
+## Update the display name
+
+The display name is intended for people and can be changed without changing the resource or namespace identity:
+
+```bash
+kubectl patch landscape prod-eu \
+  --namespace=kden-p-ecommerce-platform \
+  --type=merge \
+  --patch='{"spec":{"displayName":"Production - European Union"}}'
+```
+
+## Delete a landscape
+
+Deleting a landscape also deletes its managed namespace and the resources contained in it, including stages and deployed artifacts. Confirm that the landscape is no longer needed before deleting it.
+
+```bash
+kubectl delete landscape prod-eu \
+  --namespace=kden-p-ecommerce-platform
+```
+
+Konfidence keeps the landscape in a terminating state until its managed namespace and all associated resources have been removed.
+
+## Next steps
+
+- [Managing Deployment Targets](./deployment-targets.md) explains how to connect the landscape to infrastructure.
+- [Managing Stages](./stages.md) explains how to define delivery checkpoints in the landscape.
+- [Configure access control](./access-control.md) for the parent project.
+- Consult the [Landscape CRD reference](../reference/crd.md#landscape) for all fields.

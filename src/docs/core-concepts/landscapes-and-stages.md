@@ -1,111 +1,91 @@
 ---
-title: Stages and Promotions
-description: Understand how a stage references the vector that should be deployed and how a promotion updates that reference.
+title: Landscapes and Stages
+description: Understand how landscapes provide operational boundaries while stages express application delivery intent.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Stages and Promotions
+# Landscapes and Stages
 
-A [vector](./vectors-and-artifacts.md) is an immutable snapshot of the artifacts that make up an application.
-Once a vector has been assembled, it needs to be deployed to different environments as part of a delivery flow.
-Stages and promotions govern that flow.
+Konfidence separates the place where applications run from the checkpoints through which application versions move. **Landscapes** organize deployment contexts with shared operational requirements. **Stages** select the application version intended for a particular checkpoint in the delivery process.
 
-## Stages
+This separation lets organizations design delivery flows without tying them to a particular infrastructure topology.
 
-A stage is a logical checkpoint in a delivery flow, such as development, test, or production.
-It references one concrete vector version as its desired delivery state:
+## Overview
 
-```yaml
-apiVersion: konfidence.cloud/v1alpha1
-kind: Stage
-metadata:
-  name: dev-stage
-spec:
-  vector: registry.example.com//konfidence.cloud/demo-vector:3.0.0
-```
+Application delivery usually has two different kinds of boundaries:
 
-A stage exists in the namespace managed by a [landscape](../deploy-operate/landscapes.md). A landscape represents a deployment environment and can contain several stages, each referencing the vector that should be deployed there. The landscape targets the concrete infrastructure, such as a Kubernetes cluster, where those vectors are deployed.
+* **Operational boundaries** separate deployments by ownership, access, security, compliance, region, cost, or reliability requirements. Those boundaries focus on the question: Which deployments share the same operational rules and infrastructure context?
+* **Delivery boundaries** represent checkpoints at which an application version is developed, evaluated, or released. The driving key question here is: Which application version should be present at this checkpoint?
 
-For example, a development landscape could contain several stages that reference vectors with different feature sets enabled. One stage references vectors with experimental features, while another references only vectors with stable features. That stable stage can then be the starting point of a larger delivery flow that includes the test and production stages.
+Konfidence separates those boundaries into landscapes and stages. A landscape forms an operational boundary and contains resources to describe the underlying infrastructure. A stage represents a checkpoint in the delivery flow and focuses on the purpose it serves in the delivery flow and also which application version is served at this checkpoint
 
-Separate teams can also share one development landscape, each with its own development stage. Each team's stage references a separate vector that contains a development version of that team's microservice alongside stable versions of the others. This lets each team test its changes without affecting the other teams' development.
+## Landscapes organize deployment contexts
 
-When two stages in the same landscape reference vectors that share some artifacts, those artifacts are deployed only once and are reused, keeping the deployment footprint small.
+A landscape is a logical group of stages, deployment targets, and the resources that support their deployments. The resources in one landscape share an operational context.
 
-## Promotions
+Organizations choose landscape boundaries according to their needs. A boundary might reflect:
 
-A promotion re-points a stage to a specific vector version, updating which vector that stage references.
+- who can deploy and operate the application;
+- security and network isolation requirements;
+- regional or data-residency constraints;
+- resource quotas, cost controls, and service levels;
+- the infrastructure and deployers available to the application.
 
-Because a vector is immutable, a promotion is a lightweight operation: the vector already exists in the OCI registry, so nothing is rebuilt, copied, or moved.
+Common designs use landscapes for development and production, for geographic regions, or for combinations such as production in the EU. These are conventions rather than fixed environment types. Two landscapes can use the same underlying infrastructure, while one landscape can provide several kinds of [deployment target](./deployment-model.md#deployment-targets-configure-destinations).
 
-A `VectorPromotionConfig` connects one source to one target stage. The source is either a `VectorTemplate` or another `Stage` object.
+Each landscape belongs to a [project](../deploy-operate/projects.md). Konfidence gives the landscape a dedicated scope for its stages, target configuration, credentials, and deployment resources. This keeps independently operated contexts separate while allowing one Konfidence control plane to manage them consistently.
 
-With a template source, a `VectorPromotionConfig` forms the start of a delivery flow. The source resolves to the template's most recently assembled vector (`status.latestVector`), so whenever an artifact change produces a new one, the target stage (typically development) is automatically re-pointed to that vector.
+## Stages express delivery intent
 
-```yaml
-apiVersion: konfidence.cloud/v1alpha1
-kind: VectorPromotionConfig
-metadata:
-  name: latest-to-dev
-spec:
-  source:
-    kind: VectorTemplate
-    name: demo-vector
-  target:
-    kind: Stage
-    name: dev-stage
-    landscape: dev
-```
+A stage is a logical checkpoint that selects one [vector](./vectors-and-artifacts.md). The vector is an immutable description of an application version; the stage expresses that this is the version Konfidence should deliver for the checkpoint.
 
-With a stage source, a `VectorPromotionConfig` connects one stage to the next in the delivery flow. The source resolves to the vector the stage currently references (`spec.vector`) and the target specifies which stage should be re-pointed to that vector, gated by approval.
+Stage names describe the purpose of the checkpoint, not the infrastructure behind it. Depending on the delivery model, a landscape might contain:
 
-```yaml
-apiVersion: konfidence.cloud/v1alpha1
-kind: VectorPromotionConfig
-metadata:
-  name: dev-to-test
-spec:
-  source:
-    kind: Stage
-    name: dev-stage
-    landscape: dev
-  target:
-    kind: Stage
-    name: test-stage
-    landscape: test
-```
+- a development stage for each team;
+- one shared integration stage;
+- stable and experimental demonstration stages.
 
-Chaining several configurations together forms a delivery flow: the template is the source for the development stage, the development stage is the source for the test stage, and the test stage is the source for the production stage.
+Changing the vector selected by a stage changes the desired application state. Konfidence then deploys, migrates, and activates that vector through its runtime lifecycle. The desired vector and the currently active vector version can differ while this transition is in progress.
 
-<DrawioDiagram src="/assets/diagrams/promotion-sources.drawio" />
+Stages become a delivery flow when [promotions](./delivery-flow.md) connect them.
 
-## How a promotion runs
+## How landscapes and stages work together
 
-Konfidence watches the defined `VectorPromotionConfig` objects.
-When a source references a different vector than its target stage, a `VectorPromotion` object is automatically created. It is an immutable record of re-pointing the target stage to the source vector.
-Whether a promotion requires approval is recorded in its `requireApproval` property, which Konfidence defaults from the config's source: a `Stage` source requires approval, a `VectorTemplate` source does not. A promotion that requires approval waits until it is approved; otherwise it proceeds automatically by re-pointing the target stage.
-Because every promotion is a distinct record, the history of which vector each stage referenced remains traceable.
+Projects provide the organizational context. Landscapes define operational boundaries within that context. Deployment targets connect each landscape to concrete infrastructure, while stages select the vectors to deliver there.
 
-## Promotion lifecycle
+The following example shows how one project can separate development and production operations while each stage independently selects a vector.
 
-A promotion moves through a small set of states from creation to a terminal outcome.
-On creation, a promotion waits for approval (`Waiting`) when its `requireApproval` property is set, or becomes `Ready` immediately when it is not.
-A `Ready` promotion is queued for execution. When Konfidence executes it, the promotion becomes `InProgress` and re-points the target stage to the vector specified in the promotion's spec. It then reaches `Succeeded`, or `Failed` if execution cannot complete.
-If the target stage cannot be resolved yet, the promotion is `Blocked` and execution is retried until the target appears.
-Whenever a newer promotion for the same configuration starts, any earlier promotion that has not finished is `Superseded`.
+<DrawioDiagram src="/assets/diagrams/landscapes-and-stages.drawio" />
 
-<DrawioDiagram src="/assets/diagrams/promotion-lifecycle.drawio" />
+In this example, team development and integration stages share the same underlying infrastructure of the development landscape. The production stages are isolated under stricter operational requirements. The EU and US stages may advance independently even when they select the same vector.
 
-`Succeeded`, `Failed`, and `Superseded` are terminal.
+Stages in the same landscape can also [share deployments of reusable artifacts](../develop-integrate/artifact-types/#choose-whether-vectors-share-one-instance-of-your-artifact). For example, if two team vectors contain the same stable database artifact, Konfidence can reuse that deployment instead of creating one copy per stage. Separating the production landscape prevents this sharing from crossing the intended operational boundary.
 
-For step-by-step instructions, see [Define promotions](../deploy-operate/define-promotions.md).
+::: details Why the concepts are separated
 
-## Related pages
+Landscapes and stages allow delivery flows to remain infrastructure-independent. Stages describe application delivery intent without encoding infrastructure details. And not every stage needs separate infrastructure. The landscape boundary makes this an explicit operational decision. Several development stages can share a low-cost landscape, while production stages can use landscapes divided by region or compliance regime.
 
-- [Vectors and Artifacts](./vectors-and-artifacts.md) explains how artifacts and vectors define the application version that a promotion pins to a stage.
-- [Delivery Flow](./delivery-flow.md) explains how assembly, promotion, and deployment fit together.
-- [Vector Deployments](../deploy-operate/vector-deployments.md) explains what happens on a stage after its vector changes.
-- [Projects](../deploy-operate/projects.md) explains the project namespace that templates and promotion configurations live in.
-- [Landscapes](../deploy-operate/landscapes.md) explains the namespace each landscape manages, where stages live.
+Applications represented by different vectors often have many artifacts in common. Stages in one landscape can reuse compatible artifact deployments, which avoids unnecessary copies while preserving each stage's application-level identity.
+
+:::
+
+## Choosing boundaries
+
+Place stages in the same landscape when they can safely share the same operational context and deployment targets. This is often appropriate for multiple teams' development stages or temporary demonstrations of experimental features.
+
+Use separate landscapes when any of the operational concerns described above must be managed independently. In practical terms, ask whether the stages can share access policies, isolation, credentials, deployment destinations, resource controls, and service-level expectations. If any answer is no, separate landscapes make that boundary explicit.
+
+Do not create a new landscape solely because a stage has a different name in the delivery flow. Conversely, do not place stages together merely because they use the same infrastructure technology. The landscape should reflect the boundary at which deployments are operated together.
+
+## Related information
+
+- [Vectors and Artifacts](./vectors-and-artifacts.md) explains the immutable application versions selected by stages.
+- [Promotions and Delivery Flow](./delivery-flow.md) explains how vectors move between delivery checkpoints.
+- [Deployment Model](./deployment-model.md) explains how artifacts, deployment classes, deployers, and targets connect.
+- [Managing Landscapes](../deploy-operate/landscapes.md) explains how operators establish landscape boundaries.
+- [Managing Deployment Targets](../deploy-operate/deployment-targets.md) explains how a landscape is connected to infrastructure.
+- [Managing Stages](../deploy-operate/stages.md) explains how to define and inspect delivery checkpoints.
+- [Define promotions](../deploy-operate/define-promotions.md) explains how to connect stages in a controlled delivery flow.
+- [Vector Deployments](../deploy-operate/vector-deployments.md) explains the runtime lifecycle after a stage selects a vector.

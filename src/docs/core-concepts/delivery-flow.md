@@ -92,7 +92,7 @@ For those concepts, see [Vector Deployments](../deploy-operate/vector-deployment
 Read these pages for the surrounding concepts and task-oriented guidance:
 
 - [Vectors and Artifacts](./vectors-and-artifacts.md) explains the package model behind artifacts, aliases, and immutable vectors.
-- [Landscapes and Stages](./landscapes-and-stages.md) explains how stages select vectors and how promotions update that selection.
+- [Landscapes and Stages](./landscapes-and-stages.md) explains how operational contexts and delivery checkpoints remain separate.
 - [System Architecture](../deploy-operate/system-architecture.md) explains how the control plane and landscapes divide responsibility.
 - [Vector Deployments](../deploy-operate/vector-deployments.md) explains the runtime deployment concepts that apply after a vector reaches a target landscape.
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.
