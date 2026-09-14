@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Author a Helm artifact
 
-After this guide, your service deploys onto Kubernetes as one Helm artifact of a vector. The [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) installs the chart as one release per vector in the landscape.
+After this guide, you have a Helm chart and an OCM component constructor ready to validate and publish as a Konfidence artifact. Once the published artifact is included in a vector, the [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) installs the chart in the landscape.
 
 The examples build a service named `my-service` and push everything to `registry.example.com/my-org`.
 
