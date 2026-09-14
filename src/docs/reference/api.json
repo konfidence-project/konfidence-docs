@@ -141,7 +141,9 @@
             "description": "The artifactDeployment status",
             "enum": [
               "ArtifactFetched",
-              "ArtifactDeployed"
+              "ArtifactDeployed",
+              "AppHealthy",
+              "Ready"
             ],
             "type": "string"
           },
@@ -968,6 +970,9 @@
           },
           "403": {
             "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
           },
           "500": {
             "$ref": "#/components/responses/InternalError"
