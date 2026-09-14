@@ -15,6 +15,10 @@ Konfidence's [vector model](../core-concepts/vectors-and-artifacts.md) requires 
   <figcaption>An incoming request flows through Konfidence to your services.</figcaption>
 </figure>
 
+An incoming HTTP request reaches your application through the ingress gateway. In a Kubernetes landscape, the gateway adds `X-Vector-ID` to the routed request. This header identifies the vector handling the request. Your service must forward it on every outbound HTTP call so that downstream requests stay in the same vector. See [Access vector data in your application](./vector-data/access-vector-data.md).
+
+Your service can also use the vector ID to retrieve vector-specific configuration, feature flags, and deployment results. It requests this data from the vector data service through the OpenFeature Remote Evaluation Protocol (OFREP), a standard HTTP API. See [Read feature flags in your application](./advanced-features/feature-flags.md).
+
 ## Konfidence fits microservice applications
 
 Konfidence targets distributed applications. Use it if your application meets these requirements:
