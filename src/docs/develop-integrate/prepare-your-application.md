@@ -15,10 +15,6 @@ Konfidence's [vector model](../core-concepts/vectors-and-artifacts.md) requires 
   <figcaption>An incoming request flows through Konfidence to your services.</figcaption>
 </figure>
 
-## Prerequisites
-
-Package your deployment code as a supported [artifact](./artifact-types/index.md).
-
 ## Konfidence fits microservice applications
 
 Konfidence targets distributed applications. Use it if your application meets these requirements:
