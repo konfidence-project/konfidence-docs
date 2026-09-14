@@ -41,7 +41,7 @@ The operator, the API server and `kden` read and write custom resources and need
 make dev-apiserver
 ```
 
-Once the generators are done it prints an `export KUBECONFIG=...` line. Paste that line into every other terminal you use for the steps below and leave the apiserver running. `Ctrl`+`C` stops it.
+Once the generators are done it prints an `export KUBECONFIG=...` line. Paste that line into every other terminal you use for the steps below and leave the apiserver running. The variable is per terminal, so a new tab needs it again. `Ctrl`+`C` stops it.
 
 Verify the CRDs are present:
 
@@ -71,7 +71,7 @@ Now run the operator and the API server on your host. Both regenerate manifests 
    make run-kden-api
    ```
 
-   OIDC is off by default. The login flow still runs without an identity provider: signing in through the dashboard or `kden login` gives you a local admin session as `admin@local` in the group `local-admin`. Projects become visible to that user through a role binding on that group.
+   OIDC is off by default, so no identity provider is needed. See [No-auth mode](#no-auth-mode) below for what that means.
 
 4. Verify the API server answers:
 
@@ -82,6 +82,49 @@ Now run the operator and the API server on your host. Both regenerate manifests 
    The expected response is `{"status":"ok"}`.
 
 Build the `kden` CLI once with `make build-kden-cli`. The binary lands in `bin/kden`, which Hermit has on your `PATH`, so `kden` works from any directory. It talks to `http://localhost:8090` by default, so it works against this API server without configuration. If you run the API server elsewhere, point it there with `kden config set api-endpoint <url>`. `make test-operators` uses the same envtest binaries, so the controller tests need nothing beyond this section.
+
+### No-auth mode
+
+With `API_OIDC_ENABLED=false`, the API server replaces the OIDC login with a handler that creates a session straight away. Every session carries the same static identity, and the session middleware otherwise works as usual, so all endpoints, the dashboard and the CLI behave as they do with a real identity provider.
+
+| Field  | Value         |
+| ------ | ------------- |
+| Name   | `Local Admin` |
+| Email  | `admin@local` |
+| Groups | `local-admin` |
+
+::: warning Not for shared environments
+No-auth mode disables authentication. Never run a shared or production installation with `oidc.enabled: false`.
+:::
+
+Projects control access through role bindings, so a project is only visible to the local admin if it binds the `local-admin` group. Create one to work with:
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: konfidence.cloud/v1alpha1
+kind: Project
+metadata:
+  name: my-project
+spec:
+  roleBindings:
+    admin:
+      - session:
+          memberOf:
+            - local-admin
+EOF
+```
+
+Projects without that binding return empty role sets and their resources stay hidden.
+
+Signing in works the same way everywhere. In the dashboard, click **Login** and you land on the local admin session. With the CLI, `kden login` opens the login URL in your browser and completes the callback on its own. To drive the flow with `curl`, follow the login redirect, keep the cookie it sets and use it on later requests:
+
+```bash
+curl -si "http://localhost:8090/api/v1/login?return_url=http://localhost:8090/" | grep -i location
+curl -si "<the Location URL from above>" | grep -i set-cookie
+curl -s http://localhost:8090/api/v1/identity -H "Cookie: kden-session=<session id from the cookie>"
+```
+
+The identity response names `Local Admin` with `my-project` under `projectRoles`. An empty `projectRoles` means the Project was not applied or lacks the `local-admin` binding. The same [role binding model](../deploy-operate/access-control.md) applies to real identity provider groups.
 
 To serve the dashboard from the API server as in production, install the workspace dependencies and build it once, then start the API server with the build. Stop the API server from step 3 first, since both listen on port 8090:
 
