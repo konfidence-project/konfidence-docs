@@ -152,8 +152,6 @@ The bundle is available as `registry.example.com/my-org/my-service-manifests:1.0
 
    The component carries exactly one resource of type `kustomize`.
 
-3. Validate and publish the artifact as described in [Publish artifacts](./publish-artifacts.md).
-
 ## Expect a suffix on every resource name
 
 Several vectors deploy the same bundle into one landscape namespace. The deployer appends a suffix to every resource name so the instances coexist. The final name follows this pattern:
@@ -199,6 +197,6 @@ The first command prints the Deployment and the Service. The second command prin
 
 Use the following guides to publish your artifact and expose its Service:
 
-- [Publish artifacts](./publish-artifacts.md) to validate, sign, and push the artifact.
+- [Validate and publish the artifact](./publish-artifacts.md#validate-the-artifact-files).
 - [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to other services in the vector.
 - Read [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.

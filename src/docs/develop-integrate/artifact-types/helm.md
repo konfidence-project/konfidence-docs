@@ -168,8 +168,6 @@ The chart is available as `registry.example.com/my-org/my-service:1.0.0`.
 
    The component carries exactly one resource of type `helmChart`.
 
-3. Validate and publish the artifact as described in [Publish artifacts](./publish-artifacts.md).
-
 ## Derive every resource name from the release name
 
 Several vectors deploy the same chart into one landscape namespace. The deployer gives each deployment its own release name. Every resource in the chart must derive `metadata.name` from that release name, either directly or through the chart's fullname helper. A hard-coded name collides when a second vector deploys the chart.
@@ -239,6 +237,6 @@ Every name in the first output starts with `vector-a`, and every name in the sec
 
 Use the following guides to publish your artifact and expose its Service:
 
-- [Publish artifacts](./publish-artifacts.md) to validate, sign, and push the artifact.
+- [Validate and publish the artifact](./publish-artifacts.md#validate-the-artifact-files).
 - [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to other services in the vector.
 - Read [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.
