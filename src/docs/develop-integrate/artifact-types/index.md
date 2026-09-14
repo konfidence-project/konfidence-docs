@@ -23,12 +23,14 @@ Each artifact type deploys only where a deployer for it serves the landscape. Be
 
 ## Konfidence deploys these artifact types
 
-The following table lists each deployment method, the deployer that handles it, and where the deployer lives.
+The [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) supports both Helm and Kustomize.
 
-| Deployment method | Responsible deployer | Deployer repository |
-| --- | --- | --- |
-| [Kustomize](./kustomize.md) | Kubernetes deployer | [kubernetes-landscape-orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) |
-| [Helm](./helm.md) | Kubernetes deployer | [kubernetes-landscape-orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) |
+Choose the type that matches the deployment configuration you already maintain:
+
+- If your service has a Helm chart, follow [Author a Helm artifact](./helm.md).
+- If your service has Kubernetes manifests organized with Kustomize, follow [Author a Kustomize artifact](./kustomize.md).
+
+If both formats are available, follow your team's existing release workflow. You do not need to convert your deployment configuration for Konfidence.
 
 Deployers are extensible. To add a deployment method or a target platform, see [Extend & Customize](../../extend-customize/index.md).
 
