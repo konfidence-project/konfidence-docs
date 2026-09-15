@@ -49,7 +49,7 @@ If the `VectorTemplate` is new or changed, assembly creates a new vector. The co
 
 ## Add the configuration to a manually built vector
 
-Store the configuration in one JSON file and reference it from the vector's component constructor.
+Store the configuration in one JSON file next to your existing vector component constructor. The examples below assume that the constructor is named `component-constructor.yaml`.
 
 1. Write the configuration file next to the constructor file, for example `vector-config.json`:
 
@@ -68,7 +68,7 @@ Store the configuration in one JSON file and reference it from the vector's comp
 
    `schemaVersion` must be `v1`. Both `features` and `authored` are optional.
 
-2. Add the file as a local resource named `cloud-konfidence-vector-config` to the vector component:
+2. Add the file as a local resource named `cloud-konfidence-vector-config` to the `resources` list of the vector component in `component-constructor.yaml`:
 
    ```yaml
    components:
@@ -96,8 +96,8 @@ Store the configuration in one JSON file and reference it from the vector's comp
 3. Validate and push the vector:
 
    ```bash
-   kden vector validate --files ./component.yaml
-   kden vector push --file ./component.yaml --registry <registry>/<subpath>
+   kden vector validate --files ./component-constructor.yaml
+   kden vector push --file ./component-constructor.yaml --registry <registry>/<subpath>
    ```
 
    The command pushes the vector component version with the configuration resource. See [kden vector push](../../reference/cli.md#kden-vector-push) for all flags.
