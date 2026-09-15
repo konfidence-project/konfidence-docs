@@ -130,17 +130,33 @@ The vector data service reads one attribute from the evaluation context: `target
    }
    ```
 
-   ```bash [curl]
-   curl -s -X POST http://vector-data-service/ofrep/v1/evaluate/flags/new-checkout \
-     -H 'Content-Type: application/json' \
-     -d '{"context":{"targetingKey":"<vector-id>"}}'
-   ```
-
    :::
 
 The client returns `true` for the vector that defines `new-checkout: true`. A request with a different `X-Vector-ID` resolves against that vector's flags.
 
 Flag values never change for a given vector ID. Cache them per vector ID for as long as you like. A changed flag arrives as a new vector with a new vector ID.
+
+## Test flag evaluation without an SDK
+
+Use `curl` to test flag evaluation independently of your OpenFeature integration. Run the command from a workload in the landscape that can reach the vector data service. Use this check to confirm that the service resolves the flag before you troubleshoot the SDK setup. Application code should use the SDK workflow above.
+
+Replace `<vector-id>` with the value of an `X-Vector-ID` header from a request to your application:
+
+```bash
+curl -sS -X POST http://vector-data-service/ofrep/v1/evaluate/flags/new-checkout \
+  -H 'Content-Type: application/json' \
+  -d '{"context":{"targetingKey":"<vector-id>"}}'
+```
+
+For a vector that sets `new-checkout` to `true`, the endpoint returns:
+
+```json
+{
+  "key": "new-checkout",
+  "value": true,
+  "reason": "TARGETING_MATCH"
+}
+```
 
 ## Next steps
 
