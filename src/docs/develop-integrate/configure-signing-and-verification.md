@@ -30,6 +30,10 @@ Before you begin, make sure you have:
 - An RSA key pair for artifact signing and a separate RSA key pair for vector signing.
 - An existing Konfidence project and its namespace for the credential Secrets and `VectorTemplate`. See [Managing Projects](../deploy-operate/projects.md).
 
+Coordinate credential setup with your administrator before you begin.
+Reuse existing CLI credentials and assembly Secrets when available, and skip their setup instructions below.
+Use the corresponding signature names and Secret references throughout the examples.
+
 The examples sign `payment-hub:1.0.0`, point the `edge` alias to that version, and reference `payment-hub:edge` during assembly.
 Adapt the examples to your own artifacts and replace the registry addresses, key paths, key material, and namespace placeholders before using them.
 
@@ -93,10 +97,13 @@ Run these steps locally or in your continuous integration (CI) pipeline.
      --signature-name my-artifact-sig
    ```
 
+   An exit code of `0` confirms that signing succeeded.
+
 ## Optional: Update the artifact alias
 
 If you use a mutable alias, point it to the signed component version.
-Signing creates a new manifest digest, so repeat this command after every sign:
+Signing creates a new manifest digest.
+Run the alias command after signing so the alias points to the signed component version:
 
 ```bash
 kden artifact alias registry.example.com//konfidence.io/payment-hub:1.0.0 edge
@@ -107,7 +114,9 @@ If you skip this step, use the signed component version `registry.example.com//k
 
 ## Create credential Secrets for assembly
 
-Store key material and registry credentials in Kubernetes Secrets.
+If the required Secrets already exist, skip the creation commands and reference those Secrets in your `VectorTemplate`.
+Otherwise, coordinate their creation with your administrator using one of the following examples.
+The Secrets store key material and registry credentials.
 Choose either one combined Secret or separate Secrets, then reference them through `spec.credentials.ocm.refs` in your `VectorTemplate`.
 Konfidence merges the listed Secrets into a single credential graph.
 
@@ -324,7 +333,7 @@ spec:
 EOF
 ```
 
-Any verification or signing failure stops reconciliation.
+Any verification or signing failure stops the current reconciliation.
 
 ### Optional: Verify a base vector
 
@@ -369,8 +378,12 @@ Use the following checks for known assembly and signature-configuration problems
 
 | Symptom | Likely cause | Resolution or diagnostic check |
 | --- | --- | --- |
-| `VectorTemplate` `Ready=Unknown`, reason `DriftDetectionFailed` | Credential Secret missing, wrong key name, or not in the same namespace | Check Events with `kubectl describe vectortemplate my-vector -n <project-namespace>`. |
+| `VectorTemplate` `Ready=Unknown`, reason `DriftDetectionFailed` | Credential Secret missing, wrong key name, or not in the same namespace | Check Events with `kubectl describe vectortemplate my-vector -n <project-namespace>`, then correct the Secret configuration with your administrator. |
 | `algorithm` pin rejection | Signed with `RSASSA-PKCS1-V1_5` but the CRD pins `RSASSA-PSS` | Align `algorithm` in the Secret consumer identity and CRD `Signature` entry. |
+
+After you correct the credential configuration, Konfidence retries assembly automatically on the next reconciliation.
+You do not need to trigger a retry manually.
+Check the conditions again as described in [Verify the result](#verify-the-result).
 
 ## Next steps
 
