@@ -24,4 +24,4 @@ Konfidence includes configuration in each vector and provides it at runtime thro
 
 ## Sign artifacts and verify them before deployment
 
-[Configure signing and verification](./configure-signing-and-verification.md) covers signing artifacts and vectors. Konfidence verifies the signatures before assembly and deployment.
+Signing and verification are optional. Konfidence skips them until they are configured. To sign artifacts, you need the `kden` CLI, push access to an OCI registry, and an RSA key pair. Verification during assembly and deployment also requires access to configure `VectorTemplate` resources and the Konfidence operator. If you do not have that access, coordinate with your administrator. [Configure signing and verification](./configure-signing-and-verification.md) explains the complete workflow.
