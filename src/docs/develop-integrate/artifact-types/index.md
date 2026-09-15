@@ -71,27 +71,30 @@ The same holds when the shared instance sits downstream. Each vector's own front
   <figcaption>Two vector-specific frontends fan in to one shared instance. The vector ID travels with every call.</figcaption>
 </figure>
 
-Your service must therefore treat every request on its own:
+Your service must therefore handle vector-specific behavior in the context of each request:
 
 - Read `X-Vector-ID` from each request and forward it on every outbound call.
-- Resolve the addresses of other services, feature flags, and configuration per request through the vector data service. Cache them per vector ID, never per process.
-- Hold no state that belongs to one vector.
+- Resolve the addresses of other services, feature flags, and configuration for the current vector through the vector data service instead of loading one vector's values once at startup.
+- Key cached vector data by vector ID. Never use one process-wide cached value for requests from different vectors.
+- Keep vector-specific state isolated by vector ID so that requests from one vector cannot read or modify another vector's state.
 
 ### Choose `allowReuse: true` when
 
-Consider the following criteria:
+Set `allowReuse` to `true` only when one running instance can safely serve several vectors at the same time and your service meets every demand above.
 
-- Your service meets every demand above.
+Reuse is especially useful when:
+
 - The service is expensive to run, slow to start, or must exist only once.
 - Vectors in a landscape mostly reference the same version of the service.
 
 ### Choose `allowReuse: false` when
 
-Consider the following criteria:
+Set `allowReuse` to `false` when any of the following applies:
 
-- Your service loads configuration once at startup and keeps it for the lifetime of the process.
+- Your service loads vector-specific configuration once at startup and uses it for every request.
 - Your service hard-codes the addresses of other services or assumes fixed versions of those services.
-- Your service stores or caches data that differs between vectors.
+- Your service cannot isolate vector-specific state or cached data by vector ID.
+- Your service requires a dedicated running instance for each vector, for example because its lifecycle must be managed independently.
 - You want each vector fully isolated, for example for load tests, or for destructive experiments.
 
 ## Next steps

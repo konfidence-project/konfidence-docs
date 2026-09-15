@@ -47,10 +47,10 @@ For a Kustomize bundle, use `cloud.konfidence.flux.kustomize` as the `type` valu
 
 Set `allowReuse` based on how the artifact should be deployed:
 
-- Set it to `true` when the same artifact instance can be shared across multiple `VectorDeployment` resources.
+- Set it to `true` only when one running artifact instance can safely serve multiple `VectorDeployment` resources at the same time.
 - Set it to `false` when each `VectorDeployment` needs its own artifact instance.
 
-Only reuse artifacts that do not depend on vector-specific runtime context.
+Reuse does not require an artifact to be independent of vector-specific runtime context. A reusable service can read `X-Vector-ID` and use data for the current vector. It must handle the context separately for each request, forward the header on outbound calls, and isolate vector-specific state and cached data by vector ID. Set `allowReuse` to `false` if the service keeps one vector's configuration or state as a process-wide value.
 For more information, see [Choose whether vectors share one instance of your artifact](./index.md#choose-whether-vectors-share-one-instance-of-your-artifact).
 
 ## Create the OCM component constructor
