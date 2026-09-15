@@ -56,7 +56,7 @@ kubernetes-landscape-orchestrator   1/1     1            1           42s
 vector-data-service                 1/1     1            1           27s
 ```
 
-The `AGE` values depend on when you created the cluster. The `READY` column should show that all replicas are ready.
+The `READY` column should show that all replicas are ready.
 
 Check that the Flux controllers are also ready:
 
