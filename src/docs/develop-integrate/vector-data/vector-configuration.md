@@ -28,24 +28,36 @@ Both paths produce the same result: an Open Component Model (OCM) resource named
 
 ## Add the configuration to a VectorTemplate
 
-Add `spec.vectorConfig` to the `VectorTemplate` custom resource:
+1. Add `spec.vectorConfig` to your existing `VectorTemplate` manifest:
 
-```yaml
-spec:
-  vectorConfig:
-    features:
-      enableBeta: true
-      maxUsers: 150
-      ratio: 4.6
-      title: "TestLabel"
-    authored:
-      log-level: info
-      database:
-        host: "mysql-service"
-        port: 3306
-```
+   ```yaml
+   spec:
+     vectorConfig:
+       features:
+         enableBeta: true
+         maxUsers: 150
+         ratio: 4.6
+         title: "TestLabel"
+       authored:
+         log-level: info
+         database:
+           host: "mysql-service"
+           port: 3306
+   ```
 
-If the `VectorTemplate` is new or changed, assembly creates a new vector. The configuration becomes a local resource of that vector.
+2. Apply the updated manifest:
+
+   ```bash
+   kubectl apply --namespace <namespace> --filename <vector-template-file>
+   ```
+
+3. Check the assembly status:
+
+   ```bash
+   kubectl get vectortemplate <vector-template-name> --namespace <namespace>
+   ```
+
+When the configuration changes, assembly creates a new vector. After assembly completes, `READY` is `True`, `REASON` is `VectorCreated`, and `LATEST-VECTOR` contains the new concrete vector reference. That vector contains the configuration as a local resource named `cloud-konfidence-vector-config`.
 
 ## Add the configuration to a manually built vector
 
@@ -100,7 +112,7 @@ Store the configuration in one JSON file next to your existing vector component 
    kden vector push --file ./component-constructor.yaml --registry <registry>/<subpath>
    ```
 
-   The command pushes the vector component version with the configuration resource. See [kden vector push](../../reference/cli.md#kden-vector-push) for all flags.
+   `validate` checks the component constructor before `push` writes the vector component version to the registry. After the push succeeds, that component version contains the configuration from `vector-config.json` as a local resource named `cloud-konfidence-vector-config`. See [kden vector push](../../reference/cli.md#kden-vector-push) for all flags.
 
 ## Feature flags
 
