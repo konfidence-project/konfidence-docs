@@ -27,3 +27,9 @@ Konfidence targets distributed applications. Use it if your application meets th
 * You package each service as its own artifact.
 
 Packaging and integration add overhead for your engineering team. Evaluate carefully whether Konfidence fits your use case.
+
+## Next steps
+
+- [Artifact types](./artifact-types/) — package your services as Helm or Kustomize artifacts.
+- [Publish artifacts](./artifact-types/publish-artifacts.md) — push your artifacts to an OCI registry.
+- [Build vectors](./observe-improve/build-vectors.md) — define a `VectorTemplate` to assemble vectors from your published artifacts.
