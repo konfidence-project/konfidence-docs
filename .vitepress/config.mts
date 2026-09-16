@@ -97,8 +97,12 @@ export default defineConfig({
               link: "/docs/core-concepts/vectors-and-artifacts",
             },
             {
-              text: "Landscapes and Stages",
+              text: "Landscapes and stages",
               link: "/docs/core-concepts/landscapes-and-stages",
+            },
+            {
+              text: "Deployment model",
+              link: "/docs/core-concepts/deployment-model",
             },
             {
               text: "Promotions and Delivery Flow",
@@ -199,8 +203,16 @@ export default defineConfig({
               link: "/docs/deploy-operate/projects",
             },
             {
-              text: "Managing Landscapes",
+              text: "Manage landscapes",
               link: "/docs/deploy-operate/landscapes",
+            },
+            {
+              text: "Manage deployment targets",
+              link: "/docs/deploy-operate/deployment-targets",
+            },
+            {
+              text: "Manage stages",
+              link: "/docs/deploy-operate/stages",
             },
             {
               text: "Access Control (RBAC)",
@@ -225,11 +237,11 @@ export default defineConfig({
                 ],
             },
             {
-                text: "Deployer",
+                text: "Deployers",
                 collapsed: true,
                 items: [
                     {
-                        text: "Overview",
+                        text: "Manage deployers",
                         link: "/docs/deploy-operate/deployer/overview",
                     },
                     {

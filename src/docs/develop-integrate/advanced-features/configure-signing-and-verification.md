@@ -442,7 +442,7 @@ components:
 The file at `input.path` must be valid JSON:
 
 ```json
-{"type": "cloud.konfidence.flux.helm", "allowReuse": true}
+{"type": "helm.konfidence.cloud", "allowReuse": true}
 ```
 -->
 
