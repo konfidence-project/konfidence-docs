@@ -271,3 +271,14 @@
 .docs-landing .VPDoc h1 {
   text-align: center;
 }
+
+.vp-doc figure {
+  margin: 16px 0;
+}
+
+.vp-doc figcaption {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--vp-c-text-2);
+  text-align: center;
+}

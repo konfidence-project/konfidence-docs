@@ -1,27 +1,29 @@
 ---
-title: Prepare your Application
+title: Prepare your application
 description: Learn how to prepare your application for integration with Konfidence.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Prepare your Application
+# Prepare your application
 
-Before you can deploy your application using Konfidence, you need to prepare it for integration with the framework.
+Konfidence's [vector model](../core-concepts/vectors-and-artifacts.md) requires changes to your application. These changes let your services communicate with the other services in their vector. They also let your services receive [runtime configuration](./vector-data/overview.md) <!-- values like [feature flags]() -->.
 
-## Prerequisites
+<figure>
+  <img src="./img/vector-traffic.drawio.svg" alt="A request reaches the gateway, which adds the x-vector-id header and forwards it to Service A inside the vector. Service A queries the vector-data-service over OFREP for flags, config and sibling addresses, then forwards x-vector-id to Service B.">
+  <figcaption>An incoming request flows through Konfidence to your services.</figcaption>
+</figure>
 
-* app should be ready for target platform deployment
-* for k8s, that means having a OCI image and Kubernetes manifests (or Helm charts, Kustomize, etc.)
+An incoming HTTP request reaches your application through the ingress gateway. In a Kubernetes landscape, the gateway adds `X-Vector-ID` to the routed request. This header identifies the vector handling the request. Your service must forward it on every outbound HTTP call so that downstream requests stay in the same vector. See [Access vector data in your application](./vector-data/access-vector-data.md).
 
-## Application structure
+Your service can also use the vector ID to retrieve vector-specific configuration, feature flags, and deployment results. It requests this data from the vector data service through the OpenFeature Remote Evaluation Protocol (OFREP), a standard HTTP API. See [Read feature flags in your application](./advanced-features/feature-flags.md).
 
-* Konfidence is designed for microservices architectures
-* each microservice should be one artifact
-* artifacts should be independently versioned and deployable
+## Konfidence fits microservice applications
 
-## Vector Context
+Konfidence targets distributed applications. Use it if your application meets these requirements:
 
-* microservices need to be vector-aware
-* incoming requests carry an `X-Vector-ID` header that needs to be forwarded to all downstream service calls
+* Your application uses a microservice architecture.
+* You package each service as its own artifact.
+
+Packaging and integration add overhead for your engineering team. Evaluate carefully whether Konfidence fits your use case.
