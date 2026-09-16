@@ -25,10 +25,10 @@ Before you begin, make sure you have:
 - A running Kubernetes cluster with Konfidence custom resource definitions (CRDs) installed.
 - Global administrator permissions for the current workflow. Konfidence administrator permissions alone are not sufficient.
 - The `kden` and `kubectl` command-line tools.
-- Published application artifacts in an Open Container Initiative (OCI) registry. Follow [Publish artifacts](./publish-artifacts.md) to create and publish their Open Component Model (OCM) component versions.
+- Published application artifacts in an Open Container Initiative (OCI) registry. Follow [Publish artifacts](../artifact-types/publish-artifacts.md) to create and publish their Open Component Model (OCM) component versions.
 - The registry address and credentials for accessing your artifacts and uploading the vector.
 - An RSA key pair for artifact signing and a separate RSA key pair for vector signing.
-- An existing Konfidence project and its namespace for the credential Secrets and `VectorTemplate`. See [Managing Projects](../deploy-operate/projects.md).
+- An existing Konfidence project and its namespace for the credential Secrets and `VectorTemplate`. See [Managing Projects](../../deploy-operate/projects.md).
 
 Coordinate credential setup with your administrator before you begin.
 Reuse existing CLI credentials and assembly Secrets when available, and skip their setup instructions below.
@@ -135,7 +135,7 @@ Read it from the project's `status.namespace` field:
 kubectl get project <project-name> -o jsonpath='{.status.namespace}'
 ```
 
-For details about project namespaces, see [Managing Projects](../deploy-operate/projects.md).
+For details about project namespaces, see [Managing Projects](../../deploy-operate/projects.md).
 
 Signing requires a private key and fails immediately if it is missing.
 If verification credentials contain no RSA key material, verification falls back to the system root trust store: CA-issued signatures pass, while self-signed or internal keys fail.
@@ -340,7 +340,7 @@ Any verification or signing failure stops the current reconciliation.
 ### Optional: Verify a base vector
 
 If you inherit artifacts from an existing base vector, enable the commented `verifyVector` block in the example to verify that vector.
-For the vector-building workflow, see [Build vectors](./observe-improve/build-vectors.md).
+For the vector-building workflow, see [Build vectors](../observe-improve/build-vectors.md).
 
 ### Optional: Pin signature parameters
 
@@ -395,9 +395,9 @@ That configuration is outside the assembly task covered here.
 
 For the next parts of your application delivery workflow, see:
 
-- [Build vectors](./observe-improve/build-vectors.md).
-- [Define promotions](./observe-improve/define-promotions.md).
-- [Landscapes and Stages](../core-concepts/landscapes-and-stages.md) for security boundaries.
+- [Build vectors](../observe-improve/build-vectors.md).
+- [Define promotions](../../deploy-operate/define-promotions.md).
+- [Landscapes and Stages](../../core-concepts/landscapes-and-stages.md) for security boundaries.
 
 <!--
 Retained for reuse: the full pipeline diagram provides conceptual context beyond this assembly-focused how-to.
@@ -412,7 +412,7 @@ Retained for reuse: artifact construction and publishing are covered by Publish 
 
 ## Push, sign, and alias artifacts
 
-Before VectorAssembly can verify an artifact, it must carry a signature. Run these steps locally or in CI — see [Publish Artifacts](./publish-artifacts.md) for the full artifact publishing workflow.
+Before VectorAssembly can verify an artifact, it must carry a signature. Run these steps locally or in CI — see [Publish Artifacts](../artifact-types/publish-artifacts.md) for the full artifact publishing workflow.
 
 **Push** an artifact constructor YAML to the registry:
 
@@ -508,6 +508,7 @@ Retained for reuse: background reading moved out of the prerequisites; credentia
 
 ## Next steps
 
-- [Build vectors](./observe-improve/build-vectors.md)
-- [Define promotions](../../deploy-operate/observe-improve/define-promotions.md)
-- [Landscapes and Stages — security boundaries](../core-concepts/landscapes-and-stages.md)
+- [Build vectors](../observe-improve/build-vectors.md)
+- [Define promotions](../../deploy-operate/define-promotions.md)
+- [Landscapes and Stages — security boundaries](../../core-concepts/landscapes-and-stages.md)
+-->
