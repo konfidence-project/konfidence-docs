@@ -11,6 +11,7 @@ lastUpdated: true
 Extend Konfidence or contribute to the project through development and documentation.
 
 - [Contributing](./code-of-conduct.md)
+- [Local development](./local-development.md)
 - [Style guide](./styleguide.md)
 - [Guide templates](./guide-templates.md)
 - [GitHub repository](https://github.com/konfidence-project)
