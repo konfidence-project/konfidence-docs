@@ -79,7 +79,13 @@ Now run the operator and the API server on your host. Both regenerate manifests 
 
    The expected response is `{"status":"ok"}`.
 
-Build the `kden` CLI once with `make build-kden-cli`. The binary lands in `bin/kden`, which Hermit has on your `PATH`. It talks to `http://localhost:8090` by default and needs no configuration for this API server. If you run the API server elsewhere, point it there with `kden config set api-endpoint <url>`.
+5. Build the `kden` CLI once:
+
+   ```bash
+   make build-kden-cli
+   ```
+
+   The binary lands in `bin/kden`, which Hermit has on your `PATH`. It talks to `http://localhost:8090` by default and needs no configuration for this API server. If you run the API server elsewhere, point it there with `kden config set api-endpoint <url>`.
 
 ### No-auth mode
 
@@ -155,9 +161,9 @@ make dev-registry
 A vector is pushed from a constructor file that lists its components and resources. Create a minimal one under `.tmp`, which git ignores, together with the config file it references:
 
 ```bash
-mkdir -p .tmp/demo-vector && cd .tmp/demo-vector
-echo '{"description": "demo vector for local development"}' > vector-config.json
-cat > vector-constructor.yaml <<'EOF'
+mkdir -p .tmp/demo-vector
+echo '{"description": "demo vector for local development"}' > .tmp/demo-vector/vector-config.json
+cat > .tmp/demo-vector/vector-constructor.yaml <<'EOF'
 components:
   - name: example.com/demo/vector
     version: 0.1.0
@@ -174,11 +180,10 @@ components:
 EOF
 ```
 
-Push it with `kden` from inside that directory, because the constructor's file paths are relative to the working directory. The registry speaks plain HTTP and `kden` assumes HTTPS, hence the explicit scheme. The path after the port names the repository the vector goes into:
+Push it with `kden`. The constructor's file paths are relative to the working directory, so the command runs in a subshell inside that directory. The registry speaks plain HTTP and `kden` assumes HTTPS, hence the explicit scheme. The path after the port names the repository the vector goes into:
 
 ```bash
-kden vector push --file vector-constructor.yaml --registry=http://localhost:5001/vectors/demo
-cd ../..
+(cd .tmp/demo-vector && kden vector push --file vector-constructor.yaml --registry=http://localhost:5001/vectors/demo)
 ```
 
 On success the command prints two log lines about missing OCM configuration and credentials and nothing else. Verify the vector is in the registry:
@@ -197,14 +202,26 @@ Only the login flow touches an identity provider. The repository ships a Docker 
 make dev-up
 ```
 
-Start the API server with `API_OIDC_ENABLED=true` to use it. Your operating system must trust Caddy's local certificate authority, or the API server exits with a certificate error at startup. Export the root certificate from the running Caddy container and add it to your system trust store once. On macOS this changes the system keychain and asks for your password:
+Your operating system must trust Caddy's local certificate authority, or the API server exits with a certificate error at startup. Export the root certificate from the running Caddy container and add it to your system trust store once. On macOS this changes the system keychain and asks for your password:
 
 ```bash
 docker cp caddy:/data/caddy/pki/authorities/local/root.crt .tmp/caddy-root.crt
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain .tmp/caddy-root.crt
 ```
 
-On Linux, copy the file to `/usr/local/share/ca-certificates/caddy-root.crt` and run `sudo update-ca-certificates`. Setting `SSL_CERT_FILE` instead has no effect on macOS, where Go uses the system trust store.
+On Linux:
+
+```bash
+docker cp caddy:/data/caddy/pki/authorities/local/root.crt .tmp/caddy-root.crt
+sudo cp .tmp/caddy-root.crt /usr/local/share/ca-certificates/caddy-root.crt
+sudo update-ca-certificates
+```
+
+Setting `SSL_CERT_FILE` instead has no effect on macOS, where Go uses the system trust store. Then start the API server with OIDC on. Stop the one from step 3 first; it also listens on port 8090:
+
+```bash
+API_OIDC_ENABLED=true make run-kden-api
+```
 
 `make dev-logs` tails the stack's logs until you press `Ctrl`+`C`. `make dev-down` stops the stack and keeps its data. `make dev-reset` stops it and deletes the data.
 
@@ -252,7 +269,7 @@ Use a kind cluster when your change concerns how Konfidence runs inside a cluste
    make deploy
    ```
 
-   The issuer is `host.docker.internal` because the pod talks to Authelia on your host. `make deploy` rewrites the browser-facing URLs to `auth.localhost` and mounts Caddy's local CA into the pod so it trusts Authelia's certificate.
+   The issuer is `host.docker.internal` because the pod talks to Authelia on your host. `make deploy` rewrites the browser-facing URLs to `auth.localhost` and mounts Caddy's local CA into the pod so it trusts Authelia's certificate. On Linux, where that hostname does not exist, it also adds a host alias pointing at the kind node's gateway.
 
 5. Verify the pods are running:
 
