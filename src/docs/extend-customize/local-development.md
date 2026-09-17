@@ -292,7 +292,7 @@ To remove the deployment, run `make undeploy`. To delete the cluster and the reg
 
 ## Deployer
 
-The Konfidence operator records what should be deployed. Turning that into running workloads is the job of a deployer, which lives in its own repository and installs its own prerequisites. For the [Kubernetes deployer](../develop-integrate/deployers/kubernetes.md), clone [`kubernetes-landscape-orchestrator`](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) next to your `konfidence` clone and run, from its root with its Hermit active:
+The Konfidence operator records what should be deployed. Turning that into running workloads is the job of a deployer, which lives in its own repository and installs its own prerequisites. For the [Kubernetes deployer](../deploy-operate/deployer/kubernetes.md), clone [`kubernetes-landscape-orchestrator`](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) next to your `konfidence` clone and run, from its root with its Hermit active:
 
 ```bash
 make install-deps
