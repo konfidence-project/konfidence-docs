@@ -214,13 +214,13 @@ Check the `Ready` condition to understand the current assembly state:
 kubectl describe vectortemplate shopping-app -n my-project
 ```
 
-| Condition  | Reason | Meaning |
-|-----------|--------|---------|
-| `True` | `VectorCreated` | Drift detected; a new vector version was assembled and uploaded. |
-| `True` | `NoDriftDetected` | No changes detected; `status.latestVector` is still current. |
-| `False` | `WaitingForBase` | The base template has not assembled its first vector yet. |
-| `False` | `VectorCreationFailed` | Drift was detected but the upload to the registry failed. |
-| `Unknown` | `DriftDetectionFailed` | Assembly could not determine the desired state - for example, registry unreachable, credentials missing, or a reference parse error. |
+| Condition    | Reason                 | Meaning                                                                                                                              |
+|--------------|------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| `True`       | `VectorCreated`        | Drift detected; a new vector version was assembled and uploaded.                                                                     |
+| `True`       | `NoDriftDetected`      | No changes detected; `status.latestVector` is still current.                                                                         |
+| `False`      | `WaitingForBase`       | The base template has not assembled its first vector yet.                                                                            |
+| `False`      | `VectorCreationFailed` | Drift was detected but the upload to the registry failed.                                                                            |
+| `Unknown`    | `DriftDetectionFailed` | Assembly could not determine the desired state - for example, registry unreachable, credentials missing, or a reference parse error. |
 
 ## Full example
 
