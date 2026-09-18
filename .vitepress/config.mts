@@ -79,8 +79,8 @@ export default defineConfig({
               link: "/docs/getting-started/install-cli",
             },
             {
-              text: "Deliver a sample app",
-              link: "/docs/getting-started/deliver-sample-app",
+              text: "Deliver an application",
+              link: "/docs/getting-started/deliver-an-application",
             },
             {
               text: "Create your own app",
