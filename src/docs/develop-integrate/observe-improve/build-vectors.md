@@ -28,7 +28,7 @@ Before you begin, make sure you meet these requirements:
 
 - Your artifacts are published to an Open Container Initiative (OCI) registry. See
   [Publish artifacts](../artifact-types/publish-artifacts.md).
-- You have a [Konfidence project namespace](../../deploy-operate/projects.md).
+- You have a [Konfidence project namespace](../../deploy-operate/projects.md) and `kubectl` configured with access to it.                                                                                                      
 - Your registry credentials are stored in Kubernetes Secrets in the same
   namespace.
 
@@ -229,13 +229,13 @@ Check the `Ready` condition to understand the current assembly state:
 kubectl describe vectortemplate shopping-app -n my-project
 ```
 
-| Condition    | Reason                 | Meaning                                                                                                                              |
-|--------------|------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `True`       | `VectorCreated`        | Drift detected; a new vector version was assembled and uploaded.                                                                     |
-| `True`       | `NoDriftDetected`      | No changes detected; `status.latestVector` is still current.                                                                         |
-| `False`      | `WaitingForBase`       | The base template has not assembled its first vector yet.                                                                            |
-| `False`      | `VectorCreationFailed` | Drift was detected but the assembly failed. For example, a component copy error, a signing failure, or a write error when publishing the vector descriptor. |
-| `Unknown`    | `DriftDetectionFailed` | Assembly could not determine the desired state. For example, the registry is unreachable, credentials are missing, or a reference cannot be parsed. |
+| Condition    | Reason                 | Meaning                                                                                                                                              |
+|--------------|------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `True`       | `VectorCreated`        | Drift detected; a new vector version was assembled and uploaded                                                                                      |
+| `True`       | `NoDriftDetected`      | No changes detected; `status.latestVector` is still current                                                                                          |
+| `False`      | `WaitingForBase`       | The base template has not assembled its first vector yet                                                                                             |
+| `False`      | `VectorCreationFailed` | Drift was detected but the assembly failed. In case of a component copy error, a signing failure, or a write error when publishing vector descriptor |
+| `Unknown`    | `DriftDetectionFailed` | Assembly could not determine the desired state. When the registry is unreachable, credentials are missing, or a reference cannot be parsed           |
 
 ## Full example
 
