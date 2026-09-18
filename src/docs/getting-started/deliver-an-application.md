@@ -62,7 +62,7 @@ Resources are applied in order because each targets namespaces the previous cont
 
 ## Deploy the database
 
-The example application requires a PostgreSQL database. Apply a self-contained Postgres and a credentials secret for each landscape:
+The example application requires a PostgreSQL database. Apply a self-contained Postgres with a separate logical database (and credentials secret) for each landscape:
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/konfidence-project/example-app/main/hack/quickstart/environment/database.yaml
