@@ -37,7 +37,7 @@ This creates a `konfidence-quickstart` kind cluster with Flux, the Konfidence co
 A [project](/docs/core-concepts/deployment-model) groups everything that belongs to one application and owns a namespace for its resources.
 
 ```bash
-kubectl apply -k https://github.com/konfidence-project/example-app/hack/quickstart/project?ref=main
+kubectl apply -f https://raw.githubusercontent.com/konfidence-project/example-app/main/hack/quickstart/project/project.yaml
 kubectl wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
   project/example-app --timeout=60s
 ```
@@ -49,7 +49,7 @@ The project controller creates the `kden-p-example-app` namespace, which holds t
 A landscape represents a target environment. You create two: `dev` and `prod`. Each owns a managed namespace where its stages and workloads run.
 
 ```bash
-kubectl apply -k https://github.com/konfidence-project/example-app/hack/quickstart/landscapes?ref=main
+kubectl apply -f https://raw.githubusercontent.com/konfidence-project/example-app/main/hack/quickstart/landscapes/landscapes.yaml
 kubectl -n kden-p-example-app wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
   landscape/dev landscape/prod --timeout=60s
 ```
@@ -57,23 +57,28 @@ kubectl -n kden-p-example-app wait --for=jsonpath='{.status.conditions[?(@.type=
 This creates the `kden-l-dev` and `kden-l-prod` managed namespaces.
 
 ::: tip
-The resources are applied in stages because each set targets namespaces that the previous controller creates. The project namespace must exist before the landscapes, and the landscape namespaces before the stages.
+Resources are applied in order because each targets namespaces the previous controller creates: the project namespace before the landscapes, and the landscape namespaces before the stages.
 :::
 
-## Set up the environment
+## Deploy the database
 
-This step creates the [stages, deployment targets, database, and promotion config](/docs/core-concepts/landscapes-and-stages):
+The example application requires a PostgreSQL database. Apply a self-contained Postgres and a credentials secret for each landscape:
 
 ```bash
-kubectl apply -k https://github.com/konfidence-project/example-app/hack/quickstart/environment?ref=main
+kubectl apply -f https://raw.githubusercontent.com/konfidence-project/example-app/main/hack/quickstart/environment/database.yaml
 ```
 
-- The `dev-eu12` stage pins a published application [vector](/docs/core-concepts/vectors-and-artifacts) — this is what deploys the app.
-- The `prod-eu12` stage starts empty.
-- A `dev-to-prod` promotion config promotes the vector from `dev-eu12` to `prod-eu12`. Because its source is a stage, the promotion requires a manual approval.
-- The deployment targets tell each landscape to deploy into the local cluster, and a self-contained Postgres backs the app.
+## Configure the deployment targets
 
-Install the vector-data-service into each landscape namespace:
+A deployment target tells a landscape where to deploy. These target the local cluster, so no external credentials are needed:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/konfidence-project/example-app/main/hack/quickstart/environment/deploymenttargets.yaml
+```
+
+## Install the vector-data-service
+
+Each landscape needs a vector-data-service so the running application can read its configuration:
 
 ```bash
 for ns in kden-l-dev kden-l-prod; do
@@ -86,6 +91,26 @@ done
 ::: warning
 The per-landscape vector-data-service install is temporary until the platform provisions it automatically for each landscape.
 :::
+
+## Create the stages
+
+A [stage](/docs/core-concepts/landscapes-and-stages) is a deployment slot in a landscape. Apply both stages:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/konfidence-project/example-app/main/hack/quickstart/environment/stages.yaml
+```
+
+The `dev-eu12` stage pins a published application [vector](/docs/core-concepts/vectors-and-artifacts) — this deploys the app to development. The `prod-eu12` stage starts empty; the promotion fills it in.
+
+## Configure the promotion
+
+A promotion config moves a vector from one stage to another. Apply the `dev-to-prod` config:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/konfidence-project/example-app/main/hack/quickstart/environment/promotion.yaml
+```
+
+Because its source is a stage, the promotion requires a manual approval before it deploys to production.
 
 ## See the application in development
 
