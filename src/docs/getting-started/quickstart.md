@@ -25,7 +25,7 @@ Create a local cluster with Konfidence, Flux, and the Kubernetes landscape orche
 curl -L https://raw.githubusercontent.com/konfidence-project/konfidence/main/hack/quickstart/quickstart.sh | sh
 ```
 
-This creates a `konfidence-quickstart` kind cluster and installs Flux, the Konfidence controller and API (which serves the dashboard), the landscape orchestrator, and the vector-data-service.
+This creates a `konfidence-quickstart` kind cluster and installs Flux, the Konfidence controller and API (which serves the dashboard), and the landscape orchestrator.
 
 ::: details Already have a cluster?
 Install into the current kubeconfig context instead. Install Flux, then the Helm charts:
@@ -42,9 +42,6 @@ helm upgrade --install konfidence oci://ghcr.io/konfidence-project/charts/konfid
   --set webhook.enabled=false --wait
 
 helm upgrade --install kubernetes-landscape-orchestrator oci://ghcr.io/konfidence-project/charts/kubernetes-landscape-orchestrator \
-  --namespace konfidence-system --create-namespace --wait
-
-helm upgrade --install vector-data-service oci://ghcr.io/konfidence-project/charts/vector-data-service \
   --namespace konfidence-system --create-namespace --wait
 ```
 :::

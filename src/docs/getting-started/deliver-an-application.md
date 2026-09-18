@@ -30,7 +30,7 @@ Install a local Konfidence:
 curl -L https://raw.githubusercontent.com/konfidence-project/konfidence/main/hack/quickstart/quickstart.sh | sh
 ```
 
-This creates a `konfidence-quickstart` kind cluster with Flux, the Konfidence controller and API, the landscape orchestrator, and the vector-data-service. See the [Quickstart](/docs/getting-started/quickstart) for details.
+This creates a `konfidence-quickstart` kind cluster with Flux, the Konfidence controller and API, and the landscape orchestrator. See the [Quickstart](/docs/getting-started/quickstart) for details.
 
 ## Create the project
 
