@@ -30,6 +30,8 @@ Packaging and integration add overhead for your engineering team. Evaluate caref
 
 ## Next steps
 
-- [Artifact types](./artifact-types/) — package your services as Helm or Kustomize artifacts.
+Continue with the guides that support your application workflow:
+
+- [Types of artifacts](./artifact-types/index.md) — package your services as Helm or Kustomize artifacts.
 - [Publish artifacts](./artifact-types/publish-artifacts.md) — push your artifacts to an OCI registry.
 - [Build vectors](./observe-improve/build-vectors.md) — define a `VectorTemplate` to assemble vectors from your published artifacts.
