@@ -87,7 +87,13 @@ Apply the resource:
 kubectl apply -f vectortemplate.yaml
 ```
 
-After the first successful assembly, `status.latestVector` is set:
+Watch the template until the first assembly completes:
+
+```bash
+kubectl get vectortemplate shopping-app -n my-project --watch
+```
+
+The template is ready when the `READY` column shows `True`:
 
 ```bash
 kubectl get vectortemplate shopping-app -n my-project
@@ -120,10 +126,10 @@ components:
   - name: registry.example.com/my-project//example.com/product-service:stable
 ```
 
-**`credentials`**: Optional. References Secrets in the same namespace that
-contain OCM or OCI registry credentials (`.ocmconfig` or `.dockerconfigjson`).
-The same credential references are used for registry access, signing, and
-verification.
+**`credentials`** - optional  
+References Secrets in the same namespace that carry registry credentials
+(`.ocmconfig` or `.dockerconfigjson`). Required for private registries; omit
+for public ones. Used for artifact access, signing, and verification.
 
 ```yaml
 credentials:
@@ -140,7 +146,7 @@ interval. Use this field to reduce the polling frequency for stable templates.
 reconcileInterval: 10m
 ```
 
-## Derive a vector from a base
+## Derive a vector from a base (optional)
 
 Use `base` to inherit artifacts from another `VectorTemplate` and override or
 extend them with additional components. Use this field when you define a shared
@@ -182,7 +188,7 @@ If the base template has not completed its first assembly yet, the dependent
 template enters `Ready=False` with the reason `WaitingForBase` and waits for the
 base to become available. The controller does not poll or apply backoff.
 
-## Add vector configuration
+## Add vector configuration (optional)
 
 `vectorConfig` embeds feature flags and authored configuration values directly
 into the vector descriptor. Use this field to include environment-independent
@@ -206,7 +212,7 @@ The controller serializes this configuration as a local OCM resource
 For information on how configuration values reach your running application, see
 [Add configuration to a vector](../vector-data/vector-configuration.md).
 
-## Sign and verify
+## Sign and verify (optional)
 
 Vectors and artifacts can optionally be signed and verified during assembly using
 the `signVector`, `verifyVector`, and `verifyArtifacts` fields. Changes to these
@@ -228,7 +234,7 @@ kubectl describe vectortemplate shopping-app -n my-project
 | `True`       | `VectorCreated`        | Drift detected; a new vector version was assembled and uploaded.                                                                     |
 | `True`       | `NoDriftDetected`      | No changes detected; `status.latestVector` is still current.                                                                         |
 | `False`      | `WaitingForBase`       | The base template has not assembled its first vector yet.                                                                            |
-| `False`      | `VectorCreationFailed` | Drift was detected but the upload to the registry failed.                                                                            |
+| `False`      | `VectorCreationFailed` | Drift was detected but the assembly failed. For example, a component copy error, a signing failure, or a write error when publishing the vector descriptor. |
 | `Unknown`    | `DriftDetectionFailed` | Assembly could not determine the desired state. For example, the registry is unreachable, credentials are missing, or a reference cannot be parsed. |
 
 ## Full example
