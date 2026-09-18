@@ -14,29 +14,32 @@ lastUpdated: true
   published artifacts.
 -->
 
-A vector is an immutable OCM component that captures the exact set of artifact
-versions your application consists of at a given point in time. You define a
-`VectorTemplate` resource to tell Konfidence how to assemble and store that
-vector.
+A vector is an immutable Open Component Model (OCM) component that captures the
+exact set of artifact versions that make up your application at a given point
+in time. You define a `VectorTemplate` resource to tell Konfidence how to
+assemble and store that vector.
 
 For background on artifacts, aliases, and vectors, see
 [Vectors and artifacts](../../core-concepts/vectors-and-artifacts.md).
 
 ## Prerequisites
 
-- Your artifacts are published to an OCI registry. See
+Before you begin, make sure you meet these requirements:
+
+- Your artifacts are published to an Open Container Initiative (OCI) registry. See
   [Publish artifacts](../artifact-types/publish-artifacts.md).
-- You have a Konfidence project namespace.
+- You have a [Konfidence project namespace](../../deploy-operate/projects.md).
 - Your registry credentials are stored in Kubernetes Secrets in the same
   namespace.
 
 ## How assembly works
 
-The Konfidence assembly controller reconciles every `VectorTemplate` on a
-configurable interval (default: one minute) and immediately whenever the spec
-changes or a referenced base vector is updated.
+The Konfidence assembly controller reconciles every `VectorTemplate` at a
+configurable interval. The default is one minute. It also reconciles a template
+immediately when its specification changes or a referenced base vector is
+updated.
 
-On each reconcile the controller:
+During each reconciliation, the controller:
 
 1. Resolves credentials from the referenced Secrets.
 2. Fetches the current artifact version for each entry in `components`.
@@ -44,9 +47,9 @@ On each reconcile the controller:
    artifacts.
 4. Compares the desired artifact set against the most recently assembled vector
    stored in `status.latestVector`.
-5. If drift is detected, generates a new concrete version (UTC timestamp, e.g.
-   `2026.8.5-090000000Z`), copies all artifact components into the upload target
-   repository, and writes the new vector descriptor there.
+5. If drift is detected, generates a new concrete version (UTC timestamp, for
+   example, `2026.8.5-090000000Z`), copies all artifact components into the
+   upload target repository, and writes the new vector descriptor there.
 6. Updates `status.latestVector` with the full reference of the new vector.
 
 If no drift is detected, `status.latestVector` is not updated and the condition
@@ -54,7 +57,9 @@ reason is set to `NoDriftDetected`.
 
 ## Create a VectorTemplate
 
-### Minimal example
+### Create a minimal VectorTemplate
+
+Save the following manifest as `vectortemplate.yaml`:
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -73,6 +78,9 @@ spec:
         - name: registry-credentials
 ```
 
+Replace the resource names, namespace, component references, upload target, and
+Secret name with values for your environment.
+
 Apply the resource:
 
 ```bash
@@ -85,26 +93,26 @@ After the first successful assembly, `status.latestVector` is set:
 kubectl get vectortemplate shopping-app -n my-project
 ```
 
-```
+```text
 NAME           READY   REASON            UPLOAD-TARGET                                               LATEST-VECTOR                                                                      AGE
 shopping-app   True    VectorCreated     registry.example.com/my-project//example.com/vector/...    registry.example.com/my-project//example.com/vector/shopping-app:2026.8.5-...    2m
 ```
 
 ### Field reference
 
-**`uploadTarget`** - required  
-The OCM component path where assembled vectors are stored. Must not include a
-version - the controller generates the version on each assembly.
+**`uploadTarget`**: Required. The OCM component path where assembled vectors are
+stored. Do not include a version. The controller generates the version during
+each assembly.
 
-```
+```text
 registry.example.com/my-project//example.com/vector/shopping-app
 ```
 
-**`components`** - required (min 1 entry)  
-List of artifact component references to include in the vector. Each entry uses
+**`components`**: Required, with at least one entry. Lists the artifact component
+references to include in the vector. Each entry uses
 the format `<repository>//<component>:<version-or-alias>`. Alias tags such as
-`main`, `stable`, or `latest` are accepted and resolved on each reconcile so
-the vector tracks moving artifact versions automatically.
+`main`, `stable`, or `latest` are accepted and resolved during each
+reconciliation, so the vector tracks moving artifact versions automatically.
 
 ```yaml
 components:
@@ -112,10 +120,10 @@ components:
   - name: registry.example.com/my-project//example.com/product-service:stable
 ```
 
-**`credentials`** - optional  
-References Secrets in the same namespace that carry OCM or OCI registry
-credentials (`.ocmconfig` or `.dockerconfigjson`). The same credential refs
-are used for registry access, signing, and verification.
+**`credentials`**: Optional. References Secrets in the same namespace that
+contain OCM or OCI registry credentials (`.ocmconfig` or `.dockerconfigjson`).
+The same credential references are used for registry access, signing, and
+verification.
 
 ```yaml
 credentials:
@@ -125,9 +133,8 @@ credentials:
       - name: signing-keys
 ```
 
-**`reconcileInterval`** - optional  
-Override the default one-minute reconcile interval. Use this to reduce
-polling frequency for stable templates.
+**`reconcileInterval`**: Optional. Overrides the default one-minute reconcile
+interval. Use this field to reduce the polling frequency for stable templates.
 
 ```yaml
 reconcileInterval: 10m
@@ -136,9 +143,9 @@ reconcileInterval: 10m
 ## Derive a vector from a base
 
 Use `base` to inherit artifacts from another `VectorTemplate` and override or
-extend them with additional components. This is useful when a shared platform
-layer (infrastructure, common services) is defined once and individual team
-vectors layer their own services on top.
+extend them with additional components. Use this field when you define a shared
+platform layer, such as infrastructure and common services, once and add each
+team's services in its own vector.
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -172,14 +179,14 @@ When the base template assembles a new vector, dependent templates are
 immediately re-enqueued without waiting for the next interval tick.
 
 If the base template has not completed its first assembly yet, the dependent
-template enters `Ready=False / WaitingForBase` and waits for the base to
-become available - no polling or backoff is applied.
+template enters `Ready=False` with the reason `WaitingForBase` and waits for the
+base to become available. The controller does not poll or apply backoff.
 
 ## Add vector configuration
 
 `vectorConfig` embeds feature flags and authored configuration values directly
-into the vector descriptor. Use this to bake environment-independent
-configuration into the vector rather than managing it separately at deploy time.
+into the vector descriptor. Use this field to include environment-independent
+configuration in the vector rather than managing it separately at deploy time.
 
 ```yaml
 spec:
@@ -192,7 +199,9 @@ spec:
       currency: EUR
 ```
 
-The controller serializes this as a local OCM resource (`cloud-konfidence-vector-config:1.0.0`) inside the vector descriptor. Changes to `vectorConfig` are treated as drift and trigger a new vector version.
+The controller serializes this configuration as a local OCM resource
+(`cloud-konfidence-vector-config:1.0.0`) inside the vector descriptor. Changes to
+`vectorConfig` are treated as drift and trigger a new vector version.
 
 For information on how configuration values reach your running application, see
 [Add configuration to a vector](../vector-data/vector-configuration.md).
@@ -220,7 +229,7 @@ kubectl describe vectortemplate shopping-app -n my-project
 | `True`       | `NoDriftDetected`      | No changes detected; `status.latestVector` is still current.                                                                         |
 | `False`      | `WaitingForBase`       | The base template has not assembled its first vector yet.                                                                            |
 | `False`      | `VectorCreationFailed` | Drift was detected but the upload to the registry failed.                                                                            |
-| `Unknown`    | `DriftDetectionFailed` | Assembly could not determine the desired state - for example, registry unreachable, credentials missing, or a reference parse error. |
+| `Unknown`    | `DriftDetectionFailed` | Assembly could not determine the desired state. For example, the registry is unreachable, credentials are missing, or a reference cannot be parsed. |
 
 ## Full example
 
@@ -266,11 +275,13 @@ spec:
 
 ## Next steps
 
-- [Define promotions](/docs/deploy-operate/define-promotions) to move assembled vectors through
+Continue with the guides that support your delivery workflow:
+
+- [Define promotions](../../deploy-operate/define-promotions.md) to move assembled vectors through
   your delivery stages.
 - [Configure signing and verification](../advanced-features/configure-signing-and-verification.md)
   for production environments.
-- [Add configuration to a vector](../vector-data/vector-configuration.md) to bake
-  feature flags and authored config into your vector.
+- [Add configuration to a vector](../vector-data/vector-configuration.md) to include
+  feature flags and authored configuration in your vector.
 - [Access vector data in your application](../vector-data/access-vector-data.md) to
   read configuration and feature flags at runtime.
