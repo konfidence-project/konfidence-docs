@@ -21,7 +21,7 @@ The sections follow the order in which you set up an installation.
 ## Install the control plane
 
 1. [Install Konfidence](./konfidence-installation.md) installs the operator and the API server from one Helm chart.
-2. [Expose the API and dashboard](./expose-api.md) publishes both through an Ingress and connects the login to your identity provider.
+2. [Give teams access to the dashboard and API](./expose-api.md) publishes both through an Ingress and connects the login to your identity provider.
 3. [Connect artifact registries](./connect-registries.md) gives the control plane and the deployer credentials for private OCI registries.
 4. [Manage deployers](./deployer/overview.md) explains deployment classes. The [Kubernetes deployer](./deployer/kubernetes.md) page installs the one deployer of the current release.
 5. [Runtime components](./runtime-components/overview.md) lists optional services that run next to your workloads.
