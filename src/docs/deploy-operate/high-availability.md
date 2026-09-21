@@ -33,7 +33,7 @@ podDisruptionBudget:
   minAvailable: 1
 ```
 
-Use `affinity` to spread the replicas across nodes.
+Use `affinity` to spread the replicas across nodes. Pass these values with `--values` to the Helm command in [Install Konfidence](./konfidence-installation.md#install-the-control-plane).
 
 ## The API server needs a shared session store for more than one replica
 
@@ -55,7 +55,7 @@ api:
     minAvailable: 1
 ```
 
-The connection string uses the PostgreSQL URL form, for example `postgres://konfidence:<PASSWORD>@postgres.example.com:5432/konfidence`. The API server refuses to start when `storageType` is `db-pg` and the connection string is empty. Pool sizes are set under `api.database`.
+Apply these values the same way, with `--values` on the install command. The connection string uses the PostgreSQL URL form, for example `postgres://konfidence:<PASSWORD>@postgres.example.com:5432/konfidence`. The API server refuses to start when `storageType` is `db-pg` and the connection string is empty. Pool sizes are set under `api.database`.
 
 ## What Konfidence does not make highly available
 
