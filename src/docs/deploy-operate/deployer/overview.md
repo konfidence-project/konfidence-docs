@@ -54,6 +54,6 @@ A deployer can provide several classes for one platform, or introduce classes fo
 ## Next steps
 
 - [Manage deployment targets](../deployment-targets.md) explains how to configure a class in a landscape.
-- [Kubernetes deployer](./kubernetes.md) describes its supported artifact formats and deployment results.
+- [Kubernetes deployer](./kubernetes.md) installs the deployer and describes its connection types, artifact formats, and deployment results.
 - [Types of artifacts](../../develop-integrate/artifact-types/index.md) describes the classes available to application developers.
 - [Extend & Customize](../../extend-customize/index.md) introduces extension development.

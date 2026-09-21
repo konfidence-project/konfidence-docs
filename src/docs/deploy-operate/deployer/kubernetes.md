@@ -13,7 +13,7 @@ The **Kubernetes deployer** is the reference implementation of Konfidence's depl
 <!-- TODO: link to the Deployer interface specification once available; see
 [Deployer Specification](../../reference/deployer-specification.md). -->
 
-This page lists the manifest types this deployer supports and how it turns an annotated Service into a deployment result. For packaging and naming requirements, see [Author a Helm artifact](../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../develop-integrate/artifact-types/kustomize.md).
+This page covers everything specific to this deployer: how to install it, the connection types its deployment targets accept, the manifest types it supports, and how it turns an annotated Service into a deployment result. For packaging and naming requirements, see [Author a Helm artifact](../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../develop-integrate/artifact-types/kustomize.md).
 
 ## Install the deployer
 
@@ -40,6 +40,59 @@ kubectl get deploymentclasses
 ```
 
 The first command shows one available replica. The second lists `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. Every chart value is listed in the [Helm values reference](/docs/reference/helm-values-orchestrator). [Manage deployment targets](../deployment-targets.md) makes the classes available in a landscape.
+
+## Connection types
+
+A [deployment target](../deployment-targets.md) for one of this deployer's classes carries a `connection` block with one of two types.
+
+::: warning Only local targets are supported
+The deployer accepts `local` targets. The `kubeconfig` type for remote clusters is work in progress: the deployer validates the kubeconfig, but deploying into a remote cluster is not finished.
+:::
+
+| `connection.type` | Deploys into | Status |
+| --- | --- | --- |
+| `local` | The cluster the deployer runs in, through its own service account | Supported |
+| `kubeconfig` | The cluster a kubeconfig in a Secret points to | Work in progress |
+
+A `local` connection has no further fields:
+
+```yaml
+spec:
+  deploymentClassName: helm.konfidence.cloud
+  connection:
+    type: local
+```
+
+A `kubeconfig` connection references a Secret in the landscape namespace. The deployer reads the kubeconfig from the key `value` or `value.yaml`, the keys Flux uses:
+
+```bash
+kubectl create secret generic prod-eu-kubeconfig \
+  --namespace="$LANDSCAPE_NAMESPACE" \
+  --from-file=value="$HOME/.kube/prod-eu.yaml"
+```
+
+```yaml
+spec:
+  deploymentClassName: helm.konfidence.cloud
+  connection:
+    type: kubeconfig
+    ref:
+      kind: Secret
+      name: prod-eu-kubeconfig
+```
+
+The deployer validates every target and reports the result in the `Ready` condition:
+
+| Reason | Meaning |
+| --- | --- |
+| `Accepted` | The target passed validation. |
+| `UnsupportedConnectionType` | `connection.type` is neither `local` nor `kubeconfig`. |
+| `UnsupportedRefKind` | `connection.ref.kind` is not `Secret`. |
+| `SecretNotFound` | The referenced Secret does not exist in the landscape namespace. |
+| `InvalidSecret` | The Secret has neither a `value` nor a `value.yaml` key. |
+| `InvalidKubeconfig` | The key exists but does not parse as a kubeconfig. |
+
+Pulling artifacts from private registries needs a Secret in the landscape namespace as well. See [Connect artifact registries](../connect-registries.md#give-the-deployer-credentials).
 
 ## Supported manifest types
 
