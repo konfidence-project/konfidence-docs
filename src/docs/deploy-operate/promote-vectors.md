@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Promote vectors
 
-Define a [promotion](/docs/reference/glossary#promotion) flow so that new vectors reach a stage through a recorded, approvable step. A `VectorPromotionConfig` names a source and a target stage. Konfidence creates a `VectorPromotion` whenever the source vector differs from the target stage's vector. The promotion waits for approval if required and then writes the vector to the target stage.
+Define a [promotion](/docs/reference/glossary#promotion) flow so that a stage selects its vector through a recorded, approvable step instead of a manual edit. A `VectorPromotionConfig` names a source and a target stage. Konfidence creates a `VectorPromotion` whenever the source vector differs from the vector the target stage selects. The promotion waits for approval if required. It then updates the target stage to reference that one concrete vector version.
 
 [Delivery flow](../core-concepts/delivery-flow.md) explains the model behind promotions.
 
@@ -28,7 +28,7 @@ export PROJECT_NAMESPACE=kden-p-$PROJECT
 
 ## Define the promotion flow
 
-Save the following manifest as `promotion-config.yaml`. It promotes every new vector of the template `shop` to the stage `integration` in the landscape `dev`:
+Save the following manifest as `promotion-config.yaml`. It promotes each vector the template `shop` assembles to the stage `integration` in the landscape `dev`:
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -67,7 +67,7 @@ The condition has `status: "True"`. A `False` status names the reference that do
 
 ## Watch promotions appear
 
-When the template assembles a new vector, the controller creates a `VectorPromotion` for it:
+When the template assembles a vector that the target stage does not select yet, the controller creates a `VectorPromotion`:
 
 ```bash
 kubectl get vectorpromotions \
@@ -75,7 +75,7 @@ kubectl get vectorpromotions \
   --output=custom-columns='NAME:.metadata.name,SEQ:.spec.sequence,STATE:.status.state,VECTOR:.spec.vector'
 ```
 
-A promotion from a `VectorTemplate` source runs without approval and reaches `Succeeded` on its own. A promotion from a `Stage` source starts in `Waiting`. Only one promotion per config executes at a time. A newer promotion supersedes older ones that have not executed yet.
+A promotion from a `VectorTemplate` source runs without approval and reaches `Succeeded` on its own. A promotion from a `Stage` source starts in `Waiting`. Only one promotion per config executes at a time. The approved promotion with the highest sequence number executes next. Promotions with a lower sequence number that have not executed become `Superseded`.
 
 ## Approve a promotion
 
@@ -95,7 +95,7 @@ The promotion moves to `Ready` and then to `InProgress`. Approving twice is acce
 
 ## Verify the target stage
 
-The stage now carries the promoted vector:
+The stage now selects the promoted vector:
 
 ```bash
 kubectl get stage integration \
@@ -107,15 +107,17 @@ The output equals the promotion's `spec.vector`. The promotion records the same 
 
 ## Promotion states
 
+`status.state` summarizes the promotion's conditions for display. The conditions are the source of truth.
+
 | State | Meaning |
 |-------|---------|
 | `Waiting` | The promotion requires approval and has none yet. |
 | `Ready` | Every gate has passed. The promotion is queued for execution. |
-| `InProgress` | The promotion writes the vector to the target stage. |
+| `InProgress` | The promotion updates the target stage to reference the vector. |
 | `Blocked` | The target does not resolve. The config's `Ready` condition names the cause. |
-| `Succeeded` | The target stage carries the vector. |
-| `Failed` | Execution ended without success. The conditions carry the reason. |
-| `Superseded` | A newer promotion replaced this one. It can never be approved or executed. |
+| `Succeeded` | The target stage references the vector. |
+| `Failed` | Execution ended without success. The conditions name the reason. |
+| `Superseded` | A promotion with a higher sequence number replaced this one. It can never be approved or executed. |
 
 ## Chain stages
 
@@ -147,7 +149,7 @@ Promotions that are not terminal are never deleted. Deleting the config deletes 
 ## What to do if it fails
 
 - `Blocked`: read the config's `Ready` condition. The target stage or landscape does not exist or has a different name.
-- `Failed` with reason `PromotionTimedOut`: the execution exceeded its deadline. Inspect the target stage and re-run by assembling a new vector or editing the config target.
+- `Failed` with reason `PromotionTimedOut`: the execution exceeded the fixed five-minute deadline. Inspect the target stage. The next vector the source selects creates a fresh promotion.
 - No promotion appears: the source vector equals the target stage's vector, or a live promotion already pins the same vector. Check `kubectl get vectorpromotions`.
 - `kden vector-promotion approve` returns `403`: the caller lacks the `pm` or `admin` role. See [Grant roles](./access-control.md).
 

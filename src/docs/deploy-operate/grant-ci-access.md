@@ -21,7 +21,7 @@ Bind a project role to the OpenID Connect (OIDC) identity of a CI workflow. The 
 |----------|----------|--------------------|
 | GitHub Actions | Repository and branch, for example `my-org/my-repo` on `main` | `https://token.actions.githubusercontent.com/.well-known/openid-configuration` |
 | GitLab.com | Project path and branch, for example `my-group/my-project` on `main` | `https://gitlab.com/.well-known/openid-configuration` |
-| SPIRE | SPIFFE ID of the workload, for example `spiffe://example.org/ci/release-runner` | The URL of your SPIRE OIDC Discovery Provider, for example `https://oidc.spire.example.com/.well-known/openid-configuration` |
+| SPIRE | The SPIFFE ID SPIRE assigns to the workload, for example `spiffe://example.org/ci/release-runner` | The URL of your SPIRE OIDC Discovery Provider, for example `https://oidc.spire.example.com/.well-known/openid-configuration` |
 
 ## Choose the role
 
