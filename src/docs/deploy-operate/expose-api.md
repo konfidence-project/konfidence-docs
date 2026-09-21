@@ -39,9 +39,11 @@ kubectl create secret generic konfidence-oidc-client \
 
 ## Write the values file
 
-Save the following as `konfidence-values.yaml`. Replace the issuer URL and client id with the values from your provider, and `<INGRESS_CLASS>` with the name from `kubectl get ingressclass`:
+Pick the tab for your controller. Save the file as `konfidence-values.yaml` and replace the issuer URL and client id with the values from your provider. For an Ingress, replace `<INGRESS_CLASS>` with the name from `kubectl get ingressclass`.
 
-```yaml
+::: code-group
+
+```yaml [Ingress]
 api:
   oidc:
     enabled: true
@@ -66,6 +68,23 @@ api:
           - konfidence.example.com
 ```
 
+```yaml [Gateway API]
+api:
+  oidc:
+    enabled: true
+    issuerURL: https://id.example.com
+    clientId: konfidence
+    clientSecretRef:
+      name: konfidence-oidc-client
+      key: client-secret
+    redirectURL: https://konfidence.example.com/api/v1/auth/callback
+    scopes: openid,profile,email,groups
+  ingress:
+    enabled: false
+```
+
+:::
+
 Role bindings match users by group, so the token must carry group membership. Add the scope your provider uses for that, `groups` in the example. Leave `redirectURL` identical to the redirect URL registered at the provider.
 
 ## Upgrade the release
@@ -83,7 +102,39 @@ helm upgrade konfidence oci://ghcr.io/konfidence-project/charts/konfidence \
   --wait
 ```
 
-Helm restarts the API deployment and creates the Ingress `konfidence-api`.
+Helm restarts the API deployment.
+
+## Publish the endpoint
+
+::: code-group
+
+```bash [Ingress]
+kubectl get ingress konfidence-api --namespace konfidence-system
+```
+
+```yaml [Gateway API]
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: konfidence-api
+  namespace: konfidence-system
+spec:
+  parentRefs:
+    - name: <GATEWAY_NAME>
+      namespace: <GATEWAY_NAMESPACE>
+  hostnames:
+    - konfidence.example.com
+  rules:
+    - backendRefs:
+        - name: konfidence-api
+          port: 8090
+```
+
+:::
+
+With an Ingress, Helm already created it during the upgrade. The command lists `konfidence-api` with your host and an address.
+
+With Gateway API, save the route as `konfidence-route.yaml` and apply it with `kubectl apply -f konfidence-route.yaml`. It points at the `konfidence-api` Service. TLS terminates at the Gateway's HTTPS listener, so the certificate is configured on the Gateway, not on the route. The Gateway must allow routes from `konfidence-system` in its listener's `allowedRoutes`.
 
 ## Verify the endpoint
 
@@ -107,30 +158,6 @@ kden login
 ```
 
 A browser window opens for the identity provider. After sign-in, `kden project list` prints the projects your groups grant you.
-
-## Route through a Gateway instead of an Ingress
-
-With a Gateway API implementation such as Envoy Gateway, skip the chart's Ingress and attach an `HTTPRoute` to your Gateway. Set `api.ingress.enabled: false` in the values file and apply the route after the upgrade:
-
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: konfidence-api
-  namespace: konfidence-system
-spec:
-  parentRefs:
-    - name: <GATEWAY_NAME>
-      namespace: <GATEWAY_NAMESPACE>
-  hostnames:
-    - konfidence.example.com
-  rules:
-    - backendRefs:
-        - name: konfidence-api
-          port: 8090
-```
-
-TLS terminates at the Gateway's HTTPS listener, so the certificate is configured on the Gateway, not on the route. The Gateway must allow routes from `konfidence-system` in its listener's `allowedRoutes`. The verification steps above stay the same.
 
 ## What to do if it fails
 
