@@ -18,7 +18,7 @@ The sections follow the order in which you set up an installation.
 
 ## Install the control plane
 
-1. [Install Konfidence](./konfidence-installation.md) installs the operator, the API server, and the Kubernetes landscape orchestrator from Helm charts.
+1. [Install Konfidence](./konfidence-installation.md) installs the operator and the API server from one Helm chart.
 2. [Expose the API](./expose-api.md) publishes the API and the dashboard through an Ingress. It also connects the login to your identity provider.
 3. [Connect artifact registries](./connect-registries.md) gives the control plane and the deployer credentials for private OCI registries.
 4. [Runtime components](./runtime-components/overview.md) lists optional services that run next to your workloads.
@@ -33,7 +33,7 @@ The sections follow the order in which you set up an installation.
 
 1. [Manage landscapes](./landscapes.md) creates the namespace-backed scope in which stages deploy.
 2. [Manage deployment targets](./deployment-targets.md) tells a landscape which cluster receives its workloads.
-3. [Manage deployers](./deployer/overview.md) lists the deployment classes a landscape can use.
+3. [Manage deployers](./deployer/overview.md) installs the Kubernetes deployer and lists the deployment classes a landscape can use.
 4. [Manage stages](./stages.md) creates stages and changes the vector a stage selects.
 5. [Promote vectors](./promote-vectors.md) updates the vector a stage selects through recorded, approvable promotions.
 

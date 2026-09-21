@@ -160,25 +160,35 @@ section.VPSidebarItem.level-2 > .item > .link > .text {
   color: var(--vp-c-text-1);
 }
 
+/* Space between nested groups so the next header does not sit on the
+   previous group's last link. */
+section.VPSidebarItem.level-1 + section.VPSidebarItem.level-1 {
+  margin-top: 12px;
+}
+
 /* Child links - default: text color */
-.VPSidebarItem.level-1 > .item > .link > .text {
+.VPSidebarItem.level-1 > .item > .link > .text,
+.VPSidebarItem.level-2 > .item > .link > .text {
   font-size: 16px;
   color: var(--vp-c-text-1);
   transition: color 0.2s ease;
 }
 
 /* Spacing between child links - reduced */
-.VPSidebarItem.level-1 > .item {
+.VPSidebarItem.level-1 > .item,
+.VPSidebarItem.level-2 > .item {
   padding: 4px 0 4px 16px;
 }
 
 /* Child links - hover: blue */
-.VPSidebarItem.level-1 > .item > .link:hover > .text {
+.VPSidebarItem.level-1 > .item > .link:hover > .text,
+.VPSidebarItem.level-2 > .item > .link:hover > .text {
   color: var(--konfidence-blue) !important;
 }
 
 /* Child links - active: blue, regular weight (not bold) */
-.VPSidebarItem.level-1.is-active > .item > .link > .text {
+.VPSidebarItem.level-1.is-active > .item > .link > .text,
+.VPSidebarItem.level-2.is-active > .item > .link > .text {
   color: var(--konfidence-blue) !important;
   font-weight: 400;
 }
