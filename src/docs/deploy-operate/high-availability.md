@@ -63,5 +63,5 @@ Konfidence depends on Flux, the Gateway API CRDs, and cert-manager when the webh
 
 ## Related pages
 
-- [System architecture](./system-architecture.md) explains the three components and the one-cluster topology.
+- [System architecture](./system-architecture.md) explains the control plane and the one-cluster topology.
 - [Helm values: konfidence](/docs/reference/helm-values-konfidence) lists every value named here.
