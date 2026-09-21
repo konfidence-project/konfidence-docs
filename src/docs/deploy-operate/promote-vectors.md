@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Promote vectors
 
-Define a [promotion](/docs/reference/glossary#promotion) flow so that a stage selects its vector through a recorded, approvable step instead of a manual edit. A `VectorPromotionConfig` names a source and a target stage. Konfidence creates a `VectorPromotion` whenever the source vector differs from the vector the target stage selects. The promotion waits for approval if required. It then updates the target stage to reference that one concrete vector version.
+Define a [promotion](/docs/reference/glossary#promotion) flow so that a stage selects its vector through a recorded, approvable step. A `VectorPromotionConfig` names a source and a target stage. Konfidence creates a `VectorPromotion` whenever the source vector differs from the vector the target stage selects. The promotion waits for approval if required. It then updates the target stage to reference that one concrete vector version.
 
 [Delivery flow](../core-concepts/delivery-flow.md) explains the model behind promotions.
 
