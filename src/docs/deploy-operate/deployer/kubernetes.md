@@ -45,14 +45,14 @@ The first command shows one available replica. The second lists `helm.konfidence
 
 A [deployment target](../deployment-targets.md) for one of this deployer's classes carries a `connection` block with one of two types.
 
-::: warning Only local targets are supported
-The deployer accepts `local` targets. The `kubeconfig` type for remote clusters is work in progress: the deployer validates the kubeconfig, but deploying into a remote cluster is not finished.
+::: warning Only local targets work as documented
+Use `local` targets. The `kubeconfig` type is work in progress. The deployer validates the kubeconfig and marks the target `Ready`, but it does not yet create every resource on the remote cluster. Deployments through a `kubeconfig` target are incomplete.
 :::
 
 | `connection.type` | Deploys into | Status |
 | --- | --- | --- |
 | `local` | The cluster the deployer runs in, through its own service account | Supported |
-| `kubeconfig` | The cluster a kubeconfig in a Secret points to | Work in progress |
+| `kubeconfig` | The cluster a kubeconfig in a Secret points to | Work in progress, incomplete |
 
 A `local` connection has no further fields:
 
