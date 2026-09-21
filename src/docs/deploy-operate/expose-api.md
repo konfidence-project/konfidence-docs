@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Give teams access to the dashboard and API
 
-Let your teams open the Konfidence dashboard in a browser and sign in with their company account. The same setup lets the `kden` CLI and CI pipelines reach the API. To get there, you publish the API server under a public URL with TLS and connect its login to your OpenID Connect (OIDC) provider.
+Let your teams open the Konfidence dashboard in a browser and sign in with their company account. The same setup lets the `kden` CLI and CI pipelines reach the API. To get there, you publish the API server under a public URL with TLS. Then you connect its login to your OpenID Connect (OIDC) provider.
 
 ## Prerequisites
 
