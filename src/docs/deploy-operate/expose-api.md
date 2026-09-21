@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Expose the API and dashboard
 
-After installation, the API server is reachable only inside the cluster and has no login. Give it a public URL with TLS and connect the login to your OpenID Connect (OIDC) provider. One Ingress then serves every client: the dashboard, where teams follow projects, stages, and deployments in a browser, the `kden` CLI, and CI pipelines. Nobody needs cluster access to use Konfidence afterwards.
+After installation, the API server is reachable only inside the cluster and has no login. Give it a public URL with TLS and connect the login to your OpenID Connect (OIDC) provider. One Ingress then serves every client: the dashboard, the `kden` CLI, and CI pipelines. In the dashboard, teams follow projects, stages, and deployments in a browser. Nobody needs cluster access to use Konfidence afterwards.
 
 ## Prerequisites
 
