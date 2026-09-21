@@ -18,7 +18,7 @@ Running the control plane with more than one replica is not fully tested in the 
 
 Konfidence stores all delivery state as custom resources in the Kubernetes API. That covers projects, landscapes, deployment targets, stages, stage versions, vector templates, promotion configurations, and promotions. The operator holds only in-memory caches of those resources and the leader election Lease. When a replica stops, nothing is lost that was not already written to the Kubernetes API. The replacement replica rebuilds its caches from the API and continues from the stored state.
 
-The API server stores nothing except login sessions. The default session store is `in-memory`, so a restart loses every session and signs all users out. To keep sessions across restarts, set `api.session.storageType` to `db-pg`. The [section below](#the-api-server-needs-a-shared-session-store-for-more-than-one-replica) shows the values, which you pass to the [install command](./konfidence-installation.md#install-the-control-plane).
+The API server stores nothing except login sessions. The default session store is `in-memory`, so a restart loses every session and signs all users out. To keep sessions across restarts, set `api.session.storageType` to `db-pg`. [Keep login sessions in PostgreSQL](./konfidence-installation.md#keep-login-sessions-in-postgresql) on the install page shows the values.
 
 ## The operator uses leader election
 
@@ -37,25 +37,7 @@ Use `affinity` to spread the replicas across nodes. Pass these values with `--va
 
 ## The API server needs a shared session store for more than one replica
 
-The API server is stateless apart from sessions. To run more than one replica, switch the session store to PostgreSQL. The chart exposes the store type as a value and reads the connection string from the environment:
-
-```yaml
-api:
-  replicas: 2
-  session:
-    storageType: db-pg
-  env:
-    - name: API_DB_CONNECTION
-      valueFrom:
-        secretKeyRef:
-          name: konfidence-api-db
-          key: connection
-  podDisruptionBudget:
-    enabled: true
-    minAvailable: 1
-```
-
-Apply these values the same way, with `--values` on the install command. The connection string uses the PostgreSQL URL form, for example `postgres://konfidence:<PASSWORD>@postgres.example.com:5432/konfidence`. The API server refuses to start when `storageType` is `db-pg` and the connection string is empty. Pool sizes are set under `api.database`.
+With the default `in-memory` store, two API server replicas do not share sessions. Switch the store to PostgreSQL before setting `api.replicas` above 1. [Keep login sessions in PostgreSQL](./konfidence-installation.md#keep-login-sessions-in-postgresql) on the install page shows the values. Add `api.podDisruptionBudget` with `minAvailable: 1` alongside, as for the operator.
 
 ## What Konfidence does not make highly available
 
