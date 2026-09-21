@@ -39,7 +39,7 @@ kubectl get deployment kubernetes-landscape-orchestrator -n "$KONFIDENCE_NAMESPA
 kubectl get deploymentclasses
 ```
 
-The first command shows one available replica. The second lists `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. [Manage deployment targets](../deployment-targets.md) makes the classes available in a landscape.
+The first command shows one available replica. The second lists `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. Every chart value is listed in the [Helm values reference](/docs/reference/helm-values-orchestrator). [Manage deployment targets](../deployment-targets.md) makes the classes available in a landscape.
 
 ## Supported manifest types
 

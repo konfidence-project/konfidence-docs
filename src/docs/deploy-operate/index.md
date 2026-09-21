@@ -16,6 +16,8 @@ The sections follow the order in which you set up an installation.
 
 [System architecture](./system-architecture.md) explains what a Konfidence installation consists of and which topology the current release supports.
 
+[High availability](./high-availability.md) explains which components can run with more than one replica and what that requires.
+
 ## Install the control plane
 
 1. [Install Konfidence](./konfidence-installation.md) installs the operator and the API server from one Helm chart.
