@@ -10,13 +10,13 @@ lastUpdated: true
 
 Create a landscape to establish an operational boundary for stages and their deployment resources. Konfidence manages a dedicated namespace for each landscape.
 
-For guidance on choosing landscape boundaries, see [Landscapes and stages](../core-concepts/landscapes-and-stages.md). To understand how a landscape connects artifacts to infrastructure, see the [Deployment model](../core-concepts/deployment-model.md).
+For guidance on choosing landscape boundaries, see [Landscapes and stages](../../core-concepts/landscapes-and-stages.md). To understand how a landscape connects artifacts to infrastructure, see the [Deployment model](../../core-concepts/deployment-model.md).
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
-- A [project](./projects.md) in which to create the landscape.
+- A [project](../control-access/projects.md) in which to create the landscape.
 - Permission to create `Landscape` resources in the project's namespace.
 - Access to the Konfidence cluster through `kubectl`.
 
@@ -104,5 +104,5 @@ Konfidence keeps the landscape in a terminating state until its managed namespac
 
 - [Manage deployment targets](./deployment-targets.md) explains how to connect the landscape to infrastructure.
 - [Manage stages](./stages.md) explains how to define delivery checkpoints in the landscape.
-- [Grant roles](./access-control.md) for the parent project.
-- Consult the [Landscape CRD reference](../reference/crd.md#landscape) for all fields.
+- [Grant roles](../control-access/access-control.md) for the parent project.
+- Consult the [Landscape CRD reference](../../reference/crd.md#landscape) for all fields.

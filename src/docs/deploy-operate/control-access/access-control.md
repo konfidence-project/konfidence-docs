@@ -87,4 +87,4 @@ For the full field list, see the [Project CRD reference](/docs/reference/crd#pro
 ## Next steps
 
 - [Grant CI pipelines access](./grant-ci-access.md) binds a role to a CI workflow.
-- [Manage landscapes](./landscapes.md) creates landscapes governed by these roles.
+- [Manage landscapes](../manage-delivery/landscapes.md) creates landscapes governed by these roles.

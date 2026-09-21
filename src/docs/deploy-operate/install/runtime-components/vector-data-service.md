@@ -11,7 +11,7 @@ The vector data service lets applications resolve vector data for a specific vec
 
 - feature flags,
 - authored configuration values, and
-- [deployment results](../../develop-integrate/vector-data/deployment-results.md), such as service endpoints, URLs, identities, and other data produced by deployers which are required for service-to-service communication.
+- [deployment results](../../../develop-integrate/vector-data/deployment-results.md), such as service endpoints, URLs, identities, and other data produced by deployers which are required for service-to-service communication.
 
 Because accessing this data is essential for core features of Konfidence, it's recommended to always install the vector data service.
 
@@ -30,4 +30,4 @@ After installation, workloads in that namespace can reach the service at `http:/
 ## Protocol compatibility
 
 The vector data service implements the REST endpoints defined by the [OpenFeature Remote Evaluation Protocol (OFREP) specification](https://openfeature.dev/docs/reference/other-technologies/ofrep/openapi). Applications should use an OpenFeature client with a standard [OFREP-compatible provider](https://openfeature.dev/ecosystem), but they can also call the REST endpoints directly without a provider.
-More information can be found in the [Access Vector Data Section](../../develop-integrate/vector-data/access-vector-data.md) of the Develop & Integrate section.
+More information can be found in the [Access Vector Data Section](../../../develop-integrate/vector-data/access-vector-data.md) of the Develop & Integrate section.

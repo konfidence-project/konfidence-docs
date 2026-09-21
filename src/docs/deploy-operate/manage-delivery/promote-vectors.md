@@ -10,11 +10,11 @@ lastUpdated: true
 
 Define a [promotion](/docs/reference/glossary#promotion) flow so that a stage selects its vector through a recorded, approvable step. A `VectorPromotionConfig` names a source and a target stage. Konfidence creates a `VectorPromotion` whenever the source vector differs from the vector the target stage selects. The promotion waits for approval if required. It then updates the target stage to reference that one concrete vector version.
 
-[Delivery flow](../core-concepts/delivery-flow.md) explains the model behind promotions.
+[Delivery flow](../../core-concepts/delivery-flow.md) explains the model behind promotions.
 
 ## Prerequisites
 
-- A [project](./projects.md) with a [landscape](./landscapes.md) and a target [stage](./stages.md).
+- A [project](../control-access/projects.md) with a [landscape](./landscapes.md) and a target [stage](./stages.md).
 - A source: a `VectorTemplate` that assembles vectors, see [Build vectors](/docs/develop-integrate/observe-improve/build-vectors), or another stage.
 - `kubectl` access to the project namespace `kden-p-<PROJECT>`.
 - For approvals: `kden` installed and the `pm` or `admin` role in the project. Check: `kden project list` shows the project.
@@ -151,9 +151,9 @@ Promotions that are not terminal are never deleted. Deleting the config deletes 
 - `Blocked`: read the config's `Ready` condition. The target stage or landscape does not exist or has a different name.
 - `Failed` with reason `PromotionTimedOut`: the execution exceeded the fixed five-minute deadline. Inspect the target stage. The next vector the source selects creates a fresh promotion.
 - No promotion appears: the source vector equals the target stage's vector, or a live promotion already pins the same vector. Check `kubectl get vectorpromotions`.
-- `kden vector-promotion approve` returns `403`: the caller lacks the `pm` or `admin` role. See [Grant roles](./access-control.md).
+- `kden vector-promotion approve` returns `403`: the caller lacks the `pm` or `admin` role. See [Grant roles](../control-access/access-control.md).
 
 ## Next steps
 
-- [Grant CI pipelines access](./grant-ci-access.md) lets a pipeline approve promotions.
+- [Grant CI pipelines access](../control-access/grant-ci-access.md) lets a pipeline approve promotions.
 - [Manage stages](./stages.md) inspects the rollout after a promotion succeeded.

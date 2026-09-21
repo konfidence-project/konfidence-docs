@@ -128,7 +128,7 @@ curl -si "<the Location URL from above>" | grep -i set-cookie
 curl -s http://localhost:8090/api/v1/identity -H "Cookie: kden-session=<session id from the cookie>"
 ```
 
-The identity response names `Local Admin` with `my-project` under `projectRoles`. An empty `projectRoles` means the Project was not applied or lacks the `local-admin` binding. The same [role binding model](../deploy-operate/access-control.md) applies to real identity provider groups.
+The identity response names `Local Admin` with `my-project` under `projectRoles`. An empty `projectRoles` means the Project was not applied or lacks the `local-admin` binding. The same [role binding model](../deploy-operate/control-access/access-control.md) applies to real identity provider groups.
 
 To serve the dashboard from the API server as in production, install the workspace dependencies and build it once, then start the API server with the build. Stop the API server from step 3 first, since both listen on port 8090:
 
@@ -292,7 +292,7 @@ To remove the deployment, run `make undeploy`. To delete the cluster and the reg
 
 ## Deployer
 
-The Konfidence operator records what should be deployed. Turning that into running workloads is the job of a deployer, which lives in its own repository and installs its own prerequisites. For the [Kubernetes deployer](../deploy-operate/deployer/kubernetes.md), clone [`kubernetes-landscape-orchestrator`](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) next to your `konfidence` clone and run, from its root with its Hermit active:
+The Konfidence operator records what should be deployed. Turning that into running workloads is the job of a deployer, which lives in its own repository and installs its own prerequisites. For the [Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md), clone [`kubernetes-landscape-orchestrator`](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) next to your `konfidence` clone and run, from its root with its Hermit active:
 
 ```bash
 make install-deps

@@ -97,5 +97,5 @@ Use these pages to explore landscape boundaries or configure deployments:
 
 - [Landscapes and stages](./landscapes-and-stages.md) explains operational and delivery boundaries.
 - [Types of artifacts](../develop-integrate/artifact-types/index.md) helps application developers choose and author supported artifacts.
-- [Manage deployers](../deploy-operate/deployer/overview.md) explains how operators inspect available deployers and classes.
-- [Manage deployment targets](../deploy-operate/deployment-targets.md) explains how to make a class available in a landscape.
+- [Manage deployers](../deploy-operate/install/deployer/overview.md) explains how operators inspect available deployers and classes.
+- [Manage deployment targets](../deploy-operate/manage-delivery/deployment-targets.md) explains how to make a class available in a landscape.

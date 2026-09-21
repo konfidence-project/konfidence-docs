@@ -189,11 +189,11 @@ export default defineConfig({
               items: [
                 {
                   text: "System architecture",
-                  link: "/docs/deploy-operate/system-architecture",
+                  link: "/docs/deploy-operate/plan/system-architecture",
                 },
                 {
                   text: "High availability",
-                  link: "/docs/deploy-operate/high-availability",
+                  link: "/docs/deploy-operate/plan/high-availability",
                 },
               ],
             },
@@ -202,15 +202,15 @@ export default defineConfig({
               items: [
                 {
                   text: "Install Konfidence",
-                  link: "/docs/deploy-operate/konfidence-installation",
+                  link: "/docs/deploy-operate/install/konfidence-installation",
                 },
                 {
                   text: "Give teams access to the dashboard and API",
-                  link: "/docs/deploy-operate/expose-api",
+                  link: "/docs/deploy-operate/install/expose-api",
                 },
                 {
                   text: "Connect artifact registries",
-                  link: "/docs/deploy-operate/connect-registries",
+                  link: "/docs/deploy-operate/install/connect-registries",
                 },
                 {
                   text: "Deployers",
@@ -218,11 +218,11 @@ export default defineConfig({
                   items: [
                     {
                       text: "Manage deployers",
-                      link: "/docs/deploy-operate/deployer/overview",
+                      link: "/docs/deploy-operate/install/deployer/overview",
                     },
                     {
                       text: "Kubernetes",
-                      link: "/docs/deploy-operate/deployer/kubernetes",
+                      link: "/docs/deploy-operate/install/deployer/kubernetes",
                     },
                   ],
                 },
@@ -232,11 +232,11 @@ export default defineConfig({
                   items: [
                     {
                       text: "Overview",
-                      link: "/docs/deploy-operate/runtime-components/overview",
+                      link: "/docs/deploy-operate/install/runtime-components/overview",
                     },
                     {
                       text: "Vector data service",
-                      link: "/docs/deploy-operate/runtime-components/vector-data-service",
+                      link: "/docs/deploy-operate/install/runtime-components/vector-data-service",
                     },
                   ],
                 },
@@ -247,15 +247,15 @@ export default defineConfig({
               items: [
                 {
                   text: "Manage projects",
-                  link: "/docs/deploy-operate/projects",
+                  link: "/docs/deploy-operate/control-access/projects",
                 },
                 {
                   text: "Grant roles",
-                  link: "/docs/deploy-operate/access-control",
+                  link: "/docs/deploy-operate/control-access/access-control",
                 },
                 {
                   text: "Grant CI pipelines access",
-                  link: "/docs/deploy-operate/grant-ci-access",
+                  link: "/docs/deploy-operate/control-access/grant-ci-access",
                 },
               ],
             },
@@ -264,19 +264,19 @@ export default defineConfig({
               items: [
                 {
                   text: "Manage landscapes",
-                  link: "/docs/deploy-operate/landscapes",
+                  link: "/docs/deploy-operate/manage-delivery/landscapes",
                 },
                 {
                   text: "Manage deployment targets",
-                  link: "/docs/deploy-operate/deployment-targets",
+                  link: "/docs/deploy-operate/manage-delivery/deployment-targets",
                 },
                 {
                   text: "Manage stages",
-                  link: "/docs/deploy-operate/stages",
+                  link: "/docs/deploy-operate/manage-delivery/stages",
                 },
                 {
                   text: "Promote vectors",
-                  link: "/docs/deploy-operate/promote-vectors",
+                  link: "/docs/deploy-operate/manage-delivery/promote-vectors",
                 },
               ],
             },

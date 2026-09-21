@@ -10,7 +10,7 @@ lastUpdated: true
 
 Create a stage to select the vector Konfidence should deliver for a checkpoint. Stages are created in a landscape namespace and use the deployment targets configured there.
 
-For help deciding how stages and landscapes should relate, see [Landscapes and stages](../core-concepts/landscapes-and-stages.md).
+For help deciding how stages and landscapes should relate, see [Landscapes and stages](../../core-concepts/landscapes-and-stages.md).
 
 ## Prerequisites
 
@@ -124,5 +124,5 @@ Use the following checks if stage creation or activation does not complete:
 ## Next steps
 
 - [Promote vectors](./promote-vectors.md) to update stages through a controlled delivery flow.
-- [Delivery flow](../core-concepts/delivery-flow.md#runtime-boundary) to understand the runtime lifecycle behind a rollout.
-- Consult the [Stage CRD reference](../reference/crd.md#stage) for all fields.
+- [Delivery flow](../../core-concepts/delivery-flow.md#runtime-boundary) to understand the runtime lifecycle behind a rollout.
+- Consult the [Stage CRD reference](../../reference/crd.md#stage) for all fields.

@@ -28,7 +28,7 @@ Before you begin, make sure you have:
 - Published application artifacts in an Open Container Initiative (OCI) registry. Follow [Publish artifacts](../artifact-types/publish-artifacts.md) to create and publish their Open Component Model (OCM) component versions.
 - The registry address and credentials for accessing your artifacts and uploading the vector.
 - An RSA key pair for artifact signing and a separate RSA key pair for vector signing.
-- An existing Konfidence project and its namespace for the credential Secrets and `VectorTemplate`. See [Manage projects](../../deploy-operate/projects.md).
+- An existing Konfidence project and its namespace for the credential Secrets and `VectorTemplate`. See [Manage projects](../../deploy-operate/control-access/projects.md).
 
 Coordinate credential setup with your administrator before you begin.
 Reuse existing CLI credentials and assembly Secrets when available, and skip their setup instructions below.
@@ -135,7 +135,7 @@ Read it from the project's `status.namespace` field:
 kubectl get project <project-name> -o jsonpath='{.status.namespace}'
 ```
 
-For details about project namespaces, see [Manage projects](../../deploy-operate/projects.md).
+For details about project namespaces, see [Manage projects](../../deploy-operate/control-access/projects.md).
 
 Signing requires a private key and fails immediately if it is missing.
 If verification credentials contain no RSA key material, verification falls back to the system root trust store: CA-issued signatures pass, while self-signed or internal keys fail.
@@ -396,7 +396,7 @@ That configuration is outside the assembly task covered here.
 For the next parts of your application delivery workflow, see:
 
 - [Build vectors](../observe-improve/build-vectors.md).
-- [Promote vectors](../../deploy-operate/promote-vectors.md).
+- [Promote vectors](../../deploy-operate/manage-delivery/promote-vectors.md).
 - [Landscapes and Stages](../../core-concepts/landscapes-and-stages.md) for security boundaries.
 
 <!--
@@ -509,6 +509,6 @@ Retained for reuse: background reading moved out of the prerequisites; credentia
 ## Next steps
 
 - [Build vectors](../observe-improve/build-vectors.md)
-- [Promote vectors](../../deploy-operate/promote-vectors.md)
+- [Promote vectors](../../deploy-operate/manage-delivery/promote-vectors.md)
 - [Landscapes and Stages — security boundaries](../../core-concepts/landscapes-and-stages.md)
 -->

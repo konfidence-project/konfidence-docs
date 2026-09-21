@@ -13,7 +13,7 @@ Bind a project role to the OpenID Connect (OIDC) identity of a CI workflow. The 
 ## Prerequisites
 
 - A [project](./projects.md) and the `admin` role in it, or `kubectl` access to edit `Project` resources.
-- The API is reachable from the CI runners over HTTPS. See [Give teams access to the dashboard and API](./expose-api.md).
+- The API is reachable from the CI runners over HTTPS. See [Give teams access to the dashboard and API](../install/expose-api.md).
 - The public URL of the API, for example `https://konfidence.example.com/api`.
 - The identity the provider gives the workflow:
 
@@ -165,5 +165,5 @@ In every case, the last command prints the promotion configs of the project. A `
 
 ## Next steps
 
-- [Promote vectors](./promote-vectors.md) shows the approval the pipeline can now grant.
+- [Promote vectors](../manage-delivery/promote-vectors.md) shows the approval the pipeline can now grant.
 - [Grant roles](./access-control.md) covers session subjects for interactive users.

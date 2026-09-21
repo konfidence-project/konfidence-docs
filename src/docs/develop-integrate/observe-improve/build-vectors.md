@@ -305,7 +305,7 @@ spec:
 
 Continue with the guides that support your delivery workflow:
 
-- [Promote vectors](../../deploy-operate/promote-vectors.md) to move assembled vectors through
+- [Promote vectors](../../deploy-operate/manage-delivery/promote-vectors.md) to move assembled vectors through
   your delivery stages.
 - [Configure signing and verification](../advanced-features/configure-signing-and-verification.md)
   for production environments.
