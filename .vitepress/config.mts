@@ -205,6 +205,14 @@ export default defineConfig({
                   link: "/docs/deploy-operate/konfidence-installation",
                 },
                 {
+                  text: "Expose the API",
+                  link: "/docs/deploy-operate/expose-api",
+                },
+                {
+                  text: "Connect artifact registries",
+                  link: "/docs/deploy-operate/connect-registries",
+                },
+                {
                   text: "Deployers",
                   collapsed: true,
                   items: [
@@ -217,14 +225,6 @@ export default defineConfig({
                       link: "/docs/deploy-operate/deployer/kubernetes",
                     },
                   ],
-                },
-                {
-                  text: "Expose the API",
-                  link: "/docs/deploy-operate/expose-api",
-                },
-                {
-                  text: "Connect artifact registries",
-                  link: "/docs/deploy-operate/connect-registries",
                 },
                 {
                   text: "Runtime components",
