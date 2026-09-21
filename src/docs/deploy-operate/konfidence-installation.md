@@ -115,16 +115,7 @@ webhook:
     cert-manager.io/inject-ca-from: konfidence-system/konfidence-webhook-server-cert
 ```
 
-Re-run the install command with `--values webhook-values.yaml` and without `--set webhook.enabled=false`. Verify that the CA reached the webhook configuration:
-
-```bash
-kubectl get validatingwebhookconfiguration konfidence-validating-webhook-configuration \
-  --output=jsonpath='{.webhooks[0].clientConfig.caBundle}' | head -c 20; echo
-```
-
-The command prints the start of a base64 string. An empty line means the injection did not happen. Check that the annotation value names the `Certificate`, not the Secret, and that cert-manager's CA injector runs.
-
-With `failurePolicy: Fail`, the chart default, the Kubernetes API server rejects `Project`, `Landscape`, and `DeploymentTarget` writes while the webhook is unreachable. Set `webhook.failurePolicy: Ignore` if you prefer availability over validation.
+Then re-run the install/upgrade command.
 
 ## Next steps
 
