@@ -13,7 +13,7 @@ The **Kubernetes deployer** is the reference implementation of Konfidence's depl
 <!-- TODO: link to the Deployer interface specification once available; see
 [Deployer Specification](../../reference/deployer-specification.md). -->
 
-This page covers everything specific to this deployer: how to install it, the connection types its deployment targets accept, the manifest types it supports, and how it turns an annotated Service into a deployment result. For packaging and naming requirements, see [Author a Helm artifact](../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../develop-integrate/artifact-types/kustomize.md).
+This page covers everything specific to this deployer. It explains how to install it and which connection types its deployment targets accept. It lists the manifest types it supports and how it turns an annotated Service into a deployment result. For packaging and naming requirements, see [Author a Helm artifact](../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../develop-integrate/artifact-types/kustomize.md).
 
 ## Install the deployer
 
@@ -46,7 +46,7 @@ The first command shows one available replica. The second lists `helm.konfidence
 A [deployment target](../deployment-targets.md) for one of this deployer's classes carries a `connection` block with one of two types.
 
 ::: warning Only local targets work as documented
-Use `local` targets. The `kubeconfig` type is work in progress. The deployer validates the kubeconfig and marks the target `Ready`, but it does not yet create every resource on the remote cluster. Deployments through a `kubeconfig` target are incomplete.
+Use `local` targets. The `kubeconfig` type is work in progress. The deployer validates the kubeconfig and marks the target `Ready`. It does not yet create every resource on the remote cluster. Deployments through a `kubeconfig` target are incomplete.
 :::
 
 | `connection.type` | Deploys into | Status |
