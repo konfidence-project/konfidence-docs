@@ -83,9 +83,16 @@ This model supports controlled delivery because each stage can be tied back to a
 The delivery flow described on this page ends before deployers act on workloads.
 At that boundary, the target stage state exists in the cluster and the runtime controllers act on it.
 
-After that point, the runtime deployment lifecycle starts.
-That lifecycle includes concepts such as vector deployments, artifact deployments, vector assignments, tasks, and activation.
-For those concepts, see [Vector Deployments](../deploy-operate/vector-deployments.md).
+From there, the runtime lifecycle turns the stage into running workloads:
+
+1. The control plane tracks the `Stage` and pulls the vector it selects.
+2. It creates a [StageVersion](../reference/glossary.md#stageversion) that records this rollout. Stage versions capture stage changes over time and let a new version start while the active version keeps running.
+3. [Deployers](../reference/glossary.md#deployer) translate the artifacts in the vector into workloads in the landscape. The Kubernetes deployer, provided by the [kubernetes-landscape-orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator), is the deployer available in the current release.
+4. [VectorAssignments](../reference/glossary.md#vectorassignment) link the deployed artifacts to the vector. An artifact shared by two vectors is deployed once.
+5. [Tasks](../reference/glossary.md#task) prepare data for the new version.
+6. Activation switches traffic to the new version once every step has completed.
+
+[Manage stages](../deploy-operate/stages.md) shows how to inspect the desired and active state of a stage during this lifecycle.
 
 ## Related pages
 
@@ -94,6 +101,5 @@ Read these pages for the surrounding concepts and task-oriented guidance:
 - [Vectors and Artifacts](./vectors-and-artifacts.md) explains the package model behind artifacts, aliases, and immutable vectors.
 - [Landscapes and stages](./landscapes-and-stages.md) explains how operational contexts and delivery checkpoints remain separate.
 - [System Architecture](../deploy-operate/system-architecture.md) explains how the control plane and landscapes divide responsibility.
-- [Vector Deployments](../deploy-operate/vector-deployments.md) explains the runtime deployment concepts that apply after a vector reaches a target landscape.
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.
-- [Define promotions](../deploy-operate/define-promotions.md) explains the task-oriented flow for promotion setup.
+- [Promote vectors](../deploy-operate/promote-vectors.md) explains the task-oriented flow for promotion setup.

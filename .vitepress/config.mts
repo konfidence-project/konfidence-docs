@@ -38,8 +38,6 @@ export default defineConfig({
   // pages for features that are not part of the initial release; recoverable
   // from git history / re-enabled by removing them here (issue #814)
   srcExclude: [
-    "docs/deploy-operate/galaxy-installation.md",
-    "docs/deploy-operate/star-installation.md",
     "docs/develop-integrate/observe-improve/paved-road.md",
     "docs/develop-integrate/run-migrations.md",
     "docs/extend-customize/create-deployer.md",
@@ -187,76 +185,96 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "System Architecture",
-              link: "/docs/deploy-operate/system-architecture",
+              text: "Plan",
+              items: [
+                {
+                  text: "System architecture",
+                  link: "/docs/deploy-operate/system-architecture",
+                },
+              ],
             },
             {
-              text: "Installation variants",
-              link: "/docs/deploy-operate/installation-variants",
-            },
-            {
-              text: "Installing Konfidence",
-              link: "/docs/deploy-operate/konfidence-installation",
-            },
-            {
-              text: "Managing Projects",
-              link: "/docs/deploy-operate/projects",
-            },
-            {
-              text: "Manage landscapes",
-              link: "/docs/deploy-operate/landscapes",
-            },
-            {
-              text: "Manage deployment targets",
-              link: "/docs/deploy-operate/deployment-targets",
-            },
-            {
-              text: "Manage stages",
-              link: "/docs/deploy-operate/stages",
-            },
-            {
-              text: "Access Control (RBAC)",
-              link: "/docs/deploy-operate/access-control",
-            },
-            {
-              text: "Upgrading Konfidence",
-              link: "/docs/deploy-operate/upgrading-konfidence",
-            },
-            {
-                text: "Runtime Components",
-                collapsed: true,
-                items: [
+              text: "Install",
+              items: [
+                {
+                  text: "Install Konfidence",
+                  link: "/docs/deploy-operate/konfidence-installation",
+                },
+                {
+                  text: "Expose the API",
+                  link: "/docs/deploy-operate/expose-api",
+                },
+                {
+                  text: "Connect artifact registries",
+                  link: "/docs/deploy-operate/connect-registries",
+                },
+                {
+                  text: "Runtime components",
+                  collapsed: true,
+                  items: [
                     {
-                        text: "Overview",
-                        link: "/docs/deploy-operate/runtime-components/overview",
+                      text: "Overview",
+                      link: "/docs/deploy-operate/runtime-components/overview",
                     },
                     {
-                        text: "Vector Data Service",
-                        link: "/docs/deploy-operate/runtime-components/vector-data-service",
+                      text: "Vector data service",
+                      link: "/docs/deploy-operate/runtime-components/vector-data-service",
                     },
-                ],
+                  ],
+                },
+              ],
             },
             {
-                text: "Deployers",
-                collapsed: true,
-                items: [
+              text: "Control access",
+              items: [
+                {
+                  text: "Manage projects",
+                  link: "/docs/deploy-operate/projects",
+                },
+                {
+                  text: "Grant roles",
+                  link: "/docs/deploy-operate/access-control",
+                },
+                {
+                  text: "Grant CI pipelines access",
+                  link: "/docs/deploy-operate/grant-ci-access",
+                },
+              ],
+            },
+            {
+              text: "Manage delivery",
+              items: [
+                {
+                  text: "Manage landscapes",
+                  link: "/docs/deploy-operate/landscapes",
+                },
+                {
+                  text: "Manage deployment targets",
+                  link: "/docs/deploy-operate/deployment-targets",
+                },
+                {
+                  text: "Deployers",
+                  collapsed: true,
+                  items: [
                     {
-                        text: "Manage deployers",
-                        link: "/docs/deploy-operate/deployer/overview",
+                      text: "Manage deployers",
+                      link: "/docs/deploy-operate/deployer/overview",
                     },
                     {
-                        text: "Kubernetes",
-                        link: "/docs/deploy-operate/deployer/kubernetes",
+                      text: "Kubernetes",
+                      link: "/docs/deploy-operate/deployer/kubernetes",
                     },
-                ],
-            },
-            {
-              text: "Define promotions",
-              link: "/docs/deploy-operate/define-promotions",
-            },
-            {
-              text: "Vector Deployments",
-              link: "/docs/deploy-operate/vector-deployments",
+                  ],
+                },
+                {
+                  text: "Manage stages",
+                  link: "/docs/deploy-operate/stages",
+                },
+                {
+                  text: "Promote vectors",
+                  link: "/docs/deploy-operate/promote-vectors",
+                },
+              ],
             },
           ],
         },

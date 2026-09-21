@@ -104,5 +104,5 @@ Konfidence keeps the landscape in a terminating state until its managed namespac
 
 - [Manage deployment targets](./deployment-targets.md) explains how to connect the landscape to infrastructure.
 - [Manage stages](./stages.md) explains how to define delivery checkpoints in the landscape.
-- [Configure access control](./access-control.md) for the parent project.
+- [Grant roles](./access-control.md) for the parent project.
 - Consult the [Landscape CRD reference](../reference/crd.md#landscape) for all fields.

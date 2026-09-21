@@ -1,6 +1,6 @@
 ---
 title: Deploy & Operate
-description: Install, configure, and operate Konfidence. Installation and promotion flows for DevOps engineers, Konfidence admins, and infrastructure engineers.
+description: Install Konfidence on your own cluster, control who can use it, and run the delivery flow.
 outline: deep
 editLink: true
 lastUpdated: true
@@ -8,9 +8,36 @@ lastUpdated: true
 
 # Deploy & Operate
 
-Ensure the reliability of your Konfidence setup. Install and configure Konfidence and manage promotion flows.
+Install Konfidence on your own Kubernetes cluster, control who can use it, and run the delivery flow for your projects. These pages are for platform administrators and DevOps engineers who operate a Konfidence installation. Application developers find their pages under [Develop & Integrate](/docs/develop-integrate/).
+
+The sections follow the order in which you set up an installation.
+
+## Plan the installation
+
+[System architecture](./system-architecture.md) explains what a Konfidence installation consists of and which topology the current release supports.
+
+## Install the control plane
+
+1. [Install Konfidence](./konfidence-installation.md) installs the operator, the API server, and the Kubernetes landscape orchestrator from Helm charts.
+2. [Expose the API](./expose-api.md) publishes the API and the dashboard through an Ingress. It also connects the login to your identity provider.
+3. [Connect artifact registries](./connect-registries.md) gives the control plane and the deployer credentials for private OCI registries.
+4. [Runtime components](./runtime-components/overview.md) lists optional services that run next to your workloads.
+
+## Control access
+
+1. [Manage projects](./projects.md) creates the project that owns landscapes, vector templates, and promotion flows.
+2. [Grant roles](./access-control.md) binds project roles to identity provider groups and workload identities.
+3. [Grant CI pipelines access](./grant-ci-access.md) lets a CI workflow call the Konfidence API with a project role.
+
+## Manage delivery
+
+1. [Manage landscapes](./landscapes.md) creates the namespace-backed scope in which stages deploy.
+2. [Manage deployment targets](./deployment-targets.md) tells a landscape which cluster receives its workloads.
+3. [Manage deployers](./deployer/overview.md) lists the deployment classes a landscape can use.
+4. [Manage stages](./stages.md) creates stages and changes the vector a stage runs.
+5. [Promote vectors](./promote-vectors.md) moves vectors between stages through recorded, approvable promotions.
 
 ## Related
 
-- [Getting Started](/docs/getting-started/) - Quickstart guide
-- [Core Concepts](/docs/core-concepts/) - Core concepts
+- [Getting Started](/docs/getting-started/) installs Konfidence into a local kind cluster.
+- [Core Concepts](/docs/core-concepts/) explains vectors, stages, landscapes, and the delivery flow.
