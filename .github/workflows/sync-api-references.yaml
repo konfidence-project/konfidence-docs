@@ -69,7 +69,7 @@ jobs:
           cp .upstream/api/docs/crd.md src/docs/reference/crd.md
           cp .upstream/api/docs/cli.md src/docs/reference/cli.md
           values_page() {
-            printf -- '---\ntitle: %s\ndescription: %s\noutline: [2, 3]\neditLink: false\n---\n\n' "$2" "$3"
+            printf -- '---\ntitle: "%s"\ndescription: "%s"\noutline: [2, 3]\neditLink: false\n---\n\n' "$2" "$3"
             cat "$1"
           }
           values_page .upstream/charts/konfidence/README.md \

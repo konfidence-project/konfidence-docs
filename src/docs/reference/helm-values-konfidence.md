@@ -1,5 +1,5 @@
 ---
-title: Helm values: konfidence
+title: "Helm values: konfidence"
 description: Every value of the konfidence Helm chart with its type, default, and description.
 outline: [2, 3]
 editLink: false
