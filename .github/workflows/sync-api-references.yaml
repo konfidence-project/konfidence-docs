@@ -1,7 +1,7 @@
 name: Sync API references from konfidence
 
-# Pulls generated API references (api/docs/crd.md, api/docs/cli.md) from the
-# konfidence repo and opens (or force-updates) a single PR against this repo.
+# Pulls generated API references (api/docs/crd.md, api/docs/cli.md) and the
+# helm-docs chart READMEs from the konfidence and orchestrator repos and opens (or force-updates) a single PR against this repo.
 # konfidence is the source of truth; these files are 100% generated, so the
 # sync branch is owned unconditionally by this workflow — any divergence is
 # reset to the latest fetched state (peter-evans/create-pull-request
@@ -44,6 +44,19 @@ jobs:
             api/docs/crd.md
             api/docs/cli.md
             api/openapi.yaml
+            charts/konfidence/README.md
+          sparse-checkout-cone-mode: false
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Checkout upstream orchestrator chart
+        uses: actions/checkout@v7
+        with:
+          repository: konfidence-project/kubernetes-landscape-orchestrator
+          ref: main
+          path: .upstream-orchestrator
+          sparse-checkout: |
+            charts/kubernetes-landscape-orchestrator/README.md
           sparse-checkout-cone-mode: false
           fetch-depth: 1
           persist-credentials: false
@@ -55,11 +68,23 @@ jobs:
           mkdir -p src/docs/reference
           cp .upstream/api/docs/crd.md src/docs/reference/crd.md
           cp .upstream/api/docs/cli.md src/docs/reference/cli.md
+          values_page() {
+            printf -- '---\ntitle: %s\ndescription: %s\noutline: [2, 3]\neditLink: false\n---\n\n' "$2" "$3"
+            cat "$1"
+          }
+          values_page .upstream/charts/konfidence/README.md \
+            "Helm values: konfidence" \
+            "Every value of the konfidence Helm chart with its type, default, and description." \
+            > src/docs/reference/helm-values-konfidence.md
+          values_page .upstream-orchestrator/charts/kubernetes-landscape-orchestrator/README.md \
+            "Helm values: kubernetes-landscape-orchestrator" \
+            "Every value of the kubernetes-landscape-orchestrator Helm chart with its type, default, and description." \
+            > src/docs/reference/helm-values-orchestrator.md
           yq -o=json -I=2 '
             .servers = [{"url": "https://your-konfidence-api/api", "description": "Replace with your Konfidence API base URL"}]
             | sort_keys(..)
           ' .upstream/api/openapi.yaml > src/docs/reference/api.json
-          rm -rf .upstream
+          rm -rf .upstream .upstream-orchestrator
           echo "short_sha=${COMMIT::7}" >> "$GITHUB_OUTPUT"
         env:
           COMMIT: ${{ steps.upstream.outputs.commit }}
@@ -79,6 +104,8 @@ jobs:
 
             - `src/docs/reference/crd.md` — CRD reference
             - `src/docs/reference/cli.md` — CLI reference
+            - `src/docs/reference/helm-values-konfidence.md` — konfidence chart values
+            - `src/docs/reference/helm-values-orchestrator.md` — kubernetes-landscape-orchestrator chart values
 
             Synced from `main` HEAD @ [`${{ steps.upstream.outputs.commit }}`](https://github.com/konfidence-project/konfidence/commit/${{ steps.upstream.outputs.commit }})
           labels: |

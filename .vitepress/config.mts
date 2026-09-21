@@ -191,6 +191,10 @@ export default defineConfig({
                   text: "System architecture",
                   link: "/docs/deploy-operate/system-architecture",
                 },
+                {
+                  text: "High availability",
+                  link: "/docs/deploy-operate/high-availability",
+                },
               ],
             },
             {
@@ -305,6 +309,8 @@ export default defineConfig({
             { text: "CRDs", link: "/docs/reference/crd" },
             { text: "CLI", link: "/docs/reference/cli" },
             { text: "API", link: "/docs/reference/api" },
+            { text: "Helm values: konfidence", link: "/docs/reference/helm-values-konfidence" },
+            { text: "Helm values: orchestrator", link: "/docs/reference/helm-values-orchestrator" },
           ],
         },
       ],
