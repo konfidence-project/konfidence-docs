@@ -30,7 +30,7 @@ export LANDSCAPE_NAMESPACE=$(kubectl get landscape dev \
 
 ## Pick the deployment class
 
-Each artifact names the deployment class it requires, and a landscape needs one ready target for every class its stages deploy. List the classes installed deployers advertise:
+Each artifact names the deployment class it requires. A landscape needs one ready target for every class its stages deploy. List the classes installed deployers advertise:
 
 ```bash
 kubectl get deploymentclasses
