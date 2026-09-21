@@ -205,6 +205,20 @@ export default defineConfig({
                   link: "/docs/deploy-operate/konfidence-installation",
                 },
                 {
+                  text: "Deployers",
+                  collapsed: true,
+                  items: [
+                    {
+                      text: "Manage deployers",
+                      link: "/docs/deploy-operate/deployer/overview",
+                    },
+                    {
+                      text: "Kubernetes",
+                      link: "/docs/deploy-operate/deployer/kubernetes",
+                    },
+                  ],
+                },
+                {
                   text: "Expose the API",
                   link: "/docs/deploy-operate/expose-api",
                 },
@@ -255,20 +269,6 @@ export default defineConfig({
                 {
                   text: "Manage deployment targets",
                   link: "/docs/deploy-operate/deployment-targets",
-                },
-                {
-                  text: "Deployers",
-                  collapsed: true,
-                  items: [
-                    {
-                      text: "Manage deployers",
-                      link: "/docs/deploy-operate/deployer/overview",
-                    },
-                    {
-                      text: "Kubernetes",
-                      link: "/docs/deploy-operate/deployer/kubernetes",
-                    },
-                  ],
                 },
                 {
                   text: "Manage stages",

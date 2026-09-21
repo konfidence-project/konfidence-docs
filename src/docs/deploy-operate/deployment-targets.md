@@ -1,6 +1,6 @@
 ---
 title: Manage deployment targets
-description: Connect a landscape to infrastructure through the deployment classes provided by installed deployers.
+description: Create one deployment target per deployment class in a landscape and verify that its deployer accepts it.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -8,121 +8,83 @@ lastUpdated: true
 
 # Manage deployment targets
 
-Configure deployment targets to make installed deployment capabilities available in a landscape. This guide covers discovering deployment classes, connecting them to infrastructure, and verifying that their targets are ready.
+Create a deployment target to make a deployment class available in a landscape. A target names the class and carries a `connection` block that tells the class's deployer where to deploy. The deployer defines what the block contains and reports whether it accepts the target.
 
 For the relationship between artifacts, deployment classes, deployers, targets, and landscapes, see the [Deployment model](../core-concepts/deployment-model.md).
 
 ## Prerequisites
 
-Before you begin, make sure you have:
-
 - A [ready landscape](./landscapes.md).
-- An installed deployer that supports the required artifact format and target platform.
-- Credentials for the destination when it is not local to the deployer.
+- A deployer that provides the class you need. Check: `kubectl get deploymentclasses` lists it. See [Manage deployers](./deployer/overview.md).
+- The connection block for that deployer, from its page. For the Kubernetes deployer, see [Connection types](./deployer/kubernetes.md#connection-types).
 - Permission to create resources in the landscape namespace.
 
-## Discover available deployment classes
+Set the names used below:
 
-List the deployment capabilities advertised by installed deployers:
+```bash
+export PROJECT_NAMESPACE=kden-p-ecommerce-platform
+export LANDSCAPE_NAMESPACE=$(kubectl get landscape dev \
+  --namespace="$PROJECT_NAMESPACE" \
+  --output=jsonpath='{.status.namespace}')
+```
+
+## Pick the deployment class
+
+Each artifact names the deployment class it requires, and a landscape needs one ready target for every class its stages deploy. List the classes installed deployers advertise:
 
 ```bash
 kubectl get deploymentclasses
 ```
 
-The Kubernetes deployer commonly provides classes such as `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. Use the exact value from the `NAME` column as `spec.deploymentClassName`.
+Use the exact value from the `NAME` column as `spec.deploymentClassName`. A landscape can hold only one target per class. The class name is immutable after creation, because changing it would hand the target to another deployer.
 
-Each artifact identifies the deployment class it requires. A landscape needs one ready target for every class used by the vectors delivered to its stages.
+## Create the target
 
-## Get the landscape namespace
-
-Deployment targets and their connection resources must be created in the namespace managed by the landscape:
-
-```bash
-LANDSCAPE_NAMESPACE=$(kubectl get landscape prod-eu \
-  --namespace=kden-p-ecommerce-platform \
-  --output=jsonpath='{.status.namespace}')
-```
-
-## Configure a local Kubernetes target
-
-Use a `local` connection when the Kubernetes deployer should deploy through its local cluster connection. Save the following manifest as `deployment-target.yaml`:
+Save the following manifest as `deployment-target.yaml`. The `connection` block is the Kubernetes deployer's `local` connection, which deploys into the cluster the deployer runs in:
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
 kind: DeploymentTarget
 metadata:
   name: helm-local
-  namespace: <landscape-namespace>
+  namespace: kden-l-dev
 spec:
   deploymentClassName: helm.konfidence.cloud
   connection:
     type: local
 ```
 
-Replace `<landscape-namespace>` with the value obtained from the landscape status, then apply the manifest:
+Replace `kden-l-dev` with the value of `LANDSCAPE_NAMESPACE`, then apply the manifest:
 
 ```bash
 kubectl apply -f deployment-target.yaml
 ```
 
-## Configure a remote Kubernetes target
-
-::: warning Remote targets are not fully supported
-
-Remote deployment targets are under development and are not yet fully supported.
-
-:::
-
-For a remote Kubernetes cluster, store its kubeconfig in a `Secret` in the landscape namespace. The Kubernetes landscape orchestrator accepts kubeconfig data under `value` or `value.yaml`.
-
-```bash
-kubectl create secret generic prod-eu-kubeconfig \
-  --namespace="$LANDSCAPE_NAMESPACE" \
-  --from-file=value="$HOME/.kube/prod-eu.yaml"
-```
-
-Reference that `Secret` from the target:
-
-```yaml
-apiVersion: konfidence.cloud/v1alpha1
-kind: DeploymentTarget
-metadata:
-  name: helm-prod-eu
-  namespace: <landscape-namespace>
-spec:
-  deploymentClassName: helm.konfidence.cloud
-  connection:
-    type: kubeconfig
-    ref:
-      kind: Secret
-      name: prod-eu-kubeconfig
-```
-
-Connection types and referenced resources are defined by the deployer. Consult the deployer's documentation before configuring targets for other platforms.
-
 ## Verify the target
 
-Wait for the responsible deployer to accept the target. For the local example, replace `helm-prod-eu` in the following command with `helm-local`:
+The deployer that owns the class validates the target and sets its `Ready` condition:
 
 ```bash
-kubectl wait \
-  --for=condition=Ready \
-  deploymenttarget/helm-prod-eu \
+kubectl wait deploymenttarget/helm-local \
   --namespace="$LANDSCAPE_NAMESPACE" \
+  --for=condition=Ready \
   --timeout=60s
 ```
 
-Inspect all targets in the landscape:
+The command returns `condition met`. What `Ready` checks is up to the deployer. It can include configuration validation, credential checks, or a connectivity check. List all targets of the landscape:
 
 ```bash
 kubectl get deploymenttargets --namespace="$LANDSCAPE_NAMESPACE"
 ```
 
-The meaning of `Ready` is defined by the responsible deployer. It can include configuration validation, credential checks, or a connectivity check.
+## What to do if it fails
+
+- `Ready` stays `False` with reason `UnsupportedType`: no deployer owns the class. Check the class name against `kubectl get deploymentclasses`.
+- `Ready` stays `False` with another reason: the connection block is wrong for the deployer. The reason and message come from the deployer. For the Kubernetes deployer, see [Connection types](./deployer/kubernetes.md#connection-types).
+- The target never gets a condition: the deployer that owns the class is not running. See [Install the deployer](./deployer/kubernetes.md#install-the-deployer).
 
 ## Next steps
 
-- [Manage stages](./stages.md) explains how to create stages that use the landscape's deployment targets.
-- [Manage deployers](./deployer/overview.md) explains how to inspect the controllers that provide deployment classes.
-- [Types of artifacts](../develop-integrate/artifact-types/index.md) explains how application developers select a class for an artifact.
-- Consult the [DeploymentTarget CRD reference](../reference/crd.md#deploymenttarget) for all fields.
+- [Manage stages](./stages.md) creates stages that deploy through the landscape's targets.
+- [Types of artifacts](../develop-integrate/artifact-types/index.md) explains how developers select a class for an artifact.
+- [DeploymentTarget CRD reference](../reference/crd.md#deploymenttarget) lists all fields.
