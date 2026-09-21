@@ -73,7 +73,8 @@ The most important fields are:
 - `uploadTarget`, which defines where the assembled vector is stored.
 - `components`, which defines which previously built artifacts are part of the vector.
 - `credentials`, which references Secrets used to access the required registries.
-- `base`, which can optionally reference an existing vector to build on.
+- `base`, which can optionally reference another `VectorTemplate` whose latest
+  assembled vector is used as the base.
 
 The following example shows the relationship between those fields:
 

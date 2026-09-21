@@ -28,9 +28,10 @@ Before you begin, make sure you meet these requirements:
 
 - Your artifacts are published to an Open Container Initiative (OCI) registry. See
   [Publish artifacts](../artifact-types/publish-artifacts.md).
-- You have a [Konfidence project namespace](../../deploy-operate/projects.md) and `kubectl` configured with access to it.                                                                                                      
-- Your registry credentials are stored in Kubernetes Secrets in the same
-  namespace.
+- You have `kubectl` configured with access to a
+  [Konfidence project namespace](../../deploy-operate/projects.md).
+- If your registry is private, its credentials are stored in Kubernetes Secrets
+  in the same namespace.
 
 ## How assembly works
 
@@ -126,10 +127,12 @@ components:
   - name: registry.example.com/my-project//example.com/product-service:stable
 ```
 
-**`credentials`** - optional  
-References Secrets in the same namespace that carry registry credentials
-(`.ocmconfig` or `.dockerconfigjson`). Required for private registries; omit
-for public ones. Used for artifact access, signing, and verification.
+**`credentials`**: Optional. References Secrets in the same namespace that
+contain OCM configuration or Docker credentials (`.ocmconfig` or
+`.dockerconfigjson`). Registry credentials are required for private registries.
+If all registries are public and you do not configure signing or verification,
+omit this field. The same Secret references are used for artifact access,
+signing, and verification.
 
 ```yaml
 credentials:
@@ -229,15 +232,21 @@ Check the `Ready` condition to understand the current assembly state:
 kubectl describe vectortemplate shopping-app -n my-project
 ```
 
-| Condition    | Reason                 | Meaning                                                                                                                                              |
-|--------------|------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `True`       | `VectorCreated`        | Drift detected; a new vector version was assembled and uploaded                                                                                      |
-| `True`       | `NoDriftDetected`      | No changes detected; `status.latestVector` is still current                                                                                          |
-| `False`      | `WaitingForBase`       | The base template has not assembled its first vector yet                                                                                             |
-| `False`      | `VectorCreationFailed` | Drift was detected but the assembly failed. In case of a component copy error, a signing failure, or a write error when publishing vector descriptor |
-| `Unknown`    | `DriftDetectionFailed` | Assembly could not determine the desired state. When the registry is unreachable, credentials are missing, or a reference cannot be parsed           |
+| Status | Reason | Meaning |
+| --- | --- | --- |
+| `True` | `VectorCreated` | Drift was detected; a new vector version was assembled and uploaded. |
+| `True` | `NoDriftDetected` | No changes were detected; `status.latestVector` is still current. |
+| `False` | `WaitingForBase` | The base template has not assembled its first vector yet. |
+| `False` | `VectorCreationFailed` | Drift was detected, but the assembly failed. Possible causes include a component copy error, a signing failure, or a write error when publishing the vector descriptor. |
+| `Unknown` | `DriftDetectionFailed` | Assembly could not determine the desired state. Possible causes include an unreachable registry, missing credentials, or a reference that cannot be parsed. |
 
 ## Full example
+
+The following illustrative manifest combines all fields described on this page.
+Use it only when you need the optional settings. Before you apply it, replace
+the sample values and make sure that the referenced `platform-base`
+`VectorTemplate`, registry credential Secret, and signing key Secret exist in
+the same namespace.
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
