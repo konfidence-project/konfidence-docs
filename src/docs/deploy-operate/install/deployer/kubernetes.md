@@ -11,9 +11,9 @@ lastUpdated: true
 The **Kubernetes deployer** is the reference implementation of Konfidence's deployer interface. It provides the deployment classes `helm.konfidence.cloud` and `kustomize.konfidence.cloud` and realizes them through Flux.
 
 <!-- TODO: link to the Deployer interface specification once available; see
-[Deployer Specification](../../reference/deployer-specification.md). -->
+[Deployer Specification](../../../reference/deployer-specification.md). -->
 
-This page covers everything specific to this deployer. It explains how to install it and which connection types its deployment targets accept. It lists the manifest types it supports and how it turns an annotated Service into a deployment result. For packaging and naming requirements, see [Author a Helm artifact](../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../develop-integrate/artifact-types/kustomize.md).
+This page covers everything specific to this deployer. It explains how to install it and which connection types its deployment targets accept. It lists the manifest types it supports and how it turns an annotated Service into a deployment result. For packaging and naming requirements, see [Author a Helm artifact](../../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../../develop-integrate/artifact-types/kustomize.md).
 
 ## Install the deployer
 
@@ -39,11 +39,11 @@ kubectl get deployment kubernetes-landscape-orchestrator -n "$KONFIDENCE_NAMESPA
 kubectl get deploymentclasses
 ```
 
-The first command shows one available replica. The second lists `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. Every chart value is listed in the [Helm values reference](/docs/reference/helm-values-orchestrator). [Manage deployment targets](../deployment-targets.md) makes the classes available in a landscape.
+The first command shows one available replica. The second lists `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. Every chart value is listed in the [Helm values reference](/docs/reference/helm-values-orchestrator). [Manage deployment targets](../../manage-delivery/deployment-targets.md) makes the classes available in a landscape.
 
 ## Connection types
 
-A [deployment target](../deployment-targets.md) for one of this deployer's classes carries a `connection` block with one of two types.
+A [deployment target](../../manage-delivery/deployment-targets.md) for one of this deployer's classes carries a `connection` block with one of two types.
 
 ::: warning Only local targets work as documented
 Use `local` targets. The `kubeconfig` type is work in progress. The deployer validates the kubeconfig and marks the target `Ready`. It does not yet create every resource on the remote cluster. Deployments through a `kubeconfig` target are incomplete.
@@ -151,7 +151,7 @@ a deployment result on the `ArtifactDeployment` containing:
 
 Konfidence aggregates these into the vector's `VectorData`, keyed by artifact
 component, so every component in the vector can resolve the Service by its stable
-name at runtime — see [Use deployment results](../../develop-integrate/vector-data/deployment-results.md).
+name at runtime — see [Use deployment results](../../../develop-integrate/vector-data/deployment-results.md).
 
 ### Scope
 
@@ -163,7 +163,7 @@ supported.
 
 Use these pages for publishing instructions and the definition of a deployer:
 
-- [Publish artifacts](../../develop-integrate/artifact-types/publish-artifacts.md)
-- [Deployment model](../../core-concepts/deployment-model.md)
+- [Publish artifacts](../../../develop-integrate/artifact-types/publish-artifacts.md)
+- [Deployment model](../../../core-concepts/deployment-model.md)
 - [Manage deployers](./overview.md)
-- [Manage deployment targets](../deployment-targets.md)
+- [Manage deployment targets](../../manage-delivery/deployment-targets.md)

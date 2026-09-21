@@ -10,13 +10,13 @@ lastUpdated: true
 
 Create a deployment target to make a deployment class available in a landscape. A target names the class and carries a `connection` block that tells the class's deployer where to deploy. The deployer defines what the block contains and reports whether it accepts the target.
 
-For the relationship between artifacts, deployment classes, deployers, targets, and landscapes, see the [Deployment model](../core-concepts/deployment-model.md).
+For the relationship between artifacts, deployment classes, deployers, targets, and landscapes, see the [Deployment model](../../core-concepts/deployment-model.md).
 
 ## Prerequisites
 
 - A [ready landscape](./landscapes.md).
-- A deployer that provides the class you need. Check: `kubectl get deploymentclasses` lists it. See [Manage deployers](./deployer/overview.md).
-- The connection block for that deployer, from its page. For the Kubernetes deployer, see [Connection types](./deployer/kubernetes.md#connection-types).
+- A deployer that provides the class you need. Check: `kubectl get deploymentclasses` lists it. See [Manage deployers](../install/deployer/overview.md).
+- The connection block for that deployer, from its page. For the Kubernetes deployer, see [Connection types](../install/deployer/kubernetes.md#connection-types).
 - Permission to create resources in the landscape namespace.
 
 Set the names used below:
@@ -80,11 +80,11 @@ kubectl get deploymenttargets --namespace="$LANDSCAPE_NAMESPACE"
 ## What to do if it fails
 
 - `Ready` stays `False` with reason `UnsupportedType`: no deployer owns the class. Check the class name against `kubectl get deploymentclasses`.
-- `Ready` stays `False` with another reason: the connection block is wrong for the deployer. The reason and message come from the deployer. For the Kubernetes deployer, see [Connection types](./deployer/kubernetes.md#connection-types).
-- The target never gets a condition: the deployer that owns the class is not running. See [Install the deployer](./deployer/kubernetes.md#install-the-deployer).
+- `Ready` stays `False` with another reason: the connection block is wrong for the deployer. The reason and message come from the deployer. For the Kubernetes deployer, see [Connection types](../install/deployer/kubernetes.md#connection-types).
+- The target never gets a condition: the deployer that owns the class is not running. See [Install the deployer](../install/deployer/kubernetes.md#install-the-deployer).
 
 ## Next steps
 
 - [Manage stages](./stages.md) creates stages that deploy through the landscape's targets.
-- [Types of artifacts](../develop-integrate/artifact-types/index.md) explains how developers select a class for an artifact.
-- [DeploymentTarget CRD reference](../reference/crd.md#deploymenttarget) lists all fields.
+- [Types of artifacts](../../develop-integrate/artifact-types/index.md) explains how developers select a class for an artifact.
+- [DeploymentTarget CRD reference](../../reference/crd.md#deploymenttarget) lists all fields.

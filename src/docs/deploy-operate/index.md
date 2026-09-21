@@ -14,30 +14,30 @@ The sections follow the order in which you set up an installation.
 
 ## Plan the installation
 
-[System architecture](./system-architecture.md) explains what a Konfidence installation consists of and which topology the current release supports.
+[System architecture](./plan/system-architecture.md) explains what a Konfidence installation consists of and which topology the current release supports.
 
-[High availability](./high-availability.md) explains which components can run with more than one replica and what that requires.
+[High availability](./plan/high-availability.md) explains which components can run with more than one replica and what that requires.
 
 ## Install the control plane
 
-1. [Install Konfidence](./konfidence-installation.md) installs the operator and the API server from one Helm chart.
-2. [Give teams access to the dashboard and API](./expose-api.md) publishes both and connects the login to your identity provider.
-3. [Connect artifact registries](./connect-registries.md) gives the control plane and the deployer credentials for private OCI registries.
-4. [Manage deployers](./deployer/overview.md) explains deployment classes. The [Kubernetes deployer](./deployer/kubernetes.md) page installs the one deployer of the current release.
-5. [Runtime components](./runtime-components/overview.md) lists optional services that run next to your workloads.
+1. [Install Konfidence](./install/konfidence-installation.md) installs the operator and the API server from one Helm chart.
+2. [Give teams access to the dashboard and API](./install/expose-api.md) publishes both and connects the login to your identity provider.
+3. [Connect artifact registries](./install/connect-registries.md) gives the control plane and the deployer credentials for private OCI registries.
+4. [Manage deployers](./install/deployer/overview.md) explains deployment classes. The [Kubernetes deployer](./install/deployer/kubernetes.md) page installs the one deployer of the current release.
+5. [Runtime components](./install/runtime-components/overview.md) lists optional services that run next to your workloads.
 
 ## Control access
 
-1. [Manage projects](./projects.md) creates the project that owns landscapes, vector templates, and promotion flows.
-2. [Grant roles](./access-control.md) binds project roles to identity provider groups and workload identities.
-3. [Grant CI pipelines access](./grant-ci-access.md) lets a CI workflow call the Konfidence API with a project role.
+1. [Manage projects](./control-access/projects.md) creates the project that owns landscapes, vector templates, and promotion flows.
+2. [Grant roles](./control-access/access-control.md) binds project roles to identity provider groups and workload identities.
+3. [Grant CI pipelines access](./control-access/grant-ci-access.md) lets a CI workflow call the Konfidence API with a project role.
 
 ## Manage delivery
 
-1. [Manage landscapes](./landscapes.md) creates the namespace-backed scope in which stages deploy.
-2. [Manage deployment targets](./deployment-targets.md) makes a deployment class available in a landscape.
-3. [Manage stages](./stages.md) creates stages and changes the vector a stage selects.
-4. [Promote vectors](./promote-vectors.md) updates the vector a stage selects through recorded, approvable promotions.
+1. [Manage landscapes](./manage-delivery/landscapes.md) creates the namespace-backed scope in which stages deploy.
+2. [Manage deployment targets](./manage-delivery/deployment-targets.md) makes a deployment class available in a landscape.
+3. [Manage stages](./manage-delivery/stages.md) creates stages and changes the vector a stage selects.
+4. [Promote vectors](./manage-delivery/promote-vectors.md) updates the vector a stage selects through recorded, approvable promotions.
 
 ## Related
 

@@ -42,6 +42,6 @@ The control plane and the Kubernetes landscape orchestrator run in one Kubernete
 * The kubernetes-landscape-orchestrator Helm chart installs the deployer for the Kubernetes target runtime.
 * Each project and each landscape owns a namespace in that cluster.
 
-A [deployment target](./deployment-targets.md) decides where a landscape's workloads run. It can point at the control plane cluster or at a remote cluster. Running the control plane itself across several clusters is not available in the current release.
+A [deployment target](../manage-delivery/deployment-targets.md) decides where a landscape's workloads run. It can point at the control plane cluster or at a remote cluster. Running the control plane itself across several clusters is not available in the current release.
 
-See [Install Konfidence](./konfidence-installation.md) for the installation steps.
+See [Install Konfidence](../install/konfidence-installation.md) for the installation steps.

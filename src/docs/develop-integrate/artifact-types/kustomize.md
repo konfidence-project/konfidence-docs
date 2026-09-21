@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Author a Kustomize artifact
 
-After this guide, your service deploys onto Kubernetes as one Kustomize artifact of a vector. The [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) renders the bundle once per vector into the landscape.
+After this guide, your service deploys onto Kubernetes as one Kustomize artifact of a vector. The [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) renders the bundle once per vector into the landscape.
 
 The examples build a service named `my-service` and push everything to `registry.example.com/my-org`.
 
@@ -19,7 +19,7 @@ Before you begin, make sure you have:
 - A container build tool such as `docker` and the `flux` command-line tool for pushing Open Container Initiative (OCI) artifacts.
 - Push access to an OCI registry for the image, the bundle, and the artifact.
 - The `kden` command-line tool. See [Publish artifacts](./publish-artifacts.md).
-- A landscape with a ready `kustomize.konfidence.cloud` target. See [Manage deployment targets](../../deploy-operate/deployment-targets.md).
+- A landscape with a ready `kustomize.konfidence.cloud` target. See [Manage deployment targets](../../deploy-operate/manage-delivery/deployment-targets.md).
 - A service that reads and forwards `X-Vector-ID`. See [Prepare your application](../prepare-your-application.md).
 
 ## Build and push the container image
@@ -199,4 +199,4 @@ Use the following guides to publish your artifact and expose its Service:
 
 - [Validate and publish the artifact](./publish-artifacts.md#validate-the-artifact-files).
 - [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to other services in the vector.
-- Read [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.
+- Read [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.

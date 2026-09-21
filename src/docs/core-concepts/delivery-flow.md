@@ -92,7 +92,7 @@ From there, the runtime lifecycle turns the stage into running workloads:
 5. [Tasks](../reference/glossary.md#task) prepare data for the new version.
 6. Activation switches traffic to the new version once every step has completed.
 
-[Manage stages](../deploy-operate/stages.md) shows how to inspect the desired and active state of a stage during this lifecycle.
+[Manage stages](../deploy-operate/manage-delivery/stages.md) shows how to inspect the desired and active state of a stage during this lifecycle.
 
 ## Related pages
 
@@ -100,6 +100,6 @@ Read these pages for the surrounding concepts and task-oriented guidance:
 
 - [Vectors and Artifacts](./vectors-and-artifacts.md) explains the package model behind artifacts, aliases, and immutable vectors.
 - [Landscapes and stages](./landscapes-and-stages.md) explains how operational contexts and delivery checkpoints remain separate.
-- [System Architecture](../deploy-operate/system-architecture.md) explains how the control plane and landscapes divide responsibility.
+- [System Architecture](../deploy-operate/plan/system-architecture.md) explains how the control plane and landscapes divide responsibility.
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.
-- [Promote vectors](../deploy-operate/promote-vectors.md) explains the task-oriented flow for promotion setup.
+- [Promote vectors](../deploy-operate/manage-delivery/promote-vectors.md) explains the task-oriented flow for promotion setup.

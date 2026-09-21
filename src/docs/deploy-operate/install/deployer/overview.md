@@ -11,7 +11,7 @@ lastUpdated: true
 Deployers provide the platform-specific capabilities Konfidence uses to turn artifacts into running workloads.
 Operators install deployers centrally, then configure deployment targets in individual landscapes to make the deployment classes available.
 
-For the relationship between deployers, classes, targets, and artifacts, see the [Deployment model](../../core-concepts/deployment-model.md).
+For the relationship between deployers, classes, targets, and artifacts, see the [Deployment model](../../../core-concepts/deployment-model.md).
 
 ## List deployment classes
 
@@ -38,7 +38,7 @@ kubectl get deploymenttargets --namespace=<landscape-namespace>
 The `spec.deploymentClassName` field identifies the capability each target makes available.
 The landscape can deploy an artifact only when it contains a ready target whose class matches the artifact manifest type.
 
-Use [Manage deployment targets](../deployment-targets.md) to add a missing capability or investigate a target that is not ready.
+Use [Manage deployment targets](../../manage-delivery/deployment-targets.md) to add a missing capability or investigate a target that is not ready.
 
 ## Available deployers
 
@@ -53,7 +53,7 @@ A deployer can provide several classes for one platform, or introduce classes fo
 
 ## Next steps
 
-- [Manage deployment targets](../deployment-targets.md) explains how to configure a class in a landscape.
+- [Manage deployment targets](../../manage-delivery/deployment-targets.md) explains how to configure a class in a landscape.
 - [Kubernetes deployer](./kubernetes.md) installs the deployer and describes its connection types, artifact formats, and deployment results.
-- [Types of artifacts](../../develop-integrate/artifact-types/index.md) describes the classes available to application developers.
-- [Extend & Customize](../../extend-customize/index.md) introduces extension development.
+- [Types of artifacts](../../../develop-integrate/artifact-types/index.md) describes the classes available to application developers.
+- [Extend & Customize](../../../extend-customize/index.md) introduces extension development.

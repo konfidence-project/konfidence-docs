@@ -60,4 +60,4 @@ For the full field list, see the [Project CRD reference](/docs/reference/crd#pro
 ## Next steps
 
 - [Grant roles](./access-control.md) binds `pm` and `dev` roles to the teams that work in the project.
-- [Manage landscapes](./landscapes.md) creates the first landscape inside the project.
+- [Manage landscapes](../manage-delivery/landscapes.md) creates the first landscape inside the project.

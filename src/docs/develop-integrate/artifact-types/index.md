@@ -21,11 +21,11 @@ The component holds your deployable content, such as a Helm chart or a Kustomize
 
 The artifact manifest's `type` is a deployment-class identifier. It selects both the deployer that understands the artifact and the capability a target landscape must provide.
 
-Before choosing a class, confirm that the landscapes where the artifact will run have a matching deployment target. See the [Deployment model](../../core-concepts/deployment-model.md) for the complete relationship and [Manage deployment targets](../../deploy-operate/deployment-targets.md) for the operator workflow.
+Before choosing a class, confirm that the landscapes where the artifact will run have a matching deployment target. See the [Deployment model](../../core-concepts/deployment-model.md) for the complete relationship and [Manage deployment targets](../../deploy-operate/manage-delivery/deployment-targets.md) for the operator workflow.
 
 ## Konfidence deploys these artifact types
 
-The [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) supports both Helm and Kustomize.
+The [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) supports both Helm and Kustomize.
 
 Choose the type that matches the deployment configuration you already maintain:
 

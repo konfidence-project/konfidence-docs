@@ -16,7 +16,7 @@ Vector assembly credentials belong to the project, not to the installation. A `V
 
 - A registry account with pull permission, its username, and its password or token.
 - The registry host name, for example `registry.example.com`.
-- `kubectl` access to `konfidence-system` and to the landscape namespace. [Manage stages](./stages.md#get-the-landscape-namespace) shows how to read it.
+- `kubectl` access to `konfidence-system` and to the landscape namespace. [Manage stages](../manage-delivery/stages.md#get-the-landscape-namespace) shows how to read it.
 
 Set the values used below:
 
@@ -107,5 +107,5 @@ The credentials on this page cover the artifacts and vectors that Konfidence pul
 
 ## Next steps
 
-- [Manage landscapes](./landscapes.md) creates the landscapes that need deployer credentials.
+- [Manage landscapes](../manage-delivery/landscapes.md) creates the landscapes that need deployer credentials.
 - [Runtime components](./runtime-components/overview.md) lists optional services for your landscape.

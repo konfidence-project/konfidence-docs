@@ -163,10 +163,10 @@ A browser window opens for the identity provider. After sign-in, `kden project l
 
 - The API pod restarts with `oidc-issuer-url must not be empty`: `api.oidc.issuerURL` is missing from the values file.
 - The provider rejects the login with a redirect URI error: `redirectURL` differs from the URL registered at the provider.
-- Sign-in succeeds but `kden project list` is empty: the token carries no group that a project binds. Check the scope and [Grant roles](./access-control.md).
+- Sign-in succeeds but `kden project list` is empty: the token carries no group that a project binds. Check the scope and [Grant roles](../control-access/access-control.md).
 - `curl` reports a certificate error: the TLS Secret named in `ingress.tls` does not exist or covers a different host.
 
 ## Next steps
 
-- [Grant roles](./access-control.md) binds identity provider groups to project roles.
-- [Grant CI pipelines access](./grant-ci-access.md) lets pipelines call the exposed API.
+- [Grant roles](../control-access/access-control.md) binds identity provider groups to project roles.
+- [Grant CI pipelines access](../control-access/grant-ci-access.md) lets pipelines call the exposed API.
