@@ -117,6 +117,36 @@ webhook:
 
 Then re-run the install/upgrade command.
 
+## Keep login sessions in PostgreSQL
+
+The API server keeps login sessions in memory by default. A restart signs every user out, and two replicas do not share sessions. To keep sessions across restarts and replicas, store them in PostgreSQL.
+
+Prerequisite: a PostgreSQL database the API server can reach, and its connection string in the URL form `postgres://konfidence:<PASSWORD>@postgres.example.com:5432/konfidence`.
+
+Store the connection string in a Secret:
+
+```bash
+kubectl create secret generic konfidence-api-db \
+  --namespace konfidence-system \
+  --from-literal=connection='postgres://konfidence:<PASSWORD>@postgres.example.com:5432/konfidence'
+```
+
+Save the following as `session-values.yaml`. The chart exposes the store type as a value and reads the connection string from the environment:
+
+```yaml
+api:
+  session:
+    storageType: db-pg
+  env:
+    - name: API_DB_CONNECTION
+      valueFrom:
+        secretKeyRef:
+          name: konfidence-api-db
+          key: connection
+```
+
+Re-run the install command with `--values session-values.yaml`. The API server refuses to start when `storageType` is `db-pg` and the connection string is empty. Pool sizes are set under `api.database`.
+
 ## Next steps
 
 * [Install the Kubernetes deployer](./deployer/kubernetes.md#install-the-deployer). Without a deployer, no stage can deploy.
