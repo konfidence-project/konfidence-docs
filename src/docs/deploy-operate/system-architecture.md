@@ -33,3 +33,15 @@ A landscape is the actual place where deployments happen.
 * **Definition:** The infrastructure where your software runs. In the current release, a landscape is a Kubernetes environment represented by a namespace, and the [Kubernetes landscape orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) executes the deployments there.
 * **Role:** It provides the foundation for your applications. Konfidence does not manage the landscape itself; you must provide the underlying infrastructure. You can set up multiple landscapes for different purposes, such as testing and production.
 
+
+## The current release runs everything in one cluster
+
+The control plane and the Kubernetes landscape orchestrator run in one Kubernetes cluster:
+
+* The Konfidence Helm chart installs the control plane: the operator and the API server.
+* The kubernetes-landscape-orchestrator Helm chart installs the deployer for the Kubernetes target runtime.
+* Each project and each landscape owns a namespace in that cluster.
+
+A [deployment target](./deployment-targets.md) decides where a landscape's workloads run. It can point at the control plane cluster or at a remote cluster. Running the control plane itself across several clusters is not available in the current release.
+
+See [Install Konfidence](./konfidence-installation.md) for the installation steps.

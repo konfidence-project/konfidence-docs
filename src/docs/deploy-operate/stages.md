@@ -82,7 +82,7 @@ kubectl patch stage integration \
   --patch='{"spec":{"vector":"registry.example.com//konfidence.cloud/ecommerce:1.5.0"}}'
 ```
 
-Konfidence starts a new rollout while retaining resources required by the active version. In a managed delivery flow, a [promotion](./define-promotions.md) normally performs this update and records the decision.
+Konfidence starts a new rollout while retaining resources required by the active version. In a managed delivery flow, a [promotion](./promote-vectors.md) normally performs this update and records the decision.
 
 ## Verify the active version
 
@@ -121,6 +121,6 @@ Use the following checks if stage creation or activation does not complete:
 
 ## Next steps
 
-- [Define promotions](./define-promotions.md) to update stages through a controlled delivery flow.
-- [Understand Vector Deployments](./vector-deployments.md) to investigate the runtime lifecycle.
+- [Promote vectors](./promote-vectors.md) to update stages through a controlled delivery flow.
+- [Delivery flow](../core-concepts/delivery-flow.md#runtime-boundary) to understand the runtime lifecycle behind a rollout.
 - Consult the [Stage CRD reference](../reference/crd.md#stage) for all fields.

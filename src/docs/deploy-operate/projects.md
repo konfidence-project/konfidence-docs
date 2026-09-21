@@ -1,20 +1,23 @@
 ---
-title: Managing Projects
-description: Create and configure Projects to organize teams and control access with role-based permissions.
+title: Manage projects
+description: Create a project, verify its namespace, and grant the first role binding so a team can use it.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Managing Projects
+# Manage projects
 
-## Overview
+Create a project to give a team its own space in Konfidence. A project owns a namespace that holds its landscapes, vector templates, and promotion configurations. Everything in the project is accessed through the project's role bindings.
 
-Projects provide organizational boundaries and access control for Konfidence deployments. Each project automatically creates a dedicated namespace that contains Landscape resources as well as other project-scoped resources like VectorTemplate and VectorPromotionConfig.
+## Prerequisites
 
-## Creating a Project
+- Access to the Konfidence cluster through `kubectl` with permission to create `Project` resources. Projects are cluster-scoped.
+- A project name that is a valid DNS label. Konfidence derives the namespace name from it.
 
-Projects are **cluster-scoped** resources. Create one per application or organizational unit:
+## Create the project
+
+Save the following manifest as `project.yaml`:
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -25,57 +28,36 @@ spec:
   displayName: E-Commerce Platform
 ```
 
-This creates:
-- A Project resource named `ecommerce-platform`
-- A project namespace: `kden-p-ecommerce-platform`
-
-After creating the Project, check its status to ensure the namespace was successfully created.
-Look for a `Ready` condition with status `True`.
+Apply it:
 
 ```bash
-kubectl get project ecommerce-platform -o jsonpath='{.status.conditions[?(@.type=="Ready")]}'
+kubectl apply -f project.yaml
 ```
 
-For full CRD specification details, see the [Project CRD Reference](/docs/reference/crd#project).
+The command prints `project.konfidence.cloud/ecommerce-platform created`.
 
-## Role-Based Access Control
+## Verify the namespace
 
-Projects define access control via `roleBindings`. Roles can be granted to both interactive users (via session subjects) and workload identities like CI/CD pipelines (via JWKS subjects). 
+Konfidence creates the namespace `kden-p-ecommerce-platform` and reports it in the project's `Ready` condition:
 
-### Example with Session and JWKS Subjects
-
-```yaml
-spec:
-  roleBindings:
-    admin:
-      # Interactive users from identity provider groups
-      - session:
-          memberOf:
-            - platform-admins
-      # CI/CD pipeline from main branch
-      - jwks:
-          endpoint: https://token.actions.githubusercontent.com/.well-known/openid-configuration
-          audience: https://github.com/konfidence-project
-          claims:
-            sub: repo:my-org/ecommerce-platform:ref:refs/heads/main
-    dev:
-      # Developers from identity provider groups
-      - session:
-          memberOf:
-            - ecommerce-developers
-      # Feature branch CI/CD pipelines
-      - jwks:
-          endpoint: https://token.actions.githubusercontent.com/.well-known/openid-configuration
-          audience: https://github.com/konfidence-project
-          claims:
-            sub: repo:my-org/ecommerce-platform:*
+```bash
+kubectl get project ecommerce-platform \
+  --output=jsonpath='{.status.conditions[?(@.type=="Ready")].status}{"\n"}'
 ```
 
-This configuration grants the `admin` role to platform administrators and the main branch CI/CD pipeline, while the `dev` role goes to developers and feature branch pipelines.
+The command prints `True`. Confirm the namespace exists:
 
-See [Access Control](/docs/deploy-operate/access-control) for complete details about roles, permissions, and identity sources.
+```bash
+kubectl get namespace kden-p-ecommerce-platform
+```
 
-## Next Steps
+## Grant access
 
-- [Manage landscapes](/docs/deploy-operate/landscapes): Establish operational boundaries within your project
-- [Access Control](/docs/deploy-operate/access-control): Configure detailed RBAC policies
+A new project has no role bindings, so nobody can use it through the Konfidence API. Add them in `spec.roleBindings` as described in [Grant roles](./access-control.md).
+
+For the full field list, see the [Project CRD reference](/docs/reference/crd#project).
+
+## Next steps
+
+- [Grant roles](./access-control.md) binds `pm` and `dev` roles to the teams that work in the project.
+- [Manage landscapes](./landscapes.md) creates the first landscape inside the project.

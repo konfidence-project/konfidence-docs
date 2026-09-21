@@ -14,4 +14,4 @@ For early-access and pre-release deployments, refer to the [release notes on Git
 
 ## See also
 
-- [Installing Konfidence](/docs/deploy-operate/konfidence-installation) - Installation reference
+- [Install Konfidence](/docs/deploy-operate/konfidence-installation) - Installation steps

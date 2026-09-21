@@ -147,6 +147,19 @@
   padding-bottom: 8px;
 }
 
+/* Nested group headers (e.g. "Install", "Advanced features"). VitePress
+   only bolds group headers at level-0; deeper ones render like leaf links.
+   An item with children renders as <section>, a leaf as <div>, so the
+   element selector picks out group headers with or without a link. */
+section.VPSidebarItem.level-1 > .item > .text,
+section.VPSidebarItem.level-1 > .item > .link > .text,
+section.VPSidebarItem.level-2 > .item > .text,
+section.VPSidebarItem.level-2 > .item > .link > .text {
+  font-weight: 600 !important;
+  font-size: 16px;
+  color: var(--vp-c-text-1);
+}
+
 /* Child links - default: text color */
 .VPSidebarItem.level-1 > .item > .link > .text {
   font-size: 16px;

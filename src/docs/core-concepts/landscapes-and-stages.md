@@ -89,5 +89,5 @@ Use these pages to explore related concepts or configure the resources described
 - [Manage landscapes](../deploy-operate/landscapes.md) explains how operators establish landscape boundaries.
 - [Manage deployment targets](../deploy-operate/deployment-targets.md) explains how a landscape is connected to infrastructure.
 - [Manage stages](../deploy-operate/stages.md) explains how to define and inspect delivery checkpoints.
-- [Define promotions](../deploy-operate/define-promotions.md) explains how to connect stages in a controlled delivery flow.
-- [Vector Deployments](../deploy-operate/vector-deployments.md) explains the runtime lifecycle after a stage selects a vector.
+- [Promote vectors](../deploy-operate/promote-vectors.md) explains how to connect stages in a controlled delivery flow.
+- [Delivery flow](./delivery-flow.md#runtime-boundary) explains the runtime lifecycle after a stage selects a vector.

@@ -1,99 +1,90 @@
 ---
-title: Access Control (RBAC)
-description: Configure role-based access control for Projects using session and workload identities.
+title: Grant roles
+description: Bind the admin, pm, and dev roles of a project to identity provider groups and to workload identities.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Access Control (RBAC)
+# Grant roles
 
-## Overview
+Bind project roles to the people and workloads that use a project. Konfidence enforces role-based access control at the project level through the `roleBindings` field of the `Project` resource. A binding applies to every resource in the project, including its landscapes.
 
-Konfidence provides **role-based access control (RBAC)** for Projects via the `roleBindings` field. Access control is defined at the Project level and applies to all resources within that Project, including Landscapes.
-
-::: warning Direct Kubernetes Access Bypasses Authorization
-Because authorization rules are enforced by the Konfidence API server (not Kubernetes RBAC), granting direct `kubectl` access to project or landscape namespaces **bypasses the authorization layer entirely**.
-
-Users must access project resources through the Konfidence API server. Teams requiring direct Kubernetes access should run their own Konfidence installation rather than share the managed control plane.
+::: warning Direct Kubernetes access bypasses authorization
+The Konfidence API server enforces the role bindings, not Kubernetes RBAC. Anyone with `kubectl` access to a project or landscape namespace bypasses them. Give users access through the Konfidence API only. A team that needs direct Kubernetes access runs its own Konfidence installation.
 :::
 
-## Built-in Roles
+## Three roles cover administration, delivery, and observation
 
-Projects support three built-in roles with different permission levels:
+| Role | Permissions | Typical holders |
+|------|-------------|-----------------|
+| `admin` | Full control over project resources, including `roleBindings` and the project lifecycle | Platform team, DevOps engineers |
+| `pm` | Manage the delivery process: promotion flows, stage configuration, promotion approvals | Product managers, release managers |
+| `dev` | Read deployment status, logs, artifact and vector details | Developers, CI pipelines with read access |
 
-| Role | Permissions | Typical Users |
-|------|-------------|---------------|
-| `admin` | Full control over project resources, including `roleBindings` and project lifecycle | Platform team, DevOps engineers |
-| `pm` | Manage delivery process: promotion flows, stage configuration, approve promotions. | Product managers, release managers |
-| `dev` | Read-only / observability: deployment status, logs, artifact and vector details. | Developers, CI/CD pipelines (read access) |
+## Prerequisites
 
-## Identity Sources
+- A [project](./projects.md).
+- The `admin` role in that project, or `kubectl` access to edit `Project` resources.
+- The group names your identity provider puts into the session, or the OIDC details of the workload.
 
-Roles can be granted to two types of identities:
+## Bind a role to identity provider groups
 
-### Session Subjects (Interactive Users)
-
-Session subjects match **interactive users** authenticated via an identity provider by group membership.
-
-**Example:**
+A session subject matches an interactively signed-in user by group membership:
 
 ```yaml
-roleBindings:
-  admin:
-    - session:
-        memberOf:
-          - platform-admins
+spec:
+  roleBindings:
+    admin:
+      - session:
+          memberOf:
+            - platform-admins
 ```
 
-Session subjects match users by **group membership** using OR logic. A user holds a role if they are a member of **any** of the specified groups.
+A user holds the role when they are a member of any listed group. Apply the change with `kubectl edit project <NAME>`.
 
-### JWKS Subjects (Workload Identities)
+## Bind a role to a workload identity
 
-JWKS subjects match **workload identities** presenting OIDC tokens signed by a trusted provider. This mechanism supports any OIDC-compliant identity provider, including GitHub Actions, GitLab CI, SPIRE, Azure AD, Keycloak, AWS IAM, and custom identity solutions, as long as trust is established via the OIDC discovery endpoint.
+A `jwks` subject matches a workload, such as a CI pipeline, that presents an OIDC token signed by a trusted provider. [Grant CI pipelines access](./grant-ci-access.md) covers the binding and the token request for GitHub Actions, GitLab.com, and SPIRE.
 
-**Example:**
+## Combine subjects on one role
+
+A role accepts several subjects. A caller holds the role when any subject matches:
 
 ```yaml
-roleBindings:
-  dev:
-    - jwks:
-        endpoint: https://token.actions.githubusercontent.com/.well-known/openid-configuration
-        audience: https://github.com/konfidence-project
-        claims:
-          sub: repo:my-org/my-repo:*
-          ref: refs/heads/main
+spec:
+  roleBindings:
+    dev:
+      - session:
+          memberOf:
+            - my-product-developers
+      - jwks:
+          endpoint: https://token.actions.githubusercontent.com/.well-known/openid-configuration
+          audience: https://konfidence.example.com/api
+          claims:
+            sub: repo:my-org/my-repo:*
 ```
 
-This grants the `dev` role to GitHub Actions workflows that:
-- Are from repository `my-org/my-repo` (any workflow file)
-- AND run on the `main` branch
-- AND present a token with audience `https://konfidence.example.com/api`
+## Verify a binding
 
-### Multiple Subjects
+Sign in as a member of the group and list the projects the API grants you:
 
-Each role can have **multiple subjects** with OR semantics:
-
-```yaml
-roleBindings:
-  dev:
-    - session:
-        memberOf:
-          - my-product-developers
-    - jwks:
-        endpoint: https://token.actions.githubusercontent.com/.well-known/openid-configuration
-        audience: https://github.com/konfidence-project
-        claims:
-          sub: repo:my-org/my-repo:*
+```bash
+kden login
+kden project list
 ```
 
-A caller holds the `dev` role if:
-- They are a member of `my-product-developers` **OR**
-- They present a valid GitHub Actions token from `my-org/my-repo`
+The project appears in the list. For a workload token, call the identity endpoint with the token instead:
 
-For complete CRD specification details, see the [Project CRD Reference](/docs/reference/crd#project).
+```bash
+curl --header "Authorization: Bearer $TOKEN" https://konfidence.example.com/api/v1/identity
+```
 
-## Next Steps
+The response lists the project under `projectRoles` with the granted role.
 
-- [Managing Projects](/docs/deploy-operate/projects): Create projects with role bindings
-- [Manage landscapes](/docs/deploy-operate/landscapes): Establish landscape boundaries governed by project roles
+For the full field list, see the [Project CRD reference](/docs/reference/crd#project).
+
+## Next steps
+
+- [Grant CI pipelines access](./grant-ci-access.md) binds a role to a CI workflow.
+- [Manage landscapes](./landscapes.md) creates landscapes governed by these roles.
