@@ -1,14 +1,14 @@
 ---
-title: Expose the API
+title: Expose the API and dashboard
 description: Publish the API and dashboard through an Ingress with TLS and connect the login to your OIDC provider.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Expose the API
+# Expose the API and dashboard
 
-Publish the API server outside the cluster and turn on login through your OpenID Connect (OIDC) provider. The API server also serves the dashboard, so one Ingress covers the dashboard, the `kden` CLI, and CI pipelines. After this page, users sign in with their identity provider account and `kden login` works from a workstation.
+Publish the API server and the dashboard outside the cluster and turn on login through your OpenID Connect (OIDC) provider. Konfidence ships a web dashboard that shows projects, landscapes, stages, and deployments. The API server serves it, so one Ingress covers the dashboard, the `kden` CLI, and CI pipelines. After this page, users sign in with their identity provider account and `kden login` works from a workstation.
 
 ## Prerequisites
 
@@ -93,7 +93,9 @@ Check the health endpoint through the Ingress:
 curl --fail "https://$KONFIDENCE_HOST/healthz"
 ```
 
-The command exits with status 0. Open `https://konfidence.example.com` in a browser. The sign-in page appears, and after signing in you see the dashboard.
+The command exits with status 0. Open `https://konfidence.example.com` in a browser. The sign-in page appears, and after signing in you see the dashboard with the projects your groups grant you.
+
+<!-- TODO(docs): screenshot — the project list right after sign-in, captured from the quickstart with the example app. Belongs with the planned "Follow deployments in the dashboard" page under Develop & Integrate. -->
 
 ## Log in with the CLI
 

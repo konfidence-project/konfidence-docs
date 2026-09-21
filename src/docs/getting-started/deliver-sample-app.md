@@ -43,6 +43,9 @@ steps:
 * requests automatically go to the latest deployed vector in the stage
 
 check the resources which have been created:
+
+<!-- TODO(docs): screenshot — the vector deployments view of the dashboard after the first delivery, showing the sample app vector on the dev stage. -->
+
 * `kubectl get vectordeployment`
 * `kubectl get artifactdeployment`
 * `kubectl get httproute`
