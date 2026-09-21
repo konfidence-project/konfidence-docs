@@ -18,7 +18,7 @@ Running the control plane with more than one replica is not fully tested in the 
 
 Konfidence stores all delivery state as custom resources in the Kubernetes API. That covers projects, landscapes, deployment targets, stages, stage versions, vector templates, promotion configurations, and promotions. The operator holds only in-memory caches of those resources and the leader election Lease. When a replica stops, nothing is lost that was not already written to the Kubernetes API. The replacement replica rebuilds its caches from the API and continues from the stored state.
 
-The API server stores nothing except login sessions. With the default `in-memory` session store, a session lives in the memory of the replica that created it. A restart signs every browser and CLI user out. Two replicas do not see each other's sessions, so a user whose requests reach the other replica is signed out as well. Bearer tokens from CI pipelines are verified on every request and need no session, so they are unaffected.
+The API server stores nothing except login sessions. With the default `in-memory` session store, a session lives in the memory of the replica that created it. A restart signs every browser and CLI user out. Two replicas do not see each other's sessions. A user whose requests reach the other replica is signed out as well. Bearer tokens from CI pipelines are verified on every request and need no session, so they are unaffected.
 
 ## The operator uses leader election
 
