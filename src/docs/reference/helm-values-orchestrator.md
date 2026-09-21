@@ -1,5 +1,5 @@
 ---
-title: Helm values: kubernetes-landscape-orchestrator
+title: "Helm values: kubernetes-landscape-orchestrator"
 description: Every value of the kubernetes-landscape-orchestrator Helm chart with its type, default, and description.
 outline: [2, 3]
 editLink: false
