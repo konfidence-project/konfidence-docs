@@ -18,7 +18,7 @@ Running the control plane with more than one replica is not fully tested in the 
 
 Konfidence stores all delivery state as custom resources in the Kubernetes API. That covers projects, landscapes, deployment targets, stages, stage versions, vector templates, promotion configurations, and promotions. The operator holds only in-memory caches of those resources and the leader election Lease. When a replica stops, nothing is lost that was not already written to the Kubernetes API. The replacement replica rebuilds its caches from the API and continues from the stored state.
 
-The API server stores nothing except login sessions. The default session store is `in-memory`, so a restart loses every session and signs all users out. To keep sessions across restarts and replicas, set `api.session.storageType` to `db-pg` as described in [The API server needs a shared session store](#the-api-server-needs-a-shared-session-store-for-more-than-one-replica) and pass it with the [install command](./konfidence-installation.md#install-the-control-plane).
+The API server stores nothing except login sessions. The default session store is `in-memory`, so a restart loses every session and signs all users out. To keep sessions across restarts, set `api.session.storageType` to `db-pg`. The [section below](#the-api-server-needs-a-shared-session-store-for-more-than-one-replica) shows the values, which you pass to the [install command](./konfidence-installation.md#install-the-control-plane).
 
 ## The operator uses leader election
 
