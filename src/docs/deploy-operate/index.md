@@ -34,8 +34,8 @@ The sections follow the order in which you set up an installation.
 1. [Manage landscapes](./landscapes.md) creates the namespace-backed scope in which stages deploy.
 2. [Manage deployment targets](./deployment-targets.md) tells a landscape which cluster receives its workloads.
 3. [Manage deployers](./deployer/overview.md) lists the deployment classes a landscape can use.
-4. [Manage stages](./stages.md) creates stages and changes the vector a stage runs.
-5. [Promote vectors](./promote-vectors.md) moves vectors between stages through recorded, approvable promotions.
+4. [Manage stages](./stages.md) creates stages and changes the vector a stage selects.
+5. [Promote vectors](./promote-vectors.md) updates the vector a stage selects through recorded, approvable promotions.
 
 ## Related
 

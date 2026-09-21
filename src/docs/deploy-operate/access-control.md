@@ -45,7 +45,7 @@ A user holds the role when they are a member of any listed group. Apply the chan
 
 ## Bind a role to a workload identity
 
-A `jwks` subject matches a workload, such as a CI pipeline, that presents an OIDC token signed by a trusted provider. [Grant CI pipelines access](./grant-ci-access.md) covers the binding and the token request for GitHub Actions, GitLab.com, and SPIRE.
+A `jwks` subject matches a workload, such as a CI pipeline, that presents an OIDC token signed by a trusted provider. The API server verifies the token against the provider's JSON Web Key Set (JWKS). [Grant CI pipelines access](./grant-ci-access.md) covers the binding and the token request for GitHub Actions, GitLab.com, and SPIRE.
 
 ## Combine subjects on one role
 

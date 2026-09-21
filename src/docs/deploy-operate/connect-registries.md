@@ -81,7 +81,7 @@ The Secret `registry-example` still lives in the landscape namespace and has the
 
 ## Use an OCM configuration instead of a Docker configuration
 
-The control plane Secret accepts a `.ocmconfig` key instead of `.dockerconfigjson`. Use it when the same Secret also carries signing or verification keys. [Configure signing and verification](/docs/develop-integrate/advanced-features/configure-signing-and-verification#configure-cli-credentials) shows the `credentials.config.ocm.software/v1` format.
+The control plane Secret accepts an Open Component Model (OCM) configuration under the `.ocmconfig` key instead of `.dockerconfigjson`. Use it when the same Secret also carries signing or verification keys. [Configure signing and verification](/docs/develop-integrate/advanced-features/configure-signing-and-verification#configure-cli-credentials) shows the `credentials.config.ocm.software/v1` format.
 
 The operator can load a second Secret with another name or namespace. Set both environment variables through the chart's `env` value:
 
