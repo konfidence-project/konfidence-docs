@@ -205,7 +205,7 @@ export default defineConfig({
                   link: "/docs/deploy-operate/konfidence-installation",
                 },
                 {
-                  text: "Expose the API and dashboard",
+                  text: "Give teams access to the dashboard and API",
                   link: "/docs/deploy-operate/expose-api",
                 },
                 {

@@ -55,7 +55,7 @@ helm upgrade --install konfidence oci://ghcr.io/konfidence-project/charts/konfid
   --wait
 ```
 
-The two `enabled=false` flags keep the first install self-contained. With the chart defaults, the API server refuses to start without an OIDC issuer URL. The admission webhook needs a TLS Secret named `konfidence-webhook-server-cert`. [Expose the API and dashboard](./expose-api.md) turns OIDC on. [Enable the admission webhook with cert-manager](#enable-the-admission-webhook-with-cert-manager) below creates the Secret. Every chart value is listed in the [Helm values reference](/docs/reference/helm-values-konfidence).
+The two `enabled=false` flags keep the first install self-contained. With the chart defaults, the API server refuses to start without an OIDC issuer URL. The admission webhook needs a TLS Secret named `konfidence-webhook-server-cert`. [Give teams access to the dashboard and API](./expose-api.md) turns OIDC on. [Enable the admission webhook with cert-manager](#enable-the-admission-webhook-with-cert-manager) below creates the Secret. Every chart value is listed in the [Helm values reference](/docs/reference/helm-values-konfidence).
 
 ## Verify the installation
 
@@ -129,5 +129,5 @@ With `failurePolicy: Fail`, the chart default, the Kubernetes API server rejects
 ## Next steps
 
 * [Install the Kubernetes deployer](./deployer/kubernetes.md#install-the-deployer). Without a deployer, no stage can deploy.
-* [Expose the API and dashboard](./expose-api.md) publishes both and enables login through your identity provider.
+* [Give teams access to the dashboard and API](./expose-api.md) publishes both and enables login through your identity provider.
 * [Connect artifact registries](./connect-registries.md) gives the control plane and the deployer access to private registries.

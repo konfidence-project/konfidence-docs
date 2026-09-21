@@ -1,20 +1,20 @@
 ---
-title: Expose the API and dashboard
+title: Give teams access to the dashboard and API
 description: Publish the API and dashboard through an Ingress with TLS and connect the login to your OIDC provider.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Expose the API and dashboard
+# Give teams access to the dashboard and API
 
 After installation, the API server is reachable only inside the cluster and has no login. Give it a public URL with TLS and connect the login to your OpenID Connect (OIDC) provider. One Ingress then serves every client: the dashboard, the `kden` CLI, and CI pipelines. In the dashboard, teams follow projects, stages, and deployments in a browser. Nobody needs cluster access to use Konfidence afterwards.
 
 ## Prerequisites
 
 - Konfidence installed with the release name `konfidence` in `konfidence-system`. See [Install Konfidence](./konfidence-installation.md).
-- An Ingress controller in the cluster. Check: `kubectl get ingressclass` lists at least one class.
-- A DNS name for the API that resolves to the Ingress controller, for example `konfidence.example.com`.
+- An Ingress controller in the cluster, or a Gateway API implementation such as Envoy Gateway. Check: `kubectl get ingressclass` or `kubectl get gatewayclass` lists at least one class.
+- A DNS name for the API that resolves to that controller, for example `konfidence.example.com`.
 - A TLS certificate for that name as a Secret in `konfidence-system`. An issuer such as cert-manager can create it from Ingress annotations instead.
 - An OIDC client at your identity provider with the redirect URL `https://konfidence.example.com/api/v1/auth/callback`. Note its issuer URL, client id, and client secret.
 
@@ -39,7 +39,7 @@ kubectl create secret generic konfidence-oidc-client \
 
 ## Write the values file
 
-Save the following as `konfidence-values.yaml` and replace the issuer URL and client id with the values from your provider:
+Save the following as `konfidence-values.yaml`. Replace the issuer URL and client id with the values from your provider, and `<INGRESS_CLASS>` with the name from `kubectl get ingressclass`:
 
 ```yaml
 api:
@@ -54,7 +54,7 @@ api:
     scopes: openid,profile,email,groups
   ingress:
     enabled: true
-    className: nginx
+    className: <INGRESS_CLASS>
     hosts:
       - host: konfidence.example.com
         paths:
@@ -107,6 +107,30 @@ kden login
 ```
 
 A browser window opens for the identity provider. After sign-in, `kden project list` prints the projects your groups grant you.
+
+## Route through a Gateway instead of an Ingress
+
+With a Gateway API implementation such as Envoy Gateway, skip the chart's Ingress and attach an `HTTPRoute` to your Gateway. Set `api.ingress.enabled: false` in the values file and apply the route after the upgrade:
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: konfidence-api
+  namespace: konfidence-system
+spec:
+  parentRefs:
+    - name: <GATEWAY_NAME>
+      namespace: <GATEWAY_NAMESPACE>
+  hostnames:
+    - konfidence.example.com
+  rules:
+    - backendRefs:
+        - name: konfidence-api
+          port: 8090
+```
+
+TLS terminates at the Gateway's HTTPS listener, so the certificate is configured on the Gateway, not on the route. The Gateway must allow routes from `konfidence-system` in its listener's `allowedRoutes`. The verification steps above stay the same.
 
 ## What to do if it fails
 
