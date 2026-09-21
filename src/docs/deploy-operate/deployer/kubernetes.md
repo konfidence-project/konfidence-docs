@@ -15,6 +15,32 @@ The **Kubernetes deployer** is the reference implementation of Konfidence's depl
 
 This page lists the manifest types this deployer supports and how it turns an annotated Service into a deployment result. For packaging and naming requirements, see [Author a Helm artifact](../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../develop-integrate/artifact-types/kustomize.md).
 
+## Install the deployer
+
+The deployer ships as the Helm chart `kubernetes-landscape-orchestrator`. Install it into the Konfidence namespace after the control plane. It needs Flux in the cluster, which [Install Konfidence](../konfidence-installation.md#prerequisites) lists as a prerequisite.
+
+```bash
+export KONFIDENCE_VERSION=0.0.1-alpha.1
+export KONFIDENCE_NAMESPACE=konfidence-system
+
+helm upgrade --install kubernetes-landscape-orchestrator oci://ghcr.io/konfidence-project/charts/kubernetes-landscape-orchestrator \
+  --version "$KONFIDENCE_VERSION" \
+  --namespace "$KONFIDENCE_NAMESPACE" \
+  --create-namespace \
+  --set image.repository=ghcr.io/konfidence-project/kubernetes-landscape-orchestrator \
+  --set image.tag="$KONFIDENCE_VERSION" \
+  --wait
+```
+
+Verify that the deployer runs and registered its deployment classes:
+
+```bash
+kubectl get deployment kubernetes-landscape-orchestrator -n "$KONFIDENCE_NAMESPACE"
+kubectl get deploymentclasses
+```
+
+The first command shows one available replica. The second lists `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. [Manage deployment targets](../deployment-targets.md) makes the classes available in a landscape.
+
 ## Supported manifest types
 
 The value of `.spec.manifest.type` on an `ArtifactDeployment` selects the
