@@ -54,6 +54,8 @@ Konfidence records immutable rollout state for the selected vector and starts th
 
 ## Inspect desired and active state
 
+<!-- TODO(docs): screenshot — the stage detail view in the dashboard, showing the desired vector and the active stage version side by side. Same information as the kubectl commands below; captured from the quickstart. -->
+
 List stages in the landscape:
 
 ```bash

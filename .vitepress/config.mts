@@ -205,7 +205,7 @@ export default defineConfig({
                   link: "/docs/deploy-operate/konfidence-installation",
                 },
                 {
-                  text: "Expose the API",
+                  text: "Expose the API and dashboard",
                   link: "/docs/deploy-operate/expose-api",
                 },
                 {
