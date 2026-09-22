@@ -1,23 +1,28 @@
 ---
-title: Kubernetes deployer
-description: Reference for the built-in Kubernetes deployer, its supported manifest types, and how it exposes Services as deployment results.
+title: Install the Kubernetes deployer
+description: Install and verify the Kubernetes deployer, then use its connection types, artifact formats, and deployment results.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Kubernetes deployer
+# Install the Kubernetes deployer {#kubernetes-deployer}
 
-The **Kubernetes deployer** is the reference implementation of Konfidence's deployer interface. It provides the deployment classes `helm.konfidence.cloud` and `kustomize.konfidence.cloud` and realizes them through Flux.
+Install the Kubernetes deployer to deliver Helm and Kustomize artifacts to Kubernetes through Flux. It provides the deployment classes `helm.konfidence.cloud` and `kustomize.konfidence.cloud` and is the reference implementation of Konfidence's deployer interface.
 
 <!-- TODO: link to the Deployer interface specification once available; see
 [Deployer Specification](../../../reference/deployer-specification.md). -->
 
-This page covers everything specific to this deployer. It explains how to install it and which connection types its deployment targets accept. It lists the manifest types it supports and how it turns an annotated Service into a deployment result. For packaging and naming requirements, see [Author a Helm artifact](../../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../../develop-integrate/artifact-types/kustomize.md).
+After installation, use the connection types on this page to configure targets in your landscapes. The later sections describe supported manifest types and Service deployment results. For packaging and naming requirements, see [Author a Helm artifact](../../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../../develop-integrate/artifact-types/kustomize.md).
+
+## Prerequisites
+
+- [Konfidence installed](../konfidence-installation.md) in the cluster, including the listed Flux prerequisites.
+- Helm and `kubectl` access with permission to install the chart and its cluster-scoped resources, and to inspect Deployments and Deployment Classes.
 
 ## Install the deployer
 
-The deployer ships as the Helm chart `kubernetes-landscape-orchestrator`. Install it into the Konfidence namespace after the control plane. It needs Flux in the cluster, which [Install Konfidence](../konfidence-installation.md#prerequisites) lists as a prerequisite.
+The deployer ships as the Helm chart `kubernetes-landscape-orchestrator`. Install it into the Konfidence namespace:
 
 ```bash
 export KONFIDENCE_VERSION=0.0.1-alpha.1
@@ -32,6 +37,8 @@ helm upgrade --install kubernetes-landscape-orchestrator oci://ghcr.io/konfidenc
   --wait
 ```
 
+## Verify the installation
+
 Verify that the deployer runs and registered its deployment classes:
 
 ```bash
@@ -39,7 +46,7 @@ kubectl get deployment kubernetes-landscape-orchestrator -n "$KONFIDENCE_NAMESPA
 kubectl get deploymentclasses
 ```
 
-The first command shows one available replica. The second lists `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. Every chart value is listed in the [Helm values reference](/docs/reference/helm-values-orchestrator). [Manage deployment targets](../../manage-delivery/deployment-targets.md) makes the classes available in a landscape.
+The first command shows one available replica. The second lists `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. Every chart value is listed in the [Helm values reference](../../../reference/helm-values-orchestrator.md). [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) makes the classes available in a landscape.
 
 ## Connection types
 
@@ -159,11 +166,16 @@ Only Kubernetes `Service` objects can be exposed this way today
 (deployment-result type `http-k8s-service`). Other resource kinds are not yet
 supported.
 
-## Related
+## Next steps {#related}
 
-Use these pages for publishing instructions and the definition of a deployer:
+Make the installed capabilities available to your applications:
+
+- [Create a landscape](../../manage-delivery/landscapes.md) if you do not have one yet.
+- [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) using the connection types on this page.
+- [Connect artifact registries](../connect-registries.md#give-the-deployer-credentials) supplies deployer credentials in each landscape that needs them.
+
+For artifact authoring and the deployment model, see:
 
 - [Publish artifacts](../../../develop-integrate/artifact-types/publish-artifacts.md)
 - [Deployment model](../../../core-concepts/deployment-model.md)
-- [Manage deployers](./overview.md)
-- [Manage deployment targets](../../manage-delivery/deployment-targets.md)
+- [Choose a deployer](./overview.md)

@@ -1,14 +1,14 @@
 ---
-title: Grant roles
+title: Grant teams access to a project
 description: Bind the admin, pm, and dev roles of a project to identity provider groups and to workload identities.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Grant roles
+# Grant teams access to a project {#grant-roles}
 
-Bind project roles to the people and workloads that use a project. Konfidence enforces role-based access control at the project level through the `roleBindings` field of the `Project` resource. A binding applies to every resource in the project, including its landscapes.
+Give your team access to a project by binding roles to identity provider groups. Konfidence enforces role-based access control through the `roleBindings` field of the `Project` resource. A binding applies to API access to resources in the project, including its landscapes. You can also bind workload identities, as described below.
 
 ::: warning Direct Kubernetes access bypasses authorization
 The Konfidence API server enforces the role bindings, not Kubernetes RBAC. Anyone with `kubectl` access to a project or landscape namespace bypasses them. Give users access through the Konfidence API only. A team that needs direct Kubernetes access runs its own Konfidence installation.
@@ -25,8 +25,11 @@ The Konfidence API server enforces the role bindings, not Kubernetes RBAC. Anyon
 ## Prerequisites
 
 - A [project](./projects.md).
-- The `admin` role in that project, or `kubectl` access to edit `Project` resources.
-- The group names your identity provider puts into the session, or the OIDC details of the workload.
+- For the edits shown here, `kubectl` access with Kubernetes permission to read and edit cluster-scoped `Project` resources. A Konfidence `admin` role alone does not authorize these commands.
+- For interactive users, [dashboard and API login configured](../install/expose-api.md) and the group names your identity provider puts into the session.
+- For verification, `kden` configured for that API and a user in the bound group, or a workload token for a `jwks` binding.
+
+These examples configure bindings through Kubernetes. Project roles govern what the bound users and workloads can then do through the Konfidence API.
 
 ## Bind a role to identity provider groups
 
@@ -87,4 +90,4 @@ For the full field list, see the [Project CRD reference](/docs/reference/crd#pro
 ## Next steps
 
 - [Grant CI pipelines access](./grant-ci-access.md) binds a role to a CI workflow.
-- [Manage landscapes](../manage-delivery/landscapes.md) creates landscapes governed by these roles.
+- [Create a landscape](../manage-delivery/landscapes.md) prepares an environment within the project. Its creation steps require Kubernetes permissions; access through the Konfidence API uses the project's role bindings.

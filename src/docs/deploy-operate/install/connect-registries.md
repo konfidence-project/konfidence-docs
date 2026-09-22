@@ -10,13 +10,16 @@ lastUpdated: true
 
 Give Konfidence credentials for the private OCI registries that hold artifacts and vectors. Two components read registries on their own, and each needs its own Secret. The control plane pulls a vector when a stage changes. The Kubernetes deployer pulls artifact contents when it creates workloads. Without credentials, both access the registry unauthenticated and private registries answer with `401` or `403`.
 
+Configure the control plane credentials during installation. Return to [Give the deployer credentials](#give-the-deployer-credentials) after creating each landscape that uses a private registry.
+
 Vector assembly credentials belong to the project, not to the installation. A `VectorTemplate` names its own Secrets in `spec.credentials.ocm.refs`. See [Configure signing and verification](/docs/develop-integrate/advanced-features/configure-signing-and-verification) and the [Credentials reference](/docs/reference/crd#credentials).
 
 ## Prerequisites
 
 - A registry account with pull permission, its username, and its password or token.
 - The registry host name, for example `registry.example.com`.
-- `kubectl` access to `konfidence-system` and to the landscape namespace. [Manage stages](../manage-delivery/stages.md#get-the-landscape-namespace) shows how to read it.
+- For the control plane steps, `kubectl` access to create Secrets in `konfidence-system` and restart the operator Deployment.
+- For the deployer steps, a [landscape](../manage-delivery/landscapes.md#verify-the-landscape) and permission to create Secrets in its namespace. The registry-to-Secret mapping also requires permission to configure a ConfigMap in `konfidence-system`.
 
 Set the values used below:
 
@@ -24,7 +27,6 @@ Set the values used below:
 export REGISTRY_HOST=registry.example.com
 export REGISTRY_USER=konfidence
 export REGISTRY_PASSWORD='<TOKEN>'
-export LANDSCAPE_NAMESPACE=<LANDSCAPE_NAMESPACE>
 ```
 
 ## Give the control plane credentials
@@ -49,6 +51,12 @@ kubectl rollout status deployment/konfidence --namespace konfidence-system
 The rollout completes. The next stage change that pulls a vector from this registry succeeds instead of failing with `401`.
 
 ## Give the deployer credentials
+
+Set the namespace reported by your Landscape's status. Replace `<landscape-namespace>` with that value:
+
+```bash
+export LANDSCAPE_NAMESPACE='<landscape-namespace>'
+```
 
 The Kubernetes deployer looks up credentials by registry host name. It searches the namespace of the resource it reconciles, the landscape namespace. Create a Docker registry Secret named exactly like the registry host:
 
@@ -107,5 +115,6 @@ The credentials on this page cover the artifacts and vectors that Konfidence pul
 
 ## Next steps
 
-- [Manage landscapes](../manage-delivery/landscapes.md) creates the landscapes that need deployer credentials.
-- [Runtime components](./runtime-components/overview.md) lists optional services for your landscape.
+- [Create a project](../control-access/projects.md) and [Create a landscape](../manage-delivery/landscapes.md) establish the scope for landscape-specific credentials.
+- [Configure deployment targets for a landscape](../manage-delivery/deployment-targets.md) connects its workloads to the installed deployer.
+- [Choose landscape services](./runtime-components/overview.md) identifies services your applications use at runtime.

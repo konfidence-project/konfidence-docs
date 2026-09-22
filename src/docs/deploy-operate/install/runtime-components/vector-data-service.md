@@ -1,11 +1,14 @@
 ---
-title: Vector data service
-description: Learn what the vector data service does and when to install it.
+title: Install the Vector Data Service
+description: Install the Vector Data Service in a Kubernetes landscape so applications can resolve vector data at runtime.
+outline: [2, 3]
+editLink: true
+lastUpdated: true
 ---
 
-# Vector data service
+# Install the Vector Data Service {#vector-data-service}
 
-This guide explains when to install the vector data service in a Kubernetes landscape and what it provides to workloads at runtime.
+Install the Vector Data Service in a Kubernetes landscape to make vector data available to applications running there. This is a landscape-level task, performed after the landscape namespace exists.
 
 The vector data service lets applications resolve vector data for a specific vector at runtime:
 
@@ -15,9 +18,16 @@ The vector data service lets applications resolve vector data for a specific vec
 
 Because accessing this data is essential for core features of Konfidence, it's recommended to always install the vector data service.
 
+## Prerequisites
+
+- A [ready landscape](../../manage-delivery/landscapes.md#verify-the-landscape) and its managed namespace.
+- The [Kubernetes deployer](../deployer/kubernetes.md), which publishes vector data in the landscape.
+- Helm with OCI registry support and Kubernetes permissions to install the service's chart into that landscape namespace.
+
 ## Install the vector data service
 
-The vector data service must be installed in each Kubernetes landscape namespace which can be done via helm:
+Install the service in each Kubernetes landscape namespace. Replace `<landscape-namespace>` with the namespace reported by the Landscape:
+
 ```bash
 helm upgrade --install vector-data-service oci://ghcr.io/konfidence-project/charts/vector-data-service \
   --create-namespace \
@@ -31,3 +41,8 @@ After installation, workloads in that namespace can reach the service at `http:/
 
 The vector data service implements the REST endpoints defined by the [OpenFeature Remote Evaluation Protocol (OFREP) specification](https://openfeature.dev/docs/reference/other-technologies/ofrep/openapi). Applications should use an OpenFeature client with a standard [OFREP-compatible provider](https://openfeature.dev/ecosystem), but they can also call the REST endpoints directly without a provider.
 More information can be found in the [Access Vector Data Section](../../../develop-integrate/vector-data/access-vector-data.md) of the Develop & Integrate section.
+
+## Next steps
+
+- [Create a stage](../../manage-delivery/stages.md) to deliver a vector into the prepared landscape.
+- [Access vector data in your application](../../../develop-integrate/vector-data/access-vector-data.md) explains how applications use the service.
