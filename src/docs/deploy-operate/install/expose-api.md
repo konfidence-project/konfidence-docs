@@ -1,6 +1,6 @@
 ---
 title: Give teams access to the dashboard and API
-description: Publish the API and dashboard through an Ingress with TLS and connect the login to your OIDC provider.
+description: Publish the API and dashboard through an Ingress or Gateway with TLS and connect the login to your OIDC provider.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -10,9 +10,12 @@ lastUpdated: true
 
 Let your teams open the Konfidence dashboard in a browser and sign in with their company account. The same setup lets the `kden` CLI and CI pipelines reach the API. To get there, you publish the API server under a public URL with TLS. Then you connect its login to your OpenID Connect (OIDC) provider.
 
+This configures the installation's endpoint and login. [Create a project](../control-access/projects.md) and [grant teams access to it](../control-access/access-control.md) to make project resources available after sign-in.
+
 ## Prerequisites
 
 - Konfidence installed with the release name `konfidence` in `konfidence-system`. See [Install Konfidence](./konfidence-installation.md).
+- Helm and `kubectl` access to upgrade the release and configure Secrets and routing in its namespace.
 - An Ingress controller in the cluster, or a Gateway API implementation such as Envoy Gateway. Check: `kubectl get ingressclass` or `kubectl get gatewayclass` lists at least one class.
 - A DNS name for the API that resolves to that controller, for example `konfidence.example.com`.
 - A TLS certificate for that name as a Secret in `konfidence-system`. An issuer such as cert-manager can create it from Ingress annotations instead.
@@ -138,7 +141,7 @@ With Gateway API, save the route as `konfidence-route.yaml` and apply it with `k
 
 ## Verify the endpoint
 
-Check the health endpoint through the Ingress:
+Check the health endpoint through your Ingress or Gateway:
 
 ```bash
 curl --fail "https://$KONFIDENCE_HOST/healthz"
@@ -163,10 +166,11 @@ A browser window opens for the identity provider. After sign-in, `kden project l
 
 - The API pod restarts with `oidc-issuer-url must not be empty`: `api.oidc.issuerURL` is missing from the values file.
 - The provider rejects the login with a redirect URI error: `redirectURL` differs from the URL registered at the provider.
-- Sign-in succeeds but `kden project list` is empty: the token carries no group that a project binds. Check the scope and [Grant roles](../control-access/access-control.md).
+- Sign-in succeeds but `kden project list` is empty: the token carries no group that a project binds. Check the scope and [Grant teams access to a project](../control-access/access-control.md).
 - `curl` reports a certificate error: the TLS Secret named in `ingress.tls` does not exist or covers a different host.
 
 ## Next steps
 
-- [Grant roles](../control-access/access-control.md) binds identity provider groups to project roles.
+- [Choose a deployer](./deployer/overview.md) selects the deployment capabilities to install.
+- [Create a project](../control-access/projects.md) establishes a project, and [Grant teams access to a project](../control-access/access-control.md) binds identity provider groups to its roles.
 - [Grant CI pipelines access](../control-access/grant-ci-access.md) lets pipelines call the exposed API.

@@ -1,17 +1,33 @@
 ---
-title: "Manage deployers"
-description: "Inspect the deployers and deployment classes available to landscapes."
+title: "Choose a deployer"
+description: "Choose deployment capabilities for your target platform and inspect the classes available to landscapes."
 outline: deep
 editLink: true
 lastUpdated: true
 ---
 
-# Manage deployers
+# Choose a deployer {#manage-deployers}
 
-Deployers provide the platform-specific capabilities Konfidence uses to turn artifacts into running workloads.
-Operators install deployers centrally, then configure deployment targets in individual landscapes to make the deployment classes available.
+Choose a deployer for the platform where your applications will run and the artifact types they use. Deployers provide the platform-specific capabilities Konfidence uses to turn artifacts into workloads. Administrators install them centrally, then configure deployment targets in individual landscapes to make their deployment classes available.
 
 For the relationship between deployers, classes, targets, and artifacts, see the [Deployment model](../../../core-concepts/deployment-model.md).
+
+## Available deployers
+
+The Kubernetes deployer is the deployer available in the current release:
+
+| Deployer | Target platform | Artifact formats | Provided deployment classes |
+| --- | --- | --- | --- |
+| [Kubernetes deployer](./kubernetes.md) | Kubernetes through Flux | Helm, Kustomize | `helm.konfidence.cloud`, `kustomize.konfidence.cloud` |
+
+Choose it when your applications are packaged as Helm or Kustomize artifacts. [Install the Kubernetes deployer](./kubernetes.md#install-the-deployer), then use its [connection types](./kubernetes.md#connection-types) when configuring landscape targets. The current release supports local targets; remote targets are work in progress.
+
+Deployers are extensible. A deployer can provide several classes for one platform, or introduce classes for another platform and artifact format. The target platform describes where artifacts run; Konfidence itself is installed on Kubernetes.
+
+## Prerequisites for inspecting installed capabilities
+
+- `kubectl` access to read cluster-scoped `DeploymentClass` resources.
+- For the landscape check below, a [landscape](../../manage-delivery/landscapes.md) and permission to read `DeploymentTarget` resources in its namespace.
 
 ## List deployment classes
 
@@ -38,22 +54,11 @@ kubectl get deploymenttargets --namespace=<landscape-namespace>
 The `spec.deploymentClassName` field identifies the capability each target makes available.
 The landscape can deploy an artifact only when it contains a ready target whose class matches the artifact manifest type.
 
-Use [Manage deployment targets](../../manage-delivery/deployment-targets.md) to add a missing capability or investigate a target that is not ready.
-
-## Available deployers
-
-The Kubernetes deployer provides the following deployment classes:
-
-| Deployer | Platform | Provided deployment classes |
-| --- | --- | --- |
-| [Kubernetes deployer](./kubernetes.md) | Kubernetes through Flux | `helm.konfidence.cloud`, `kustomize.konfidence.cloud` |
-
-Deployers are extensible.
-A deployer can provide several classes for one platform, or introduce classes for another platform and artifact format.
+Use [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) to add a missing capability or investigate a target that is not ready.
 
 ## Next steps
 
-- [Manage deployment targets](../../manage-delivery/deployment-targets.md) explains how to configure a class in a landscape.
-- [Kubernetes deployer](./kubernetes.md) installs the deployer and describes its connection types, artifact formats, and deployment results.
+- [Install the Kubernetes deployer](./kubernetes.md) provides the Helm and Kustomize deployment classes.
+- [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) makes an installed class available to that landscape.
 - [Types of artifacts](../../../develop-integrate/artifact-types/index.md) describes the classes available to application developers.
 - [Extend & Customize](../../../extend-customize/index.md) introduces extension development.

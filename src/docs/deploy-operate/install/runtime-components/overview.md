@@ -1,25 +1,32 @@
 ---
-title: Overview
-description: 
+title: Choose landscape services
+description: Choose services that provide runtime capabilities alongside applications in a landscape.
+outline: [2, 3]
+editLink: true
+lastUpdated: true
 ---
 
-# Runtime Components Overview
+# Choose landscape services {#runtime-components-overview}
 
-## What Are Runtime Components?
+Choose the services your applications need in a landscape before creating its stages. Landscape services run alongside application workloads in the target environment and provide capabilities such as access to vector data.
 
-Runtime components are optional services that are deployed alongside your application workloads into your target runtime. 
-They run beside your actual application services and provide additional functionality for Konfidence that may not be required in every setup.
+## What are landscape services? {#what-are-runtime-components}
 
-These components are designed to enhance and extend the capabilities of your Konfidence deployment.
-Since they're optional, you only need to install the ones that match your specific requirements.
+These services were previously described as runtime components. Configure them for each landscape after its namespace exists. Their use depends on the capabilities your applications need; check each service's guidance rather than treating every service as optional.
 
-## Installation and Administration
+## Installation and administration
 
-At the moment, runtime components need to be installed manually by a cluster administrator. 
-This may change in future releases with automated installation options.
+An administrator installs landscape services manually. Before installing one, [create a landscape](../../manage-delivery/landscapes.md) and [configure its deployment targets](../../manage-delivery/deployment-targets.md). Use the namespace from the landscape status and the Kubernetes permissions listed in the service's guide.
 
-## Available Runtime Components
+## Available landscape services {#available-runtime-components}
 
-| Component                                           | Purpose                                                                                               |
-|-----------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| [Vector Data Service](./vector-data-service.md) | Allows your app to access [Vector Data](/docs/develop-integrate/vector-data/overview) during runtime. |
+The current documentation covers the following service:
+
+| Service | Purpose | When to install |
+| --- | --- | --- |
+| [Vector Data Service](./vector-data-service.md) | Provides runtime access to [vector data](../../../develop-integrate/vector-data/overview.md), including feature flags, configuration, and deployment results | Recommended in every Kubernetes landscape; applications use it to resolve vector data at runtime |
+
+## Next steps
+
+- [Install the Vector Data Service](./vector-data-service.md) in your landscape namespace.
+- [Create a stage](../../manage-delivery/stages.md) once the landscape's targets, registry credentials, and needed services are configured.

@@ -19,7 +19,7 @@ Before you begin, make sure you have:
 - A container build tool such as `docker` and the `flux` command-line tool for pushing Open Container Initiative (OCI) artifacts.
 - Push access to an OCI registry for the image, the bundle, and the artifact.
 - The `kden` command-line tool. See [Publish artifacts](./publish-artifacts.md).
-- A landscape with a ready `kustomize.konfidence.cloud` target. See [Manage deployment targets](../../deploy-operate/manage-delivery/deployment-targets.md).
+- A landscape with a ready `kustomize.konfidence.cloud` target. See [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md).
 - A service that reads and forwards `X-Vector-ID`. See [Prepare your application](../prepare-your-application.md).
 
 ## Build and push the container image

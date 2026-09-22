@@ -1,23 +1,25 @@
 ---
-title: Manage deployment targets
+title: Configure deployment targets for a landscape
 description: Create one deployment target per deployment class in a landscape and verify that its deployer accepts it.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Manage deployment targets
+# Configure deployment targets for a landscape {#manage-deployment-targets}
 
 Create a deployment target to make a deployment class available in a landscape. A target names the class and carries a `connection` block that tells the class's deployer where to deploy. The deployer defines what the block contains and reports whether it accepts the target.
+
+The deployer is installed centrally. This task configures a landscape to use one of its classes; repeat it for each class the landscape's applications need.
 
 For the relationship between artifacts, deployment classes, deployers, targets, and landscapes, see the [Deployment model](../../core-concepts/deployment-model.md).
 
 ## Prerequisites
 
 - A [ready landscape](./landscapes.md).
-- A deployer that provides the class you need. Check: `kubectl get deploymentclasses` lists it. See [Manage deployers](../install/deployer/overview.md).
+- A deployer that provides the class you need. Check: `kubectl get deploymentclasses` lists it. See [Choose a deployer](../install/deployer/overview.md).
 - The connection block for that deployer, from its page. For the Kubernetes deployer, see [Connection types](../install/deployer/kubernetes.md#connection-types).
-- Permission to create resources in the landscape namespace.
+- `kubectl` access with permission to read Deployment Classes and the Landscape, and to create and read `DeploymentTarget` resources in its namespace.
 
 Set the names used below:
 
@@ -85,6 +87,8 @@ kubectl get deploymenttargets --namespace="$LANDSCAPE_NAMESPACE"
 
 ## Next steps
 
-- [Manage stages](./stages.md) creates stages that deploy through the landscape's targets.
+- [Connect artifact registries](../install/connect-registries.md#give-the-deployer-credentials) supplies credentials for private artifacts in this landscape.
+- [Choose landscape services](../install/runtime-components/overview.md) identifies the runtime services your applications need.
+- [Create a stage](./stages.md) selects a vector to deploy through the prepared landscape's targets.
 - [Types of artifacts](../../develop-integrate/artifact-types/index.md) explains how developers select a class for an artifact.
 - [DeploymentTarget CRD reference](../../reference/crd.md#deploymenttarget) lists all fields.

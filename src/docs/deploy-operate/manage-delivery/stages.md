@@ -1,14 +1,16 @@
 ---
-title: Manage stages
+title: Create a stage
 description: Create a delivery checkpoint, select its desired vector, and inspect its active version.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Manage stages
+# Create a stage {#manage-stages}
 
 Create a stage to select the vector Konfidence should deliver for a checkpoint. Stages are created in a landscape namespace and use the deployment targets configured there.
+
+This guide uses `kubectl` to create a stage, change its desired vector, and inspect the rollout. After creating it, you can use a promotion flow to update the selected vector through recorded decisions.
 
 For help deciding how stages and landscapes should relate, see [Landscapes and stages](../../core-concepts/landscapes-and-stages.md).
 
@@ -16,9 +18,10 @@ For help deciding how stages and landscapes should relate, see [Landscapes and s
 
 Before you begin, make sure you have:
 
-- A [ready landscape](./landscapes.md) with targets for the vector's required deployment classes.
+- A [ready landscape](./landscapes.md) with [targets](./deployment-targets.md) for the vector's required deployment classes.
+- [Registry credentials](../install/connect-registries.md) for private artifacts and vectors, and the [landscape services](../install/runtime-components/overview.md) your applications need.
 - A concrete vector reference in an Open Component Model (OCM)-compatible repository.
-- Permission to create `Stage` resources in the landscape namespace.
+- `kubectl` access with Kubernetes permission to read the Landscape, create and update `Stage` resources, and inspect rollout resources in the landscape namespace. Konfidence project roles alone do not authorize these commands.
 
 ## Get the landscape namespace
 
@@ -123,6 +126,6 @@ Use the following checks if stage creation or activation does not complete:
 
 ## Next steps
 
-- [Promote vectors](./promote-vectors.md) to update stages through a controlled delivery flow.
+- [Set up and run promotion flows](./promote-vectors.md) to update stages through a controlled delivery flow.
 - [Delivery flow](../../core-concepts/delivery-flow.md#runtime-boundary) to understand the runtime lifecycle behind a rollout.
 - Consult the [Stage CRD reference](../../reference/crd.md#stage) for all fields.

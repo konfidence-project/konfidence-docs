@@ -185,20 +185,20 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "Plan",
+              text: "Prepare",
               items: [
                 {
                   text: "System architecture",
                   link: "/docs/deploy-operate/plan/system-architecture",
                 },
                 {
-                  text: "High availability",
+                  text: "Plan for high availability",
                   link: "/docs/deploy-operate/plan/high-availability",
                 },
               ],
             },
             {
-              text: "Install",
+              text: "Install the platform",
               items: [
                 {
                   text: "Install Konfidence",
@@ -209,48 +209,34 @@ export default defineConfig({
                   link: "/docs/deploy-operate/install/expose-api",
                 },
                 {
-                  text: "Connect artifact registries",
-                  link: "/docs/deploy-operate/install/connect-registries",
-                },
-                {
-                  text: "Deployers",
+                  text: "Choose and install deployers",
                   collapsed: true,
                   items: [
                     {
-                      text: "Manage deployers",
+                      text: "Choose a deployer",
                       link: "/docs/deploy-operate/install/deployer/overview",
                     },
                     {
-                      text: "Kubernetes",
+                      text: "Install the Kubernetes deployer",
                       link: "/docs/deploy-operate/install/deployer/kubernetes",
                     },
                   ],
                 },
                 {
-                  text: "Runtime components",
-                  collapsed: true,
-                  items: [
-                    {
-                      text: "Overview",
-                      link: "/docs/deploy-operate/install/runtime-components/overview",
-                    },
-                    {
-                      text: "Vector data service",
-                      link: "/docs/deploy-operate/install/runtime-components/vector-data-service",
-                    },
-                  ],
+                  text: "Connect artifact registries",
+                  link: "/docs/deploy-operate/install/connect-registries",
                 },
               ],
             },
             {
-              text: "Control access",
+              text: "Administer projects and access",
               items: [
                 {
-                  text: "Manage projects",
+                  text: "Create a project",
                   link: "/docs/deploy-operate/control-access/projects",
                 },
                 {
-                  text: "Grant roles",
+                  text: "Grant teams access to a project",
                   link: "/docs/deploy-operate/control-access/access-control",
                 },
                 {
@@ -260,23 +246,51 @@ export default defineConfig({
               ],
             },
             {
-              text: "Manage delivery",
+              text: "Prepare delivery environments",
               items: [
                 {
-                  text: "Manage landscapes",
+                  text: "Create a landscape",
                   link: "/docs/deploy-operate/manage-delivery/landscapes",
                 },
                 {
-                  text: "Manage deployment targets",
+                  text: "Configure deployment targets for a landscape",
                   link: "/docs/deploy-operate/manage-delivery/deployment-targets",
                 },
                 {
-                  text: "Manage stages",
+                  text: "Configure landscape services",
+                  collapsed: true,
+                  items: [
+                    {
+                      text: "Choose landscape services",
+                      link: "/docs/deploy-operate/install/runtime-components/overview",
+                    },
+                    {
+                      text: "Install the Vector Data Service",
+                      link: "/docs/deploy-operate/install/runtime-components/vector-data-service",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              text: "Run delivery",
+              items: [
+                {
+                  text: "Create a stage",
                   link: "/docs/deploy-operate/manage-delivery/stages",
                 },
                 {
-                  text: "Promote vectors",
+                  text: "Set up and run promotion flows",
                   link: "/docs/deploy-operate/manage-delivery/promote-vectors",
+                },
+              ],
+            },
+            {
+              text: "Operate the platform",
+              items: [
+                {
+                  text: "Upgrade Konfidence",
+                  link: "/docs/deploy-operate/operate/upgrading-konfidence",
                 },
               ],
             },

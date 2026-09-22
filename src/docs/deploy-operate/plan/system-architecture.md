@@ -1,16 +1,32 @@
 ---
-title: System Architecture
-description: Understand the architecture of Konfidence, including the control plane and the landscapes where applications run.
+title: System architecture
+description: Understand how Konfidence, deployers, and landscapes work together in the supported single-cluster topology.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# System Architecture
+# System architecture
 
-Konfidence separates the definition of your delivery process from its execution in the target environments. Both responsibilities are roles of a single control plane: Konfidence runs as one binary, installed from one Helm chart, in one Kubernetes cluster.
+Konfidence separates the definition of your delivery process from its execution in target environments. Before installing it, understand which components you install centrally and which resources you configure for each project and landscape.
+
+Konfidence acts as a delivery control plane. It runs as workloads on Kubernetes and uses the Kubernetes API to store delivery state. It does not replace the Kubernetes control plane.
+
+The diagram shows how delivery management and runtime orchestration connect through the desired stage state:
 
 <DrawioDiagram src="/assets/diagrams/konfidence-architecture.drawio" />
+
+## Components you install
+
+The platform consists of Konfidence and the deployers you install to provide deployment capabilities:
+
+| Component | Responsibility | Installation |
+| --- | --- | --- |
+| Konfidence operator | Reconciles delivery resources and coordinates rollouts | The `konfidence` Helm chart |
+| Konfidence API server | Provides the API, dashboard, login, and project authorization | The same `konfidence` Helm chart |
+| Kubernetes deployer | Deploys Helm and Kustomize artifacts through Flux | The separate `kubernetes-landscape-orchestrator` Helm chart |
+
+[Choose a deployer](../install/deployer/overview.md) explains how deployment classes connect artifact types to a target platform. Installing a deployer provides its classes centrally. A [deployment target](../manage-delivery/deployment-targets.md) makes one class available in a particular landscape.
 
 ## Delivery management
 
@@ -28,11 +44,11 @@ Runtime orchestration is the execution side of the control plane.
 
 ## Landscape
 
-A landscape is the actual place where deployments happen.
+A landscape groups stages and their deployment resources within a project. Konfidence creates and manages a namespace for each landscape. You provide the underlying infrastructure and configure the deployment targets that tell deployers where to run its workloads.
 
-* **Definition:** The infrastructure where your software runs. In the current release, a landscape is a Kubernetes environment represented by a namespace, and the [Kubernetes landscape orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) executes the deployments there.
-* **Role:** It provides the foundation for your applications. Konfidence does not manage the landscape itself; you must provide the underlying infrastructure. You can set up multiple landscapes for different purposes, such as testing and production.
+You can create landscapes for different operational boundaries, such as testing and production. [Landscapes and stages](../../core-concepts/landscapes-and-stages.md) explains how to choose those boundaries.
 
+[Landscape services](../install/runtime-components/overview.md), such as the Vector Data Service, run alongside applications. Install them in the landscape context after creating its namespace.
 
 ## The current release runs everything in one cluster
 
@@ -42,6 +58,9 @@ The control plane and the Kubernetes landscape orchestrator run in one Kubernete
 * The kubernetes-landscape-orchestrator Helm chart installs the deployer for the Kubernetes target runtime.
 * Each project and each landscape owns a namespace in that cluster.
 
-A [deployment target](../manage-delivery/deployment-targets.md) decides where a landscape's workloads run. It can point at the control plane cluster or at a remote cluster. Running the control plane itself across several clusters is not available in the current release.
+Use the Kubernetes deployer's `local` connection for workloads in this cluster. Its remote `kubeconfig` connection is work in progress and does not yet create every resource on the remote cluster. See [Connection types](../install/deployer/kubernetes.md#connection-types) for the current limitations. Running the Konfidence control plane itself across several clusters is not available in the current release.
 
-See [Install Konfidence](../install/konfidence-installation.md) for the installation steps.
+## Next steps
+
+- [Plan for high availability](./high-availability.md) explains replica configuration, session storage, and external dependencies.
+- [Install Konfidence](../install/konfidence-installation.md) installs the operator and API server.

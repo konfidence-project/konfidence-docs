@@ -1,6 +1,6 @@
 ---
 title: Install Konfidence
-description: Install the Konfidence control plane into a Kubernetes cluster with Helm.
+description: Install the Konfidence operator and API server into a Kubernetes cluster with Helm.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -8,13 +8,15 @@ lastUpdated: true
 
 # Install Konfidence
 
-Install the Konfidence control plane, the operator and the API server, from one Helm chart. After this page the control plane runs. You then install a deployer, expose the API, and connect registries.
+Install the Konfidence operator and API server from one Helm chart. After verifying these services, publish the dashboard and API, choose a deployer, and configure registry access.
+
+These steps are for the administrator of the Kubernetes installation. Review [System architecture](../plan/system-architecture.md) and [Plan for high availability](../plan/high-availability.md) before choosing your configuration.
 
 For a local test cluster, use the [Quickstart](/docs/getting-started/quickstart) instead. It sets up a kind cluster with everything installed.
 
 ## Prerequisites
 
-- A Kubernetes cluster and `kubectl` access to it. Check: `kubectl cluster-info` prints the control plane address.
+- A Kubernetes cluster and `kubectl` access with permission to install charts and their cluster-scoped resources. Check connectivity with `kubectl cluster-info`; it prints the Kubernetes control plane address.
 - Helm with OCI registry support, version 3.8 or later. Check: `helm version` prints 3.8 or higher.
 - The Gateway API CRDs, version 1.4.1. Check: `kubectl get crd gateways.gateway.networking.k8s.io` finds the CRD. Install:
 
@@ -32,7 +34,7 @@ For a local test cluster, use the [Quickstart](/docs/getting-started/quickstart)
     --timeout=180s
   ```
 
-## Install the control plane
+## Install the Konfidence services {#install-the-control-plane}
 
 Set the Konfidence version and target namespace:
 
@@ -149,6 +151,6 @@ Re-run the install command with `--values session-values.yaml`. The API server r
 
 ## Next steps
 
-* [Install the Kubernetes deployer](./deployer/kubernetes.md#install-the-deployer). Without a deployer, no stage can deploy.
-* [Give teams access to the dashboard and API](./expose-api.md) publishes both and enables login through your identity provider.
-* [Connect artifact registries](./connect-registries.md) gives the control plane and the deployer access to private registries.
+- [Give teams access to the dashboard and API](./expose-api.md) publishes both and enables login through your identity provider.
+- [Choose a deployer](./deployer/overview.md) selects the capabilities your applications need. Then [install the Kubernetes deployer](./deployer/kubernetes.md#install-the-deployer) for Helm and Kustomize artifacts.
+- [Connect artifact registries](./connect-registries.md) configures central credentials now and deployer credentials after you create a landscape.

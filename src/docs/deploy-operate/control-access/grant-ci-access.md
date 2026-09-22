@@ -12,9 +12,10 @@ Bind a project role to the OpenID Connect (OIDC) identity of a CI workflow. The 
 
 ## Prerequisites
 
-- A [project](./projects.md) and the `admin` role in it, or `kubectl` access to edit `Project` resources.
+- A [project](./projects.md) and `kubectl` access with Kubernetes permission to read and edit it. These binding examples use Kubernetes directly; a Konfidence project role alone does not authorize the edits.
 - The API is reachable from the CI runners over HTTPS. See [Give teams access to the dashboard and API](../install/expose-api.md).
 - The public URL of the API, for example `https://konfidence.example.com/api`.
+- `kden` installed on the runner for the API calls below. The GitHub Actions token request also uses `curl` and `jq`; the SPIRE example uses a local SPIRE agent.
 - The identity the provider gives the workflow:
 
 | Provider | Identity | Discovery endpoint |
@@ -30,7 +31,7 @@ Bind a project role to the OpenID Connect (OIDC) identity of a CI workflow. The 
 | Read deployment status, list vectors and promotions | `dev` |
 | Approve promotions, change stage configuration | `pm` |
 
-`admin` grants control over role bindings. Do not bind it to a pipeline. [Grant roles](./access-control.md) lists every permission.
+`admin` grants control over role bindings. Do not bind it to a pipeline. [Grant teams access to a project](./access-control.md) explains the project roles. The role you bind authorizes pipeline calls to the Konfidence API, not direct Kubernetes access.
 
 ## Choose the audience
 
@@ -165,5 +166,5 @@ In every case, the last command prints the promotion configs of the project. A `
 
 ## Next steps
 
-- [Promote vectors](../manage-delivery/promote-vectors.md) shows the approval the pipeline can now grant.
-- [Grant roles](./access-control.md) covers session subjects for interactive users.
+- [Approve a promotion](../manage-delivery/promote-vectors.md#approve-a-promotion) shows the API operation a pipeline with the `pm` role can perform once a promotion flow exists.
+- [Grant teams access to a project](./access-control.md) covers session subjects for interactive users.

@@ -1,14 +1,14 @@
 ---
-title: High availability
-description: Which control plane components can run with more than one replica, what each needs, and where state lives.
+title: Plan for high availability
+description: Plan replicas and session storage for the Konfidence operator and API server, and understand their external dependencies.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# High availability
+# Plan for high availability {#high-availability}
 
-The Konfidence control plane runs as two Deployments: the operator and the API server. Each can run with more than one replica. This page explains what each needs for that and where state lives, so you can decide which components to scale.
+Plan how the Konfidence operator and API server handle replica failures before configuring your installation. They run as two Deployments, each of which can run with more than one replica. Use the state and session requirements below to decide which components to scale and which external services you need.
 
 ::: warning Not fully tested
 Running the control plane with more than one replica is not fully tested in the current release. Use it at your own discretion and verify failover in a non-production cluster first.
@@ -43,7 +43,8 @@ With the default `in-memory` store, two API server replicas do not share session
 
 Konfidence depends on Flux, the Gateway API CRDs, and cert-manager when the webhook is enabled. Their availability is configured in their own installations. The state of Konfidence is only as durable as the cluster's etcd. Back up the cluster or the custom resources with your existing tooling.
 
-## Related pages
+## Next steps {#related-pages}
 
 - [System architecture](./system-architecture.md) explains the control plane and the one-cluster topology.
-- [Helm values: konfidence](/docs/reference/helm-values-konfidence) lists every value named here.
+- [Install Konfidence](../install/konfidence-installation.md) applies the configuration, including a shared session store when needed.
+- [Helm values: konfidence](../../reference/helm-values-konfidence.md) lists every value named here.

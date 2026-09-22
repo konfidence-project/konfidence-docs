@@ -86,8 +86,8 @@ Use these pages to explore related concepts or configure the resources described
 - [Vectors and Artifacts](./vectors-and-artifacts.md) explains the immutable application versions selected by stages.
 - [Promotions and Delivery Flow](./delivery-flow.md) explains how vectors move between delivery checkpoints.
 - [Deployment model](./deployment-model.md) explains how artifacts, deployment classes, deployers, and targets connect.
-- [Manage landscapes](../deploy-operate/manage-delivery/landscapes.md) explains how operators establish landscape boundaries.
-- [Manage deployment targets](../deploy-operate/manage-delivery/deployment-targets.md) explains how a landscape is connected to infrastructure.
-- [Manage stages](../deploy-operate/manage-delivery/stages.md) explains how to define and inspect delivery checkpoints.
-- [Promote vectors](../deploy-operate/manage-delivery/promote-vectors.md) explains how to connect stages in a controlled delivery flow.
+- [Create a landscape](../deploy-operate/manage-delivery/landscapes.md) explains how operators establish landscape boundaries.
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md) explains how a landscape is connected to infrastructure.
+- [Create a stage](../deploy-operate/manage-delivery/stages.md) explains how to define and inspect delivery checkpoints.
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md) explains how to connect stages in a controlled delivery flow.
 - [Delivery flow](./delivery-flow.md#runtime-boundary) explains the runtime lifecycle after a stage selects a vector.

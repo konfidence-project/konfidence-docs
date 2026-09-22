@@ -1,14 +1,16 @@
 ---
-title: Manage landscapes
+title: Create a landscape
 description: Create a landscape within a project and verify its managed deployment scope.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Manage landscapes
+# Create a landscape {#manage-landscapes}
 
 Create a landscape to establish an operational boundary for stages and their deployment resources. Konfidence manages a dedicated namespace for each landscape.
+
+Use Kubernetes access to create and maintain the landscape. Once its namespace is ready, configure deployment targets, registry credentials, and landscape services before creating stages.
 
 For guidance on choosing landscape boundaries, see [Landscapes and stages](../../core-concepts/landscapes-and-stages.md). To understand how a landscape connects artifacts to infrastructure, see the [Deployment model](../../core-concepts/deployment-model.md).
 
@@ -17,7 +19,7 @@ For guidance on choosing landscape boundaries, see [Landscapes and stages](../..
 Before you begin, make sure you have:
 
 - A [project](../control-access/projects.md) in which to create the landscape.
-- Permission to create `Landscape` resources in the project's namespace.
+- Kubernetes permission to create and read `Landscape` resources in the project's namespace. The update and delete sections also require the corresponding Kubernetes permissions.
 - Access to the Konfidence cluster through `kubectl`.
 
 ## Create a landscape
@@ -102,7 +104,8 @@ Konfidence keeps the landscape in a terminating state until its managed namespac
 
 ## Next steps
 
-- [Manage deployment targets](./deployment-targets.md) explains how to connect the landscape to infrastructure.
-- [Manage stages](./stages.md) explains how to define delivery checkpoints in the landscape.
-- [Grant roles](../control-access/access-control.md) for the parent project.
+- [Configure deployment targets for a landscape](./deployment-targets.md) makes the required deployment classes available.
+- [Give the deployer registry credentials](../install/connect-registries.md#give-the-deployer-credentials) in this landscape when artifacts come from private registries.
+- [Choose landscape services](../install/runtime-components/overview.md) identifies services to install alongside your applications.
+- [Create a stage](./stages.md) once the landscape is prepared.
 - Consult the [Landscape CRD reference](../../reference/crd.md#landscape) for all fields.
