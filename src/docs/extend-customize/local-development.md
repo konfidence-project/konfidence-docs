@@ -1,110 +1,182 @@
 ---
 title: "Local development"
-description: "Run Konfidence locally while you change it: an envtest apiserver on your host, and a registry, identity provider, kind cluster or deployer when your change needs them."
+description: "Set up Konfidence locally and add only the services your work needs."
 editLink: true
 lastUpdated: true
 ---
 
 # Local development
 
-This page is for contributors to the [`konfidence`](https://github.com/konfidence-project/konfidence) repository. To try Konfidence without changing it, follow the [Quickstart](../getting-started/quickstart.md) instead.
+This guide is for contributors to the [`konfidence`](https://github.com/konfidence-project/konfidence) repository. If you only want to try Konfidence, follow the [Quickstart](../getting-started/quickstart.md) instead.
 
-What you need depends on what your change touches:
+The recommended setup runs the operator, API server, and dashboard on your computer. A lightweight Kubernetes API stores the Konfidence resources, while Docker provides login, HTTPS, and PostgreSQL.
 
-| You are changing | You need |
+## Before you start
+
+You need:
+
+- the `konfidence` repository cloned locally
+- Docker running
+- Hermit activated in every terminal you use
+
+From the repository root, activate Hermit:
+
+```bash
+source ./bin/activate-hermit
+```
+
+Hermit provides the project tools, including Go, `kubectl`, Helm, and kind. Run `make help` at any time to see the available development commands.
+
+If you plan to work on the dashboard, install its dependencies once:
+
+```bash
+pnpm install
+```
+
+## Customize your local settings
+
+Make loads the shared settings from `hack/kden_local_dev/konfidence.env` before it runs a target. These settings provide the local addresses and development credentials used throughout this guide.
+
+Do not edit that file for personal settings. For a one-time change, add the variable to the `make` command. For example:
+
+```bash
+make dev-ui VITE_KONFIDENCE_API_BASE_URL=http://localhost:8090/api
+```
+
+For settings you want to keep, create a private copy outside the repository:
+
+```bash
+mkdir -p "$HOME/.config/konfidence"
+cp hack/kden_local_dev/konfidence.env "$HOME/.config/konfidence/dev.env"
+```
+
+Edit the private file, then tell Make to use it in the current terminal:
+
+```bash
+export DEV_KONFIDENCE_ENV_FILE="$HOME/.config/konfidence/dev.env"
+```
+
+Every `make` command from that terminal now uses your private settings.
+
+You can also select the file for only one command:
+
+```bash
+make dev-ui DEV_KONFIDENCE_ENV_FILE="$HOME/.config/konfidence/dev.env"
+```
+
+## Recommended setup
+
+The following setup includes the local sign-in flow and trusted HTTPS addresses. Keep each long-running command open in its own terminal.
+
+### 1. Start the local services
+
+```bash
+make dev-up
+```
+
+This starts the local identity provider, HTTPS proxy, and PostgreSQL. The first run adds the local development certificate to your operating system's trust store and may ask for your password or confirmation.
+
+The credentials and certificates in `hack/kden_local_dev` are only for local development. Do not reuse them elsewhere.
+
+### 2. Start the Kubernetes API
+
+```bash
+make dev-kube-apiserver
+```
+
+This starts a small Kubernetes API for development. It does not run containers or workloads, but it is enough for the operator, API server, CLI, and dashboard.
+
+The command prints a `KUBECONFIG` value. In every new terminal, activate Hermit and set that value:
+
+```bash
+source ./bin/activate-hermit
+export KUBECONFIG="$PWD/.tmp/envtest.kubeconfig"
+```
+
+Leave `make dev-kube-apiserver` running while you work.
+
+### 3. Start the operator
+
+Generate the local webhook certificates once:
+
+```bash
+make webhook-certs
+```
+
+Then start the operator:
+
+```bash
+make run
+```
+
+### 4. Start the API server
+
+In another terminal with Hermit and `KUBECONFIG` set, run:
+
+```bash
+make run-kden-api
+```
+
+The default local configuration connects the API server to the identity provider started by `make dev-up`.
+
+To check that the API is ready, open <https://api.localhost/healthz>. The response should be `{"status":"ok"}`.
+
+### 5. Start the dashboard
+
+In another terminal, run:
+
+```bash
+make dev-ui
+```
+
+Open <https://ui.localhost> and sign in with one of these local users:
+
+| Username | Password | Groups |
+| --- | --- | --- |
+| `alice` | `password` | `admins`, `developers` |
+| `devin` | `password` | `developers` |
+| `primo` | `password` | `productmanagers` |
+
+The main local addresses are:
+
+| Service | Address |
 | --- | --- |
-| Controller logic, API handlers, the CLI, the dashboard | A Kubernetes API with the Konfidence CRDs. envtest provides one on your host. |
-| [Vector](../reference/glossary.md#vector) or [artifact](../reference/glossary.md#artifact) handling, image builds | The above plus a local OCI registry |
-| Login and sessions | The above plus a local identity provider |
-| The Helm chart, Dockerfiles, RBAC or webhook wiring | A kind cluster with the registry |
-| End-to-end delivery into workloads | The cluster plus a [deployer](../reference/glossary.md#deployer) |
+| Dashboard | <https://ui.localhost> |
+| API | <https://api.localhost> |
+| Sign-in | <https://auth.localhost> |
 
-## Prerequisites
+## Dashboard only
 
-- A clone of the `konfidence` repository.
-- Docker running, for the registry, the identity provider and kind. Another container tool works if you set `CONTAINER_TOOL`, for example `CONTAINER_TOOL=podman`.
-- Hermit activated in your shell. It provides every other tool, including `go`, `kind`, `kubectl`, `helm` and `mkcert`:
-
-  ```bash
-  source ./bin/activate-hermit
-  ```
-
-Run every command on this page from the repository root with Hermit active. `make help` lists all targets. The first `make` target you run downloads the pinned tools and regenerates manifests. Expect a minute of output before anything else happens.
-
-## Kubernetes API
-
-The operator, the API server and `kden` read and write custom resources and need nothing else from a cluster. A bare API server is enough, and [envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest) starts one on your host with the Konfidence CRDs installed. `make test-operators` uses the same binaries:
+You do not need Kubernetes or the operator when your change only affects the dashboard. Start the dashboard with its mock API:
 
 ```bash
-make dev-apiserver
+pnpm ui:dev:mock
 ```
 
-Once the generators are done it prints an `export KUBECONFIG=...` line. Paste that line into every other terminal you use for the steps below and leave the apiserver running. The variable is per terminal; a new tab needs it again. `Ctrl`+`C` stops it.
+Open the address printed in the terminal, usually `http://localhost:5173`. Changes to the dashboard and design system appear automatically.
 
-Verify the CRDs are present:
+Use the [recommended setup](#recommended-setup) when you need real API data or want to test sign-in.
+
+## Run without sign-in
+
+For API or CLI work that does not involve authentication, you can skip `make dev-up`. Start the Kubernetes API and operator as described above, then run the API server with local authentication disabled:
 
 ```bash
-kubectl get crds | grep konfidence
+API_OIDC_ENABLED=false \
+API_SESSION_COOKIE_SECURE=false \
+API_SESSION_COOKIE_SAME_SITE=SameSiteStrictMode \
+make run-kden-api
 ```
 
-You should see the Konfidence CRDs, such as `landscapes.konfidence.cloud` and `artifactdeployments.konfidence.cloud`.
+The API is available at `http://localhost:8090`. Signing in creates a local administrator session without asking for a password.
 
-Now run the operator and the API server on your host. Both regenerate manifests and run `go fmt` and `go vet` on every start, which takes about half a minute.
-
-1. Generate the webhook certificates once. The operator's admission webhooks need TLS, and `mkcert` creates a locally trusted certificate:
-
-   ```bash
-   make webhook-certs
-   ```
-
-2. Start the operator in one terminal:
-
-   ```bash
-   make run
-   ```
-
-3. Start the API server in a second terminal:
-
-   ```bash
-   make run-kden-api
-   ```
-
-   OIDC is off by default. See [No-auth mode](#no-auth-mode) for what that means.
-
-4. Verify the API server answers:
-
-   ```bash
-   curl http://localhost:8090/healthz
-   ```
-
-   The expected response is `{"status":"ok"}`.
-
-5. Build the `kden` CLI once:
-
-   ```bash
-   make build-kden-cli
-   ```
-
-   The binary lands in `bin/kden`, which Hermit has on your `PATH`. It talks to `http://localhost:8090` by default and needs no configuration for this API server. If you run the API server elsewhere, point it there with `kden config set api-endpoint <url>`.
-
-### No-auth mode
-
-With `API_OIDC_ENABLED=false`, the API server replaces the OIDC login with a handler that creates a session straight away. Every session carries the same static identity. The session middleware otherwise works as usual, and all endpoints, the dashboard and the CLI behave as they do with a real identity provider.
-
-| Field  | Value         |
-| ------ | ------------- |
-| Name   | `Local Admin` |
-| Email  | `admin@local` |
-| Groups | `local-admin` |
-
-::: warning Not for shared environments
-No-auth mode disables authentication. Never run a shared or production installation with `oidc.enabled: false`.
+::: warning Local development only
+Disabling OIDC removes real authentication. Never use this mode in a shared or production environment.
 :::
 
-[Projects](../reference/glossary.md#project) control access through role bindings. A project is only visible to the local admin if it binds the `local-admin` group. Create one to work with:
+Projects control access through role bindings. To make a project visible in this mode, bind the `local-admin` group:
 
-```bash
-kubectl apply -f - <<EOF
+```yaml
 apiVersion: konfidence.cloud/v1alpha1
 kind: Project
 metadata:
@@ -115,230 +187,164 @@ spec:
       - session:
           memberOf:
             - local-admin
-EOF
 ```
 
-Projects without that binding return empty role sets and their resources stay hidden.
+Apply the file with `kubectl apply -f <file>`.
 
-Signing in works the same way everywhere. In the dashboard, click **Login** and you land on the local admin session. With the CLI, `kden login` opens the login URL in your browser and completes the callback on its own. To drive the flow with `curl`, follow the login redirect, keep the cookie it sets and use it on later requests:
+## Use the CLI
+
+Build the CLI once:
 
 ```bash
-curl -si "http://localhost:8090/api/v1/login?return_url=http://localhost:8090/" | grep -i location
-curl -si "<the Location URL from above>" | grep -i set-cookie
-curl -s http://localhost:8090/api/v1/identity -H "Cookie: kden-session=<session id from the cookie>"
+make build-kden-cli
 ```
 
-The identity response names `Local Admin` with `my-project` under `projectRoles`. An empty `projectRoles` means the Project was not applied or lacks the `local-admin` binding. The same [role binding model](../deploy-operate/control-access/access-control.md) applies to real identity provider groups.
-
-To serve the dashboard from the API server as in production, install the workspace dependencies and build it once, then start the API server with the build. Stop the API server from step 3 first, since both listen on port 8090:
+The `kden` command is then available on your Hermit `PATH`. By default, it connects to `http://localhost:8090/api`. To use another API server, run:
 
 ```bash
-pnpm install
-pnpm ui:build
-API_UI_ASSET_PATH=apps/konfidence-ui/build make run-kden-api
+kden config set api-endpoint <url>
 ```
 
-For dashboard work itself, run the dev server and point its API proxy at the API server from step 3:
+## Optional services
+
+Add these services only when your change needs them.
+
+### Database-backed sessions
+
+Sessions normally remain in memory and disappear when the API server stops. To test persistent sessions, start the local services, apply the database migrations, and select PostgreSQL storage:
 
 ```bash
-KONFIDENCE_API_URL=http://127.0.0.1:8090 pnpm ui:dev
+make dev-up
+make dev-db-migrate
+API_SESSION_STORAGE_TYPE=db-pg make run-kden-api
 ```
 
-Open the printed URL, usually `http://localhost:5173`, and sign in. With OIDC off you land on the local admin session without a password. Without `KONFIDENCE_API_URL` the proxy targets the mock API on port 8091, which `pnpm ui:dev:mock` starts together with the dashboard when you want no Kubernetes at all. The design system is a workspace package that the dashboard imports from source; changes to it show up live in the same dev server. See the [`konfidence` README](https://github.com/konfidence-project/konfidence#dashboard-development).
+The migration command is safe to run again; it only applies missing migrations.
 
-::: tip Any cluster works
-If you already have a cluster, point `KUBECONFIG` at it and install the CRDs with `make install`. Everything else on this page is the same.
-:::
+### Local artifact registry
 
-## Artifact store
-
-Vectors and artifacts are OCI objects, and so are the container images. Start a local registry at `localhost:5001`:
+Vectors, artifacts, and development container images can use the local registry:
 
 ```bash
 make dev-registry
 ```
 
-A vector is pushed from a constructor file that lists its components and resources. Create a minimal one under `.tmp`, which git ignores, together with the config file it references:
+The registry is available at `http://localhost:5001`. Include the `http://` scheme when passing it to `kden` because the local registry does not use TLS.
+
+### Workload identity simulator
+
+Start the simulator only when working on workload identity:
 
 ```bash
-mkdir -p .tmp/demo-vector
-echo '{"description": "demo vector for local development"}' > .tmp/demo-vector/vector-config.json
-cat > .tmp/demo-vector/vector-constructor.yaml <<'EOF'
-components:
-  - name: example.com/demo/vector
-    version: 0.1.0
-    provider:
-      name: konfidence
-    resources:
-      - name: cloud-konfidence-vector-config
-        type: json
-        version: 0.1.0
-        relation: local
-        input:
-          type: file/v1
-          path: ./vector-config.json
-EOF
+go run ./hack/kden_local_dev/workload_id_simulator.go
 ```
 
-Push it with `kden`. The constructor's file paths are relative to the working directory, so the command runs in a subshell inside that directory. The registry speaks plain HTTP and `kden` assumes HTTPS, hence the explicit scheme. The path after the port names the repository the vector goes into:
+It is then available through <https://id.localhost> while `make dev-up` is running.
+
+## Test in a real cluster
+
+Use the local kind cluster when changing the Helm chart, container images, RBAC, or webhook setup. Stop the lightweight Kubernetes API first and use a terminal where `KUBECONFIG` is not set:
 
 ```bash
-(cd .tmp/demo-vector && kden vector push --file vector-constructor.yaml --registry=http://localhost:5001/vectors/demo)
+unset KUBECONFIG
+make dev-cluster
+kubectl config use-context kind-konfidence-dev
 ```
 
-On success the command prints two log lines about missing OCM configuration and credentials and nothing else. Verify the vector is in the registry:
+Build and push the local images:
 
 ```bash
-curl http://localhost:5001/v2/_catalog
+REGISTRY=localhost:5001 make docker-build docker-push docker-build-api docker-push-api
 ```
 
-The output lists `vectors/demo/component-descriptors/example.com/demo/vector`. The registry keeps its contents until `make dev-cluster-down` deletes it along with the kind cluster.
-
-## Identity provider
-
-Only the login flow touches an identity provider. The repository ships a Docker Compose stack with Authelia (OIDC) behind Caddy (reverse proxy with local TLS), served at `https://auth.localhost`:
+To deploy only the operator:
 
 ```bash
-make dev-up
+REGISTRY=localhost:5001 make deploy
 ```
 
-Your operating system must trust Caddy's local certificate authority, or the API server exits with a certificate error at startup. Export the root certificate from the running Caddy container and add it to your system trust store once. On macOS this changes the system keychain and asks for your password:
+To include the API server and local sign-in, first run `make dev-up`, then deploy with:
 
 ```bash
-docker cp caddy:/data/caddy/pki/authorities/local/root.crt .tmp/caddy-root.crt
-sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain .tmp/caddy-root.crt
+REGISTRY=localhost:5001 \
+DEPLOY_OIDC_ISSUER_URL=https://host.docker.internal \
+DEPLOY_OIDC_CLIENT_ID=konfidence \
+DEPLOY_OIDC_REDIRECT_URL=https://api.localhost/api/v1/auth/callback \
+DEPLOY_OIDC_CLIENT_SECRET=konfidence \
+DEPLOY_OIDC_ALLOWED_RETURN_HOSTS=ui.localhost \
+DEPLOY_OIDC_TRUST_LOCAL_CA=1 \
+make deploy
 ```
 
-On Linux:
+Check that the pods are running:
 
 ```bash
-docker cp caddy:/data/caddy/pki/authorities/local/root.crt .tmp/caddy-root.crt
-sudo cp .tmp/caddy-root.crt /usr/local/share/ca-certificates/caddy-root.crt
-sudo update-ca-certificates
+kubectl get pods -n konfidence-system
 ```
 
-Setting `SSL_CERT_FILE` instead has no effect on macOS, where Go uses the system trust store. Then start the API server with OIDC on. Stop the one from step 3 first; it also listens on port 8090:
+To reach the in-cluster API from your computer:
 
 ```bash
-API_OIDC_ENABLED=true make run-kden-api
+kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
 ```
 
-`make dev-logs` tails the stack's logs until you press `Ctrl`+`C`. `make dev-down` stops the stack and keeps its data. `make dev-reset` stops it and deletes the data.
-
-The stack also starts Postgres. Sessions default to in-memory storage; you need Postgres when you work on session storage itself. Apply the API server's migrations once, then start the API server in database mode. Stop the API server from step 3 first; it also listens on port 8090:
+`make deploy` uses your current Kubernetes context. Always check it before deploying:
 
 ```bash
-make dev-db-migrate
-API_SESSION_STORAGE_TYPE=db-pg make run-kden-api
+kubectl config current-context
 ```
 
-`make dev-db-migrate` can be rerun; it applies whatever migrations are missing. The connection string defaults to the compose credentials and can be overridden with `API_DB_CONNECTION`.
+## Test a deployer
 
-## Real cluster
+Deployers live in separate repositories. For the Kubernetes deployer, clone [`kubernetes-landscape-orchestrator`](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) next to the `konfidence` repository and follow its development instructions.
 
-Use a kind cluster when your change concerns how Konfidence runs inside a cluster: the Helm chart, the Dockerfiles, RBAC or the webhook wiring. Stop `make dev-apiserver`, `make run` and `make run-kden-api` first, and use a terminal without the envtest `KUBECONFIG`. kind writes its context into whatever `KUBECONFIG` points at, and every `make dev-apiserver` rewrites the envtest file. `make dev-cluster` therefore refuses to run while it's set.
+The deployer needs a real cluster, the Konfidence CRDs, and its own dependencies. Start with the [Kubernetes deployer installation guide](../deploy-operate/install/deployer/kubernetes.md).
 
-1. Create the cluster. It is wired to the local registry and starts it if needed. Your `kubectl` context switches to `kind-konfidence-dev`:
+## Stop the local setup
 
-   ```bash
-   make dev-cluster
-   ```
+Stop the operator, API server, dashboard, and lightweight Kubernetes API with `Ctrl`+`C` in their terminals.
 
-2. Build the images and push them to the registry. These targets cross-compile for Linux and work on macOS and Linux hosts alike:
-
-   ```bash
-   REGISTRY=localhost:5001 make docker-build docker-push docker-build-api docker-push-api
-   ```
-
-3. Deploy the operator. `make deploy` reuses the webhook certificates from `make webhook-certs`. Run that once if you haven't:
-
-   ```bash
-   REGISTRY=localhost:5001 make deploy
-   ```
-
-4. Or deploy the operator and the API server together. Running this after step 3 upgrades the release in place. The API server pod needs the identity provider from `make dev-up` wired in, and the values below match the compose stack:
-
-   ```bash
-   REGISTRY=localhost:5001 \
-   DEPLOY_OIDC_ISSUER_URL=https://host.docker.internal \
-   DEPLOY_OIDC_CLIENT_ID=konfidence \
-   DEPLOY_OIDC_REDIRECT_URL=https://api.localhost/api/v1/auth/callback \
-   DEPLOY_OIDC_CLIENT_SECRET=konfidence-local-secret \
-   DEPLOY_OIDC_ALLOW_RETURN_URLS=https://api.localhost \
-   DEPLOY_OIDC_TRUST_CADDY_CA=1 \
-   make deploy
-   ```
-
-   The issuer is `host.docker.internal` because the pod talks to Authelia on your host. `make deploy` rewrites the browser-facing URLs to `auth.localhost` and mounts Caddy's local CA into the pod so it trusts Authelia's certificate. On Linux, where that hostname does not exist, it also adds a host alias pointing at the kind node's gateway.
-
-5. Verify the pods are running:
-
-   ```bash
-   kubectl get pods -n konfidence-system
-   ```
-
-   Both `konfidence` and `konfidence-api` should reach `1/1 Running`.
-
-6. To call the in-cluster API server from your host, forward its service and check the health endpoint:
-
-   ```bash
-   kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
-   curl http://localhost:8090/healthz
-   ```
-
-   Browser logins from this deployment redirect to `https://auth.localhost`, which the compose stack serves.
-
-To remove the deployment, run `make undeploy`. To delete the cluster and the registry, run `make dev-cluster-down`.
-
-## Deployer
-
-The Konfidence operator records what should be deployed. Turning that into running workloads is the job of a deployer, which lives in its own repository and installs its own prerequisites. For the [Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md), clone [`kubernetes-landscape-orchestrator`](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) next to your `konfidence` clone and run, from its root with its Hermit active:
+Stop the Docker services but keep their data:
 
 ```bash
-make install-deps
-make install-konfidence-crds
-REGISTRY=localhost:5001 make docker-build docker-push dev-install
+make dev-down
 ```
 
-The first target installs Gateway API and Flux into the kind cluster. The second installs the Konfidence CRDs from the sibling clone, which the deployer's controllers need before they start; it skips the install when the CRDs are already present, for example after `make deploy` in `konfidence`. The last line builds the deployer image for your host's architecture, pushes it to the local registry and installs the chart with it.
-
-The chart installs into your current namespace, normally `default`. Verify the deployer is running:
+Delete their containers and stored data, including the local PostgreSQL database:
 
 ```bash
-kubectl get pods -l app.kubernetes.io/name=kubernetes-landscape-orchestrator
-```
-
-The pod should reach `1/1 Running`.
-
-## Tear everything down
-
-```bash
-make undeploy
-make dev-cluster-down
 make dev-reset
 ```
 
-Stop `make dev-apiserver` with `Ctrl`+`C`. If it was killed hard instead, its `etcd` and `kube-apiserver` processes can survive it. Find and stop them with `pkill -f kube-apiserver` and `pkill -f etcd`. The built images in your container tool and the webhook certificates under `/tmp/k8s-webhook-server` are left in place.
+Delete the kind cluster and local registry:
+
+```bash
+make dev-cluster-down
+```
+
+Remove a deployed Helm release before deleting its cluster:
+
+```bash
+make undeploy
+```
+
+The local certificate remains trusted by your operating system after these commands. Locally built images and webhook certificates are also kept.
 
 ## Troubleshooting
 
-**`make dev-apiserver` exits with `is KUBEBUILDER_ASSETS set?`.** The envtest binaries for the configured Kubernetes version are missing. Run `make setup-envtest` and retry.
+**The browser does not trust a local HTTPS address.** Run `make dev-trust`, restart the browser, and try again. Some browsers with their own certificate store may need separate certificate settings.
 
-**`make run-kden-api` fails with `address already in use`.** Another API server is still listening on port 8090, usually the one from step 3. Stop it first.
+**The API server reports that port 8090 is already in use.** Another API server is still running. Stop it before starting a new one.
 
-**`make deploy` fails with `spec.selector` is immutable.** A `konfidence` Deployment from an older chart version is still in the cluster. Delete it and rerun the command:
+**The dashboard returns to the sign-in page after login.** Make sure `make dev-up`, `make run-kden-api`, and `make dev-ui` are all running. Delete cookies for `ui.localhost` and `api.localhost`, then sign in again.
 
-```bash
-kubectl delete deployment konfidence -n konfidence-system
-```
+**PostgreSQL rejects the local credentials.** Run `make dev-reset`, then `make dev-up`. Resetting removes the local database data.
 
-**`kden` reports a TLS error when pushing to `localhost:5001`.** The `--registry` value is missing its `http://` scheme. See [Artifact store](#artifact-store).
+**`make dev-kube-apiserver` cannot find its Kubernetes binaries.** Run `make setup-envtest`, then retry.
 
-**The API server can't verify Authelia's certificate on your host.** This only happens with `API_OIDC_ENABLED=true`. Trust Caddy's CA in your operating system, as described in [Identity provider](#identity-provider).
-
-**A deployer logs `no matches for kind` errors.** It started before the Konfidence CRDs existed. Install the CRDs and restart the deployer.
+**The wrong cluster receives a deployment.** Run `kubectl config current-context`. For the local kind cluster, select it with `kubectl config use-context kind-konfidence-dev`.
 
 ## Related information
 
-- The [`konfidence` README](https://github.com/konfidence-project/konfidence#dashboard-development) covers developing the dashboard with `pnpm`.
-- The [`example-app`](https://github.com/konfidence-project/example-app) repository deploys a complete multi-service application through a released Konfidence build.
+- The [`konfidence` README](https://github.com/konfidence-project/konfidence#dashboard-development) lists dashboard checks and tests.
+- The [`example-app`](https://github.com/konfidence-project/example-app) repository demonstrates a complete multi-service application.
