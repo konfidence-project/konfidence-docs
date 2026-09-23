@@ -22,32 +22,31 @@ Continuous integration (CI) pipelines publish artifacts to an OCM-compliant repo
 
 ::: details Pages that use this term
 
-- [Access Control (RBAC)](../deploy-operate/access-control.md)
 - [Advanced features](../develop-integrate/advanced-features/index.md)
 - [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
 - [Author a Kustomize artifact](../develop-integrate/artifact-types/kustomize.md)
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md)
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
 - [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
 - [Core concepts](../core-concepts/index.md)
+- [Create a landscape](../deploy-operate/manage-delivery/landscapes.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Create your own artifacts](../getting-started/create-vector.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
 - [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Deployment model](../core-concepts/deployment-model.md)
 - [Develop & Integrate](../develop-integrate/index.md)
-- [Kubernetes deployer](../deploy-operate/deployer/kubernetes.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
 - [Local development](../extend-customize/local-development.md)
-- [Manage deployers](../deploy-operate/deployer/overview.md)
-- [Manage deployment targets](../deploy-operate/deployment-targets.md)
-- [Manage landscapes](../deploy-operate/landscapes.md)
-- [Manage stages](../deploy-operate/stages.md)
 - [Observe & Deliver](../develop-integrate/observe-improve/index.md)
 - [Prepare your application](../develop-integrate/prepare-your-application.md)
 - [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md)
 - [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
-- [Vector Deployments](../deploy-operate/vector-deployments.md)
 - [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
 
 :::
@@ -70,10 +69,10 @@ The delivery flow is the path from published artifacts to the vector each stage 
 ::: details Pages that use this term
 
 - [Core concepts](../core-concepts/index.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
 - [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
-- [Manage stages](../deploy-operate/stages.md)
 - [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
 
 :::
@@ -88,19 +87,18 @@ The current release provides one deployer for Kubernetes, installed with the [la
 
 - [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
 - [Author a Kustomize artifact](../develop-integrate/artifact-types/kustomize.md)
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
 - [Core concepts](../core-concepts/index.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
 - [Deployment model](../core-concepts/deployment-model.md)
-- [Installation variants](../deploy-operate/installation-variants.md)
-- [Kubernetes deployer](../deploy-operate/deployer/kubernetes.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
 - [Local development](../extend-customize/local-development.md)
-- [Manage deployers](../deploy-operate/deployer/overview.md)
-- [Manage deployment targets](../deploy-operate/deployment-targets.md)
+- [System architecture](../deploy-operate/plan/system-architecture.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
-- [Vector data service](../deploy-operate/runtime-components/vector-data-service.md)
-- [Vector Deployments](../deploy-operate/vector-deployments.md)
 
 :::
 
@@ -112,12 +110,12 @@ By convention, the class name follows the pattern `<class-name>.<vendor-domain>`
 
 ::: details Pages that use this term
 
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Deployment model](../core-concepts/deployment-model.md)
-- [Kubernetes deployer](../deploy-operate/deployer/kubernetes.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
-- [Manage deployers](../deploy-operate/deployer/overview.md)
-- [Manage deployment targets](../deploy-operate/deployment-targets.md)
-- [Manage stages](../deploy-operate/stages.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 
 :::
@@ -129,12 +127,12 @@ A deployment result is a value that a deployer produces while it deploys an arti
 ::: details Pages that use this term
 
 - [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
-- [Kubernetes deployer](../deploy-operate/deployer/kubernetes.md)
-- [Manage deployers](../deploy-operate/deployer/overview.md)
-- [Vector data overview](../develop-integrate/vector-data/overview.md)
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
 - [Prepare your application](../develop-integrate/prepare-your-application.md)
 - [Quickstart](../getting-started/quickstart.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
 
 :::
 
@@ -144,11 +142,11 @@ A deployment target makes one deployment class available in one landscape. It pr
 
 ::: details Pages that use this term
 
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Deployment model](../core-concepts/deployment-model.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
-- [Manage deployers](../deploy-operate/deployer/overview.md)
-- [Manage deployment targets](../deploy-operate/deployment-targets.md)
-- [Manage stages](../deploy-operate/stages.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 
 :::
@@ -162,12 +160,12 @@ A feature flag is a named value in the [vector configuration](#vector-configurat
 - [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
 - [Add configuration to a vector](../develop-integrate/vector-data/vector-configuration.md)
 - [Advanced features](../develop-integrate/advanced-features/index.md)
-- [Vector data overview](../develop-integrate/vector-data/overview.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
 - [Prepare your application](../develop-integrate/prepare-your-application.md)
 - [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
-- [Vector data service](../deploy-operate/runtime-components/vector-data-service.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
 
 :::
 
@@ -179,28 +177,26 @@ Konfidence creates a dedicated Kubernetes namespace for each landscape, `kden-l-
 
 ::: details Pages that use this term
 
-- [Access Control (RBAC)](../deploy-operate/access-control.md)
 - [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
 - [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
 - [Author a Kustomize artifact](../develop-integrate/artifact-types/kustomize.md)
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Create a landscape](../deploy-operate/manage-delivery/landscapes.md)
+- [Create a project](../deploy-operate/control-access/projects.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
 - [Deployment model](../core-concepts/deployment-model.md)
-- [Installation variants](../deploy-operate/installation-variants.md)
-- [Installing Konfidence](../deploy-operate/konfidence-installation.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
+- [Install Konfidence](../deploy-operate/install/konfidence-installation.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
-- [Manage deployers](../deploy-operate/deployer/overview.md)
-- [Manage deployment targets](../deploy-operate/deployment-targets.md)
-- [Manage landscapes](../deploy-operate/landscapes.md)
-- [Manage stages](../deploy-operate/stages.md)
-- [Managing Projects](../deploy-operate/projects.md)
-- [Vector data overview](../develop-integrate/vector-data/overview.md)
 - [Prepare your application](../develop-integrate/prepare-your-application.md)
 - [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
-- [System Architecture](../deploy-operate/system-architecture.md)
+- [System architecture](../deploy-operate/plan/system-architecture.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
-- [Vector data service](../deploy-operate/runtime-components/vector-data-service.md)
-- [Vector Deployments](../deploy-operate/vector-deployments.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
 
 :::
 
@@ -210,12 +206,12 @@ The landscape orchestrator executes deployments in a landscape. It runs in the s
 
 ::: details Pages that use this term
 
-- [Installation variants](../deploy-operate/installation-variants.md)
-- [Installing Konfidence](../deploy-operate/konfidence-installation.md)
-- [Manage deployment targets](../deploy-operate/deployment-targets.md)
-- [Vector data overview](../develop-integrate/vector-data/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Install Konfidence](../deploy-operate/install/konfidence-installation.md)
 - [Quickstart](../getting-started/quickstart.md)
+- [System architecture](../deploy-operate/plan/system-architecture.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
 
 :::
 
@@ -225,12 +221,12 @@ A project provides the organizational boundary for Konfidence resources. The API
 
 ::: details Pages that use this term
 
-- [Access Control (RBAC)](../deploy-operate/access-control.md)
 - [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
+- [Create a landscape](../deploy-operate/manage-delivery/landscapes.md)
+- [Create a project](../deploy-operate/control-access/projects.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
 - [Local development](../extend-customize/local-development.md)
-- [Manage landscapes](../deploy-operate/landscapes.md)
-- [Managing Projects](../deploy-operate/projects.md)
 
 :::
 
@@ -242,12 +238,11 @@ A [`VectorPromotionConfig`](#vectorpromotionconfig) defines a promotion flow. Ko
 
 ::: details Pages that use this term
 
-- [Access Control (RBAC)](../deploy-operate/access-control.md)
-- [Define promotions](../deploy-operate/define-promotions.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Deploy & Operate](../deploy-operate/index.md)
 - [Deploy a sample application](../getting-started/deliver-sample-app.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
 - [Quickstart](../getting-started/quickstart.md)
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
 
 :::
 
@@ -259,22 +254,20 @@ Each stage belongs to a landscape and uses the deployment targets configured the
 
 ::: details Pages that use this term
 
-- [Access Control (RBAC)](../deploy-operate/access-control.md)
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
 - [Core concepts](../core-concepts/index.md)
+- [Create a landscape](../deploy-operate/manage-delivery/landscapes.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Create your own artifacts](../getting-started/create-vector.md)
-- [Define promotions](../deploy-operate/define-promotions.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
 - [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Deployment model](../core-concepts/deployment-model.md)
-- [Installation variants](../deploy-operate/installation-variants.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
-- [Manage deployment targets](../deploy-operate/deployment-targets.md)
-- [Manage landscapes](../deploy-operate/landscapes.md)
-- [Manage stages](../deploy-operate/stages.md)
 - [Observe & Deliver](../develop-integrate/observe-improve/index.md)
-- [System Architecture](../deploy-operate/system-architecture.md)
-- [Vector Deployments](../deploy-operate/vector-deployments.md)
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
+- [System architecture](../deploy-operate/plan/system-architecture.md)
 - [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
 
 :::
@@ -287,35 +280,34 @@ Any change to an artifact reference or to the configuration creates a new vector
 
 ::: details Pages that use this term
 
-- [Access Control (RBAC)](../deploy-operate/access-control.md)
 - [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
 - [Add configuration to a vector](../develop-integrate/vector-data/vector-configuration.md)
 - [Advanced features](../develop-integrate/advanced-features/index.md)
 - [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
 - [Author a Kustomize artifact](../develop-integrate/artifact-types/kustomize.md)
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
 - [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
 - [Core concepts](../core-concepts/index.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Create your own artifacts](../getting-started/create-vector.md)
-- [Define promotions](../deploy-operate/define-promotions.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
 - [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Deployment model](../core-concepts/deployment-model.md)
-- [Kubernetes deployer](../deploy-operate/deployer/kubernetes.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
 - [Local development](../extend-customize/local-development.md)
-- [Manage deployment targets](../deploy-operate/deployment-targets.md)
-- [Manage stages](../deploy-operate/stages.md)
-- [Vector data overview](../develop-integrate/vector-data/overview.md)
 - [Prepare your application](../develop-integrate/prepare-your-application.md)
 - [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md)
 - [Quickstart](../getting-started/quickstart.md)
 - [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
-- [System Architecture](../deploy-operate/system-architecture.md)
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
+- [System architecture](../deploy-operate/plan/system-architecture.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
-- [Vector data service](../deploy-operate/runtime-components/vector-data-service.md)
-- [Vector Deployments](../deploy-operate/vector-deployments.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
 - [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
 
 :::
@@ -339,12 +331,12 @@ Vector data is runtime data that belongs to one vector deployment. It contains t
 ::: details Pages that use this term
 
 - [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
-- [Kubernetes deployer](../deploy-operate/deployer/kubernetes.md)
-- [Vector data overview](../develop-integrate/vector-data/overview.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
 - [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
-- [Vector data service](../deploy-operate/runtime-components/vector-data-service.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
 
 :::
 
@@ -356,14 +348,14 @@ The vector data service is a runtime component that serves vector data to worklo
 
 - [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
 - [Advanced features](../develop-integrate/advanced-features/index.md)
-- [Installing Konfidence](../deploy-operate/konfidence-installation.md)
-- [Vector data overview](../develop-integrate/vector-data/overview.md)
+- [Install Konfidence](../deploy-operate/install/konfidence-installation.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
 - [Prepare your application](../develop-integrate/prepare-your-application.md)
 - [Quickstart](../getting-started/quickstart.md)
 - [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
-- [Vector data service](../deploy-operate/runtime-components/vector-data-service.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
 
 :::
 
@@ -380,7 +372,7 @@ An `ArtifactDeployment` is a custom resource that describes the deployment of on
 - [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
 - [Author a Kustomize artifact](../develop-integrate/artifact-types/kustomize.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Kubernetes deployer](../deploy-operate/deployer/kubernetes.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
 
@@ -392,8 +384,7 @@ A `StageVersion` is a custom resource that captures one immutable rollout of a s
 
 ::: details Pages that use this term
 
-- [Manage stages](../deploy-operate/stages.md)
-- [Vector Deployments](../deploy-operate/vector-deployments.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
 
 :::
 
@@ -413,7 +404,7 @@ A `VectorActivation` is a custom resource that starts the activation of a vector
 
 ::: details Pages that use this term
 
-- [Manage stages](../deploy-operate/stages.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
 
 :::
 
@@ -426,7 +417,6 @@ The vector deployment controller manages `VectorAssignment` resources. Deployers
 ::: details Pages that use this term
 
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Vector Deployments](../deploy-operate/vector-deployments.md)
 
 :::
 
@@ -438,12 +428,11 @@ A `VectorDeployment` is a custom resource that deploys all artifacts of one vect
 
 - [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
 - [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Manage stages](../deploy-operate/stages.md)
-- [Vector data overview](../develop-integrate/vector-data/overview.md)
 - [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
-- [Vector Deployments](../deploy-operate/vector-deployments.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
 
 :::
 
@@ -453,8 +442,8 @@ A `VectorPromotion` is a custom resource that runs a promotion flow once. It pin
 
 ::: details Pages that use this term
 
-- [Define promotions](../deploy-operate/define-promotions.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
 
 :::
 
@@ -464,11 +453,11 @@ A `VectorPromotionConfig` is a custom resource that defines a promotion flow fro
 
 ::: details Pages that use this term
 
+- [Create a project](../deploy-operate/control-access/projects.md)
 - [Create your own artifacts](../getting-started/create-vector.md)
-- [Define promotions](../deploy-operate/define-promotions.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
 - [Deploy a sample application](../getting-started/deliver-sample-app.md)
-- [Managing Projects](../deploy-operate/projects.md)
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
 
 :::
 
@@ -482,10 +471,10 @@ A `VectorTemplate` is a custom resource that defines how Konfidence assembles a 
 - [Advanced features](../develop-integrate/advanced-features/index.md)
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md)
 - [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
+- [Create a project](../deploy-operate/control-access/projects.md)
 - [Create your own artifacts](../getting-started/create-vector.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
 - [Deploy a sample application](../getting-started/deliver-sample-app.md)
-- [Managing Projects](../deploy-operate/projects.md)
 - [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md)
 - [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
 
