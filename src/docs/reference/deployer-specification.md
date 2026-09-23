@@ -1,6 +1,6 @@
 ---
 title: Deployer Specification
-description: Technical specification for the interface of Konfidence Star and Runtime-specific Deployers to extend Konfidence's deployment capabilities to new runtime environments.
+description: Technical specification for the interface between Konfidence and runtime-specific deployers to extend Konfidence's deployment capabilities to new runtime environments.
 outline: [2, 3]
 editLink: true
 lastUpdated: true

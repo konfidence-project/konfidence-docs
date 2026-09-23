@@ -7,12 +7,12 @@ description: "Learn how to create a custom Deployer to extend Konfidence's deplo
 
 <!-- 
   Content type (Diátaxis): How-to guide — assumes reader knows what a Deployer is and why they need one; they want to build their own.
-  TW will structure this as: Prerequisites → implement the interface → register with Star → test locally.
+  TW will structure this as: Prerequisites → implement the interface → install its DeploymentClass → test locally.
 
   Dev input needed:
   - Link to or paste the Deployer interface specification (Go interface, proto definition, or equivalent)
   - Walk through how the built-in Kubernetes Deployer works as a reference implementation (key methods, what they receive, what they must return)
-  - How does a custom Deployer get registered with Star?
+  - How does a custom Deployer register its DeploymentClass with Konfidence?
 
   Ticket: DOCS — How to Create your own Deployer: Provide Deployer interface spec and k8s reference implementation walkthrough
 -->
