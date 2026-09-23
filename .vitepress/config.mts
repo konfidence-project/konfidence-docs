@@ -285,15 +285,6 @@ export default defineConfig({
                 },
               ],
             },
-            {
-              text: "Operate the platform",
-              items: [
-                {
-                  text: "Upgrade Konfidence",
-                  link: "/docs/deploy-operate/operate/upgrading-konfidence",
-                },
-              ],
-            },
           ],
         },
         {
