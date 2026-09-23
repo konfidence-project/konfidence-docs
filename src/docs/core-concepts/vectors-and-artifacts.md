@@ -73,7 +73,8 @@ The most important fields are:
 - `uploadTarget`, which defines where the assembled vector is stored.
 - `components`, which defines which previously built artifacts are part of the vector.
 - `credentials`, which references Secrets used to access the required registries.
-- `base`, which can optionally reference an existing vector to build on.
+- `base`, which can optionally reference another `VectorTemplate` whose latest
+  assembled vector is used as the base.
 
 The following example shows the relationship between those fields:
 
@@ -84,17 +85,17 @@ metadata:
   name: example-vector
   namespace: default
 spec:
-  uploadTarget: https://registry.kdenv.lab/sample-project//konfidence.project/constructed-vector:latest
+  uploadTarget: registry.example.com/my-project//example.com/vector/example-vector
   components:
-    - name: https://registry.kdenv.lab/sample-project//konfidence.project/sample-vector/service1:main
-    - name: https://registry.example.com/sample-project//example.tools/dev/service2:stable
+    - name: registry.example.com/my-project//example.com/service1:main
+    - name: registry.example.com/my-project//example.com/service2:stable
   credentials:
     ocm:
       refs:
         - name: registry-credentials
 ```
 
-Both the `uploadTarget` and the entries under `components` use aliases so that Konfidence can resolve the referenced resources.
+The `uploadTarget` field contains only the component path without version. Konfidence generates a UTC timestamp version on each assembly. The entries under `components` use alias tags (such as `main` or `stable`) so that Konfidence can resolve the referenced resources.
 The component artifacts do not have to be stored in the same registry as the vector target.
 If a component artifact is stored elsewhere, Konfidence copies it into the target registry defined by `uploadTarget`.
 
