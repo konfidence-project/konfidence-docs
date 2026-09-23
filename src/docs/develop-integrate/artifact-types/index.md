@@ -8,9 +8,9 @@ lastUpdated: true
 
 # Types of artifacts
 
-An artifact is one deployable microservice packaged as an Open Component Model (OCM) component. A vector references artifacts by version, and a deployer renders each one into a landscape.
+An [artifact](../../reference/glossary.md#artifact) is one deployable microservice packaged as an Open Component Model (OCM) component. A [vector](../../reference/glossary.md#vector) references artifacts by version, and a [deployer](../../reference/glossary.md#deployer) renders each one into a [landscape](../../reference/glossary.md#landscape).
 
-The component holds your deployable content, such as a Helm chart or a Kustomize bundle, and a small manifest. The manifest names the required deployment class and states whether one running instance may serve several vectors. The authoring guides show both.
+The component holds your deployable content, such as a Helm chart or a Kustomize bundle, and a small manifest. The manifest names the required [deployment class](../../reference/glossary.md#deployment-class) and states whether one running instance may serve several vectors. The authoring guides show both.
 
 <figure>
   <img src="../img/artifact-vector.drawio.svg" alt="A vector named shop 1.4.0 contains two artifacts and an optional vector configuration. Each artifact contains a manifest with the deployment method and its deployable content: a Helm chart or a Kustomize bundle in a registry. The vector configuration holds feature flags and authored settings.">
@@ -21,7 +21,7 @@ The component holds your deployable content, such as a Helm chart or a Kustomize
 
 The artifact manifest's `type` is a deployment-class identifier. It selects both the deployer that understands the artifact and the capability a target landscape must provide.
 
-Before choosing a class, confirm that the landscapes where the artifact will run have a matching deployment target. See the [Deployment model](../../core-concepts/deployment-model.md) for the complete relationship and [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md) for the operator workflow.
+Before choosing a class, confirm that the landscapes where the artifact will run have a matching [deployment target](../../reference/glossary.md#deployment-target). See the [Deployment model](../../core-concepts/deployment-model.md) for the complete relationship and [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md) for the operator workflow.
 
 ## Konfidence deploys these artifact types
 
@@ -74,8 +74,8 @@ The same holds when the shared instance sits downstream. Each vector's own front
 Your service must therefore handle vector-specific behavior in the context of each request:
 
 - Read `X-Vector-ID` from each request and forward it on every outbound call.
-- Resolve the addresses of other services, feature flags, and configuration for the current vector through the vector data service instead of loading one vector's values once at startup.
-- Key cached vector data by vector ID. Never use one process-wide cached value for requests from different vectors.
+- Resolve the addresses of other services, [feature flags](../../reference/glossary.md#feature-flag), and configuration for the current vector through the [vector data service](../../reference/glossary.md#vector-data-service) instead of loading one vector's values once at startup.
+- Key cached [vector data](../../reference/glossary.md#vector-data) by vector ID. Never use one process-wide cached value for requests from different vectors.
 - Keep vector-specific state isolated by vector ID so that requests from one vector cannot read or modify another vector's state.
 
 ### Choose `allowReuse: true` when

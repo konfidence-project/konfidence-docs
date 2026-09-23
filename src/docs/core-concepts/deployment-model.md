@@ -9,17 +9,17 @@ lastUpdated: true
 # Deployment model
 
 Konfidence separates the application version to deliver from the platform-specific work required to run it.
-Artifacts declare what they need for deployment, while each landscape provides configured destinations that meet those requirements.
+[Artifacts](../reference/glossary.md#artifact) declare what they need for deployment, while each [landscape](../reference/glossary.md#landscape) provides configured destinations that meet those requirements.
 
 This separation allows one delivery model to work across different infrastructure and deployment technologies.
 
 ## From artifact to infrastructure
 
-The diagram shows how deployment classes, deployers, targets, and landscapes connect an artifact to infrastructure:
+The diagram shows how [deployment classes](../reference/glossary.md#deployment-class), [deployers](../reference/glossary.md#deployer), targets, and landscapes connect an artifact to infrastructure:
 
 <DrawioDiagram src="/assets/diagrams/deployment-model.drawio" />
 
-An artifact names the deployment class it requires. A deployer provides that class and uses a matching deployment target in the landscape to connect to infrastructure. The class identifier links the artifact's requirements to the deployer and its configured destination.
+An artifact names the deployment class it requires. A deployer provides that class and uses a matching [deployment target](../reference/glossary.md#deployment-target) in the landscape to connect to infrastructure. The class identifier links the artifact's requirements to the deployer and its configured destination.
 
 For example, an artifact with manifest type `helm.konfidence.cloud` can be deployed in a landscape only when the class `helm.konfidence.cloud` exists and the landscape contains a ready target for that class.
 
@@ -43,7 +43,7 @@ Changing an artifact to require another class changes its deployment requirement
 A deployer is a platform-specific controller that interprets artifacts of the classes it provides.
 It turns their deployable content into running workloads and participates in platform-specific migration and activation work.
 
-Konfidence coordinates delivery of the vector selected for a stage.
+Konfidence coordinates delivery of the [vector](../reference/glossary.md#vector) selected for a [stage](../reference/glossary.md#stage).
 The deployer handles the platform-specific work needed to run it.
 This keeps the Konfidence delivery model independent of Kubernetes, managed cloud services, or future target platforms.
 

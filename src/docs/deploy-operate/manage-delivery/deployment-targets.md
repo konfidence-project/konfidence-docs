@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Configure deployment targets for a landscape {#manage-deployment-targets}
 
-Create a deployment target to make a deployment class available in a landscape. A target names the class and carries a `connection` block that tells the class's deployer where to deploy. The deployer defines what the block contains and reports whether it accepts the target.
+Create a [deployment target](../../reference/glossary.md#deployment-target) to make a [deployment class](../../reference/glossary.md#deployment-class) available in a [landscape](../../reference/glossary.md#landscape). A target names the class and carries a `connection` block that tells the class's [deployer](../../reference/glossary.md#deployer) where to deploy. The deployer defines what the block contains and reports whether it accepts the target.
 
 The deployer is installed centrally. This task configures a landscape to use one of its classes; repeat it for each class the landscape's applications need.
 
@@ -32,7 +32,7 @@ export LANDSCAPE_NAMESPACE=$(kubectl get landscape dev \
 
 ## Choose the deployment class
 
-Each artifact names the deployment class it requires. A landscape needs one ready target for every class its stages deploy. List the classes installed deployers advertise:
+Each [artifact](../../reference/glossary.md#artifact) names the deployment class it requires. A landscape needs one ready target for every class its [stages](../../reference/glossary.md#stage) deploy. List the classes installed deployers advertise:
 
 ```bash
 kubectl get deploymentclasses

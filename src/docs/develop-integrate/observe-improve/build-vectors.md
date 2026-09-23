@@ -18,7 +18,7 @@ A vector is an immutable [Open Component Model (OCM)](https://ocm.software) comp
 exact set of artifact versions that make up your application at a given point
 in time.
 
-Vectors can be created in two ways:
+[Vectors](../../reference/glossary.md#vector) can be created in two ways:
 
 - **Automatically** - by defining a `VectorTemplate` resource. Konfidence
   continuously reconciles the template and assembles a new vector whenever a delta
@@ -26,7 +26,7 @@ Vectors can be created in two ways:
 - **Manually** - by pushing an OCM component directly to the upload target
   registry using the OCM CLI or your own tooling.
 
-This guide covers the automated path. You define a `VectorTemplate` resource to
+This guide covers the automated path. You define a [`VectorTemplate`](../../reference/glossary.md#vectortemplate) resource to
 tell Konfidence how to assemble and store that vector.
 
 For background on artifacts, aliases, and vectors, see

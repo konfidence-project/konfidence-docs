@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Develop & Integrate
 
-Write, maintain, and enhance software applications with Konfidence. Prepare your application, publish artifacts, and deploy across environments safely.
+Write, maintain, and enhance software applications with Konfidence. Prepare your application, publish [artifacts](../reference/glossary.md#artifact), and deploy across environments safely.
 
 ## Related
 

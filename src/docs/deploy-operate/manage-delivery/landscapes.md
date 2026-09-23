@@ -8,18 +8,18 @@ lastUpdated: true
 
 # Create a landscape {#manage-landscapes}
 
-Create a landscape to establish an operational boundary for stages and their deployment resources. Konfidence manages a dedicated namespace for each landscape.
+Create a [landscape](../../reference/glossary.md#landscape) to establish an operational boundary for [stages](../../reference/glossary.md#stage) and their deployment resources. Konfidence manages a dedicated namespace for each landscape.
 
 Use Kubernetes access to create and maintain the landscape. Once its namespace is ready, configure deployment targets, registry credentials, and landscape services before creating stages.
 
-For guidance on choosing landscape boundaries, see [Landscapes and stages](../../core-concepts/landscapes-and-stages.md). To understand how a landscape connects artifacts to infrastructure, see the [Deployment model](../../core-concepts/deployment-model.md).
+For guidance on choosing landscape boundaries, see [Landscapes and stages](../../core-concepts/landscapes-and-stages.md). To understand how a landscape connects [artifacts](../../reference/glossary.md#artifact) to infrastructure, see the [Deployment model](../../core-concepts/deployment-model.md).
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
 - A [project](../control-access/projects.md) in which to create the landscape.
-- Kubernetes permission to create and read `Landscape` resources in the project's namespace. The update and delete sections also require the corresponding Kubernetes permissions.
+- Kubernetes permission to create and read `Landscape` resources in the [project](../../reference/glossary.md#project)'s namespace. The update and delete sections also require the corresponding Kubernetes permissions.
 - Access to the Konfidence cluster through `kubectl`.
 
 ## Create a landscape

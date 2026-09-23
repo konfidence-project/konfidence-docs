@@ -8,12 +8,12 @@ lastUpdated: true
 
 # Install the Kubernetes deployer {#kubernetes-deployer}
 
-Install the Kubernetes deployer to deliver Helm and Kustomize artifacts to Kubernetes through Flux. It provides the deployment classes `helm.konfidence.cloud` and `kustomize.konfidence.cloud` and is the reference implementation of Konfidence's deployer interface.
+Install the Kubernetes [deployer](../../../reference/glossary.md#deployer) to deliver Helm and Kustomize artifacts to Kubernetes through Flux. It provides the [deployment classes](../../../reference/glossary.md#deployment-class) `helm.konfidence.cloud` and `kustomize.konfidence.cloud` and is the reference implementation of Konfidence's deployer interface.
 
 <!-- TODO: link to the Deployer interface specification once available; see
 [Deployer Specification](../../../reference/deployer-specification.md). -->
 
-After installation, use the connection types on this page to configure targets in your landscapes. The later sections describe supported manifest types and Service deployment results. For packaging and naming requirements, see [Author a Helm artifact](../../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../../develop-integrate/artifact-types/kustomize.md).
+After installation, use the connection types on this page to configure targets in your landscapes. The later sections describe supported manifest types and Service [deployment results](../../../reference/glossary.md#deployment-result). For packaging and naming requirements, see [Author a Helm artifact](../../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../../develop-integrate/artifact-types/kustomize.md).
 
 ## Prerequisites
 
@@ -103,7 +103,7 @@ Pulling artifacts from private registries needs a Secret in the landscape namesp
 
 ## Supported manifest types
 
-The value of `.spec.manifest.type` on an `ArtifactDeployment` selects the
+The value of `.spec.manifest.type` on an [`ArtifactDeployment`](../../../reference/glossary.md#artifactdeployment) selects the
 sub-controller that reconciles it. The following table lists the supported manifest types, their Open Component Model (OCM) resource types, and the Flux resources the deployer creates:
 
 | Deployment class | OCM resource type | Flux resources created |
@@ -117,7 +117,7 @@ Each `ArtifactDeployment` must carry at most one OCM resource of the matching ty
 
 ## Expose a Service as a deployment result
 
-By default, the Services in your bundle or chart are internal. To let other components in the same vector discover and call a Service, annotate it:
+By default, the Services in your bundle or chart are internal. To let other components in the same [vector](../../../reference/glossary.md#vector) discover and call a Service, annotate it:
 
 ```yaml
 apiVersion: v1
@@ -138,13 +138,13 @@ The deployer applies a per-vector `nameSuffix` (Kustomize) or `releaseName` (Hel
 
 ### How the deployer processes the annotation
 
-After the artifact is deployed, the deployer lists the Services it created. For each Service carrying the annotation, it records a deployment result on the `ArtifactDeployment` containing:
+After the [artifact](../../../reference/glossary.md#artifact) is deployed, the deployer lists the Services it created. For each Service carrying the annotation, it records a deployment result on the `ArtifactDeployment` containing:
 
 - The annotation value as the result name.
 - The Service's namespace and its actual (suffixed) name.
 - The Service's ports verbatim (multi-port Services are supported as-is).
 
-Konfidence aggregates these into the vector's `VectorData`, keyed by artifact component. Every component in the vector can then resolve the Service by its stable name at runtime. See [Use deployment results](../../../develop-integrate/vector-data/deployment-results.md).
+Konfidence aggregates these into the vector's [`VectorData`](../../../reference/glossary.md#vector-data), keyed by artifact component. Every component in the vector can then resolve the Service by its stable name at runtime. See [Use deployment results](../../../develop-integrate/vector-data/deployment-results.md).
 
 ### Scope
 

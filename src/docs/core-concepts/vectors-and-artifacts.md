@@ -13,7 +13,7 @@ Konfidence uses the Open Component Model (OCM) to describe build outputs and com
 
 ## Artifacts
 
-An artifact describes one piece of your software, such as a microservice, a configuration file, or an asset.
+An [artifact](../reference/glossary.md#artifact) describes one piece of your software, such as a microservice, a configuration file, or an asset.
 Development teams usually build and publish artifacts in their continuous integration (CI) pipelines.
 
 An artifact is an OCM component version that contains a reference to a build result, such as a Docker image, and its metadata.
@@ -24,10 +24,10 @@ To learn how to create OCM components, see the [OCM guide on creating component 
 ## Artifact aliases
 
 Konfidence does not rely on the semantic version of each individual artifact when it decides what to deliver.
-It delivers a vector, which represents the application as a whole.
+It delivers a [vector](../reference/glossary.md#vector), which represents the application as a whole.
 That means the important version is the exact combination of artifacts inside the vector.
 
-Artifact aliases are dynamic references that tell Konfidence which artifact flavor to include when it assembles a vector.
+[Artifact aliases](../reference/glossary.md#artifact-alias) are dynamic references that tell Konfidence which artifact flavor to include when it assembles a vector.
 An alias can describe any dimension that matters to your delivery model, for example:
 
 - Maturity, such as `experimental` or `stable`.
@@ -37,7 +37,7 @@ An alias can describe any dimension that matters to your delivery model, for exa
 
 In most setups, one branch-based alias is enough.
 For example, a service can publish each successful build from the main branch under the `main` alias.
-The alias then acts as a floating pointer that lets `VectorTemplate` detect artifact changes without requiring you to update the template for every new build.
+The alias then acts as a floating pointer that lets [`VectorTemplate`](../reference/glossary.md#vectortemplate) detect artifact changes without requiring you to update the template for every new build.
 
 ## Vectors
 
@@ -64,7 +64,7 @@ It gives the vector model a stable name for a moving target, such as "the curren
 
 ## Assemble: define the vector
 
-A vector is the complete application version that Konfidence moves through the delivery flow.
+A vector is the complete application version that Konfidence moves through the [delivery flow](../reference/glossary.md#delivery-flow).
 It contains the selected artifact references and represents the desired application state at a specific point in time.
 
 The `VectorTemplate` custom resource defines how Konfidence assembles that vector.
@@ -104,6 +104,6 @@ This lets teams derive a new vector from an existing vector without redefining e
 
 ## Related pages
 
-- [Delivery Flow](./delivery-flow.md) explains how vectors move from build outputs to controlled stage state.
+- [Delivery Flow](./delivery-flow.md) explains how vectors move from build outputs to controlled [stage](../reference/glossary.md#stage) state.
 - [Landscapes and stages](./landscapes-and-stages.md) explains where vectors are delivered and how stages express the desired application version.
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.

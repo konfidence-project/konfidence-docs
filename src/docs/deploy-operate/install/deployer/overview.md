@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Choose a deployer {#manage-deployers}
 
-Choose a deployer for the platform where your applications will run and the artifact types they use. Deployers provide the platform-specific capabilities Konfidence uses to turn artifacts into workloads. Administrators install them centrally, then configure deployment targets in individual landscapes to make their deployment classes available.
+Choose a deployer for the platform where your applications will run and the artifact types they use. [Deployers](../../../reference/glossary.md#deployer) provide the platform-specific capabilities Konfidence uses to turn [artifacts](../../../reference/glossary.md#artifact) into workloads. Administrators install them centrally, then configure [deployment targets](../../../reference/glossary.md#deployment-target) in individual [landscapes](../../../reference/glossary.md#landscape) to make their [deployment classes](../../../reference/glossary.md#deployment-class) available.
 
 For the relationship between deployers, classes, targets, and artifacts, see the [Deployment model](../../../core-concepts/deployment-model.md).
 

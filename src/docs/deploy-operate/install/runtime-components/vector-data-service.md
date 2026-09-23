@@ -8,13 +8,13 @@ lastUpdated: true
 
 # Install the Vector Data Service {#vector-data-service}
 
-Install the Vector Data Service in a Kubernetes landscape to make vector data available to applications running there. This is a landscape-level task, performed after the landscape namespace exists.
+Install the [Vector Data Service](../../../reference/glossary.md#vector-data-service) in a Kubernetes [landscape](../../../reference/glossary.md#landscape) to make vector data available to applications running there. This is a landscape-level task, performed after the landscape namespace exists.
 
-The Vector Data Service lets applications resolve vector data for a specific vector at runtime:
+The Vector Data Service lets applications resolve [vector data](../../../reference/glossary.md#vector-data) for a specific [vector](../../../reference/glossary.md#vector) at runtime:
 
-- Feature flags.
+- [Feature flags](../../../reference/glossary.md#feature-flag).
 - Authored configuration values.
-- [Deployment results](../../../develop-integrate/vector-data/deployment-results.md), such as service endpoints, URLs, identities, and other data produced by deployers for service-to-service communication.
+- [Deployment results](../../../develop-integrate/vector-data/deployment-results.md), such as service endpoints, URLs, identities, and other data produced by [deployers](../../../reference/glossary.md#deployer) for service-to-service communication.
 
 Because applications use this data for core Konfidence features, we recommend installing the Vector Data Service in every Kubernetes landscape.
 

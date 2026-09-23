@@ -11,7 +11,7 @@ lastUpdated: true
 Give your team access to a project by binding roles to identity provider groups. Konfidence enforces role-based access control through the `roleBindings` field of the `Project` resource. A binding applies to API access to resources in the project, including its landscapes. You can also bind workload identities, as described below.
 
 ::: warning Direct Kubernetes access bypasses authorization
-The Konfidence API server enforces the role bindings, not Kubernetes RBAC. Anyone with `kubectl` access to a project or landscape namespace bypasses them. Give users access through the Konfidence API only. A team that needs direct Kubernetes access runs its own Konfidence installation.
+The Konfidence API server enforces the role bindings, not Kubernetes RBAC. Anyone with `kubectl` access to a [project](../../reference/glossary.md#project) or [landscape](../../reference/glossary.md#landscape) namespace bypasses them. Give users access through the Konfidence API only. A team that needs direct Kubernetes access runs its own Konfidence installation.
 :::
 
 ## Three roles cover administration, delivery, and observation

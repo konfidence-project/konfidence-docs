@@ -13,10 +13,10 @@ lastUpdated: true
   a deployable artifact so that Konfidence can include it in a vector.
 -->
 
-This guide explains how to publish a deployable artifact as an Open Component Model (OCM) component version to an Open Container Initiative (OCI) registry.
-After you publish it, you can reference the component version or an alias in a `VectorTemplate`.
+This guide explains how to publish a deployable [artifact](../../reference/glossary.md#artifact) as an Open Component Model (OCM) component version to an Open Container Initiative (OCI) registry.
+After you publish it, you can reference the component version or an alias in a [`VectorTemplate`](../../reference/glossary.md#vectortemplate).
 
-For background about artifacts, aliases, and vectors, see [Vectors and artifacts](../../core-concepts/vectors-and-artifacts.md).
+For background about artifacts, aliases, and [vectors](../../reference/glossary.md#vector), see [Vectors and artifacts](../../core-concepts/vectors-and-artifacts.md).
 
 ## Prerequisites
 
@@ -47,7 +47,7 @@ For a Kustomize bundle, use `kustomize.konfidence.cloud` as the `type` value.
 
 Set `allowReuse` based on how the artifact should be deployed:
 
-- Set it to `true` only when one running artifact instance can safely serve multiple `VectorDeployment` resources at the same time.
+- Set it to `true` only when one running artifact instance can safely serve multiple [`VectorDeployment`](../../reference/glossary.md#vectordeployment) resources at the same time.
 - Set it to `false` when each `VectorDeployment` needs its own artifact instance.
 
 Reuse does not require an artifact to be independent of vector-specific runtime context. A reusable service can read `X-Vector-ID` and use data for the current vector. It must handle the context separately for each request, forward the header on outbound calls, and isolate vector-specific state and cached data by vector ID. Set `allowReuse` to `false` if the service keeps one vector's configuration or state as a process-wide value.

@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Author a Helm artifact
 
-After this guide, you have a Helm chart and an OCM component constructor ready to validate and publish as a Konfidence artifact. Once the published artifact is included in a vector, the [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) installs the chart in the landscape.
+After this guide, you have a Helm chart and an OCM component constructor ready to validate and publish as a Konfidence [artifact](../../reference/glossary.md#artifact). Once the published artifact is included in a [vector](../../reference/glossary.md#vector), the [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) installs the chart in the [landscape](../../reference/glossary.md#landscape).
 
 The examples build a service named `my-service` and push everything to `registry.example.com/my-org`.
 
@@ -170,7 +170,7 @@ The chart is available as `registry.example.com/my-org/my-service:1.0.0`.
 
 ## Derive every resource name from the release name
 
-Several vectors deploy the same chart into one landscape namespace. The deployer gives each deployment its own release name. Every resource in the chart must derive `metadata.name` from that release name, either directly or through the chart's fullname helper. A hard-coded name collides when a second vector deploys the chart.
+Several vectors deploy the same chart into one landscape namespace. The [deployer](../../reference/glossary.md#deployer) gives each deployment its own release name. Every resource in the chart must derive `metadata.name` from that release name, either directly or through the chart's fullname helper. A hard-coded name collides when a second vector deploys the chart.
 
 <div v-pre>
 
@@ -211,14 +211,14 @@ The deployer creates one Flux `HelmRelease` per artifact instance and sets these
 
 | Field | Value |
 | --- | --- |
-| `metadata.name` | The `ArtifactDeployment` name |
+| `metadata.name` | The [`ArtifactDeployment`](../../reference/glossary.md#artifactdeployment) name |
 | `spec.releaseName` | The `ArtifactDeployment` name |
 | `spec.chart.spec.sourceRef` | The `HelmRepository` with the same name |
 | `spec.targetNamespace` | The landscape namespace |
 | `spec.storageNamespace` | The landscape namespace |
 | `spec.commonMetadata.labels` | `konfidence.cloud/artifact-deployment=<artifact-deployment-name>` |
 
-The release name is deterministic per component, version, `allowReuse` setting, and `VectorDeployment`.
+The release name is deterministic per component, version, `allowReuse` setting, and [`VectorDeployment`](../../reference/glossary.md#vectordeployment).
 
 :::
 

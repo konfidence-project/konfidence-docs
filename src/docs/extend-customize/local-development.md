@@ -14,10 +14,10 @@ What you need depends on what your change touches:
 | You are changing | You need |
 | --- | --- |
 | Controller logic, API handlers, the CLI, the dashboard | A Kubernetes API with the Konfidence CRDs. envtest provides one on your host. |
-| Vector or artifact handling, image builds | The above plus a local OCI registry |
+| [Vector](../reference/glossary.md#vector) or [artifact](../reference/glossary.md#artifact) handling, image builds | The above plus a local OCI registry |
 | Login and sessions | The above plus a local identity provider |
 | The Helm chart, Dockerfiles, RBAC or webhook wiring | A kind cluster with the registry |
-| End-to-end delivery into workloads | The cluster plus a deployer |
+| End-to-end delivery into workloads | The cluster plus a [deployer](../reference/glossary.md#deployer) |
 
 ## Prerequisites
 
@@ -101,7 +101,7 @@ With `API_OIDC_ENABLED=false`, the API server replaces the OIDC login with a han
 No-auth mode disables authentication. Never run a shared or production installation with `oidc.enabled: false`.
 :::
 
-Projects control access through role bindings. A project is only visible to the local admin if it binds the `local-admin` group. Create one to work with:
+[Projects](../reference/glossary.md#project) control access through role bindings. A project is only visible to the local admin if it binds the `local-admin` group. Create one to work with:
 
 ```bash
 kubectl apply -f - <<EOF
