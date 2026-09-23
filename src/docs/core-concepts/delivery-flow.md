@@ -23,7 +23,7 @@ The main relationship to understand is:
 ## The delivery flow in Konfidence
 
 The delivery flow sits between artifact publishing and runtime deployment.
-It is part of the [control plane](../reference/glossary.md#control-plane) and describes how Konfidence turns build outputs into target stage state.
+It describes how Konfidence turns build outputs into target stage state.
 
 This page focuses on the delivery state before runtime deployment starts.
 It does not describe how [deployers](../reference/glossary.md#deployer) create workloads in a [landscape](../reference/glossary.md#landscape).
@@ -85,7 +85,7 @@ At that boundary, the target stage state exists in the cluster and the runtime c
 
 From there, the runtime lifecycle turns the stage into running workloads:
 
-1. The control plane tracks the `Stage` and pulls the vector it selects.
+1. Konfidence tracks the `Stage` and pulls the vector it selects.
 2. It creates a [StageVersion](../reference/glossary.md#stageversion) that records this rollout. Stage versions capture stage changes over time and let a new version start while the active version keeps running.
 3. [Deployers](../reference/glossary.md#deployer) translate the artifacts in the vector into workloads in the landscape. The Kubernetes deployer, provided by the [kubernetes-landscape-orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator), is the deployer available in the current release.
 4. [VectorAssignments](../reference/glossary.md#vectorassignment) link the deployed artifacts to the vector. An artifact shared by two vectors is deployed once.
@@ -100,6 +100,6 @@ Read these pages for the surrounding concepts and task-oriented guidance:
 
 - [Vectors and Artifacts](./vectors-and-artifacts.md) explains the package model behind artifacts, aliases, and immutable vectors.
 - [Landscapes and stages](./landscapes-and-stages.md) explains how operational contexts and delivery checkpoints remain separate.
-- [System architecture](../deploy-operate/plan/system-architecture.md) explains how the control plane and landscapes divide responsibility.
+- [System architecture](../deploy-operate/plan/system-architecture.md) explains how Konfidence and landscapes divide responsibility.
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.
 - [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md) explains promotion configuration, approval, and inspection.

@@ -35,7 +35,7 @@ Organizations choose landscape boundaries according to their needs. A boundary m
 
 Common designs use landscapes for development and production, for geographic regions, or for combinations such as production in the EU. These are conventions rather than fixed environment types. Two landscapes can use the same underlying infrastructure, while one landscape can provide several kinds of [deployment target](./deployment-model.md#deployment-targets-configure-destinations).
 
-Each landscape belongs to a [project](../deploy-operate/control-access/projects.md). Konfidence groups its stages, target configuration, credentials, and deployment resources within that landscape. This keeps independently operated contexts separate while allowing one Konfidence [control plane](../reference/glossary.md#control-plane) to manage them consistently.
+Each landscape belongs to a [project](../deploy-operate/control-access/projects.md). Konfidence groups its stages, target configuration, credentials, and deployment resources within that landscape. This keeps independently operated contexts separate while allowing one Konfidence installation to manage them consistently.
 
 ## Stages express delivery intent
 
