@@ -23,12 +23,12 @@ requirements:
 
 steps:
 * publish app artifacts with kden CLI: `kden artifact push -f component-constructor.yaml`
-* check [VectorTemplate](../reference/glossary.md#vectortemplate) status: `kubectl get vectortemplate vector-dev`
+* check [`VectorTemplate`](../reference/glossary.md#vectortemplate) status: `kubectl get vectortemplate vector-dev`
 * first [vector](../reference/glossary.md#vector) should be created now (might take few minutes for reconciliation)
 * in OCI registry, you should see a new artifact created for the vector
 
 what's happening now:
-* vector is available, a [VectorPromotionConfig](../reference/glossary.md#vectorpromotionconfig) targeting the dev [stage](../reference/glossary.md#stage) picks it up and writes the concrete version to `Stage.spec.vector`
+* vector is available, a [`VectorPromotionConfig`](../reference/glossary.md#vectorpromotionconfig) targeting the dev [stage](../reference/glossary.md#stage) picks it up and writes the concrete version to `Stage.spec.vector`
 * Stage reconciliation deploys all artifacts of the vector and assigns them dev stage
 * internal routing rules are rolled out and allow east-west traffic between artifacts in the dev stage
 * activation makes services externally available

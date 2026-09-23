@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Landscapes and stages
 
-Konfidence separates the place where applications run from the checkpoints through which application versions move. **[Landscapes](../reference/glossary.md#landscape)** organize deployment contexts with shared operational requirements. **[Stages](../reference/glossary.md#stage)** select the application version intended for a particular checkpoint in the delivery process.
+Konfidence separates the place where applications run from the checkpoints through which application versions move. [Landscapes](../reference/glossary.md#landscape) organize deployment contexts with shared operational requirements. [Stages](../reference/glossary.md#stage) select the application version intended for a particular checkpoint in the delivery process.
 
 This separation lets organizations design [delivery flows](../reference/glossary.md#delivery-flow) independently of how their infrastructure is organized.
 
@@ -39,7 +39,7 @@ Each landscape belongs to a [project](../deploy-operate/control-access/projects.
 
 ## Stages express delivery intent
 
-A stage is a logical checkpoint that selects one [vector](./vectors-and-artifacts.md). The [vector](../reference/glossary.md#vector) is an immutable description of an application version; the stage expresses that this is the version Konfidence should deliver for the checkpoint.
+A stage is a logical checkpoint that selects one [vector](../reference/glossary.md#vector). The vector is an immutable description of an application version; the stage expresses that this is the version Konfidence should deliver for the checkpoint.
 
 Stage names describe the purpose of the checkpoint, not the infrastructure behind it. Depending on the delivery model, a landscape might contain:
 

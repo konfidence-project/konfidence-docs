@@ -27,7 +27,7 @@ summary:
 * manual [promotion](../reference/glossary.md#promotion) brings [vectors](../reference/glossary.md#vector) to production stage
 
 steps:
-* define a [VectorPromotionConfig](../reference/glossary.md#vectorpromotionconfig) with the dev [vector template](../reference/glossary.md#vectortemplate) as source and the dev stage as target
+* define a [`VectorPromotionConfig`](../reference/glossary.md#vectorpromotionconfig) with the dev [`VectorTemplate`](../reference/glossary.md#vectortemplate) as source and the dev stage as target
 * define a VectorPromotionConfig with the dev stage as source and the production stage as target
 * apply all resources with `kubectl apply -f <resource>.yaml`
 
