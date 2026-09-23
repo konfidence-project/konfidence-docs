@@ -14,10 +14,20 @@ lastUpdated: true
   published artifacts.
 -->
 
-A vector is an immutable Open Component Model (OCM) component that captures the
+A vector is an immutable [Open Component Model (OCM)](https://ocm.software) component that captures the
 exact set of artifact versions that make up your application at a given point
-in time. You define a `VectorTemplate` resource to tell Konfidence how to
-assemble and store that vector.
+in time.
+
+Vectors can be created in two ways:
+
+- **Automatically** - by defining a `VectorTemplate` resource. Konfidence
+  continuously reconciles the template and assembles a new vector whenever a delta
+  is detected in the referenced artifacts.
+- **Manually** - by pushing an OCM component directly to the upload target
+  registry using the OCM CLI or your own tooling.
+
+This guide covers the automated path. You define a `VectorTemplate` resource to
+tell Konfidence how to assemble and store that vector.
 
 For background on artifacts, aliases, and vectors, see
 [Vectors and artifacts](../../core-concepts/vectors-and-artifacts.md).
@@ -176,13 +186,16 @@ spec:
         - name: registry-credentials
 ```
 
-The merge rules are:
+<details>
+<summary>Merge rules</summary>
 
 - Artifacts from `base` form the initial list.
 - Each entry in `components` is matched by component name:
   - If a base artifact has the same name, the component version replaces it.
   - If no base artifact matches, the component is appended.
 - Base artifacts without a matching component entry are kept unchanged.
+
+</details>
 
 When the base template assembles a new vector, dependent templates are
 immediately re-enqueued without waiting for the next interval tick.
