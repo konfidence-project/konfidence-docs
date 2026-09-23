@@ -8,13 +8,13 @@ lastUpdated: true
 
 # Advanced features
 
-Use these pages when your service needs data from its vector at runtime or when your environment requires signed artifacts.
+Use these pages when your service needs data from its [vector](../../reference/glossary.md#vector) at runtime or when your environment requires signed [artifacts](../../reference/glossary.md#artifact).
 
 ## Read configuration and sibling addresses from the vector
 
-Konfidence includes configuration in each vector and provides it at runtime through the vector data service. Start with the [vector data overview](../vector-data/overview.md), then:
+Konfidence includes configuration in each vector and provides it at runtime through the [vector data service](../../reference/glossary.md#vector-data-service). Start with the [vector data overview](../vector-data/overview.md), then:
 
-- [Add configuration to a vector](../vector-data/vector-configuration.md) to include feature flags and authored configuration in the vector.
+- [Add configuration to a vector](../vector-data/vector-configuration.md) to include [feature flags](../../reference/glossary.md#feature-flag) and authored configuration in the vector.
 - [Add deployment results to an artifact](../vector-data/deployment-results.md) to make a Service discoverable by other services in the vector.
 - [Access vector data in your application](../vector-data/access-vector-data.md) to read flags, configuration, and the addresses of other services at runtime.
 
@@ -24,4 +24,4 @@ Konfidence includes configuration in each vector and provides it at runtime thro
 
 ## Sign artifacts and verify them before deployment
 
-Signing and verification are optional. Konfidence skips them until they are configured. To sign artifacts, you need the `kden` CLI, push access to an OCI registry, and an RSA key pair. Verification during assembly and deployment also requires access to configure `VectorTemplate` resources and the Konfidence operator. If you do not have that access, coordinate with your administrator. [Configure signing and verification](./configure-signing-and-verification.md) explains the complete workflow.
+Signing and verification are optional. Konfidence skips them until they are configured. To sign artifacts, you need the `kden` CLI, push access to an OCI registry, and an RSA key pair. Verification during assembly and deployment also requires access to configure [`VectorTemplate`](../../reference/glossary.md#vectortemplate) resources and the Konfidence operator. If you do not have that access, coordinate with your administrator. [Configure signing and verification](./configure-signing-and-verification.md) explains the complete workflow.

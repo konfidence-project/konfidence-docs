@@ -8,21 +8,21 @@ lastUpdated: true
 
 # Use deployment results
 
-This guide explains how to use deployment results in running application code. Deployment results are values that deployers produce while deploying a vector, such as service endpoints, generated URLs, identities, and allocated resources.
+This guide explains how to use [deployment results](../../reference/glossary.md#deployment-result) in running application code. Deployment results are values that [deployers](../../reference/glossary.md#deployer) produce while deploying a [vector](../../reference/glossary.md#vector), such as service endpoints, generated URLs, identities, and allocated resources.
 
-You do not author deployment results in vector configuration. Konfidence computes them as a side effect of deploying the vector and merges them into the same vector data bundle that applications read at runtime.
+You do not author deployment results in [vector configuration](../../reference/glossary.md#vector-configuration). Konfidence computes them as a side effect of deploying the vector and merges them into the same [vector data](../../reference/glossary.md#vector-data) bundle that applications read at runtime.
 
 ## Prerequisites
 
-- A deployer produces deployment results for an artifact in the vector.
+- A deployer produces deployment results for an [artifact](../../reference/glossary.md#artifact) in the vector.
 - The producing artifact has been deployed; results are available from that point (including during the migration phase), not only after the vector is activated.
-- Your application can access vector data through the vector data service.
+- Your application can access vector data through the [vector data service](../../reference/glossary.md#vector-data-service).
 
 ## Let deployers produce deployment results
 
-Each producing deployer writes deployment results to the corresponding `ArtifactDeployment`.
+Each producing deployer writes deployment results to the corresponding [`ArtifactDeployment`](../../reference/glossary.md#artifactdeployment).
 
-Konfidence aggregates those deployment results into the `VectorData` custom resource through the `VectorDeployment` status. The landscape orchestrator reads the `VectorData` resource and passes the data to the landscape as a `ConfigMap`.
+Konfidence aggregates those deployment results into the `VectorData` custom resource through the [`VectorDeployment`](../../reference/glossary.md#vectordeployment) status. The [landscape orchestrator](../../reference/glossary.md#landscape-orchestrator) reads the `VectorData` resource and passes the data to the [landscape](../../reference/glossary.md#landscape) as a `ConfigMap`.
 
 ## Expose a Kubernetes Service
 
@@ -69,7 +69,7 @@ For an `http-k8s-service` result, `spec` carries the Service's `Namespace`, `K8s
 
 Here a consumer looks up the result named `candidates` and resolves it to `candidates-7f3a.vector-42.svc.cluster.local:80`.
 
-The single-flag and bulk endpoints resolve feature flags only. Deployment results and authored config are available through the whole-bundle response.
+The single-flag and bulk endpoints resolve [feature flags](../../reference/glossary.md#feature-flag) only. Deployment results and authored config are available through the whole-bundle response.
 
 ## Use deployment results for service discovery
 

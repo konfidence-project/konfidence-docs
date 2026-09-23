@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Install Konfidence
 
-Install the Konfidence operator and API server from one Helm chart. After verifying these services, publish the dashboard and API, choose a deployer, and configure registry access.
+Install the Konfidence operator and API server from one Helm chart. After verifying these services, publish the dashboard and API, choose a [deployer](../../reference/glossary.md#deployer), and configure registry access.
 
 These steps are for the administrator of the Kubernetes installation. Review [System architecture](../plan/system-architecture.md) and [Plan for high availability](../plan/high-availability.md) before choosing your configuration.
 
@@ -153,4 +153,4 @@ Run the install command again with `--values session-values.yaml`. The API serve
 
 - [Give teams access to the dashboard and API](./expose-api.md) publishes both and enables login through your identity provider.
 - [Choose a deployer](./deployer/overview.md) selects the capabilities your applications need. Then [install the Kubernetes deployer](./deployer/kubernetes.md#install-the-deployer) for Helm and Kustomize artifacts.
-- [Connect artifact registries](./connect-registries.md) configures control plane credentials now and deployer credentials after you create a landscape.
+- [Connect artifact registries](./connect-registries.md) configures control plane credentials now and deployer credentials after you create a [landscape](../../reference/glossary.md#landscape).

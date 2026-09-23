@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Author a Kustomize artifact
 
-After this guide, your service deploys onto Kubernetes as one Kustomize artifact of a vector. The [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) renders the bundle once per vector into the landscape.
+After this guide, your service deploys onto Kubernetes as one Kustomize [artifact](../../reference/glossary.md#artifact) of a [vector](../../reference/glossary.md#vector). The [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) renders the bundle once per vector into the [landscape](../../reference/glossary.md#landscape).
 
 The examples build a service named `my-service` and push everything to `registry.example.com/my-org`.
 
@@ -154,7 +154,7 @@ The bundle is available as `registry.example.com/my-org/my-service-manifests:1.0
 
 ## Expect a suffix on every resource name
 
-Several vectors deploy the same bundle into one landscape namespace. The deployer appends a suffix to every resource name so the instances coexist. The final name follows this pattern:
+Several vectors deploy the same bundle into one landscape namespace. The [deployer](../../reference/glossary.md#deployer) appends a suffix to every resource name so the instances coexist. The final name follows this pattern:
 
 ```text
 <name-in-your-manifest>-<artifact-version>-<hash>
@@ -174,7 +174,7 @@ The deployer creates one Flux `Kustomization` per artifact instance and sets the
 
 | Field | Value |
 | --- | --- |
-| `metadata.name` | The `ArtifactDeployment` name |
+| `metadata.name` | The [`ArtifactDeployment`](../../reference/glossary.md#artifactdeployment) name |
 | `spec.sourceRef` | The `OCIRepository` with the same name |
 | `spec.targetNamespace` | The landscape namespace |
 | `spec.nameSuffix` | `-<sanitized-artifact-version>-<hash>`, derived from the artifact version and hash |

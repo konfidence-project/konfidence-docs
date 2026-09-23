@@ -8,19 +8,19 @@ lastUpdated: true
 
 # Overview
 
-Vector data is runtime data that belongs to a specific vector deployment. Applications use it to resolve feature flags, authored configuration values, and deployment results by vector ID.
+[Vector data](../../reference/glossary.md#vector-data) is runtime data that belongs to a specific [vector deployment](../../reference/glossary.md#vectordeployment). Applications use it to resolve [feature flags](../../reference/glossary.md#feature-flag), authored configuration values, and [deployment results](../../reference/glossary.md#deployment-result) by [vector](../../reference/glossary.md#vector) ID.
 
 ## How vector data reaches the runtime
 
-Konfidence stores vector data in the `VectorData` custom resource. The landscape orchestrator reads the `VectorData` resource and passes the data to the target runtime.
+Konfidence stores vector data in the `VectorData` custom resource. The [landscape orchestrator](../../reference/glossary.md#landscape-orchestrator) reads the `VectorData` resource and passes the data to the target runtime.
 
 The runtime must provide a way for applications to read vector data by vector ID. This keeps runtime data scoped to the vector that is currently handling the request or workload.
 
 ## Kubernetes runtime
 
-In a Kubernetes runtime, an administrator installs the [vector data service](../../deploy-operate/install/runtime-components/vector-data-service.md) in the landscape cluster. The Kubernetes landscape orchestrator pushes vector data to the landscape cluster as `ConfigMap` resources.
+In a Kubernetes runtime, an administrator installs the [vector data service](../../deploy-operate/install/runtime-components/vector-data-service.md) in the [landscape](../../reference/glossary.md#landscape) cluster. The Kubernetes landscape orchestrator pushes vector data to the landscape cluster as `ConfigMap` resources.
 
-The vector data service reads those `ConfigMap` resources and provides an OpenFeature-compatible API. Workloads use that API to read vector data by vector ID.
+The [vector data service](../../reference/glossary.md#vector-data-service) reads those `ConfigMap` resources and provides an OpenFeature-compatible API. Workloads use that API to read vector data by vector ID.
 
 ## Data types
 

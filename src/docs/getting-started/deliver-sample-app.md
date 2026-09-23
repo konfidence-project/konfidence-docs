@@ -9,7 +9,7 @@ lastUpdated: true
 # Before you begin
 
 requirements: 
-* an OCI registry to store artifacts
+* an OCI registry to store [artifacts](../reference/glossary.md#artifact)
 * a running k8s cluster with konfidence installed (see quickstart guide)
 * clone sample-app/quickstart repo: github.com/konfidence-project/example-app
 
@@ -22,17 +22,17 @@ requirements:
 # Define your Delivery Flow
 
 summary:
-* start with dev and production stage
+* start with dev and production [stage](../reference/glossary.md#stage)
 * use pre-made vector/artifacts from example app 
-* manual promotion brings vectors to production stage
+* manual [promotion](../reference/glossary.md#promotion) brings [vectors](../reference/glossary.md#vector) to production stage
 
 steps:
-* define a VectorPromotionConfig with the dev vector template as source and the dev stage as target
+* define a [VectorPromotionConfig](../reference/glossary.md#vectorpromotionconfig) with the dev [vector template](../reference/glossary.md#vectortemplate) as source and the dev stage as target
 * define a VectorPromotionConfig with the dev stage as source and the production stage as target
 * apply all resources with `kubectl apply -f <resource>.yaml`
 
 what happened so far:
-* delivery flow defined, but no artifacts created yet
+* [delivery flow](../reference/glossary.md#delivery-flow) defined, but no artifacts created yet
 * no vector can be created, because referenced artifacts do not yet exist
 
 # Access the app on the dev stage
