@@ -63,25 +63,6 @@ An artifact alias is a mutable tag, such as `main`, that points to one version o
 
 :::
 
-### Control plane
-
-The control plane manages the delivery process and executes it in landscapes. It has two roles:
-
-- Delivery management defines which vectors exist and which vector each stage selects.
-- Runtime orchestration turns that stage state into deployments.
-
-One Helm chart installs the control plane. It runs two components: the operator and the API server. The API server also serves the user interface. The landscape orchestrator runs in the same cluster as the control plane.
-
-::: details Pages that use this term
-
-- [Access Control (RBAC)](../deploy-operate/access-control.md)
-- [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Installation variants](../deploy-operate/installation-variants.md)
-- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
-- [System Architecture](../deploy-operate/system-architecture.md)
-- [Vector Deployments](../deploy-operate/vector-deployments.md)
-
-:::
 
 ### Delivery flow
 
@@ -226,7 +207,7 @@ Konfidence creates a dedicated Kubernetes namespace for each landscape, `kden-l-
 
 ### Landscape orchestrator
 
-The landscape orchestrator executes deployments in a landscape. The Kubernetes landscape orchestrator has its own Helm chart and installs the Kubernetes deployer. It runs migration tasks as Kubernetes Jobs and activates vectors through Gateway API HTTPRoutes. It also passes vector data to the landscape as `ConfigMap` resources.
+The landscape orchestrator executes deployments in a landscape. It runs in the same cluster as Konfidence. The Kubernetes landscape orchestrator has its own Helm chart and installs the Kubernetes deployer. It runs migration tasks as Kubernetes Jobs and activates vectors through Gateway API HTTPRoutes. It also passes vector data to the landscape as `ConfigMap` resources.
 
 ::: details Pages that use this term
 
