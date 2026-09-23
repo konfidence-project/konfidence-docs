@@ -9,4 +9,4 @@ editLink: false
 
 Every value of the `konfidence` Helm chart with its type, default, and description. The sync workflow generates this page from the chart's README, which helm-docs builds from `values.yaml`. Do not edit it here.
 
-The first sync after [konfidence#301](https://github.com/konfidence-project/konfidence/pull/301) merges fills this page. Until then, read the table in the [chart README](https://github.com/konfidence-project/konfidence/blob/main/charts/konfidence/README.md).
+The next successful sync populates this page. Until then, read the table in the [chart README](https://github.com/konfidence-project/konfidence/blob/main/charts/konfidence/README.md).

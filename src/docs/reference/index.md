@@ -8,14 +8,13 @@ lastUpdated: true
 
 # Reference
 
-Reference material for Konfidence terminology.
+Reference material for Konfidence terminology, custom resources, commands, APIs, and Helm charts.
 
 ## Documentation sections
 
-- [Glossary](/docs/reference/glossary) - Terminology and definitions
-- [CRDs](/docs/reference/crd) - Custom resource fields
-- [CLI](/docs/reference/cli) - `kden` commands and flags
-- [API](/docs/reference/api) - HTTP API of the API server
-- [Helm values: konfidence](/docs/reference/helm-values-konfidence) - Control plane chart values
-- [Helm values: orchestrator](/docs/reference/helm-values-orchestrator) - Kubernetes deployer chart values
-
+- [Glossary](./glossary.md) defines Konfidence terminology.
+- [CRDs](./crd.md) lists custom resource fields.
+- [CLI](./cli.md) lists `kden` commands and flags.
+- [API](./api.md) describes the HTTP API of the API server.
+- [Helm values: konfidence](./helm-values-konfidence.md) lists control plane chart values.
+- [Helm values: orchestrator](./helm-values-orchestrator.md) lists Kubernetes deployer chart values.

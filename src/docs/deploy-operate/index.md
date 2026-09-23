@@ -25,9 +25,9 @@ Here, *platform* means Konfidence and its installed deployers. Landscape service
 Install the shared services and make them reachable:
 
 1. [Install Konfidence](./install/konfidence-installation.md) installs the operator and the API server from one Helm chart.
-2. [Give teams access to the dashboard and API](./install/expose-api.md) publishes both and connects the login to your identity provider.
+2. [Give teams access to the dashboard and API](./install/expose-api.md) publishes both and configures login through your identity provider.
 3. [Choose a deployer](./install/deployer/overview.md) matches your target platform and artifact types to deployment classes. [Install the Kubernetes deployer](./install/deployer/kubernetes.md) provides Helm and Kustomize deployment capabilities.
-4. [Connect artifact registries](./install/connect-registries.md) configures credentials for Konfidence and the deployer. Set up the central credentials now and return to the landscape-specific steps after creating a landscape.
+4. [Connect artifact registries](./install/connect-registries.md) configures credentials for Konfidence and the deployer. Set up the control plane credentials now and return to the landscape-specific steps after creating a landscape.
 
 ## Administer projects and access {#control-access}
 
@@ -58,7 +58,7 @@ These guides cover the progress of application delivery. The next section concer
 
 [Upgrade Konfidence](./operate/upgrading-konfidence.md) points to the release-specific upgrade and migration information available for pre-release installations.
 
-## Related
+## Related information
 
 - [Getting started](../getting-started/index.md) installs Konfidence into a local kind cluster.
 - [Core concepts](../core-concepts/index.md) explains vectors, stages, landscapes, and the delivery flow.

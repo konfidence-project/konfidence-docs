@@ -88,7 +88,7 @@ Application developers and platform operators provide the inputs Konfidence need
 | Role or component | Responsibility |
 | --- | --- |
 | Application developer | Packages an artifact and selects the deployment class it requires. |
-| Platform operator     | Installs deployers and configures matching targets in each landscape. |
+| Platform operator | Installs deployers and configures matching targets in each landscape. |
 | Konfidence | Matches artifact requirements to targets and coordinates the deployment lifecycle. |
 
 ## Related information

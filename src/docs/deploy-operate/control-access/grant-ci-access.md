@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Grant CI pipelines access
 
-Bind a project role to the OpenID Connect (OIDC) identity of a CI workflow. The workflow then calls the Konfidence API with the short-lived token its identity provider issues. No password or service account token is stored in the pipeline. The steps are the same for GitHub Actions, GitLab.com, and SPIRE. Pick your provider in the tabs.
+Bind a project role to the OpenID Connect (OIDC) identity of a CI workflow. The workflow then calls the Konfidence API with the short-lived token its identity provider issues. No password or service account token is stored in the pipeline. The process is similar for GitHub Actions, GitLab.com, and SPIRE. Use the tabs to select your provider.
 
 ## Prerequisites
 
@@ -39,7 +39,7 @@ The token's `aud` claim must equal the `audience` in the binding. Use the public
 
 ## Add the binding to the project
 
-Add a `jwks` subject to the role. All listed claims must match. A `*` matches any run of characters.
+Add a `jwks` subject to the role. All listed claims must match. A `*` matches any sequence of characters.
 
 ::: code-group
 
@@ -158,11 +158,11 @@ GitLab exposes the token as the variable named under `id_tokens`, so no request 
 
 In every case, the last command prints the promotion configs of the project. A `401` response means no binding matched the token.
 
-## What to do if it fails
+## Troubleshooting
 
 - `401` from the API: the token did not match any binding. Decode the token and compare `aud` and each claim with the binding.
 - The `Project` update is rejected with a validation error: `endpoint` must start with `https://`, and `claims` needs at least one entry.
-- The token is rejected although the binding matches: the discovery endpoint must be reachable from the API server pod. For SPIRE, that is the OIDC Discovery Provider, not the agent socket.
+- The token is rejected even though the binding matches: the discovery endpoint must be reachable from the API server pod. For SPIRE, that is the OIDC Discovery Provider, not the agent socket.
 
 ## Next steps
 

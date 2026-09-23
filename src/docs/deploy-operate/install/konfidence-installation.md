@@ -117,7 +117,7 @@ webhook:
     cert-manager.io/inject-ca-from: konfidence-system/konfidence-webhook-server-cert
 ```
 
-Then re-run the install/upgrade command.
+Run the install command again without `--set webhook.enabled=false`.
 
 ## Keep login sessions in PostgreSQL
 
@@ -147,10 +147,10 @@ api:
           key: connection
 ```
 
-Re-run the install command with `--values session-values.yaml`. The API server refuses to start when `storageType` is `db-pg` and the connection string is empty. Pool sizes are set under `api.database`.
+Run the install command again with `--values session-values.yaml`. The API server refuses to start when `storageType` is `db-pg` and the connection string is empty. Pool sizes are set under `api.database`.
 
 ## Next steps
 
 - [Give teams access to the dashboard and API](./expose-api.md) publishes both and enables login through your identity provider.
 - [Choose a deployer](./deployer/overview.md) selects the capabilities your applications need. Then [install the Kubernetes deployer](./deployer/kubernetes.md#install-the-deployer) for Helm and Kustomize artifacts.
-- [Connect artifact registries](./connect-registries.md) configures central credentials now and deployer credentials after you create a landscape.
+- [Connect artifact registries](./connect-registries.md) configures control plane credentials now and deployer credentials after you create a landscape.

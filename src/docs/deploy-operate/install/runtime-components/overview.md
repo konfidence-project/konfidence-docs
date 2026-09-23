@@ -12,7 +12,7 @@ Choose the services your applications need in a landscape before creating its st
 
 ## What are landscape services? {#what-are-runtime-components}
 
-These services were previously described as runtime components. Configure them for each landscape after its namespace exists. Their use depends on the capabilities your applications need; check each service's guidance rather than treating every service as optional.
+These services were previously described as runtime components. Configure them for each landscape after its namespace exists. Follow each service's guidance to determine whether your applications need it.
 
 ## Installation and administration
 

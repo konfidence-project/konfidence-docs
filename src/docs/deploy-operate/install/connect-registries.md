@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Connect artifact registries
 
-Give Konfidence credentials for the private OCI registries that hold artifacts and vectors. Two components read registries on their own, and each needs its own Secret. The control plane pulls a vector when a stage changes. The Kubernetes deployer pulls artifact contents when it creates workloads. Without credentials, both access the registry unauthenticated and private registries answer with `401` or `403`.
+Give Konfidence credentials for the private OCI registries that hold artifacts and vectors. Two components read registries on their own, and each needs its own Secret. The control plane pulls a vector when a stage changes. The Kubernetes deployer pulls artifact contents when it creates workloads. Without credentials, both access the registry unauthenticated and private registries return `401` or `403`.
 
 Configure the control plane credentials during installation. Return to [Give the deployer credentials](#give-the-deployer-credentials) after creating each landscape that uses a private registry.
 
@@ -41,7 +41,7 @@ kubectl create secret docker-registry registry-credentials \
   --docker-password="$REGISTRY_PASSWORD"
 ```
 
-The controllers load the Secret at start-up. Restart the operator so it picks the Secret up:
+The controllers load the Secret at startup. Restart the operator so it loads the Secret:
 
 ```bash
 kubectl rollout restart deployment/konfidence --namespace konfidence-system
@@ -52,7 +52,7 @@ The rollout completes. The next stage change that pulls a vector from this regis
 
 ## Give the deployer credentials
 
-Set the namespace reported by your Landscape's status. Replace `<landscape-namespace>` with that value:
+Set the namespace reported by your `Landscape` resource's status. Replace `<landscape-namespace>` with that value:
 
 ```bash
 export LANDSCAPE_NAMESPACE='<landscape-namespace>'
@@ -70,7 +70,7 @@ kubectl create secret docker-registry "$REGISTRY_HOST" \
 
 Repeat this for every landscape that deploys from the registry. The next deployment in the landscape pulls the artifact with these credentials.
 
-## Map registries to Secrets with other names
+## Map registries to Secrets with different names
 
 A Secret name must be a DNS subdomain name. A registry with a port, such as `registry.example.com:5000`, cannot name the Secret. Map the host to a Secret name in the ConfigMap `flux-deployer-configuration` in `konfidence-system` instead:
 
@@ -101,13 +101,13 @@ env:
     value: konfidence-system
 ```
 
-Setting only one of the two variables stops the operator at start-up with an error that names the missing one.
+Setting only one of the two variables stops the operator at startup with an error that names the missing one.
 
 ## Workload images stay your responsibility
 
 The credentials on this page cover the artifacts and vectors that Konfidence pulls. The container images your workloads run are pulled by the kubelet through `imagePullSecrets` in your manifests or Helm values. Konfidence does not add those.
 
-## What to do if it fails
+## Troubleshooting
 
 - A stage rollout fails with `401` or `403` from the registry. The control plane Secret is missing, or the operator was not restarted after creating it.
 - A deployment in a landscape fails to pull. No Secret named after the host exists in the landscape namespace. The ConfigMap has no entry for the host either.
