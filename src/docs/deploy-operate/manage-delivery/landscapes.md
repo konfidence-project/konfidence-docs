@@ -19,7 +19,7 @@ For guidance on choosing landscape boundaries, see [Landscapes and stages](../..
 Before you begin, make sure you have:
 
 - A [project](../control-access/projects.md) in which to create the landscape.
-- Kubernetes permission to create and read `Landscape` resources in the [project](../../reference/glossary.md#project)'s namespace. The update and delete sections also require the corresponding Kubernetes permissions.
+- Kubernetes permission to create and read `Landscape` resources in the namespace of the [project](../../reference/glossary.md#project). The update and delete sections also require the corresponding Kubernetes permissions.
 - Access to the Konfidence cluster through `kubectl`.
 
 ## Create a landscape
