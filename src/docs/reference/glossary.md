@@ -14,9 +14,9 @@ The glossary defines the Konfidence terms used in this documentation. Each entry
 
 ### Artifact
 
-An artifact is one deployable piece of your application, such as a microservice. Konfidence packages it as an Open Component Model (OCM) component version.
+An artifact is one deployable piece of your application, such as a microservice. Your CI pipeline packages it as an Open Component Model (OCM) component version.
 
-The artifact contains a manifest and a reference to the build result, such as a container image. It can also include binary resources directly. The manifest names the [deployment class](#deployment-class) the artifact requires. It also states whether one running instance may serve several vectors.
+The artifact contains a manifest and a reference to the build result, such as a container image. It can also include binary resources directly. The manifest field `type` names the [deployment class](#deployment-class) the artifact requires. The field `allowReuse` controls whether several vector deployments share one running instance.
 
 Continuous integration (CI) pipelines publish artifacts to an OCM-compliant repository, such as an Open Container Initiative (OCI) registry.
 
@@ -54,7 +54,7 @@ Continuous integration (CI) pipelines publish artifacts to an OCM-compliant repo
 
 ### Artifact alias
 
-An artifact alias is a dynamic reference that tells Konfidence which artifact flavor to include when it assembles a vector. It gives a stable name to a moving target, such as the current main-branch build of a service. An alias does not replace the semantic version of the artifact.
+An artifact alias is a mutable tag, such as `main`, that points to one version of an artifact. A VectorTemplate can reference an artifact by alias. Assembly resolves the alias and records the concrete version in the vector. An alias does not replace the semantic version of the artifact.
 
 ::: details Pages that use this term
 
@@ -70,7 +70,7 @@ The control plane manages the delivery process and executes it in landscapes. It
 - Delivery management defines which vectors exist and which vector each stage selects.
 - Runtime orchestration turns that stage state into deployments.
 
-The control plane runs as one binary, installed from one Helm chart. In the current release, the control plane, the landscape orchestrator, and your workloads share one Kubernetes cluster.
+One Helm chart installs the control plane. It runs two components: the operator and the API server. The API server also serves the user interface. The landscape orchestrator runs in the same cluster as the control plane.
 
 ::: details Pages that use this term
 
@@ -85,7 +85,7 @@ The control plane runs as one binary, installed from one Helm chart. In the curr
 
 ### Delivery flow
 
-The delivery flow is the path from published artifacts to the vector each stage selects. It has four phases: build, assemble, assign, and promote. Deployment in a landscape starts after the delivery flow ends.
+The delivery flow is the path from published artifacts to the vector each stage selects. It has four phases: build, assemble, assign, and promote. The assign phase is unrelated to the VectorAssignment resource. Deployment in a landscape starts after the delivery flow ends.
 
 ::: details Pages that use this term
 
@@ -100,9 +100,9 @@ The delivery flow is the path from published artifacts to the vector each stage 
 
 ### Deployer
 
-A deployer is a platform-specific controller that deploys artifacts of the deployment classes it provides. It reconciles [ArtifactDeployment](#artifactdeployment) resources and turns their deployable content into running workloads. It also takes part in platform-specific migration and activation work.
+A deployer is a platform-specific controller that deploys artifacts of the deployment classes it provides. It reconciles [ArtifactDeployment](#artifactdeployment) resources and turns their deployable content into running workloads.
 
-The current release provides one deployer for Kubernetes, installed with the [landscape orchestrator](#landscape-orchestrator).
+The current release provides one deployer for Kubernetes, installed with the [landscape orchestrator](#landscape-orchestrator). It deploys artifacts through Flux.
 
 ::: details Pages that use this term
 
@@ -126,9 +126,9 @@ The current release provides one deployer for Kubernetes, installed with the [la
 
 ### Deployment class
 
-A deployment class is a named capability for deploying one kind of artifact, such as Helm or Kustomize. A deployer advertises each class it provides with a cluster-scoped `DeploymentClass` resource.
+A deployment class is a named capability for deploying one kind of artifact, such as Helm or Kustomize. Each class exists as a cluster-scoped `DeploymentClass` resource that names the controller responsible for it. The deployer's Helm chart installs these resources.
 
-The class name follows the pattern `<class-name>.<vendor-domain>`, for example `helm.konfidence.cloud`. The `type` field of the artifact manifest names the class the artifact requires.
+By convention, the class name follows the pattern `<class-name>.<vendor-domain>`, for example `helm.konfidence.cloud`. The `type` field of the artifact manifest names the class the artifact requires.
 
 ::: details Pages that use this term
 
@@ -144,7 +144,7 @@ The class name follows the pattern `<class-name>.<vendor-domain>`, for example `
 
 ### Deployment result
 
-A deployment result is one output that a deployer produces while it deploys an artifact. Examples are service endpoints, generated URLs, identities, and allocated resources. Konfidence passes deployment results to the landscape as part of [vector data](#vector-data).
+A deployment result is one output that a deployer produces while it deploys an artifact, such as a service endpoint. The Kubernetes deployer reports Services annotated with `konfidence.cloud/deployment-result`. Konfidence passes deployment results to the landscape as part of [vector data](#vector-data).
 
 ::: details Pages that use this term
 
@@ -160,7 +160,7 @@ A deployment result is one output that a deployer produces while it deploys an a
 
 ### Deployment target
 
-A deployment target makes one deployment class available in one landscape. It holds the connection information the responsible deployer needs, such as credentials. A landscape has one deployment target per deployment class. The `DeploymentTarget` resource lives in the landscape namespace.
+A deployment target makes one deployment class available in one landscape. It references the connection the responsible deployer uses: the local cluster or a Secret with a kubeconfig. A landscape has one deployment target per deployment class. The `DeploymentTarget` resource lives in the landscape namespace.
 
 ::: details Pages that use this term
 
@@ -195,7 +195,7 @@ A feature flag is a named value in the [vector configuration](#vector-configurat
 
 A landscape is an operational boundary within a project. It groups stages, deployment targets, credentials, and deployment resources that share ownership, security, compliance, or reliability requirements.
 
-Konfidence creates a dedicated Kubernetes namespace for each landscape. Deployment targets connect the landscape to the infrastructure where deployments run.
+Konfidence creates a dedicated Kubernetes namespace for each landscape, `kden-l-<landscape-name>-<hash>` by default. Deployment targets connect the landscape to the infrastructure where deployments run.
 
 ::: details Pages that use this term
 
@@ -226,7 +226,7 @@ Konfidence creates a dedicated Kubernetes namespace for each landscape. Deployme
 
 ### Landscape orchestrator
 
-The landscape orchestrator executes deployments in a landscape. The Kubernetes landscape orchestrator has its own Helm chart and installs the Kubernetes deployer. It also passes vector data to the landscape as `ConfigMap` resources.
+The landscape orchestrator executes deployments in a landscape. The Kubernetes landscape orchestrator has its own Helm chart and installs the Kubernetes deployer. It runs migration tasks as Kubernetes Jobs and activates vectors through Gateway API HTTPRoutes. It also passes vector data to the landscape as `ConfigMap` resources.
 
 ::: details Pages that use this term
 
@@ -241,7 +241,7 @@ The landscape orchestrator executes deployments in a landscape. The Kubernetes l
 
 ### Project
 
-A project provides the organizational boundary and access control for Konfidence resources. Each project owns a dedicated namespace, `kden-p-<project-name>` by default. That namespace holds the project's landscapes, vector templates, and promotion configurations.
+A project provides the organizational boundary for Konfidence resources. The API server grants access to a project to the subjects in its role bindings. Each project owns a dedicated namespace, `kden-p-<project-name>` by default. That namespace holds the project's landscapes, vector templates, and promotion configurations.
 
 ::: details Pages that use this term
 
@@ -256,9 +256,9 @@ A project provides the organizational boundary and access control for Konfidence
 
 ### Promotion
 
-A promotion selects a concrete, immutable vector for a target stage by updating the stage's desired vector. It does not rebuild, copy, or change the vector. Each promotion records which vector reached which stage.
+A promotion selects a concrete, immutable vector for a target stage by updating the stage's desired vector. It does not rebuild, copy, or change the vector.
 
-A [VectorPromotionConfig](#vectorpromotionconfig) defines a promotion flow. A [VectorPromotion](#vectorpromotion) runs it once. In the current release, you trigger promotions manually.
+A [VectorPromotionConfig](#vectorpromotionconfig) defines a promotion flow. Konfidence creates a [VectorPromotion](#vectorpromotion) when the source vector differs from the target stage. A promotion from a stage waits for approval before it runs.
 
 ::: details Pages that use this term
 
@@ -273,9 +273,9 @@ A [VectorPromotionConfig](#vectorpromotionconfig) defines a promotion flow. A [V
 
 ### Stage
 
-A stage is a logical checkpoint in the delivery flow, such as development, integration, or production. It selects exactly one desired vector at a time. Stage names describe the purpose of the checkpoint, not the infrastructure behind it.
+A stage is a logical checkpoint in the delivery flow, such as development, integration, or production. It selects at most one desired vector at a time. Stage names describe the purpose of the checkpoint, not the infrastructure behind it.
 
-Each stage belongs to a landscape and uses the deployment targets configured there. Stages in one landscape can share deployments of artifacts they have in common. The `Stage` custom resource holds the selected vector.
+Each stage belongs to a landscape and uses the deployment targets configured there. Stages in one landscape share an artifact deployment when the artifact allows reuse and the versions match. The `Stage` custom resource holds the selected vector.
 
 ::: details Pages that use this term
 
@@ -342,7 +342,7 @@ Any change to an artifact reference or to the configuration creates a new vector
 
 ### Vector configuration
 
-Vector configuration is data that you add to a vector: feature flags and free-form authored configuration. Konfidence imposes no schema on authored configuration. The vector ID determines its configuration, so changing the configuration creates a new vector.
+Vector configuration is data that you add to a vector: feature flags and free-form authored configuration. Konfidence imposes no schema on authored configuration. Changing the configuration creates a new vector. It is stored as the OCM resource `cloud-konfidence-vector-config` on the vector.
 
 ::: details Pages that use this term
 
@@ -354,7 +354,7 @@ Vector configuration is data that you add to a vector: feature flags and free-fo
 
 ### Vector data
 
-Vector data is runtime data that belongs to one vector deployment. It contains the vector configuration and the deployment results of the vector's artifacts. Applications read vector data by vector ID. Vector data is available before the vector is activated.
+Vector data is runtime data that belongs to one vector deployment. It contains the vector configuration and the deployment results of the vector's artifacts. Applications read vector data by vector ID, the name of the vector deployment. Activation sends this ID in the `x-vector-id` request header. Vector data is available before the vector is activated.
 
 ::: details Pages that use this term
 
@@ -370,7 +370,7 @@ Vector data is runtime data that belongs to one vector deployment. It contains t
 
 ### Vector data service
 
-The vector data service is a runtime component that serves vector data to workloads in a Kubernetes landscape. It reads vector data from `ConfigMap` resources and provides an OpenFeature-compatible API. An administrator installs it in each landscape namespace.
+The vector data service is a runtime component that serves vector data to workloads in a Kubernetes landscape. It reads vector data from `ConfigMap` resources and provides the OpenFeature Remote Evaluation Protocol (OFREP) API. An administrator installs it in each landscape namespace.
 
 ::: details Pages that use this term
 
@@ -387,13 +387,13 @@ The vector data service is a runtime component that serves vector data to worklo
 
 :::
 
-## Custom resources implement the concepts
+## Custom resources
 
-Konfidence represents its concepts as Kubernetes custom resources in the `konfidence.cloud/v1alpha1` API group. The [CRD reference](./crd.md) lists all fields.
+Konfidence represents its concepts as Kubernetes custom resources in the API group `konfidence.cloud`, version `v1alpha1`. The [CRD reference](./crd.md) lists all fields.
 
 ### ArtifactDeployment
 
-A custom resource that describes the deployment of one artifact in a landscape. A deployer reconciles it according to the deployment class in the artifact manifest. Several vector deployments in one landscape can reuse one ArtifactDeployment when their vectors share the artifact.
+A custom resource that describes the deployment of one artifact in a landscape. A deployer reconciles it according to the deployment class in the artifact manifest. Vector deployments in one landscape share an ArtifactDeployment if the artifact sets `allowReuse` and the versions match.
 
 ::: details Pages that use this term
 
@@ -408,7 +408,7 @@ A custom resource that describes the deployment of one artifact in a landscape. 
 
 ### StageVersion
 
-A custom resource that captures one immutable rollout of a stage. It records the selected vector and the stage generation. Stage versions track stage changes over time and let Konfidence switch between vectors without downtime. The stage status names the active stage version.
+A custom resource that captures one immutable rollout of a stage. It records the selected vector and the stage generation. Every change to the stage spec creates a new stage version. The previous stage version stays active until activation of the new one succeeds. The stage status names the active stage version.
 
 ::: details Pages that use this term
 
@@ -419,7 +419,7 @@ A custom resource that captures one immutable rollout of a stage. It records the
 
 ### StageVersionUsage
 
-A custom resource that marks a StageVersion as in use and states the reason. It references the StageVersion by name or by label selector. Konfidence keeps the resources of a StageVersion while a StageVersionUsage references it.
+A custom resource that marks a StageVersion as in use and can state the reason. It references the StageVersion by name or by label selector. Konfidence keeps the resources of a StageVersion while a StageVersionUsage references it.
 
 ::: details Pages that use this term
 
@@ -429,7 +429,7 @@ A custom resource that marks a StageVersion as in use and states the reason. It 
 
 ### VectorActivation
 
-A custom resource that starts the activation of a vector for a stage version. Activation switches live traffic to that vector.
+A custom resource that starts the activation of a vector for a stage version. Activation runs the registered activation tasks. Then Konfidence marks the stage version as active. The Kubernetes deployer's activation task creates an HTTPRoute that tags requests with the vector ID.
 
 ::: details Pages that use this term
 
@@ -441,7 +441,7 @@ A custom resource that starts the activation of a vector for a stage version. Ac
 
 A custom resource that binds one ArtifactDeployment to one VectorDeployment. One artifact deployment can serve several vectors, so vectors and artifact deployments form an n:m relationship. Each VectorAssignment is one edge of that relationship.
 
-The vector deployment controller manages VectorAssignments. Deployers read them to apply vector-specific configuration.
+The vector deployment controller manages VectorAssignments. Deployers reconcile them and report readiness.
 
 ::: details Pages that use this term
 
@@ -469,7 +469,7 @@ A custom resource that deploys all artifacts of one vector in a landscape. It re
 
 ### VectorPromotion
 
-A custom resource that runs a promotion flow once. It pins the concrete vector when it is created and records the status of the promotion.
+A custom resource that runs a promotion flow once. It pins the concrete vector when it is created and records the status of the promotion. Konfidence keeps the last 10 finished promotions per VectorPromotionConfig by default.
 
 ::: details Pages that use this term
 
@@ -480,7 +480,7 @@ A custom resource that runs a promotion flow once. It pins the concrete vector w
 
 ### VectorPromotionConfig
 
-A custom resource that defines a promotion flow from a source to a target stage. The source is a VectorTemplate or another stage.
+A custom resource that defines a promotion flow from a source to a target stage. The source is a VectorTemplate or another stage. Konfidence creates a VectorPromotion when the source vector differs from the target stage. Promotions from a stage source require approval by default.
 
 ::: details Pages that use this term
 
@@ -494,7 +494,7 @@ A custom resource that defines a promotion flow from a source to a target stage.
 
 ### VectorTemplate
 
-A custom resource that defines how Konfidence assembles a vector. It lists the artifact aliases to include and the upload target for the assembled vector. Konfidence assembles the vector from the latest version of each listed component.
+A custom resource that defines how Konfidence assembles a vector. It lists OCM component references, usually with an artifact alias, and the upload target for the assembled vector. Konfidence resolves each reference on every reconcile. It uploads a new vector when the result changes.
 
 ::: details Pages that use this term
 
