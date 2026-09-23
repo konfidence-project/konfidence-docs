@@ -39,7 +39,7 @@ Before you begin, make sure you meet these requirements:
 - Your artifacts are published to an Open Container Initiative (OCI) registry. See
   [Publish artifacts](../artifact-types/publish-artifacts.md).
 - You have `kubectl` configured with access to a
-  [Konfidence project namespace](../../deploy-operate/projects.md).
+  [Konfidence project namespace](../../deploy-operate/control-access/projects.md).
 - If your registry is private, its credentials are stored in Kubernetes Secrets
   in the same namespace.
 
