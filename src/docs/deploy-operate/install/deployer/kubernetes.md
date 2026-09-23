@@ -18,7 +18,7 @@ After installation, use the connection types on this page to configure targets i
 ## Prerequisites
 
 - [Konfidence installed](../konfidence-installation.md) in the cluster, including the listed Flux prerequisites.
-- Helm and `kubectl` access with permission to install the chart and its cluster-scoped resources, and to inspect Deployments and Deployment Classes.
+- Helm and `kubectl` access with permission to install the chart and its cluster-scoped resources, and to inspect `Deployment` and `DeploymentClass` resources.
 
 ## Install the deployer
 
@@ -108,22 +108,16 @@ sub-controller that reconciles it. The following table lists the supported manif
 
 | Deployment class | OCM resource type | Flux resources created |
 | :--- | :--- | :--- |
-| `kustomize.konfidence.cloud` | `kustomize` | `OCIRepository` (source) + `Kustomization` (kustomize.toolkit.fluxcd.io) |
-| `helm.konfidence.cloud` | `helmChart` | `HelmRepository` (source) + `HelmRelease` (helm.toolkit.fluxcd.io) |
+| `kustomize.konfidence.cloud` | `kustomize` | `OCIRepository` (source) and `Kustomization` (`kustomize.toolkit.fluxcd.io`) |
+| `helm.konfidence.cloud` | `helmChart` | `HelmRepository` (source) and `HelmRelease` (`helm.toolkit.fluxcd.io`) |
 
-An `ArtifactDeployment` whose `manifest.type` does not match either value is
-ignored by this deployer.
+An `ArtifactDeployment` whose `manifest.type` does not match either value is ignored by this deployer.
 
-Each `ArtifactDeployment` must carry **at most one** OCM resource of the
-matching type. Deployments with more than one matching resource are rejected
-with `[Ready=False] MultipleKustomizeResources` (kustomize path) or
-`[Ready=False] MultipleHelmChartResources` (helm path). Deployments with zero
-matching resources produce no Flux resources.
+Each `ArtifactDeployment` must carry at most one OCM resource of the matching type. Deployments with more than one matching resource are rejected with `[Ready=False] MultipleKustomizeResources` (Kustomize path) or `[Ready=False] MultipleHelmChartResources` (Helm path). Deployments with zero matching resources produce no Flux resources.
 
-## Exposing a Service as a deployment result
+## Expose a Service as a deployment result
 
-By default the Services in your bundle or chart are internal. To let other
-components in the same vector discover and call a Service, annotate it:
+By default, the Services in your bundle or chart are internal. To let other components in the same vector discover and call a Service, annotate it:
 
 ```yaml
 apiVersion: v1
@@ -140,31 +134,21 @@ spec:
 
 ### Why the annotation is required
 
-The deployer applies a per-vector
-`nameSuffix` (kustomize) or `releaseName` (Helm), so the Service's deployed name
-is not known ahead of time and a caller cannot hard-code it. The annotation both
-opts the Service in and supplies the **stable name** (its value) that consumers
-look up. Services without the annotation are never exposed.
+The deployer applies a per-vector `nameSuffix` (Kustomize) or `releaseName` (Helm), so the Service's deployed name is not known ahead of time and a caller cannot hard-code it. The annotation makes the Service discoverable and supplies the **stable name** (its value) that consumers look up. Services without the annotation are never exposed.
 
 ### How the deployer processes the annotation
 
-After the artifact is deployed, the deployer
-lists the Services it created and, for each one carrying the annotation, records
-a deployment result on the `ArtifactDeployment` containing:
+After the artifact is deployed, the deployer lists the Services it created. For each Service carrying the annotation, it records a deployment result on the `ArtifactDeployment` containing:
 
 - The annotation value as the result name.
 - The Service's namespace and its actual (suffixed) name.
 - The Service's ports verbatim (multi-port Services are supported as-is).
 
-Konfidence aggregates these into the vector's `VectorData`, keyed by artifact
-component, so every component in the vector can resolve the Service by its stable
-name at runtime — see [Use deployment results](../../../develop-integrate/vector-data/deployment-results.md).
+Konfidence aggregates these into the vector's `VectorData`, keyed by artifact component. Every component in the vector can then resolve the Service by its stable name at runtime. See [Use deployment results](../../../develop-integrate/vector-data/deployment-results.md).
 
 ### Scope
 
-Only Kubernetes `Service` objects can be exposed this way today
-(deployment-result type `http-k8s-service`). Other resource kinds are not yet
-supported.
+Only Kubernetes `Service` objects can be exposed this way today (deployment-result type `http-k8s-service`). Other resource kinds are not yet supported.
 
 ## Next steps {#related}
 

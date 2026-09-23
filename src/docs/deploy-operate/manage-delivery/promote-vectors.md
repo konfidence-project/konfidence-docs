@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Set up and run promotion flows {#promote-vectors}
 
-Define a [promotion](/docs/reference/glossary#promotion) flow so that a stage selects its vector through a recorded, approvable step. A `VectorPromotionConfig` names a source and a target stage. Konfidence creates a `VectorPromotion` whenever the source vector differs from the vector the target stage selects. The promotion waits for approval if required. It then updates the target stage to reference that one concrete vector version.
+Define a [promotion](../../reference/glossary.md#promotion) flow so that a stage selects its vector through a recorded, approvable step. A `VectorPromotionConfig` names a source and a target stage. Konfidence creates a `VectorPromotion` whenever the source vector differs from the vector the target stage selects. The promotion waits for approval if required. It then updates the target stage to reference the concrete vector version.
 
 [Delivery flow](../../core-concepts/delivery-flow.md) explains the model behind promotions.
 
@@ -17,9 +17,9 @@ Use the setup sections to configure sources, target stages, and retention throug
 ## Prerequisites
 
 - A [project](../control-access/projects.md) with a [landscape](./landscapes.md) and a target [stage](./stages.md).
-- A source: a `VectorTemplate` that assembles vectors, see [Build vectors](/docs/develop-integrate/observe-improve/build-vectors), or another stage.
+- A source: either a `VectorTemplate` that assembles vectors, as described in [Build vectors](../../develop-integrate/observe-improve/build-vectors.md), or another `Stage` resource.
 - For setup: `kubectl` access with Kubernetes permission to create and read `VectorPromotionConfig` resources in the project namespace `kden-p-<PROJECT>`.
-- For the Kubernetes inspection commands: permission to read promotions and Landscapes in the project namespace, and Stages and rollout resources in the landscape namespace.
+- For the Kubernetes inspection commands: permission to read promotions and `Landscape` resources in the project namespace, and `Stage` and rollout resources in the landscape namespace.
 - For approvals: `kden` installed and configured for the Konfidence API, and the `pm` or `admin` role in the project. Use `kden project list` to check project visibility; [project role bindings](../control-access/access-control.md) determine the granted role.
 
 The approval role does not grant the Kubernetes permissions used for setup and inspection. A platform administrator can configure the flow and pass its project and configuration names to the person or pipeline responsible for approvals.
@@ -92,8 +92,8 @@ Promotions from a stage source require approval by default. Each config watches 
 
 Two fields on the config control cleanup:
 
-- `ttlAfterFinished` deletes a promotion that time after it reaches a terminal state. Without it, promotions stay.
-- `keepLastPromotions` keeps at most that many terminal promotions per config, default 10. The oldest beyond the bound are deleted.
+- `ttlAfterFinished` deletes a promotion after the configured interval once it reaches a terminal state. Without it, promotions stay.
+- `keepLastPromotions` sets the maximum number of terminal promotions retained per configuration. The default is 10. Older promotions beyond the limit are deleted.
 
 Promotions that are not terminal are never deleted. Deleting the config deletes its promotions.
 
@@ -125,7 +125,7 @@ Approve the promotion that is `Waiting`:
 kden vector-promotion approve <VECTOR_PROMOTION_ID> --projectId "$PROJECT"
 ```
 
-The promotion moves to `Ready` and then to `InProgress`. Approving twice is accepted without effect. The API answers `409` when the promotion is superseded, finished, or needs no approval.
+The promotion moves to `Ready` and then to `InProgress`. Approving twice is accepted without effect. The API returns `409` when the promotion is superseded, finished, or needs no approval.
 
 ## Inspect the result
 
@@ -155,7 +155,7 @@ The output equals the promotion's `spec.vector`. The promotion records the same 
 | `Failed` | Execution ended without success. The conditions name the reason. |
 | `Superseded` | A promotion with a higher sequence number replaced this one. It can never be approved or executed. |
 
-## What to do if it fails
+## Troubleshooting
 
 - `Blocked`: read the config's `Ready` condition. The target stage or landscape does not exist or has a different name.
 - `Failed` with reason `PromotionTimedOut`: the execution exceeded the fixed five-minute deadline. Inspect the target stage. The next vector the source selects creates a fresh promotion.

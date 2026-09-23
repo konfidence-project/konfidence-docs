@@ -1,6 +1,6 @@
 ---
 title: Give teams access to the dashboard and API
-description: Publish the API and dashboard through an Ingress or Gateway with TLS and connect the login to your OIDC provider.
+description: Publish the API and dashboard through an Ingress or Gateway with TLS and configure login through your OIDC provider.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Give teams access to the dashboard and API
 
-Let your teams open the Konfidence dashboard in a browser and sign in with their company account. The same setup lets the `kden` CLI and CI pipelines reach the API. To get there, you publish the API server under a public URL with TLS. Then you connect its login to your OpenID Connect (OIDC) provider.
+Let your teams open the Konfidence dashboard in a browser and sign in with their company account. The same setup lets the `kden` CLI and CI pipelines reach the API. Publish the API server under a public URL with TLS, then configure login through your OpenID Connect (OIDC) provider.
 
 This configures the installation's endpoint and login. [Create a project](../control-access/projects.md) and [grant teams access to it](../control-access/access-control.md) to make project resources available after sign-in.
 
@@ -19,7 +19,7 @@ This configures the installation's endpoint and login. [Create a project](../con
 - An Ingress controller in the cluster, or a Gateway API implementation such as Envoy Gateway. Check: `kubectl get ingressclass` or `kubectl get gatewayclass` lists at least one class.
 - A DNS name for the API that resolves to that controller, for example `konfidence.example.com`.
 - A TLS certificate for that name as a Secret in `konfidence-system`. An issuer such as cert-manager can create it from Ingress annotations instead.
-- An OIDC client at your identity provider with the redirect URL `https://konfidence.example.com/api/v1/auth/callback`. Note its issuer URL, client id, and client secret.
+- An OIDC client at your identity provider with the redirect URL `https://konfidence.example.com/api/v1/auth/callback`. Note its issuer URL, client ID, and client secret.
 
 The session cookie is marked `secure`, so browsers send it over HTTPS only. Plain HTTP works for `curl` but not for the dashboard login.
 
@@ -42,7 +42,7 @@ kubectl create secret generic konfidence-oidc-client \
 
 ## Write the values file
 
-Pick the tab for your controller. Save the file as `konfidence-values.yaml` and replace the issuer URL and client id with the values from your provider. For an Ingress, replace `<INGRESS_CLASS>` with the name from `kubectl get ingressclass`.
+Choose the tab for your controller. Save the file as `konfidence-values.yaml` and replace the issuer URL and client ID with the values from your provider. For an Ingress, replace `<INGRESS_CLASS>` with the name from `kubectl get ingressclass`.
 
 ::: code-group
 
@@ -162,7 +162,7 @@ kden login
 
 A browser window opens for the identity provider. After sign-in, `kden project list` prints the projects your groups grant you.
 
-## What to do if it fails
+## Troubleshooting
 
 - The API pod restarts with `oidc-issuer-url must not be empty`: `api.oidc.issuerURL` is missing from the values file.
 - The provider rejects the login with a redirect URI error: `redirectURL` differs from the URL registered at the provider.

@@ -397,7 +397,7 @@ For the next parts of your application delivery workflow, see:
 
 - [Build vectors](../observe-improve/build-vectors.md).
 - [Set up and run promotion flows](../../deploy-operate/manage-delivery/promote-vectors.md).
-- [Landscapes and Stages](../../core-concepts/landscapes-and-stages.md) for security boundaries.
+- [Landscapes and stages](../../core-concepts/landscapes-and-stages.md) for security boundaries.
 
 <!--
 Retained for reuse: the full pipeline diagram provides conceptual context beyond this assembly-focused how-to.
@@ -510,5 +510,5 @@ Retained for reuse: background reading moved out of the prerequisites; credentia
 
 - [Build vectors](../observe-improve/build-vectors.md)
 - [Set up and run promotion flows](../../deploy-operate/manage-delivery/promote-vectors.md)
-- [Landscapes and Stages — security boundaries](../../core-concepts/landscapes-and-stages.md)
+- [Landscapes and stages — security boundaries](../../core-concepts/landscapes-and-stages.md)
 -->

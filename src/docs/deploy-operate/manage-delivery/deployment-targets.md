@@ -19,7 +19,7 @@ For the relationship between artifacts, deployment classes, deployers, targets, 
 - A [ready landscape](./landscapes.md).
 - A deployer that provides the class you need. Check: `kubectl get deploymentclasses` lists it. See [Choose a deployer](../install/deployer/overview.md).
 - The connection block for that deployer, from its page. For the Kubernetes deployer, see [Connection types](../install/deployer/kubernetes.md#connection-types).
-- `kubectl` access with permission to read Deployment Classes and the Landscape, and to create and read `DeploymentTarget` resources in its namespace.
+- `kubectl` access with permission to read `DeploymentClass` and `Landscape` resources, and to create and read `DeploymentTarget` resources in the landscape namespace.
 
 Set the names used below:
 
@@ -30,7 +30,7 @@ export LANDSCAPE_NAMESPACE=$(kubectl get landscape dev \
   --output=jsonpath='{.status.namespace}')
 ```
 
-## Pick the deployment class
+## Choose the deployment class
 
 Each artifact names the deployment class it requires. A landscape needs one ready target for every class its stages deploy. List the classes installed deployers advertise:
 
@@ -79,11 +79,11 @@ The command returns `condition met`. What `Ready` checks is up to the deployer. 
 kubectl get deploymenttargets --namespace="$LANDSCAPE_NAMESPACE"
 ```
 
-## What to do if it fails
+## Troubleshooting
 
 - `Ready` stays `False` with reason `UnsupportedType`: no deployer owns the class. Check the class name against `kubectl get deploymentclasses`.
 - `Ready` stays `False` with another reason: the connection block is wrong for the deployer. The reason and message come from the deployer. For the Kubernetes deployer, see [Connection types](../install/deployer/kubernetes.md#connection-types).
-- The target never gets a condition: the deployer that owns the class is not running. See [Install the deployer](../install/deployer/kubernetes.md#install-the-deployer).
+- The target never gets a condition: the deployer that owns the class is not running. See [Install the Kubernetes deployer](../install/deployer/kubernetes.md#install-the-deployer).
 
 ## Next steps
 

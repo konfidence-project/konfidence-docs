@@ -111,7 +111,7 @@ kubectl get stageversion "$ACTIVE_VERSION" \
   --output=jsonpath='{.spec.vector}{"\n"}'
 ```
 
-The output matches the desired vector after its activation has completed and it has become the active stage version.
+After activation completes, the output matches the stage's desired vector.
 
 ## Troubleshooting
 

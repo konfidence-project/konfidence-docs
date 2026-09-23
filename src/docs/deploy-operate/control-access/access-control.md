@@ -1,6 +1,6 @@
 ---
 title: Grant teams access to a project
-description: Bind the admin, pm, and dev roles of a project to identity provider groups and to workload identities.
+description: Bind the admin, pm, and dev roles of a project to identity provider groups and workload identities.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -33,7 +33,7 @@ These examples configure bindings through Kubernetes. Project roles govern what 
 
 ## Bind a role to identity provider groups
 
-A session subject matches an interactively signed-in user by group membership:
+A `session` subject matches an interactive user through group membership:
 
 ```yaml
 spec:

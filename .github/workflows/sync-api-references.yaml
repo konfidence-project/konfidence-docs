@@ -1,7 +1,8 @@
 name: Sync API references from konfidence
 
 # Pulls generated API references (api/docs/crd.md, api/docs/cli.md) and the
-# helm-docs chart READMEs from the konfidence and orchestrator repos and opens (or force-updates) a single PR against this repo.
+# helm-docs chart READMEs from the konfidence and orchestrator repositories.
+# It opens or force-updates a single PR against this repository.
 # konfidence is the source of truth; these files are 100% generated, so the
 # sync branch is owned unconditionally by this workflow — any divergence is
 # reset to the latest fetched state (peter-evans/create-pull-request
