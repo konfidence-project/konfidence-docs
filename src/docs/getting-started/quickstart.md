@@ -31,10 +31,10 @@ curl -fsSL https://raw.githubusercontent.com/konfidence-project/konfidence/main/
 
 The script creates a kind cluster named `konfidence-quickstart` and selects it as your current kubeconfig context. It then installs these components in order:
 
-1. **Flux** — controllers that reconcile Helm and Kustomize deployments.
+1. **[Flux](https://fluxcd.io/)** — third-party controllers that reconcile Helm and Kustomize deployments. Konfidence builds on top of them.
 2. **Konfidence** — the controller and API, which also serves the dashboard.
-3. **Kubernetes Landscape Orchestrator** — uses Flux to deploy Helm charts and Kustomize configurations for Konfidence.
-4. **Vector Data Service** — lets applications read configuration and deployment results for a vector at runtime.
+3. **[Kubernetes Landscape Orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator)** — the Konfidence component that uses Flux to deploy Helm charts and Kustomize configurations.
+4. **[Vector Data Service](/docs/deploy-operate/runtime-components/vector-data-service)** — the Konfidence runtime component that lets applications read configuration and deployment results for a vector at runtime.
 
 The script waits for the Flux deployments and Helm releases to become ready. Running it again reuses the cluster and updates the existing installation.
 
@@ -73,7 +73,7 @@ The [example application](https://github.com/konfidence-project/example-app) pub
 Create the project:
 
 ```bash
-kubectl apply -k https://github.com/konfidence-project/example-app/hack/quickstart/project?ref=main
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/project?ref=main'
 kubectl wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
   project/example-app --timeout=60s
 ```
@@ -81,7 +81,7 @@ kubectl wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].st
 Create the `dev` and `prod` landscapes:
 
 ```bash
-kubectl apply -k https://github.com/konfidence-project/example-app/hack/quickstart/landscapes?ref=main
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/landscapes?ref=main'
 kubectl -n kden-p-example-app wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
   landscape/dev landscape/prod --timeout=60s
 ```
@@ -89,7 +89,7 @@ kubectl -n kden-p-example-app wait --for=jsonpath='{.status.conditions[?(@.type=
 Create the stages, deployment targets, database, and promotion config:
 
 ```bash
-kubectl apply -k https://github.com/konfidence-project/example-app/hack/quickstart/environment?ref=main
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/environment?ref=main'
 ```
 
 Install the vector-data-service into each landscape namespace:
@@ -106,11 +106,13 @@ done
 The per-landscape vector-data-service install is temporary until the platform provisions it automatically for each landscape.
 :::
 
-The example application deploys to the `dev-eu12` stage. Watch it become ready:
+The example application deploys to the `dev-eu12` stage. Watch the `ACTIVE-VERSION` column, which stays empty until the deployment succeeds:
 
 ```bash
 kubectl -n kden-l-dev get stage dev-eu12 -w
 ```
+
+Once `ACTIVE-VERSION` shows a stage version, the application is running. Press `Ctrl+C` to stop watching.
 
 ## Open the dashboard
 
@@ -120,7 +122,7 @@ The local Quickstart does not yet include an ingress setup for the dashboard. To
 kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
 ```
 
-Keep this command running and open `http://localhost:8090` in your browser. You should see the Konfidence sign-in page:
+Keep this command running and open [`http://localhost:8090`](http://localhost:8090) in your browser. You should see the Konfidence sign-in page:
 
 ![Konfidence sign-in page with the Continue with SSO button.](./screenshot_dashboard_login.png)
 
