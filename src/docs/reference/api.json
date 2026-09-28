@@ -833,12 +833,12 @@
         "operationId": "loginV1",
         "parameters": [
           {
-            "description": "Fully qualified URL to redirect to after login. The URL must be present in the API server allowlist.",
+            "description": "Root-relative path to redirect to after login. An absolute HTTP(S) URL is accepted when its domain is configured by the API server. CLI login uses an HTTP loopback callback URL.\n",
             "in": "query",
             "name": "return_url",
             "required": true,
             "schema": {
-              "format": "uri",
+              "format": "uri-reference",
               "type": "string"
             }
           },
