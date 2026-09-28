@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Observe & Deliver
 
-Plan and execute the delivery of your application: assemble [vectors](./build-vectors.md) from your artifacts and [define promotions](../../deploy-operate/define-promotions.md) that move them through your stages.
+Plan and execute the delivery of your application: assemble [vectors](./build-vectors.md) from your [artifacts](../../reference/glossary.md#artifact) and [set up and run promotion flows](../../deploy-operate/manage-delivery/promote-vectors.md) to update the vectors your [stages](../../reference/glossary.md#stage) select.
 
 ## Related
 

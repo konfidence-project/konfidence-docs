@@ -38,12 +38,16 @@ Example usage:
 ### SEE ALSO
 
 * [kden artifact](#kden-artifact)  - Manage artifacts
+* [kden artifact-deployment](#kden-artifact-deployment)  - Manage artifact deployments
 * [kden completion](#kden-completion)  - Generate shell completion scripts
 * [kden config](#kden-config)  - Manage the CLI's configuration
+* [kden landscape](#kden-landscape)  - Manage landscapes
 * [kden login](#kden-login)  - Kden API Login
 * [kden logout](#kden-logout)  - Kden API Logout
 * [kden project](#kden-project)  - Manage projects
+* [kden stage](#kden-stage)  - Manage stages
 * [kden vector](#kden-vector)  - Manage vectors
+* [kden vector-deployment](#kden-vector-deployment)  - Manage vector deployments
 * [kden vector-promotion](#kden-vector-promotion)  - Manage vector promotions
 * [kden version](#kden-version)  - Print the kden CLI version
 
@@ -224,6 +228,76 @@ kden artifact validate [flags]
 ### SEE ALSO
 
 * [kden artifact](#kden-artifact)  - Manage artifacts
+
+
+## kden artifact-deployment
+
+Manage artifact deployments
+
+```
+kden artifact-deployment [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for artifact-deployment
+```
+
+### Options inherited from parent commands
+
+```
+      --access-token string      Access token used for bearer authentication. Env: KDEN_ACCESS_TOKEN
+      --api-endpoint string      Address of the Konfidence API gateway. Env: KDEN_API_ENDPOINT (default: http://localhost:8090)
+      --log-format string        Defines the output format of the application's logs . Supported values are: 'json', 'text' and 'pretty'
+      --log-level string         Defines the base log level for the application. Supported values are: 'info', 'debug' and 'error'
+      --login-timeout string     Maximum time to wait for browser login. Env: KDEN_LOGIN_TIMEOUT (default: 2m)
+      --output string            Defines the output format for the application. Supported values are: 'json', 'yaml' and 'pretty'
+      --request-timeout string   Maximum duration for an API request. Env: KDEN_REQUEST_TIMEOUT (default: 30s)
+```
+
+### SEE ALSO
+
+* [kden](#kden)  - Kden CLI tool for working with Konfidence
+* [kden artifact-deployment list](#kden-artifact-deployment-list)  - List artifact deployments for a given project id
+
+
+## kden artifact-deployment list
+
+List artifact deployments for a given project id
+
+### Synopsis
+
+Retrieve and display all artifact deployments for a given project id.
+
+```
+kden artifact-deployment list [flags]
+```
+
+### Options
+
+```
+  -h, --help                        help for list
+  -l, --landscapeId string          The ID of the landscape the artifact deployments belong to
+  -p, --projectId string            The ID of the project the artifact deployments belong to (required)
+  -d, --vectorDeploymentId string   The ID of the vector deployment the artifact deployments belong to
+```
+
+### Options inherited from parent commands
+
+```
+      --access-token string      Access token used for bearer authentication. Env: KDEN_ACCESS_TOKEN
+      --api-endpoint string      Address of the Konfidence API gateway. Env: KDEN_API_ENDPOINT (default: http://localhost:8090)
+      --log-format string        Defines the output format of the application's logs . Supported values are: 'json', 'text' and 'pretty'
+      --log-level string         Defines the base log level for the application. Supported values are: 'info', 'debug' and 'error'
+      --login-timeout string     Maximum time to wait for browser login. Env: KDEN_LOGIN_TIMEOUT (default: 2m)
+      --output string            Defines the output format for the application. Supported values are: 'json', 'yaml' and 'pretty'
+      --request-timeout string   Maximum duration for an API request. Env: KDEN_REQUEST_TIMEOUT (default: 30s)
+```
+
+### SEE ALSO
+
+* [kden artifact-deployment](#kden-artifact-deployment)  - Manage artifact deployments
 
 
 ## kden completion
@@ -436,6 +510,74 @@ kden config unset <configuration_property> [flags]
 * [kden config](#kden-config)  - Manage the CLI's configuration
 
 
+## kden landscape
+
+Manage landscapes
+
+```
+kden landscape [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for landscape
+```
+
+### Options inherited from parent commands
+
+```
+      --access-token string      Access token used for bearer authentication. Env: KDEN_ACCESS_TOKEN
+      --api-endpoint string      Address of the Konfidence API gateway. Env: KDEN_API_ENDPOINT (default: http://localhost:8090)
+      --log-format string        Defines the output format of the application's logs . Supported values are: 'json', 'text' and 'pretty'
+      --log-level string         Defines the base log level for the application. Supported values are: 'info', 'debug' and 'error'
+      --login-timeout string     Maximum time to wait for browser login. Env: KDEN_LOGIN_TIMEOUT (default: 2m)
+      --output string            Defines the output format for the application. Supported values are: 'json', 'yaml' and 'pretty'
+      --request-timeout string   Maximum duration for an API request. Env: KDEN_REQUEST_TIMEOUT (default: 30s)
+```
+
+### SEE ALSO
+
+* [kden](#kden)  - Kden CLI tool for working with Konfidence
+* [kden landscape list](#kden-landscape-list)  - List landscapes for a given project id
+
+
+## kden landscape list
+
+List landscapes for a given project id
+
+### Synopsis
+
+Retrieve and display all landscapes for a given project id.
+
+```
+kden landscape list [flags]
+```
+
+### Options
+
+```
+  -h, --help               help for list
+  -p, --projectId string   The ID of the project the landscapes belong to (required)
+```
+
+### Options inherited from parent commands
+
+```
+      --access-token string      Access token used for bearer authentication. Env: KDEN_ACCESS_TOKEN
+      --api-endpoint string      Address of the Konfidence API gateway. Env: KDEN_API_ENDPOINT (default: http://localhost:8090)
+      --log-format string        Defines the output format of the application's logs . Supported values are: 'json', 'text' and 'pretty'
+      --log-level string         Defines the base log level for the application. Supported values are: 'info', 'debug' and 'error'
+      --login-timeout string     Maximum time to wait for browser login. Env: KDEN_LOGIN_TIMEOUT (default: 2m)
+      --output string            Defines the output format for the application. Supported values are: 'json', 'yaml' and 'pretty'
+      --request-timeout string   Maximum duration for an API request. Env: KDEN_REQUEST_TIMEOUT (default: 30s)
+```
+
+### SEE ALSO
+
+* [kden landscape](#kden-landscape)  - Manage landscapes
+
+
 ## kden login
 
 Kden API Login
@@ -571,6 +713,75 @@ kden project list [flags]
 ### SEE ALSO
 
 * [kden project](#kden-project)  - Manage projects
+
+
+## kden stage
+
+Manage stages
+
+```
+kden stage [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for stage
+```
+
+### Options inherited from parent commands
+
+```
+      --access-token string      Access token used for bearer authentication. Env: KDEN_ACCESS_TOKEN
+      --api-endpoint string      Address of the Konfidence API gateway. Env: KDEN_API_ENDPOINT (default: http://localhost:8090)
+      --log-format string        Defines the output format of the application's logs . Supported values are: 'json', 'text' and 'pretty'
+      --log-level string         Defines the base log level for the application. Supported values are: 'info', 'debug' and 'error'
+      --login-timeout string     Maximum time to wait for browser login. Env: KDEN_LOGIN_TIMEOUT (default: 2m)
+      --output string            Defines the output format for the application. Supported values are: 'json', 'yaml' and 'pretty'
+      --request-timeout string   Maximum duration for an API request. Env: KDEN_REQUEST_TIMEOUT (default: 30s)
+```
+
+### SEE ALSO
+
+* [kden](#kden)  - Kden CLI tool for working with Konfidence
+* [kden stage list](#kden-stage-list)  - List stages for a given project id
+
+
+## kden stage list
+
+List stages for a given project id
+
+### Synopsis
+
+Retrieve and display all stages for a given project id.
+
+```
+kden stage list [flags]
+```
+
+### Options
+
+```
+  -h, --help                 help for list
+  -l, --landscapeId string   The ID of the landscape the stages belong to
+  -p, --projectId string     The ID of the project the stages belong to (required)
+```
+
+### Options inherited from parent commands
+
+```
+      --access-token string      Access token used for bearer authentication. Env: KDEN_ACCESS_TOKEN
+      --api-endpoint string      Address of the Konfidence API gateway. Env: KDEN_API_ENDPOINT (default: http://localhost:8090)
+      --log-format string        Defines the output format of the application's logs . Supported values are: 'json', 'text' and 'pretty'
+      --log-level string         Defines the base log level for the application. Supported values are: 'info', 'debug' and 'error'
+      --login-timeout string     Maximum time to wait for browser login. Env: KDEN_LOGIN_TIMEOUT (default: 2m)
+      --output string            Defines the output format for the application. Supported values are: 'json', 'yaml' and 'pretty'
+      --request-timeout string   Maximum duration for an API request. Env: KDEN_REQUEST_TIMEOUT (default: 30s)
+```
+
+### SEE ALSO
+
+* [kden stage](#kden-stage)  - Manage stages
 
 
 ## kden vector
@@ -712,6 +923,75 @@ kden vector validate [flags]
 ### SEE ALSO
 
 * [kden vector](#kden-vector)  - Manage vectors
+
+
+## kden vector-deployment
+
+Manage vector deployments
+
+```
+kden vector-deployment [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for vector-deployment
+```
+
+### Options inherited from parent commands
+
+```
+      --access-token string      Access token used for bearer authentication. Env: KDEN_ACCESS_TOKEN
+      --api-endpoint string      Address of the Konfidence API gateway. Env: KDEN_API_ENDPOINT (default: http://localhost:8090)
+      --log-format string        Defines the output format of the application's logs . Supported values are: 'json', 'text' and 'pretty'
+      --log-level string         Defines the base log level for the application. Supported values are: 'info', 'debug' and 'error'
+      --login-timeout string     Maximum time to wait for browser login. Env: KDEN_LOGIN_TIMEOUT (default: 2m)
+      --output string            Defines the output format for the application. Supported values are: 'json', 'yaml' and 'pretty'
+      --request-timeout string   Maximum duration for an API request. Env: KDEN_REQUEST_TIMEOUT (default: 30s)
+```
+
+### SEE ALSO
+
+* [kden](#kden)  - Kden CLI tool for working with Konfidence
+* [kden vector-deployment list](#kden-vector-deployment-list)  - List vector deployments for a given project id
+
+
+## kden vector-deployment list
+
+List vector deployments for a given project id
+
+### Synopsis
+
+Retrieve and display all vector deployments for a given project id.
+
+```
+kden vector-deployment list [flags]
+```
+
+### Options
+
+```
+  -h, --help                 help for list
+  -l, --landscapeId string   The ID of the landscape the vector deployments belong to
+  -p, --projectId string     The ID of the project the vector deployments belong to (required)
+```
+
+### Options inherited from parent commands
+
+```
+      --access-token string      Access token used for bearer authentication. Env: KDEN_ACCESS_TOKEN
+      --api-endpoint string      Address of the Konfidence API gateway. Env: KDEN_API_ENDPOINT (default: http://localhost:8090)
+      --log-format string        Defines the output format of the application's logs . Supported values are: 'json', 'text' and 'pretty'
+      --log-level string         Defines the base log level for the application. Supported values are: 'info', 'debug' and 'error'
+      --login-timeout string     Maximum time to wait for browser login. Env: KDEN_LOGIN_TIMEOUT (default: 2m)
+      --output string            Defines the output format for the application. Supported values are: 'json', 'yaml' and 'pretty'
+      --request-timeout string   Maximum duration for an API request. Env: KDEN_REQUEST_TIMEOUT (default: 30s)
+```
+
+### SEE ALSO
+
+* [kden vector-deployment](#kden-vector-deployment)  - Manage vector deployments
 
 
 ## kden vector-promotion

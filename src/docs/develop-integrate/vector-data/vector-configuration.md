@@ -5,9 +5,9 @@ description: Learn how to use vector-scoped configuration to manage settings tha
 
 # Add configuration to a vector
 
-Add vector-scoped configuration to a vector. Use it for feature flags and authored configuration values that Konfidence versions together with the vector.
+Add vector-scoped configuration to a [vector](../../reference/glossary.md#vector). Use it for [feature flags](../../reference/glossary.md#feature-flag) and authored configuration values that Konfidence versions together with the vector.
 
-Konfidence includes the configuration in the vector, so the vector ID uniquely determines its configuration. You can add it in two ways: Konfidence assembles the vector from a `VectorTemplate`, or you build the vector yourself with the `kden` command-line tool.
+Konfidence includes the configuration in the vector, so the vector ID uniquely determines its configuration. You can add it in two ways: Konfidence assembles the vector from a [`VectorTemplate`](../../reference/glossary.md#vectortemplate), or you build the vector yourself with the `kden` command-line tool.
 
 ## Prerequisites
 
@@ -152,7 +152,7 @@ Use the top-level `authored` block for free-form JSON. Konfidence does not impos
 
 Authored config is optional and immutable per vector version. Provide one `authored` block per vector, or none.
 
-Authored config is available through the whole-bundle response only. Query the vector ID as the flag key and read the `authored` subtree from the returned vector configuration object. The single-flag and bulk endpoints resolve feature flags only.
+Authored config is available through the whole-bundle response only. Query the vector ID as the flag key and read the `authored` subtree from the returned [vector configuration](../../reference/glossary.md#vector-configuration) object. The single-flag and bulk endpoints resolve feature flags only.
 
 ## Next steps
 

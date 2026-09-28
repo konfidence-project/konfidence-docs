@@ -15,8 +15,8 @@ User job: Sign published artifacts and configure their verification and vector
 signing in a VectorTemplate, then check that assembly succeeds.
 -->
 
-Use this guide when your application requires signed artifacts and vectors.
-You will sign published artifacts, configure artifact verification and vector signing in a `VectorTemplate`, and check that assembly succeeds.
+Use this guide when your application requires signed [artifacts](../../reference/glossary.md#artifact) and [vectors](../../reference/glossary.md#vector).
+You will sign published artifacts, configure artifact verification and vector signing in a [`VectorTemplate`](../../reference/glossary.md#vectortemplate), and check that assembly succeeds.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ Before you begin, make sure you have:
 - Published application artifacts in an Open Container Initiative (OCI) registry. Follow [Publish artifacts](../artifact-types/publish-artifacts.md) to create and publish their Open Component Model (OCM) component versions.
 - The registry address and credentials for accessing your artifacts and uploading the vector.
 - An RSA key pair for artifact signing and a separate RSA key pair for vector signing.
-- An existing Konfidence project and its namespace for the credential Secrets and `VectorTemplate`. See [Managing Projects](../../deploy-operate/projects.md).
+- An existing Konfidence [project](../../reference/glossary.md#project) and its namespace for the credential Secrets and `VectorTemplate`. See [Create a project](../../deploy-operate/control-access/projects.md).
 
 Coordinate credential setup with your administrator before you begin.
 Reuse existing CLI credentials and assembly Secrets when available, and skip their setup instructions below.
@@ -135,7 +135,7 @@ Read it from the project's `status.namespace` field:
 kubectl get project <project-name> -o jsonpath='{.status.namespace}'
 ```
 
-For details about project namespaces, see [Managing Projects](../../deploy-operate/projects.md).
+For details about project namespaces, see [Create a project](../../deploy-operate/control-access/projects.md).
 
 Signing requires a private key and fails immediately if it is missing.
 If verification credentials contain no RSA key material, verification falls back to the system root trust store: CA-issued signatures pass, while self-signed or internal keys fail.
@@ -390,14 +390,14 @@ Check the conditions again as described in [Verify the result](#verify-the-resul
 ## Next steps
 
 Deployment verification is configured separately on the operator.
-The `VectorDeployment` controller reads its cryptographic configuration from environment variables on the operator pod.
+The [`VectorDeployment`](../../reference/glossary.md#vectordeployment) controller reads its cryptographic configuration from environment variables on the operator pod.
 That configuration is outside the assembly task covered here.
 
 For the next parts of your application delivery workflow, see:
 
 - [Build vectors](../observe-improve/build-vectors.md).
-- [Define promotions](../../deploy-operate/define-promotions.md).
-- [Landscapes and Stages](../../core-concepts/landscapes-and-stages.md) for security boundaries.
+- [Set up and run promotion flows](../../deploy-operate/manage-delivery/promote-vectors.md).
+- [Landscapes and stages](../../core-concepts/landscapes-and-stages.md) for security boundaries.
 
 <!--
 Retained for reuse: the full pipeline diagram provides conceptual context beyond this assembly-focused how-to.
@@ -509,6 +509,6 @@ Retained for reuse: background reading moved out of the prerequisites; credentia
 ## Next steps
 
 - [Build vectors](../observe-improve/build-vectors.md)
-- [Define promotions](../../deploy-operate/define-promotions.md)
-- [Landscapes and Stages — security boundaries](../../core-concepts/landscapes-and-stages.md)
+- [Set up and run promotion flows](../../deploy-operate/manage-delivery/promote-vectors.md)
+- [Landscapes and stages — security boundaries](../../core-concepts/landscapes-and-stages.md)
 -->

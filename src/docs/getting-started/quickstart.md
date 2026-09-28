@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Quickstart
 
-Konfidence is a software delivery framework for microservice-based software-as-a-service applications. It helps teams deliver complex applications consistently across multiple environments by using immutable, versioned application vectors and a structured release model.
+Konfidence is a software delivery framework for microservice-based software-as-a-service applications. It helps teams deliver complex applications consistently across multiple environments by using immutable, versioned application [vectors](../reference/glossary.md#vector) and a structured release model.
 
 Before you install Konfidence, it helps to know what this setup is for: teams promote the same verified application version across environments instead of rebuilding or reconfiguring it for each deployment. This makes releases easier to reason about as systems, teams, and release frequency grow.
 
@@ -33,8 +33,8 @@ The script creates a kind cluster named `konfidence-quickstart` and selects it a
 
 1. **[Flux](https://fluxcd.io/)** — third-party controllers that reconcile Helm and Kustomize deployments. Konfidence builds on top of them.
 2. **Konfidence** — the controller and API, which also serves the dashboard.
-3. **[Kubernetes Landscape Orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator)** — the Konfidence component that uses Flux to deploy Helm charts and Kustomize configurations.
-4. **[Vector Data Service](/docs/deploy-operate/runtime-components/vector-data-service)** — the Konfidence runtime component that lets applications read configuration and deployment results for a vector at runtime.
+3. **Kubernetes [Landscape Orchestrator](../reference/glossary.md#landscape-orchestrator)** — the Konfidence component that uses Flux to deploy Helm charts and Kustomize configurations.
+4. **[Vector Data Service](../reference/glossary.md#vector-data-service)** — the Konfidence runtime component that lets applications read configuration and [deployment results](../reference/glossary.md#deployment-result) for a vector at runtime.
 
 The script waits for the Flux deployments and Helm releases to become ready. Running it again reuses the cluster and updates the existing installation.
 
@@ -144,4 +144,4 @@ This deletes the `konfidence-quickstart` cluster and all workloads and data stor
 
 ## Next steps
 
-Your local Konfidence instance is ready. Continue with [Deliver an application](/docs/getting-started/deliver-an-application) to run a sample application in development and approve its promotion to production.
+Your local Konfidence instance is ready. Continue with [Deliver an application](/docs/getting-started/deliver-an-application) to run a sample application in development and approve its [promotion](../reference/glossary.md#promotion) to production.

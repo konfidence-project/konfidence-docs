@@ -1,24 +1,27 @@
 ---
-title: Manage stages
+title: Create a stage
 description: Create a delivery checkpoint, select its desired vector, and inspect its active version.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Manage stages
+# Create a stage {#manage-stages}
 
-Create a stage to select the vector Konfidence should deliver for a checkpoint. Stages are created in a landscape namespace and use the deployment targets configured there.
+Create a [stage](../../reference/glossary.md#stage) to select the [vector](../../reference/glossary.md#vector) Konfidence should deliver for a checkpoint. Stages are created in a [landscape](../../reference/glossary.md#landscape) namespace and use the [deployment targets](../../reference/glossary.md#deployment-target) configured there.
 
-For help deciding how stages and landscapes should relate, see [Landscapes and stages](../core-concepts/landscapes-and-stages.md).
+This guide uses `kubectl` to create a stage, change its desired vector, and inspect the rollout. After creating it, you can use a promotion flow to update the selected vector through recorded decisions.
+
+For help deciding how stages and landscapes should relate, see [Landscapes and stages](../../core-concepts/landscapes-and-stages.md).
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
-- A [ready landscape](./landscapes.md) with targets for the vector's required deployment classes.
+- A [ready landscape](./landscapes.md) with [targets](./deployment-targets.md) for the vector's required [deployment classes](../../reference/glossary.md#deployment-class).
+- [Registry credentials](../install/connect-registries.md) for private artifacts and vectors, and the [landscape services](../install/runtime-components/overview.md) your applications need.
 - A concrete vector reference in an Open Component Model (OCM)-compatible repository.
-- Permission to create `Stage` resources in the landscape namespace.
+- `kubectl` access with Kubernetes permission to read the Landscape, create and update `Stage` resources, and inspect rollout resources in the landscape namespace. Konfidence project roles alone do not authorize these commands.
 
 ## Get the landscape namespace
 
@@ -54,13 +57,15 @@ Konfidence records immutable rollout state for the selected vector and starts th
 
 ## Inspect desired and active state
 
+<!-- TODO(docs): screenshot — the stage detail view in the dashboard, showing the desired vector and the active stage version side by side. Same information as the kubectl commands below; captured from the quickstart. -->
+
 List stages in the landscape:
 
 ```bash
 kubectl get stages --namespace="$LANDSCAPE_NAMESPACE"
 ```
 
-The `Vector` column is the vector currently desired by the stage. The `Active-Version` column identifies the immutable stage version currently active there. During a rollout, these values can represent different vectors.
+The `Vector` column is the vector currently desired by the stage. The `Active-Version` column identifies the immutable [stage version](../../reference/glossary.md#stageversion) currently active there. During a rollout, these values can represent different vectors.
 
 Inspect the complete stage status and related rollout resources when you need more detail:
 
@@ -82,7 +87,7 @@ kubectl patch stage integration \
   --patch='{"spec":{"vector":"registry.example.com//konfidence.cloud/ecommerce:1.5.0"}}'
 ```
 
-Konfidence starts a new rollout while retaining resources required by the active version. In a managed delivery flow, a [promotion](./define-promotions.md) normally performs this update and records the decision.
+Konfidence starts a new rollout while retaining resources required by the active version. In a managed [delivery flow](../../reference/glossary.md#delivery-flow), a [promotion](./promote-vectors.md) normally performs this update and records the decision.
 
 ## Verify the active version
 
@@ -106,7 +111,7 @@ kubectl get stageversion "$ACTIVE_VERSION" \
   --output=jsonpath='{.spec.vector}{"\n"}'
 ```
 
-The output matches the desired vector after its activation has completed and it has become the active stage version.
+After activation completes, the output matches the stage's desired vector.
 
 ## Troubleshooting
 
@@ -115,12 +120,12 @@ Use the following checks if stage creation or activation does not complete:
 | Symptom | Likely cause | Resolution |
 | --- | --- | --- |
 | The `Stage` is rejected at admission. | It was created outside a landscape namespace. | Use the namespace reported in `Landscape.status.namespace`. |
-| The desired vector does not deploy. | The landscape lacks a ready target for an artifact's deployment class. | Inspect the vector's required classes and [configure the missing target](./deployment-targets.md). |
-| The active version does not change. | Deployment, migration, or activation has not completed. | Inspect the related `StageVersion`, `VectorDeployment`, `VectorMigration`, and `VectorActivation` resources. |
+| The desired vector does not deploy. | The landscape lacks a ready target for an [artifact](../../reference/glossary.md#artifact)'s deployment class. | Inspect the vector's required classes and [configure the missing target](./deployment-targets.md). |
+| The active version does not change. | Deployment, migration, or activation has not completed. | Inspect the related `StageVersion`, [`VectorDeployment`](../../reference/glossary.md#vectordeployment), `VectorMigration`, and [`VectorActivation`](../../reference/glossary.md#vectoractivation) resources. |
 | The selected vector cannot be resolved. | The reference is incorrect or the registry is inaccessible. | Verify the concrete OCM reference and registry credentials. |
 
 ## Next steps
 
-- [Define promotions](./define-promotions.md) to update stages through a controlled delivery flow.
-- [Understand Vector Deployments](./vector-deployments.md) to investigate the runtime lifecycle.
-- Consult the [Stage CRD reference](../reference/crd.md#stage) for all fields.
+- [Set up and run promotion flows](./promote-vectors.md) to update stages through a controlled delivery flow.
+- [Delivery flow](../../core-concepts/delivery-flow.md#runtime-boundary) to understand the runtime lifecycle behind a rollout.
+- Consult the [Stage CRD reference](../../reference/crd.md#stage) for all fields.

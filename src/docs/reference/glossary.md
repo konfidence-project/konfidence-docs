@@ -1,6 +1,6 @@
 ---
 title: Glossary
-description: Comprehensive glossary of Konfidence terminology, acronyms, and technical terms. Quick reference for developers and operators.
+description: Definitions of the Konfidence terms and custom resources used in this documentation.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -8,83 +8,474 @@ lastUpdated: true
 
 # Glossary
 
-Comprehensive glossary of Konfidence terminology and technical terms.
+The glossary defines the Konfidence terms used in this documentation. Each entry lists the pages that use the term.
 
-## Artifact
+## Concepts describe the delivery model
 
-An artifact is a versioned object produced during a build or continuous integration (CI) process. When you use Konfidence, a build pipeline typically produces two outputs:
-1. The build result, such as a Docker image or a Helm chart, which is uploaded to an [Open Container Initiative (OCI)](https://opencontainers.org/) registry.
-2. The Konfidence artifact in the form of an [Open Component Model (OCM)](https://ocm.software/) descriptor, which contains a reference to the build result and additional metadata.
+### Artifact
 
-The OCM artifact itself does not necessarily include the deployable content. Instead, it serves as a declarative reference to the build result, along with all the information required for consistent and reproducible deployments across environments.
+An artifact is a deployable part of your application, such as a microservice. Your CI pipeline packages it as an Open Component Model (OCM) component version.
 
-## ArtifactDeployment
+The artifact contains a manifest and a reference to the build result, such as a container image. It can also include binary resources directly. The manifest's `type` field names the [deployment class](#deployment-class) the artifact requires. The `allowReuse` field controls whether several vector deployments share one running instance.
 
-A Kubernetes CRD that contains the deployment information for a specific artifact.
-An artifact deployment can be reused by multiple vector deployments within a landscape if the corresponding vectors share the same artifact.
+Continuous integration (CI) pipelines publish artifacts to an OCM-compliant repository, such as an Open Container Initiative (OCI) registry.
 
-## Control Plane
+::: details Pages that use this term
 
-The control plane is the primary interface to manage the software delivery process. It assembles and validates vectors, defines the target state for stages, and executes the resulting deployments in the connected landscapes.
+- [Advanced features](../develop-integrate/advanced-features/index.md)
+- [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
+- [Author a Kustomize artifact](../develop-integrate/artifact-types/kustomize.md)
+- [Build vectors](../develop-integrate/observe-improve/build-vectors.md)
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
+- [Core concepts](../core-concepts/index.md)
+- [Create a landscape](../deploy-operate/manage-delivery/landscapes.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Create your own artifacts](../getting-started/create-vector.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Deployment model](../core-concepts/deployment-model.md)
+- [Develop & Integrate](../develop-integrate/index.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Local development](../extend-customize/local-development.md)
+- [Observe & Deliver](../develop-integrate/observe-improve/index.md)
+- [Prepare your application](../develop-integrate/prepare-your-application.md)
+- [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md)
+- [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
 
-It runs as a single binary in the same Kubernetes cluster as the landscapes it manages.
+:::
 
-## Deployer
+### Artifact alias
 
-A controller responsible for executing the deployment of individual artifacts.
-A deployer acts upon ArtifactDeployment CRs and performs the deployment of an artifact for a specific runtime, e.g. Kubernetes.
+An artifact alias is a mutable tag, such as `main`, that points to one version of an artifact. A `VectorTemplate` can reference an artifact by alias. During assembly, Konfidence resolves the alias and records the concrete version in the vector. An alias does not replace the semantic version of the artifact.
 
-## Landscape
+::: details Pages that use this term
 
-A landscape is an operational boundary that groups stages, deployment targets, credentials, and deployment resources with common ownership, security, compliance, or reliability requirements. Konfidence manages a dedicated Kubernetes namespace for each landscape. Concrete deployment destinations are represented by deployment targets and can be local, remote, or based on non-Kubernetes platforms.
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
 
-## Promotion
+:::
 
-A promotion selects a concrete, immutable vector for a target stage by updating the stage's desired vector reference. It does not rebuild, copy, or change the vector contents. Each promotion provides a traceable record of which vector was offered to which delivery checkpoint.
+### Delivery flow
 
-## Stage
+The delivery flow is the path from published artifacts to the vector each stage selects. It has four phases: build, assemble, assign, and promote. The assign phase is unrelated to the [`VectorAssignment`](#vectorassignment) resource. Deployment in a landscape starts after the delivery flow ends.
 
-A stage is a logical checkpoint in the delivery process, such as development, verification, demonstration, or production. It references exactly one desired vector at a time, which is a specific immutable version of the application.
+::: details Pages that use this term
 
-A stage serves as a checkpoint for quality assurance and approval. In Konfidence, stages are a virtual concept. They are represented by a Kubernetes CRD.
+- [Core concepts](../core-concepts/index.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
 
-Stages belong to landscapes and use the deployment targets configured there. Multiple stages in one landscape can reuse deployments of artifacts they have in common.
+:::
 
-## StageVersion
+### Deployer
 
-A Kubernetes CRD that captures one immutable rollout of a stage: the vector to deploy and the generation of the Stage that produced it. Stage versions track stage changes over time and enable zero-downtime switches between vector versions.
+A deployer is a platform-specific controller that deploys artifacts of the deployment classes it provides. It reconciles [ArtifactDeployment](#artifactdeployment) resources and turns their deployable content into running workloads.
 
-## StageVersionUsage
+The current release provides one deployer for Kubernetes, installed with the [landscape orchestrator](#landscape-orchestrator). It deploys artifacts through Flux.
 
-A Kubernetes CRD that marks one or more StageVersions as in use, either by direct reference or by label selector, with a human-readable reason. As long as a StageVersion is in use, its resources are kept alive; this controls the lifetime of deployed vectors.
+::: details Pages that use this term
 
-## Task
+- [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
+- [Author a Kustomize artifact](../develop-integrate/artifact-types/kustomize.md)
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Core concepts](../core-concepts/index.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Deployment model](../core-concepts/deployment-model.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Local development](../extend-customize/local-development.md)
+- [System architecture](../deploy-operate/plan/system-architecture.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
 
-A task is an instruction that must be executed as part of the vector lifecycle. Its purpose is to prepare the stage for the artifact changes coming with a new vector. Common examples for tasks are database migrations, cache warm-ups or search index updates.
+:::
 
-Tasks can be anything from simple scripts to complex workflows.
-They are defined as part of the OCM descriptor of the Artifact and need to define their parameters and execution context.
+### Deployment class
 
-## Vector
+A deployment class is a named capability for deploying one kind of artifact, such as Helm or Kustomize. Each class is represented by a cluster-scoped `DeploymentClass` resource that names the controller responsible for it. The deployer's Helm chart installs these resources.
 
-A vector is a complete, versioned set of artifacts which describes the desired state of the application to be delivered. It is immutable and represents exactly one version of this application.
+By convention, the class name follows the pattern `<class-name>.<vendor-domain>`, for example `helm.konfidence.cloud`. The `type` field of the artifact manifest names the class the artifact requires.
 
-A vector contains only references to the required artifacts and their configurations. Any modification of an artifact must result in the creation of a new vector, ensuring deployments are auditable, reproducible, and isolated from previous versions.
+::: details Pages that use this term
 
-## VectorActivation
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Deployment model](../core-concepts/deployment-model.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
 
-A Kubernetes CRD that triggers the activation process in the vector lifecycle, designating one specific vector to receive live traffic.
+:::
 
-## VectorAssignment
+### Deployment result
 
-A Kubernetes CRD that represents the logical relationship between an ArtifactDeployment and a vector.
+A deployment result is a value that a deployer produces while it deploys an artifact, such as a service endpoint. The Kubernetes deployer reports Services annotated with `konfidence.cloud/deployment-result`. Konfidence passes deployment results to the landscape as part of [vector data](#vector-data).
 
-Since a single artifact may be reused across multiple vectors, an n:m relationship exists between vectors and artifacts. VectorAssignment creates a concrete instance of that relationship.
+::: details Pages that use this term
 
-## VectorDeployment
+- [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Prepare your application](../develop-integrate/prepare-your-application.md)
+- [Quickstart](../getting-started/quickstart.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
 
-A Kubernetes CRD representing the instantiation of a vector in a specific landscape through the deployment of all artifacts of that vector.
+:::
 
-## VectorMigration
+### Deployment target
 
-A Kubernetes CRD that triggers the migration process in the vector lifecycle. During that phase, all tasks belonging to the artifacts of the vector will be executed.
+A deployment target makes one deployment class available in one landscape. It provides the connection that the responsible deployer uses: either the local cluster or a `Secret` with a kubeconfig. A landscape has one deployment target per deployment class. The `DeploymentTarget` resource lives in the landscape namespace.
+
+::: details Pages that use this term
+
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Deployment model](../core-concepts/deployment-model.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
+
+:::
+
+### Feature flag
+
+A feature flag is a named value in the [vector configuration](#vector-configuration) that toggles behavior in your application. Konfidence scopes feature flags to a vector and does not provide targeting, variants, or rules. Changing a flag creates a new vector version. Applications read flags through the [vector data service](#vector-data-service).
+
+::: details Pages that use this term
+
+- [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
+- [Add configuration to a vector](../develop-integrate/vector-data/vector-configuration.md)
+- [Advanced features](../develop-integrate/advanced-features/index.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
+- [Prepare your application](../develop-integrate/prepare-your-application.md)
+- [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
+
+:::
+
+### Landscape
+
+A landscape is an operational boundary within a project. It groups stages, deployment targets, credentials, and deployment resources that share ownership, security, compliance, or reliability requirements.
+
+Konfidence creates a dedicated Kubernetes namespace for each landscape, `kden-l-<landscape-name>-<hash>` by default. Deployment targets connect the landscape to the infrastructure where deployments run.
+
+::: details Pages that use this term
+
+- [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
+- [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
+- [Author a Kustomize artifact](../develop-integrate/artifact-types/kustomize.md)
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Create a landscape](../deploy-operate/manage-delivery/landscapes.md)
+- [Create a project](../deploy-operate/control-access/projects.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Deployment model](../core-concepts/deployment-model.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
+- [Install Konfidence](../deploy-operate/install/konfidence-installation.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Prepare your application](../develop-integrate/prepare-your-application.md)
+- [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
+- [System architecture](../deploy-operate/plan/system-architecture.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
+
+:::
+
+### Landscape orchestrator
+
+The landscape orchestrator executes deployments in a landscape. It runs in the same cluster as Konfidence. The Kubernetes landscape orchestrator has its own Helm chart and installs the Kubernetes deployer. It runs migration tasks as Kubernetes `Job` resources and activates vectors through Gateway API `HTTPRoute` resources. It also passes vector data to the landscape as `ConfigMap` resources.
+
+::: details Pages that use this term
+
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Install Konfidence](../deploy-operate/install/konfidence-installation.md)
+- [Quickstart](../getting-started/quickstart.md)
+- [System architecture](../deploy-operate/plan/system-architecture.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
+
+:::
+
+### Project
+
+A project provides the organizational boundary for Konfidence resources. The API server grants the subjects in its role bindings access to the project. Each project owns a dedicated namespace, `kden-p-<project-name>` by default. That namespace holds the project's landscapes, vector templates, and promotion configurations.
+
+::: details Pages that use this term
+
+- [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
+- [Create a landscape](../deploy-operate/manage-delivery/landscapes.md)
+- [Create a project](../deploy-operate/control-access/projects.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Local development](../extend-customize/local-development.md)
+
+:::
+
+### Promotion
+
+A promotion selects a concrete, immutable vector for a target stage by updating the stage's desired vector. It does not rebuild, copy, or change the vector.
+
+A [`VectorPromotionConfig`](#vectorpromotionconfig) defines a promotion flow. Konfidence creates a [`VectorPromotion`](#vectorpromotion) when the source vector differs from the vector selected by the target stage. A promotion from a stage waits for approval before it runs.
+
+::: details Pages that use this term
+
+- [Deliver an application](../getting-started/deliver-an-application.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
+- [Quickstart](../getting-started/quickstart.md)
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
+
+:::
+
+### Stage
+
+A stage is a logical checkpoint in the delivery flow, such as development, integration, or production. It selects at most one desired vector at a time. Stage names describe the purpose of the checkpoint, not the infrastructure behind it.
+
+Each stage belongs to a landscape and uses the deployment targets configured there. Stages in one landscape share an artifact deployment when the artifact allows reuse and their artifact versions match. The `Stage` custom resource holds the selected vector.
+
+::: details Pages that use this term
+
+- [Build vectors](../develop-integrate/observe-improve/build-vectors.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Core concepts](../core-concepts/index.md)
+- [Create a landscape](../deploy-operate/manage-delivery/landscapes.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Create your own artifacts](../getting-started/create-vector.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Deployment model](../core-concepts/deployment-model.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Observe & Deliver](../develop-integrate/observe-improve/index.md)
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
+- [System architecture](../deploy-operate/plan/system-architecture.md)
+- [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
+
+:::
+
+### Vector
+
+A vector is a complete, immutable version of your application. It is an OCM component version that references a fixed set of artifacts and an optional vector configuration.
+
+Any change to an artifact reference or to the configuration creates a new vector. Stages select vectors, and promotions update those selections.
+
+::: details Pages that use this term
+
+- [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
+- [Add configuration to a vector](../develop-integrate/vector-data/vector-configuration.md)
+- [Advanced features](../develop-integrate/advanced-features/index.md)
+- [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
+- [Author a Kustomize artifact](../develop-integrate/artifact-types/kustomize.md)
+- [Build vectors](../develop-integrate/observe-improve/build-vectors.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
+- [Core concepts](../core-concepts/index.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Create your own artifacts](../getting-started/create-vector.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Deployment model](../core-concepts/deployment-model.md)
+- [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Local development](../extend-customize/local-development.md)
+- [Prepare your application](../develop-integrate/prepare-your-application.md)
+- [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md)
+- [Quickstart](../getting-started/quickstart.md)
+- [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
+- [System architecture](../deploy-operate/plan/system-architecture.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
+- [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
+
+:::
+
+### Vector configuration
+
+Vector configuration is data that you add to a vector: feature flags and free-form authored configuration. Konfidence imposes no schema on authored configuration. Changing the configuration creates a new vector. Konfidence stores the configuration as the OCM resource `cloud-konfidence-vector-config` on the vector.
+
+::: details Pages that use this term
+
+- [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
+- [Add configuration to a vector](../develop-integrate/vector-data/vector-configuration.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+
+:::
+
+### Vector data
+
+Vector data is runtime data that belongs to one vector deployment. It contains the vector configuration and the deployment results of the vector's artifacts. Applications read vector data by vector ID. The vector ID is the name of the vector deployment. During activation, Konfidence sends this ID in the `X-Vector-ID` request header. Vector data is available before the vector is activated.
+
+::: details Pages that use this term
+
+- [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
+- [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
+
+:::
+
+### Vector data service
+
+The vector data service is a runtime component that serves vector data to workloads in a Kubernetes landscape. It reads vector data from `ConfigMap` resources and provides the OpenFeature Remote Evaluation Protocol (OFREP) API. An administrator installs it in each landscape namespace.
+
+::: details Pages that use this term
+
+- [Access vector data in your application](../develop-integrate/vector-data/access-vector-data.md)
+- [Advanced features](../develop-integrate/advanced-features/index.md)
+- [Install Konfidence](../deploy-operate/install/konfidence-installation.md)
+- [Install the Vector Data Service](../deploy-operate/install/runtime-components/vector-data-service.md)
+- [Prepare your application](../develop-integrate/prepare-your-application.md)
+- [Quickstart](../getting-started/quickstart.md)
+- [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
+
+:::
+
+## Custom resources
+
+Konfidence represents its concepts as Kubernetes custom resources in the API group `konfidence.cloud`, version `v1alpha1`. The [CRD reference](./crd.md) lists all fields.
+
+### ArtifactDeployment
+
+An `ArtifactDeployment` is a custom resource that describes the deployment of one artifact in a landscape. A deployer reconciles it according to the deployment class in the artifact manifest. Vector deployments in one landscape share an `ArtifactDeployment` if the artifact sets `allowReuse` and their artifact versions match.
+
+::: details Pages that use this term
+
+- [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
+- [Author a Kustomize artifact](../develop-integrate/artifact-types/kustomize.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+
+:::
+
+### StageVersion
+
+A `StageVersion` is a custom resource that captures one immutable rollout of a stage. It records the selected vector and the stage generation. Every change to the stage spec creates a new stage version. The previous stage version stays active until activation of the new one succeeds. The stage status names the active stage version.
+
+::: details Pages that use this term
+
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+
+:::
+
+### StageVersionUsage
+
+A `StageVersionUsage` is a custom resource that marks a `StageVersion` as in use and can include the reason. It references the `StageVersion` by name or by label selector. Konfidence keeps the resources of a `StageVersion` while a `StageVersionUsage` references it.
+
+::: details Pages that use this term
+
+- [API Reference](./crd.md#stageversionusage)
+
+:::
+
+### VectorActivation
+
+A `VectorActivation` is a custom resource that starts the activation of a vector for a stage version. Activation runs the registered activation tasks. Then Konfidence marks the stage version as active. The Kubernetes deployer's activation task creates an `HTTPRoute` that tags requests with the vector ID.
+
+::: details Pages that use this term
+
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+
+:::
+
+### VectorAssignment
+
+A `VectorAssignment` is a custom resource that binds one `ArtifactDeployment` to one `VectorDeployment`. One artifact deployment can serve several vectors, so vectors and artifact deployments form a many-to-many relationship. Each `VectorAssignment` represents one binding in that relationship.
+
+The vector deployment controller manages `VectorAssignment` resources. Deployers reconcile them and report readiness.
+
+::: details Pages that use this term
+
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+
+:::
+
+### VectorDeployment
+
+A `VectorDeployment` is a custom resource that deploys all artifacts of one vector in a landscape. It references the vector as an OCM component version in an OCI registry. A change to the vector creates a new `VectorDeployment` instead of updating the existing one.
+
+::: details Pages that use this term
+
+- [Author a Helm artifact](../develop-integrate/artifact-types/helm.md)
+- [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md)
+- [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
+- [Vector data overview](../develop-integrate/vector-data/overview.md)
+
+:::
+
+### VectorPromotion
+
+A `VectorPromotion` is a custom resource that runs a promotion flow once. It pins the concrete vector when it is created and records the status of the promotion. By default, Konfidence keeps the last 10 completed promotions for each `VectorPromotionConfig`.
+
+::: details Pages that use this term
+
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
+
+:::
+
+### VectorPromotionConfig
+
+A `VectorPromotionConfig` is a custom resource that defines a promotion flow from a source to a target stage. The source is a `VectorTemplate` or another stage. Konfidence creates a `VectorPromotion` when the source vector differs from the vector selected by the target stage. Promotions from a stage source require approval by default.
+
+::: details Pages that use this term
+
+- [Create a project](../deploy-operate/control-access/projects.md)
+- [Create your own artifacts](../getting-started/create-vector.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
+
+:::
+
+### VectorTemplate
+
+A `VectorTemplate` is a custom resource that defines how Konfidence assembles a vector. It lists OCM component references, usually with an artifact alias, and the upload target for the assembled vector. Konfidence resolves each reference during every reconciliation. It uploads a new vector when the result changes.
+
+::: details Pages that use this term
+
+- [Add configuration to a vector](../develop-integrate/vector-data/vector-configuration.md)
+- [Advanced features](../develop-integrate/advanced-features/index.md)
+- [Build vectors](../develop-integrate/observe-improve/build-vectors.md)
+- [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
+- [Create a project](../deploy-operate/control-access/projects.md)
+- [Create your own artifacts](../getting-started/create-vector.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
+- [Delivery Flow](../core-concepts/delivery-flow.md)
+- [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md)
+- [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
+
+:::

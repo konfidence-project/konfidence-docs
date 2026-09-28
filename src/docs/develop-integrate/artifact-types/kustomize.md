@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Author a Kustomize artifact
 
-After this guide, your service deploys onto Kubernetes as one Kustomize artifact of a vector. The [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) renders the bundle once per vector into the landscape.
+After this guide, your service deploys onto Kubernetes as one Kustomize [artifact](../../reference/glossary.md#artifact) of a [vector](../../reference/glossary.md#vector). The [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) renders the bundle once per vector into the [landscape](../../reference/glossary.md#landscape).
 
 The examples build a service named `my-service` and push everything to `registry.example.com/my-org`.
 
@@ -19,7 +19,7 @@ Before you begin, make sure you have:
 - A container build tool such as `docker` and the `flux` command-line tool for pushing Open Container Initiative (OCI) artifacts.
 - Push access to an OCI registry for the image, the bundle, and the artifact.
 - The `kden` command-line tool. See [Publish artifacts](./publish-artifacts.md).
-- A landscape with a ready `kustomize.konfidence.cloud` target. See [Manage deployment targets](../../deploy-operate/deployment-targets.md).
+- A landscape with a ready `kustomize.konfidence.cloud` target. See [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md).
 - A service that reads and forwards `X-Vector-ID`. See [Prepare your application](../prepare-your-application.md).
 
 ## Build and push the container image
@@ -154,7 +154,7 @@ The bundle is available as `registry.example.com/my-org/my-service-manifests:1.0
 
 ## Expect a suffix on every resource name
 
-Several vectors deploy the same bundle into one landscape namespace. The deployer appends a suffix to every resource name so the instances coexist. The final name follows this pattern:
+Several vectors deploy the same bundle into one landscape namespace. The [deployer](../../reference/glossary.md#deployer) appends a suffix to every resource name so the instances coexist. The final name follows this pattern:
 
 ```text
 <name-in-your-manifest>-<artifact-version>-<hash>
@@ -174,7 +174,7 @@ The deployer creates one Flux `Kustomization` per artifact instance and sets the
 
 | Field | Value |
 | --- | --- |
-| `metadata.name` | The `ArtifactDeployment` name |
+| `metadata.name` | The [`ArtifactDeployment`](../../reference/glossary.md#artifactdeployment) name |
 | `spec.sourceRef` | The `OCIRepository` with the same name |
 | `spec.targetNamespace` | The landscape namespace |
 | `spec.nameSuffix` | `-<sanitized-artifact-version>-<hash>`, derived from the artifact version and hash |
@@ -199,4 +199,4 @@ Use the following guides to publish your artifact and expose its Service:
 
 - [Validate and publish the artifact](./publish-artifacts.md#validate-the-artifact-files).
 - [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to other services in the vector.
-- Read [Kubernetes deployer](../../deploy-operate/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.
+- Read [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.

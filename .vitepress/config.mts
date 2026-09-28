@@ -41,8 +41,6 @@ export default defineConfig({
   // pages for features that are not part of the initial release; recoverable
   // from git history / re-enabled by removing them here (issue #814)
   srcExclude: [
-    "docs/deploy-operate/galaxy-installation.md",
-    "docs/deploy-operate/star-installation.md",
     "docs/develop-integrate/observe-improve/paved-road.md",
     "docs/develop-integrate/run-migrations.md",
     "docs/extend-customize/create-deployer.md",
@@ -190,76 +188,105 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "System Architecture",
-              link: "/docs/deploy-operate/system-architecture",
+              text: "Prepare",
+              items: [
+                {
+                  text: "System architecture",
+                  link: "/docs/deploy-operate/plan/system-architecture",
+                },
+                {
+                  text: "Plan for high availability",
+                  link: "/docs/deploy-operate/plan/high-availability",
+                },
+              ],
             },
             {
-              text: "Installation variants",
-              link: "/docs/deploy-operate/installation-variants",
-            },
-            {
-              text: "Installing Konfidence",
-              link: "/docs/deploy-operate/konfidence-installation",
-            },
-            {
-              text: "Managing Projects",
-              link: "/docs/deploy-operate/projects",
-            },
-            {
-              text: "Manage landscapes",
-              link: "/docs/deploy-operate/landscapes",
-            },
-            {
-              text: "Manage deployment targets",
-              link: "/docs/deploy-operate/deployment-targets",
-            },
-            {
-              text: "Manage stages",
-              link: "/docs/deploy-operate/stages",
-            },
-            {
-              text: "Access Control (RBAC)",
-              link: "/docs/deploy-operate/access-control",
-            },
-            {
-              text: "Upgrading Konfidence",
-              link: "/docs/deploy-operate/upgrading-konfidence",
-            },
-            {
-                text: "Runtime Components",
-                collapsed: true,
-                items: [
+              text: "Install the platform",
+              items: [
+                {
+                  text: "Install Konfidence",
+                  link: "/docs/deploy-operate/install/konfidence-installation",
+                },
+                {
+                  text: "Give teams access to the dashboard and API",
+                  link: "/docs/deploy-operate/install/expose-api",
+                },
+                {
+                  text: "Choose and install deployers",
+                  collapsed: true,
+                  items: [
                     {
-                        text: "Overview",
-                        link: "/docs/deploy-operate/runtime-components/overview",
+                      text: "Choose a deployer",
+                      link: "/docs/deploy-operate/install/deployer/overview",
                     },
                     {
-                        text: "Vector Data Service",
-                        link: "/docs/deploy-operate/runtime-components/vector-data-service",
+                      text: "Install the Kubernetes deployer",
+                      link: "/docs/deploy-operate/install/deployer/kubernetes",
                     },
-                ],
+                  ],
+                },
+                {
+                  text: "Connect artifact registries",
+                  link: "/docs/deploy-operate/install/connect-registries",
+                },
+              ],
             },
             {
-                text: "Deployers",
-                collapsed: true,
-                items: [
+              text: "Administer projects and access",
+              items: [
+                {
+                  text: "Create a project",
+                  link: "/docs/deploy-operate/control-access/projects",
+                },
+                {
+                  text: "Grant teams access to a project",
+                  link: "/docs/deploy-operate/control-access/access-control",
+                },
+                {
+                  text: "Grant CI pipelines access",
+                  link: "/docs/deploy-operate/control-access/grant-ci-access",
+                },
+              ],
+            },
+            {
+              text: "Prepare delivery environments",
+              items: [
+                {
+                  text: "Create a landscape",
+                  link: "/docs/deploy-operate/manage-delivery/landscapes",
+                },
+                {
+                  text: "Configure deployment targets for a landscape",
+                  link: "/docs/deploy-operate/manage-delivery/deployment-targets",
+                },
+                {
+                  text: "Configure landscape services",
+                  collapsed: true,
+                  items: [
                     {
-                        text: "Manage deployers",
-                        link: "/docs/deploy-operate/deployer/overview",
+                      text: "Choose landscape services",
+                      link: "/docs/deploy-operate/install/runtime-components/overview",
                     },
                     {
-                        text: "Kubernetes",
-                        link: "/docs/deploy-operate/deployer/kubernetes",
+                      text: "Install the Vector Data Service",
+                      link: "/docs/deploy-operate/install/runtime-components/vector-data-service",
                     },
-                ],
+                  ],
+                },
+              ],
             },
             {
-              text: "Define promotions",
-              link: "/docs/deploy-operate/define-promotions",
-            },
-            {
-              text: "Vector Deployments",
-              link: "/docs/deploy-operate/vector-deployments",
+              text: "Run delivery",
+              items: [
+                {
+                  text: "Create a stage",
+                  link: "/docs/deploy-operate/manage-delivery/stages",
+                },
+                {
+                  text: "Set up and run promotion flows",
+                  link: "/docs/deploy-operate/manage-delivery/promote-vectors",
+                },
+              ],
             },
           ],
         },
@@ -290,6 +317,8 @@ export default defineConfig({
             { text: "CRDs", link: "/docs/reference/crd" },
             { text: "CLI", link: "/docs/reference/cli" },
             { text: "API", link: "/docs/reference/api" },
+            { text: "Helm values: konfidence", link: "/docs/reference/helm-values-konfidence" },
+            { text: "Helm values: orchestrator", link: "/docs/reference/helm-values-orchestrator" },
           ],
         },
       ],

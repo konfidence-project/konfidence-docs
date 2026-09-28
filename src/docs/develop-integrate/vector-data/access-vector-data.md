@@ -5,14 +5,14 @@ description: Learn how to access vector data in your application code.
 
 # Access vector data in your application
 
-This guide explains how running application code reads vector data, such as feature flags, authored config, and deployment results.
+This guide explains how running application code reads [vector data](../../reference/glossary.md#vector-data), such as [feature flags](../../reference/glossary.md#feature-flag), authored config, and [deployment results](../../reference/glossary.md#deployment-result).
 
-Vector data is available before the vector is activated and stays available afterwards. Deploy-time tasks can read it, for example to resolve service-to-service dependencies.
+Vector data is available before the [vector](../../reference/glossary.md#vector) is activated and stays available afterwards. Deploy-time tasks can read it, for example to resolve service-to-service dependencies.
 
 ## Prerequisites
 
 - Your workload can determine the vector ID from `X-Vector-ID`, message metadata, or execution context.
-- The vector data service is available in the landscape.
+- The [vector data service](../../reference/glossary.md#vector-data-service) is available in the [landscape](../../reference/glossary.md#landscape).
 - Your application can make HTTP requests to the vector data service.
 
 ## Get the vector ID
@@ -38,7 +38,7 @@ Use one of the following evaluation modes through an OFREP provider or by callin
 | Mode | Request | Result |
 | --- | --- | --- |
 | Single flag | `POST /ofrep/v1/evaluate/flags/{key}` with the flag name | Returns one value. |
-| Whole bundle | `POST /ofrep/v1/evaluate/flags/{key}` with the vector ID as the flag key | Returns the entire vector configuration object, including features, authored config, and deployment results. This is useful at application startup to prime a local view. |
+| Whole bundle | `POST /ofrep/v1/evaluate/flags/{key}` with the vector ID as the flag key | Returns the entire [vector configuration](../../reference/glossary.md#vector-configuration) object, including features, authored config, and deployment results. This is useful at application startup to prime a local view. |
 | Bulk | `POST /ofrep/v1/evaluate/flags` | Returns all features at once and supports ETag-based revalidation with `If-None-Match`. |
 
 ## Use vector data from any workload protocol
