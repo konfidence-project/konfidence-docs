@@ -12,7 +12,7 @@ lastUpdated: true
 - [konfidence.cloud/v1alpha1](#konfidencecloudv1alpha1)
 
 
-## konfidence.cloud/v1alpha1
+## konfidence.cloud/v1alpha1 {#konfidencecloudv1alpha1}
 
 Package v1alpha1 contains API Schema definitions for the konfidence v1alpha1 API group.
 

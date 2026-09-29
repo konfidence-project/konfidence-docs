@@ -117,7 +117,19 @@ webhook:
     cert-manager.io/inject-ca-from: konfidence-system/konfidence-webhook-server-cert
 ```
 
-Run the install command again without `--set webhook.enabled=false`.
+Run the install command again with `--values webhook-values.yaml` and without `--set webhook.enabled=false`:
+
+```bash
+helm upgrade --install konfidence oci://ghcr.io/konfidence-project/charts/konfidence \
+  --version "$KONFIDENCE_VERSION" \
+  --namespace "$KONFIDENCE_NAMESPACE" \
+  --create-namespace \
+  --set image.repository=ghcr.io/konfidence-project/konfidence-operator \
+  --set image.tag="$KONFIDENCE_VERSION" \
+  --set api.oidc.enabled=false \
+  --values webhook-values.yaml \
+  --wait
+```
 
 ## Keep login sessions in PostgreSQL
 
