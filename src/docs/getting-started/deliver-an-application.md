@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Deliver an application
 
-In the [Quickstart](./quickstart.md), Konfidence was installed and the example application was deployed to a development stage. This guide uses the [kden CLI](./install-cli.md) to explore that setup and then promote the example application to the production stage.
+In the [Quickstart](./quickstart.md), Konfidence was installed and the example application was deployed to a development [stage](../reference/glossary.md#stage). This guide uses the [kden CLI](./install-cli.md) to explore that setup and then promote the example application to the production stage.
 
 ## Prerequisites
 
@@ -27,11 +27,11 @@ The dashboard's **Landscapes** view shows the starting point: `dev-eu12` is live
 
 ## Inspect the existing resources
 
-The Quickstart created a project, two landscapes, their stages, and a promotion config. Review each one with the CLI.
+The Quickstart created a [project](../reference/glossary.md#project), two [landscapes](../reference/glossary.md#landscape), their stages, and a [promotion config](../reference/glossary.md#vectorpromotionconfig). Review each one with the CLI.
 
 ### Project
 
-A project is the organizational boundary for an application's resources. It owns a dedicated namespace that holds its landscapes, vector templates, and promotion configs.
+A project is the organizational boundary for an application's resources. It owns a dedicated namespace that holds its landscapes, [vector templates](../reference/glossary.md#vectortemplate), and promotion configs.
 
 ::: code-group
 
@@ -53,7 +53,7 @@ Use the project ID, `example-app`, in the commands that follow.
 
 ### Landscapes
 
-A landscape is an operational boundary within a project. It groups the stages, deployment targets, and deployment resources that share operational requirements, and it owns a namespace for them.
+A landscape is an operational boundary within a project. It groups the stages, [deployment targets](../reference/glossary.md#deployment-target), and deployment resources that share operational requirements, and it owns a namespace for them.
 
 ::: code-group
 
@@ -75,7 +75,7 @@ prod   Production     example-app   kden-l-prod   True    5m
 
 ### Stages
 
-A stage is a checkpoint in the delivery flow that selects one vector to deliver. List the stages in the `dev` landscape.
+A stage is a checkpoint in the [delivery flow](../reference/glossary.md#delivery-flow) that selects one [vector](../reference/glossary.md#vector) to deliver. List the stages in the `dev` landscape.
 
 ::: code-group
 
@@ -106,7 +106,7 @@ dev-eu12   True    5m    https://ghcr.io/konfidence-project/example-app//github.
 
 The `activeStageVersion` is the vector that `dev-eu12` runs, and its status is `Ready`. This is the example application deployed to development.
 
-The `prod-eu12` stage in the `prod` landscape has no `activeStageVersion` yet. The promotion fills it in once you approve it.
+The `prod-eu12` stage in the `prod` landscape has no `activeStageVersion` yet. The [promotion](../reference/glossary.md#promotion) fills it in once you approve it.
 
 ### Promotion
 
