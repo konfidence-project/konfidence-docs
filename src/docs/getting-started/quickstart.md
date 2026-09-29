@@ -1,6 +1,6 @@
 ---
 title: Quickstart
-description: Get started with Konfidence in minutes.
+description: Install Konfidence locally, deploy the example application, and open the dashboard.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -31,10 +31,10 @@ curl -fsSL https://raw.githubusercontent.com/konfidence-project/konfidence/main/
 
 The script creates a kind cluster named `konfidence-quickstart` and selects it as your current kubeconfig context. It then installs these components in order:
 
-1. **Flux** — controllers that reconcile Helm and Kustomize deployments.
+1. **[Flux](https://fluxcd.io/)** — third-party controllers that reconcile Helm and Kustomize deployments. Konfidence builds on top of them.
 2. **Konfidence** — the controller and API, which also serves the dashboard.
-3. **Kubernetes [Landscape Orchestrator](../reference/glossary.md#landscape-orchestrator)** — uses Flux to deploy Helm charts and Kustomize configurations for Konfidence.
-4. **[Vector Data Service](../reference/glossary.md#vector-data-service)** — lets applications read configuration and [deployment results](../reference/glossary.md#deployment-result) for a vector at runtime.
+3. **Kubernetes [Landscape Orchestrator](../reference/glossary.md#landscape-orchestrator)** — the Konfidence component that uses Flux to deploy Helm charts and Kustomize configurations.
+4. **[Vector Data Service](../reference/glossary.md#vector-data-service)** — the Konfidence runtime component that lets applications read configuration and [deployment results](../reference/glossary.md#deployment-result) for a vector at runtime.
 
 The script waits for the Flux deployments and Helm releases to become ready. Running it again reuses the cluster and updates the existing installation.
 
@@ -66,7 +66,55 @@ kubectl get deployments -n flux-system
 
 For every Flux deployment, the `READY` column should show that all replicas are ready.
 
-### Open the dashboard
+## Deploy the example application
+
+The [example application](https://github.com/konfidence-project/example-app) publishes its artifacts to a public registry. Apply the prepared resources in order. The wait commands ensure that the namespaces exist before you apply resources to them.
+
+Create the project:
+
+```bash
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/project?ref=main'
+kubectl wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
+  project/example-app --timeout=60s
+```
+
+Create the `dev` and `prod` landscapes:
+
+```bash
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/landscapes?ref=main'
+kubectl -n kden-p-example-app wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
+  landscape/dev landscape/prod --timeout=60s
+```
+
+Create the stages, deployment targets, database, and promotion config:
+
+```bash
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/environment?ref=main'
+```
+
+Install the Vector Data Service in each landscape namespace:
+
+```bash
+for ns in kden-l-dev kden-l-prod; do
+  helm upgrade --install vector-data-service oci://ghcr.io/konfidence-project/charts/vector-data-service \
+    --version 0.0.0-4f194adf3c2e211514d41c59d1a446275bb093e3 \
+    --namespace "$ns" --wait
+done
+```
+
+::: warning
+The per-landscape vector-data-service install is temporary until the platform provisions it automatically for each landscape.
+:::
+
+The example application deploys to the `dev-eu12` stage. Watch the `ACTIVE-VERSION` column, which stays empty until the deployment succeeds:
+
+```bash
+kubectl -n kden-l-dev get stage dev-eu12 -w
+```
+
+Once `ACTIVE-VERSION` shows a stage version, the application is running. Press `Ctrl+C` to stop watching.
+
+## Open the dashboard
 
 The local Quickstart does not yet include an ingress setup for the dashboard. To access it from your computer, use port-forwarding to connect to the Konfidence API, which also serves the dashboard:
 
@@ -74,7 +122,7 @@ The local Quickstart does not yet include an ingress setup for the dashboard. To
 kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
 ```
 
-Keep this command running and open `http://localhost:8090` in your browser. You should see the Konfidence sign-in page:
+Keep this command running and open [`http://localhost:8090`](http://localhost:8090) in your browser. You should see the Konfidence sign-in page:
 
 ![Konfidence sign-in page with the Continue with SSO button.](./screenshot_dashboard_login.png)
 
@@ -82,9 +130,11 @@ Select **Continue with SSO** to sign in as **Local Admin**. No external identity
 
 Sessions are stored in memory, so you’ll need to sign in again if the API restarts.
 
-### Clean up
+Select the **Example App** project to see the application running in `dev-eu12` and a promotion to `prod-eu12` waiting for approval.
 
-Keep the cluster running if you’re continuing with **Deliver an application**. When you’re finished exploring Konfidence, stop the port-forward with `Ctrl+C` and remove the cluster:
+## Clean up
+
+Keep the cluster running if you’re continuing with [Deliver an application](./deliver-an-application.md). When you’re finished exploring Konfidence, stop the port-forward with `Ctrl+C` and remove the cluster:
 
 ```bash
 kind delete cluster --name konfidence-quickstart
@@ -94,4 +144,4 @@ This deletes the `konfidence-quickstart` cluster and all workloads and data stor
 
 ## Next steps
 
-Your local Konfidence instance is ready. Continue with [Deliver an application](/docs/getting-started/deliver-sample-app) to run a sample application in development and approve its [promotion](../reference/glossary.md#promotion) to production.
+Your local Konfidence instance and the example application are ready. Continue with [Deliver an application](./deliver-an-application.md) to inspect the deployment and approve its [promotion](../reference/glossary.md#promotion) to production.

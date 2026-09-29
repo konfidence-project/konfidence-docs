@@ -12,6 +12,9 @@ const prereleaseHead: HeadConfig[] = prerelease
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   srcDir: "./src",
+  // The quickstart links to the port-forwarded dashboard; localhost URLs are
+  // reachable only while the reader runs the guide, so skip them in the check.
+  ignoreDeadLinks: [/^https?:\/\/localhost(:\d+)?/],
   vite: {
     publicDir: "../public",
     define: {
@@ -77,8 +80,8 @@ export default defineConfig({
               link: "/docs/getting-started/install-cli",
             },
             {
-              text: "Deliver a sample app",
-              link: "/docs/getting-started/deliver-sample-app",
+              text: "Deliver an application",
+              link: "/docs/getting-started/deliver-an-application",
             },
             {
               text: "Create your own app",

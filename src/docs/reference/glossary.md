@@ -33,8 +33,8 @@ Continuous integration (CI) pipelines publish artifacts to an OCM-compliant repo
 - [Create a landscape](../deploy-operate/manage-delivery/landscapes.md)
 - [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Create your own artifacts](../getting-started/create-vector.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Deployment model](../core-concepts/deployment-model.md)
 - [Develop & Integrate](../develop-integrate/index.md)
 - [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
@@ -70,8 +70,8 @@ The delivery flow is the path from published artifacts to the vector each stage 
 
 - [Core concepts](../core-concepts/index.md)
 - [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
 - [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
 
@@ -238,8 +238,8 @@ A [`VectorPromotionConfig`](#vectorpromotionconfig) defines a promotion flow. Ko
 
 ::: details Pages that use this term
 
+- [Deliver an application](../getting-started/deliver-an-application.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
 - [Quickstart](../getting-started/quickstart.md)
 - [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
@@ -260,8 +260,8 @@ Each stage belongs to a landscape and uses the deployment targets configured the
 - [Create a landscape](../deploy-operate/manage-delivery/landscapes.md)
 - [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Create your own artifacts](../getting-started/create-vector.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Deployment model](../core-concepts/deployment-model.md)
 - [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
@@ -291,8 +291,8 @@ Any change to an artifact reference or to the configuration creates a new vector
 - [Core concepts](../core-concepts/index.md)
 - [Create a stage](../deploy-operate/manage-delivery/stages.md)
 - [Create your own artifacts](../getting-started/create-vector.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Deployment model](../core-concepts/deployment-model.md)
 - [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
 - [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
@@ -455,8 +455,8 @@ A `VectorPromotionConfig` is a custom resource that defines a promotion flow fro
 
 - [Create a project](../deploy-operate/control-access/projects.md)
 - [Create your own artifacts](../getting-started/create-vector.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
 
 :::
@@ -473,8 +473,8 @@ A `VectorTemplate` is a custom resource that defines how Konfidence assembles a 
 - [Configure signing and verification](../develop-integrate/advanced-features/configure-signing-and-verification.md)
 - [Create a project](../deploy-operate/control-access/projects.md)
 - [Create your own artifacts](../getting-started/create-vector.md)
+- [Deliver an application](../getting-started/deliver-an-application.md)
 - [Delivery Flow](../core-concepts/delivery-flow.md)
-- [Deploy a sample application](../getting-started/deliver-sample-app.md)
 - [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md)
 - [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
 
