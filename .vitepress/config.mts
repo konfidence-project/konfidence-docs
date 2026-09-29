@@ -41,6 +41,8 @@ export default defineConfig({
   // pages for features that are not part of the initial release; recoverable
   // from git history / re-enabled by removing them here (issue #814)
   srcExclude: [
+    "docs/overview.md",
+    "docs/getting-started/create-vector.md",
     "docs/develop-integrate/observe-improve/paved-road.md",
     "docs/develop-integrate/run-migrations.md",
     "docs/extend-customize/create-deployer.md",
@@ -57,7 +59,7 @@ export default defineConfig({
     siteTitle: false,
 
     // Navigation bar (hidden on the landing page, see Layout.vue)
-    nav: [{ text: "Docs", link: "/docs/" }],
+    nav: [{ text: "Docs", link: "/docs/getting-started/quickstart" }],
 
     socialLinks: [
       { icon: "github", link: "https://github.com/konfidence-project" },
@@ -66,7 +68,6 @@ export default defineConfig({
     // Sidebar navigation
     sidebar: {
       "/docs/": [
-        { text: "Home", link: "/docs/" },
         {
           text: "Getting started",
           collapsed: false,
@@ -82,10 +83,6 @@ export default defineConfig({
             {
               text: "Deliver an application",
               link: "/docs/getting-started/deliver-an-application",
-            },
-            {
-              text: "Create your own app",
-              link: "/docs/getting-started/create-vector",
             },
           ],
         },
