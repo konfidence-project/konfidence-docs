@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Types of artifacts
 
-An [artifact](../../reference/glossary.md#artifact) is one deployable microservice packaged as an Open Component Model (OCM) component. A [vector](../../reference/glossary.md#vector) references artifacts by version, and a [deployer](../../reference/glossary.md#deployer) renders each one into a [landscape](../../reference/glossary.md#landscape).
+An [artifact](../../reference/glossary.md#artifact) is a deployable part of your application, such as a microservice, packaged as an Open Component Model (OCM) component. A [vector](../../reference/glossary.md#vector) references artifacts by version, and a [deployer](../../reference/glossary.md#deployer) renders each one into a [landscape](../../reference/glossary.md#landscape).
 
 The component holds your deployable content, such as a Helm chart or a Kustomize bundle, and a small manifest. The manifest names the required [deployment class](../../reference/glossary.md#deployment-class) and states whether one running instance may serve several vectors. The authoring guides show both.
 
