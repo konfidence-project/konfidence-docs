@@ -158,7 +158,13 @@ dev-to-prod-1   dev-to-prod   dev-eu12   prod-eu12   Succeeded   6m
 
 :::
 
-The `dev-to-prod-1` promotion is now in the `Succeeded` state. Check that `prod-eu12` runs the vector:
+The `dev-to-prod-1` promotion is now in the `Succeeded` state. This confirms that production selects the vector; the rollout can still be running. Watch the stage until `ACTIVE-VERSION` contains a value:
+
+```bash
+kubectl -n kden-l-prod get stage prod-eu12 -w
+```
+
+Press `Ctrl+C` to stop watching, then inspect the result. If the active version stays empty, check `kubectl -n kden-l-prod get pods` and `kubectl -n kden-l-prod get events --sort-by=.lastTimestamp`. For further checks, see [Stage troubleshooting](../deploy-operate/manage-delivery/stages.md#troubleshooting).
 
 ::: code-group
 
@@ -178,13 +184,87 @@ prod-eu12   True    6m    https://ghcr.io/konfidence-project/example-app//github
 
 `prod-eu12` now runs the same vector as `dev-eu12`. The application was promoted without rebuilding it.
 
+## Try the running application
+
+The example has a `candidates` service that stores candidates and an `interviews` service that books interviews. When you book an interview, the interviews service looks up the candidate through the candidates service. This lets you check a real request between the services in the deployed vector.
+
+### Connect to the services
+
+For this local exercise, use port-forwarding to call the services directly. In a new terminal, find the candidates Service in the Quickstart's production landscape and forward it:
+
+```bash
+CANDIDATES_SERVICE=$(kubectl -n kden-l-prod get service -l app=candidates -o name)
+kubectl -n kden-l-prod port-forward "$CANDIDATES_SERVICE" 18091:80
+```
+
+Keep it running. In another terminal, forward the interviews Service:
+
+```bash
+INTERVIEWS_SERVICE=$(kubectl -n kden-l-prod get service -l app.kubernetes.io/name=interviews -o name)
+kubectl -n kden-l-prod port-forward "$INTERVIEWS_SERVICE" 18092:80
+```
+
+Run the following requests in a third terminal. Because port-forwarding bypasses the ingress gateway, supply `X-Vector-ID` yourself. In this setup, use the active stage-version name as the runtime vector ID:
+
+```bash
+VECTOR_ID=$(kubectl -n kden-l-prod get stage prod-eu12 \
+  -o jsonpath='{.status.activeStageVersion.name}')
+echo "$VECTOR_ID"
+```
+
+The output is a name such as `prod-eu12-7f3k2m9d4qxzc`. Use the value from your cluster, not the OCM reference beginning with `https://ghcr.io/`. See [Access vector data](../develop-integrate/vector-data/access-vector-data.md#get-the-vector-id) for the runtime contract.
+
+### Create a candidate and book an interview
+
+Create a candidate with synthetic data:
+
+```bash
+curl --include --silent --show-error http://localhost:18091/candidates \
+  -H 'Content-Type: application/json' \
+  -H "X-Vector-ID: $VECTOR_ID" \
+  --data '{"name":"Example Candidate","email":"candidate@example.invalid"}'
+```
+
+Expect HTTP `201` and a JSON object containing `id`, `name`, and `email`. Copy the returned `id` into this variable:
+
+```bash
+CANDIDATE_ID='<id from the response>'
+```
+
+Book a phone interview for that candidate:
+
+```bash
+curl --include --silent --show-error http://localhost:18092/interviews \
+  -H 'Content-Type: application/json' \
+  -H "X-Vector-ID: $VECTOR_ID" \
+  --data "{\"candidateId\":\"$CANDIDATE_ID\",\"slotTime\":\"2030-01-15T10:00:00Z\",\"slotType\":\"phone\"}"
+```
+
+Expect HTTP `201` and the booking details. The interviews service has resolved the candidates service from the vector's deployment results and forwarded the vector ID on its request.
+
+### Observe a feature flag
+
+The example vector has the `allow-video-slots` flag disabled. Try booking a video interview:
+
+```bash
+curl --include --silent --show-error http://localhost:18092/interviews \
+  -H 'Content-Type: application/json' \
+  -H "X-Vector-ID: $VECTOR_ID" \
+  --data "{\"candidateId\":\"$CANDIDATE_ID\",\"slotTime\":\"2030-01-15T11:00:00Z\",\"slotType\":\"video\"}"
+```
+
+Expect HTTP `400` with `{"error":"slot type video is not enabled for this vector"}`. This is the expected application response for the disabled flag. Both requests reached the same deployed application; the vector's configuration determines which booking types it accepts.
+
+Stop the two application port-forwards with `Ctrl+C` when you are finished. The records remain in the local example database until you [delete the Quickstart cluster](./quickstart.md#clean-up).
+
 ## What you've learned
 
 You have:
 
 - inspected the project, landscapes, stages, and promotion the Quickstart created,
-- approved the waiting promotion with the `kden` CLI, and
-- confirmed the same vector runs in production.
+- approved the waiting promotion with the `kden` CLI,
+- confirmed the same vector runs in production, and
+- used the running application to check service communication and a feature flag.
 
 ## Next steps
 

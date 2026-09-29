@@ -12,6 +12,8 @@ Konfidence is a software delivery framework for microservice-based software-as-a
 
 Before you install Konfidence, it helps to know what this setup is for: teams promote the same verified application version across environments instead of rebuilding or reconfiguring it for each deployment. This makes releases easier to reason about as systems, teams, and release frequency grow.
 
+To evaluate Konfidence for your own application, read [Prepare your application](../develop-integrate/prepare-your-application.md) for the required service integration. The current Kubernetes deployer supports [local targets](../deploy-operate/install/deployer/kubernetes.md#connection-types); remote targets are incomplete. Review the [high-availability status](../deploy-operate/plan/high-availability.md) before planning a production installation.
+
 ## Cluster setup
 
 Use the Quickstart script to create a local Kubernetes cluster with Konfidence installed. By the end of this setup, you’ll have a running instance and access to its dashboard.
@@ -22,6 +24,8 @@ Before you begin, install the following tools:
 - [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) — creates the local Kubernetes cluster.
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) — lets you interact with the cluster.
 - [Helm](https://helm.sh/docs/intro/install/) — installs the Konfidence components.
+
+The complete example, including the production deployment in the next guide, was tested with 4 CPUs and 8 GB RAM allocated to the Docker environment. A test with 2 CPUs and approximately 4 GB RAM left production pods pending with `Insufficient cpu`. Use the tested allocation as a starting point; it is not a measured minimum.
 
 Run the installation:
 
@@ -68,7 +72,7 @@ For every Flux deployment, the `READY` column should show that all replicas are 
 
 ## Deploy the example application
 
-The [example application](https://github.com/konfidence-project/example-app) publishes its artifacts to a public registry. Apply the prepared resources in order. The wait commands ensure that the namespaces exist before you apply resources to them.
+The [example application](https://github.com/konfidence-project/example-app) manages candidates and interview bookings. Its two services are packaged as artifacts and delivered together in one vector. It publishes its artifacts to a public registry. Apply the prepared resources in order. The wait commands ensure that the namespaces exist before you apply resources to them.
 
 Create the project:
 
@@ -114,6 +118,15 @@ kubectl -n kden-l-dev get stage dev-eu12 -w
 
 Once `ACTIVE-VERSION` shows a stage version, the application is running. Press `Ctrl+C` to stop watching.
 
+If activation does not complete, inspect the pods and events:
+
+```bash
+kubectl -n kden-l-dev get pods
+kubectl -n kden-l-dev get events --sort-by=.lastTimestamp
+```
+
+If pods are `Pending` and events report `Insufficient cpu` or `Insufficient memory`, increase the resources available to the Docker environment. For other rollout problems, see [Stage troubleshooting](../deploy-operate/manage-delivery/stages.md#troubleshooting).
+
 ## Open the dashboard
 
 The local Quickstart does not yet include an ingress setup for the dashboard. To access it from your computer, use port-forwarding to connect to the Konfidence API, which also serves the dashboard:
@@ -144,4 +157,4 @@ This deletes the `konfidence-quickstart` cluster and all workloads and data stor
 
 ## Next steps
 
-Your local Konfidence instance and the example application are ready. Continue with [Deliver an application](./deliver-an-application.md) to inspect the deployment and approve its [promotion](../reference/glossary.md#promotion) to production.
+Your local Konfidence instance and the example application are ready. Continue with [Deliver an application](./deliver-an-application.md) to inspect the deployment, approve its [promotion](../reference/glossary.md#promotion) to production, and book an interview through the running application.
