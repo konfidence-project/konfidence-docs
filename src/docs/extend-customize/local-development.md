@@ -1,6 +1,7 @@
 ---
 title: "Local development"
 description: "Set up Konfidence locally and add only the services your work needs."
+outline: deep
 editLink: true
 lastUpdated: true
 ---
@@ -17,15 +18,16 @@ You need:
 
 - the `konfidence` repository cloned locally
 - Docker running
-- Hermit activated in every terminal you use
+- Hermit available in every terminal you use
 
-From the repository root, activate Hermit:
+Run the commands in this guide from the repository root. Activate Hermit in each terminal:
 
 ```bash
 source ./bin/activate-hermit
 ```
 
 Hermit provides the project tools, including Go, `kubectl`, Helm, and kind. Run `make help` at any time to see the available development commands.
+The first `make` run may take a few minutes while it downloads tools and generates manifests.
 
 If you plan to work on the dashboard, install its dependencies once:
 
@@ -33,40 +35,9 @@ If you plan to work on the dashboard, install its dependencies once:
 pnpm install
 ```
 
-## Customize your local settings
-
-Make loads the shared settings from `hack/kden_local_dev/konfidence.env` before it runs a target. These settings provide the local addresses and development credentials used throughout this guide.
-
-Do not edit that file for personal settings. For a one-time change, add the variable to the `make` command. For example:
-
-```bash
-make dev-ui VITE_KONFIDENCE_API_BASE_URL=http://localhost:8090/api
-```
-
-For settings you want to keep, create a private copy outside the repository:
-
-```bash
-mkdir -p "$HOME/.config/konfidence"
-cp hack/kden_local_dev/konfidence.env "$HOME/.config/konfidence/dev.env"
-```
-
-Edit the private file, then tell Make to use it in the current terminal:
-
-```bash
-export DEV_KONFIDENCE_ENV_FILE="$HOME/.config/konfidence/dev.env"
-```
-
-Every `make` command from that terminal now uses your private settings.
-
-You can also select the file for only one command:
-
-```bash
-make dev-ui DEV_KONFIDENCE_ENV_FILE="$HOME/.config/konfidence/dev.env"
-```
-
 ## Recommended setup
 
-The following setup includes the local sign-in flow and trusted HTTPS addresses. Keep each long-running command open in its own terminal.
+The following setup includes the local sign-in flow and trusted HTTPS addresses. Leave each long-running process in its own terminal.
 
 ### 1. Start the local services
 
@@ -74,7 +45,7 @@ The following setup includes the local sign-in flow and trusted HTTPS addresses.
 make dev-up
 ```
 
-This starts the local identity provider, HTTPS proxy, and PostgreSQL. The first run adds the local development certificate to your operating system's trust store and may ask for your password or confirmation.
+This starts the local identity provider, HTTPS proxy, and PostgreSQL. The first run trusts the local development certificate authority in your operating system and may ask for your password or confirmation.
 
 The credentials and certificates in `hack/kden_local_dev` are only for local development. Do not reuse them elsewhere.
 
@@ -141,9 +112,38 @@ The main local addresses are:
 
 | Service | Address |
 | --- | --- |
-| Dashboard | <https://ui.localhost> |
-| API | <https://api.localhost> |
-| Sign-in | <https://auth.localhost> |
+| Dashboard | `https://ui.localhost` |
+| API | `https://api.localhost` |
+| Sign-in | `https://auth.localhost` |
+
+## Customize your local settings
+
+Make loads the shared settings from `hack/kden_local_dev/konfidence.env` before it runs a target. These settings provide the local addresses and development credentials used throughout this guide.
+
+Do not edit that file for personal settings. For a one-time change, add the variable to the `make` command. For example, enable debug logging for the API server:
+
+```bash
+make run-kden-api API_LOG_LEVEL=debug
+```
+
+For settings you want to keep, create a private copy outside the repository:
+
+```bash
+mkdir -p "$HOME/.config/konfidence"
+cp hack/kden_local_dev/konfidence.env "$HOME/.config/konfidence/dev.env"
+```
+
+Edit the private file, then tell Make to use it in the current terminal:
+
+```bash
+export DEV_KONFIDENCE_ENV_FILE="$HOME/.config/konfidence/dev.env"
+```
+
+Every `make` command from that terminal now uses your private settings. You can also select the file for one command:
+
+```bash
+make dev-ui DEV_KONFIDENCE_ENV_FILE="$HOME/.config/konfidence/dev.env"
+```
 
 ## Dashboard only
 
@@ -157,26 +157,25 @@ Open the address printed in the terminal, usually `http://localhost:5173`. Chang
 
 Use the [recommended setup](#recommended-setup) when you need real API data or want to test sign-in.
 
-## Run without sign-in
+## Run without an identity provider
 
-For API or CLI work that does not involve authentication, you can skip `make dev-up`. Start the Kubernetes API and operator as described above, then run the API server with local authentication disabled:
+For API or CLI work that does not need a real sign-in flow, you can skip `make dev-up`. OpenID Connect (OIDC) is disabled in this mode, so signing in creates a local administrator session without a password. Never use this mode in a shared or production environment.
+
+Start the Kubernetes API and operator as described above, then run the API server with OIDC disabled:
 
 ```bash
-API_OIDC_ENABLED=false \
-API_SESSION_COOKIE_SECURE=false \
-API_SESSION_COOKIE_SAME_SITE=SameSiteStrictMode \
-make run-kden-api
+make run-kden-api \
+  API_OIDC_ENABLED=false \
+  API_SESSION_COOKIE_SECURE=false \
+  API_SESSION_COOKIE_SAME_SITE=SameSiteStrictMode
 ```
 
-The API is available at `http://localhost:8090`. Signing in creates a local administrator session without asking for a password.
+The API is available at `http://localhost:8090`.
 
-::: warning Local development only
-Disabling OIDC removes real authentication. Never use this mode in a shared or production environment.
-:::
+Projects control access through role bindings. Create a project that grants access to the `local-admin` group:
 
-Projects control access through role bindings. To make a project visible in this mode, bind the `local-admin` group:
-
-```yaml
+```bash
+kubectl apply -f - <<'EOF'
 apiVersion: konfidence.cloud/v1alpha1
 kind: Project
 metadata:
@@ -187,9 +186,8 @@ spec:
       - session:
           memberOf:
             - local-admin
+EOF
 ```
-
-Apply the file with `kubectl apply -f <file>`.
 
 ## Use the CLI
 
@@ -199,11 +197,14 @@ Build the CLI once:
 make build-kden-cli
 ```
 
-The `kden` command is then available on your Hermit `PATH`. By default, it connects to `http://localhost:8090/api`. To use another API server, run:
+The `kden` command is then available on your Hermit `PATH`. For the recommended HTTPS setup, point it to the local API and sign in:
 
 ```bash
-kden config set api-endpoint <url>
+kden config set api-endpoint https://api.localhost/api
+kden login
 ```
+
+If you use the setup without an identity provider, the default endpoint is `http://localhost:8090/api`. You can change it with `kden config set api-endpoint <url>`.
 
 ## Optional services
 
@@ -211,12 +212,12 @@ Add these services only when your change needs them.
 
 ### Database-backed sessions
 
-Sessions normally remain in memory and disappear when the API server stops. To test persistent sessions, start the local services, apply the database migrations, and select PostgreSQL storage:
+Sessions normally remain in memory and disappear when the API server stops. To test persistent sessions, stop the API server if it is already running. Then start the local services, apply the database migrations, and select PostgreSQL storage:
 
 ```bash
 make dev-up
 make dev-db-migrate
-API_SESSION_STORAGE_TYPE=db-pg make run-kden-api
+make run-kden-api API_SESSION_STORAGE_TYPE=db-pg
 ```
 
 The migration command is safe to run again; it only applies missing migrations.
@@ -243,18 +244,27 @@ It is then available through <https://id.localhost> while `make dev-up` is runni
 
 ## Test in a real cluster
 
-Use the local kind cluster when changing the Helm chart, container images, RBAC, or webhook setup. Stop the lightweight Kubernetes API first and use a terminal where `KUBECONFIG` is not set:
+Use the local kind cluster when changing the Helm chart, container images, RBAC, or webhook setup. Stop the local operator, API server, and lightweight Kubernetes API first. Then use a terminal where `KUBECONFIG` is not set:
 
 ```bash
 unset KUBECONFIG
 make dev-cluster
 kubectl config use-context kind-konfidence-dev
+kubectl config current-context
 ```
+
+Confirm that the current context is `kind-konfidence-dev` before deploying.
 
 Build and push the local images:
 
 ```bash
 REGISTRY=localhost:5001 make docker-build docker-push docker-build-api docker-push-api
+```
+
+Generate the webhook certificates if you did not do so in the recommended setup:
+
+```bash
+make webhook-certs
 ```
 
 To deploy only the operator:
@@ -282,23 +292,27 @@ Check that the pods are running:
 kubectl get pods -n konfidence-system
 ```
 
-To reach the in-cluster API from your computer:
+The operator pod, and the API server pod if you deployed it, should show `Running`.
+
+If you deployed the API server, forward its port to reach it from your computer:
 
 ```bash
 kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
 ```
 
-`make deploy` uses your current Kubernetes context. Always check it before deploying:
-
-```bash
-kubectl config current-context
-```
+Leave the port-forward running. In another terminal, run `curl http://localhost:8090/healthz`. The response should be `{"status":"ok"}`.
 
 ## Test a deployer
 
-Deployers live in separate repositories. For the Kubernetes deployer, clone [`kubernetes-landscape-orchestrator`](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) next to the `konfidence` repository and follow its development instructions.
+Deployers live in separate repositories. For the Kubernetes deployer, clone [`kubernetes-landscape-orchestrator`](https://github.com/konfidence-project/kubernetes-landscape-orchestrator) next to the `konfidence` repository and follow its [local development steps](https://github.com/konfidence-project/kubernetes-landscape-orchestrator/blob/main/README.md#local-development). They use the kind cluster and registry from the previous section.
 
-The deployer needs a real cluster, the Konfidence CRDs, and its own dependencies. Start with the [Kubernetes deployer installation guide](../deploy-operate/install/deployer/kubernetes.md).
+From the deployer repository, check that its pod is running:
+
+```bash
+kubectl get pods -l app.kubernetes.io/name=kubernetes-landscape-orchestrator
+```
+
+The pod should reach `1/1 Running`. For the deployer's supported resources and configuration, see [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md).
 
 ## Stop the local setup
 
@@ -310,22 +324,25 @@ Stop the Docker services but keep their data:
 make dev-down
 ```
 
-Delete their containers and stored data, including the local PostgreSQL database:
+To also delete the containers and stored data, including the local PostgreSQL database, run:
 
 ```bash
 make dev-reset
 ```
 
-Delete the kind cluster and local registry:
+If you deployed to the kind cluster, use a terminal with `KUBECONFIG` unset. Select and check its context before removing the Helm release:
+
+```bash
+unset KUBECONFIG
+kubectl config use-context kind-konfidence-dev
+kubectl config current-context
+make undeploy
+```
+
+Then delete the kind cluster and local registry:
 
 ```bash
 make dev-cluster-down
-```
-
-Remove a deployed Helm release before deleting its cluster:
-
-```bash
-make undeploy
 ```
 
 The local certificate remains trusted by your operating system after these commands. Locally built images and webhook certificates are also kept.
