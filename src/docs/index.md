@@ -1,11 +1,19 @@
 ---
+layout: page
 title: Documentation
-description: Comprehensive documentation for Konfidence.
-outline: false
-aside: false
-editLink: true
-lastUpdated: true
-pageClass: docs-landing
+search: false
+head:
+  - - meta
+    - http-equiv: refresh
+      content: '0; url=/docs/getting-started/quickstart'
 ---
 
-<DocsCards />
+<script setup>
+import { onMounted } from 'vue'
+import { useRouter } from 'vitepress'
+
+const router = useRouter()
+onMounted(() => router.go('/docs/getting-started/quickstart'))
+</script>
+
+[Open the Quickstart](/docs/getting-started/quickstart).

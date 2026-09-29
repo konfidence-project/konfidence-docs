@@ -188,5 +188,4 @@ You have:
 
 ## Next steps
 
-- [Create your own artifacts](./create-vector.md) to build and deliver your own vector.
 - [Delivery flow](../core-concepts/delivery-flow.md) to learn how promotions move a vector across stages.

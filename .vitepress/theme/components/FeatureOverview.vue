@@ -178,7 +178,7 @@ const prerelease = __PRERELEASE__
           <Github aria-hidden="true" />
           Follow on GitHub
         </a>
-        <a v-else href="/docs/" class="cta-button cta-button--primary">
+        <a v-else href="/docs/getting-started/quickstart" class="cta-button cta-button--primary">
           Explore Konfidence
           <ArrowRight aria-hidden="true" />
         </a>

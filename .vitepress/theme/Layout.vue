@@ -13,7 +13,7 @@
       <div v-if="!prerelease" class="hero-action-area">
         <div class="button-container">
           <a href="/docs/getting-started/quickstart" class="hero-button hero-button--primary">Get Konfidence running</a>
-          <a href="/docs/" class="hero-button hero-button--secondary">Browse the docs</a>
+          <a href="/docs/getting-started/quickstart" class="hero-button hero-button--secondary">Browse the docs</a>
         </div>
       </div>
       <FeatureOverview />
