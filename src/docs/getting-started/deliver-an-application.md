@@ -20,10 +20,19 @@ In the [Quickstart](./quickstart.md), Konfidence was installed and the example a
   kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
   ```
 
-
 The dashboard's **Landscapes** view shows the starting point: `dev-eu12` is live with the example application, and `prod-eu12` has no version yet.
 
-![Konfidence dashboard Landscapes view: the dev-eu12 landscape is live and matches its target vector, while prod-eu12 has no target version and nothing active yet.](./screenshot_dashboard_dev.png)
+![Konfidence dashboard Landscapes view with a live dev-eu12 stage and an empty prod-eu12 stage.](./screenshot_dashboard_dev.png)
+
+## Sign in to the CLI
+
+The CLI needs its own session. Sign in through the browser before running the commands in this guide:
+
+```bash
+kden login
+```
+
+Select **Continue with SSO**, then sign in as **Local Admin**. The CLI connects to `http://localhost:8090` by default.
 
 ## Inspect the existing resources
 
@@ -95,7 +104,7 @@ dev-eu12   True    5m    https://ghcr.io/konfidence-project/example-app//github.
 
 `dev-eu12` runs the active version `dev-eu12-5dk7wm6b9mxzb`, and its status is `Ready`. This is the example application deployed to development.
 
-The `prod-eu12` stage in the `prod` landscape has no active version yet. The [promotion](../reference/glossary.md#promotion) fills it in once you approve it.
+The `prod-eu12` stage in the `prod` landscape has no active version yet. Approving the [promotion](../reference/glossary.md#promotion) selects the vector for that stage; the version becomes active after deployment succeeds.
 
 ### Promotion
 
@@ -167,17 +176,17 @@ prod-eu12   True    6m    https://ghcr.io/konfidence-project/example-app//github
 
 :::
 
-`prod-eu12` now runs the same vector version as `dev-eu12`. The verified application was promoted, not rebuilt.
+`prod-eu12` now runs the same vector as `dev-eu12`. The application was promoted without rebuilding it.
 
 ## What you've learned
 
 You have:
 
 - inspected the project, landscapes, stages, and promotion the Quickstart created,
-- approved the waiting promotion with the kden CLI, and
+- approved the waiting promotion with the `kden` CLI, and
 - confirmed the same vector runs in production.
 
 ## Next steps
 
-- [Create your own app](./create-vector.md) to build and deliver your own vector.
-- [Promotions and Delivery Flow](../core-concepts/delivery-flow.md) to see how promotions move a vector across stages.
+- [Create your own artifacts](./create-vector.md) to build and deliver your own vector.
+- [Delivery flow](../core-concepts/delivery-flow.md) to learn how promotions move a vector across stages.

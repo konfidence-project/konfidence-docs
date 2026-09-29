@@ -1,6 +1,6 @@
 ---
 title: Quickstart
-description: Get started with Konfidence in minutes.
+description: Install Konfidence locally, deploy the example application, and open the dashboard.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -68,7 +68,7 @@ For every Flux deployment, the `READY` column should show that all replicas are 
 
 ## Deploy the example application
 
-The [example application](https://github.com/konfidence-project/example-app) publishes its artifacts to a public registry. Apply the prepared resources in order — each set waits for the namespaces the previous one creates.
+The [example application](https://github.com/konfidence-project/example-app) publishes its artifacts to a public registry. Apply the prepared resources in order. The wait commands ensure that the namespaces exist before you apply resources to them.
 
 Create the project:
 
@@ -92,7 +92,7 @@ Create the stages, deployment targets, database, and promotion config:
 kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/environment?ref=main'
 ```
 
-Install the vector-data-service into each landscape namespace:
+Install the Vector Data Service in each landscape namespace:
 
 ```bash
 for ns in kden-l-dev kden-l-prod; do
@@ -134,7 +134,7 @@ Select the **Example App** project to see the application running in `dev-eu12` 
 
 ## Clean up
 
-Keep the cluster running if you’re continuing with **Deliver an application**. When you’re finished exploring Konfidence, stop the port-forward with `Ctrl+C` and remove the cluster:
+Keep the cluster running if you’re continuing with [Deliver an application](./deliver-an-application.md). When you’re finished exploring Konfidence, stop the port-forward with `Ctrl+C` and remove the cluster:
 
 ```bash
 kind delete cluster --name konfidence-quickstart
@@ -144,4 +144,4 @@ This deletes the `konfidence-quickstart` cluster and all workloads and data stor
 
 ## Next steps
 
-Your local Konfidence instance is ready. Continue with [Deliver an application](/docs/getting-started/deliver-an-application) to run a sample application in development and approve its [promotion](../reference/glossary.md#promotion) to production.
+Your local Konfidence instance and the example application are ready. Continue with [Deliver an application](./deliver-an-application.md) to inspect the deployment and approve its [promotion](../reference/glossary.md#promotion) to production.
