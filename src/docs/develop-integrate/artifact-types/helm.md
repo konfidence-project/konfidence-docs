@@ -44,7 +44,13 @@ The registry lists `my-service:1.0.0` afterward.
 
 ## Create a minimal chart
 
-Create the chart by hand. `helm create` generates a larger chart that follows the same rules.
+Create a `my-service/` directory for the chart and a `templates/` directory inside it:
+
+```bash
+mkdir -p my-service/templates
+```
+
+Create the following files inside `my-service/`. Run the packaging commands from its parent directory. `helm create` generates a larger chart that follows the same rules.
 
 1. Create `Chart.yaml`:
 
@@ -123,10 +129,10 @@ The chart renders one Deployment and one Service, both named after the release.
 2. Push the package to the registry:
 
    ```bash
-   helm push my-service-1.0.0.tgz oci://registry.example.com/my-org
+   helm push my-service-1.0.0.tgz oci://registry.example.com/my-org/charts
    ```
 
-The chart is available as `registry.example.com/my-org/my-service:1.0.0`.
+The chart is available as `registry.example.com/my-org/charts/my-service:1.0.0`. Keep charts and container images in separate registry paths so that pushing a chart does not replace an image tag.
 
 ## Reference the chart from the artifact component
 
@@ -163,7 +169,7 @@ The chart is available as `registry.example.com/my-org/my-service:1.0.0`.
            relation: external
            access:
              type: ociArtifact
-             imageReference: registry.example.com/my-org/my-service:1.0.0
+             imageReference: registry.example.com/my-org/charts/my-service:1.0.0
    ```
 
    The component carries exactly one resource of type `helmChart`.

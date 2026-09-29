@@ -67,7 +67,9 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p src/docs/reference
-          cp .upstream/api/docs/crd.md src/docs/reference/crd.md
+          # Preserve the generated package link with an explicit VitePress heading ID.
+          sed 's|^## konfidence\.cloud/v1alpha1$|## konfidence.cloud/v1alpha1 {#konfidencecloudv1alpha1}|' \
+            .upstream/api/docs/crd.md > src/docs/reference/crd.md
           cp .upstream/api/docs/cli.md src/docs/reference/cli.md
           values_page() {
             printf -- '---\ntitle: "%s"\ndescription: "%s"\noutline: [2, 3]\neditLink: false\n---\n\n' "$2" "$3"

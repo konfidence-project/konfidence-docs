@@ -324,7 +324,7 @@ export default defineConfig({
     // Edit link configuration
     editLink: {
       pattern:
-        "https://github.com/konfidence-project/konfidence-docs/edit/main/:path",
+        "https://github.com/konfidence-project/konfidence-docs/edit/main/src/:path",
       text: "Edit this page on GitHub",
     },
 

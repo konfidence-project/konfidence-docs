@@ -56,7 +56,7 @@ The most important references are:
 - `Stage.spec.vector` holds the concrete vector selected for a stage.
 - `VectorPromotionConfig.spec.source` names the source being watched: a `VectorTemplate` or another `Stage`.
 - `VectorPromotionConfig.spec.target` names the target stage and its landscape.
-- `VectorPromotion.spec.vectorPromotionConfigRef` ties a promotion to the configuration it belongs to.
+- `VectorPromotion.spec.vectorPromotionConfigName` ties a promotion to the configuration it belongs to.
 
 Together, these references form a traceable chain.
 You can start at a stage and identify the exact vector assigned to it.

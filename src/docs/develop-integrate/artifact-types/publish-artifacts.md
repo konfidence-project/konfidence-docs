@@ -77,7 +77,7 @@ components:
         relation: external
         access:
           type: ociArtifact
-          imageReference: registry.example.com/my-org/my-service:1.0.0
+          imageReference: registry.example.com/my-org/charts/my-service:1.0.0
 ```
 
 The component constructor contains two resources:
