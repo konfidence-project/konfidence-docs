@@ -80,20 +80,9 @@ A stage is a checkpoint in the [delivery flow](../reference/glossary.md#delivery
 ::: code-group
 
 ```console [kden]
-$ kden stage list -p example-app -l dev
-{
-  "data": [
-    {
-      "id": "dev-eu12",
-      "landscapeId": "dev",
-      "name": "dev-eu12",
-      "activeStageVersion": {
-        "status": "Ready",
-        "vector": "https://ghcr.io/konfidence-project/example-app//github.com/konfidence-project/example-app/vector:0.1.0-f486ecb"
-      }
-    }
-  ]
-}
+$ kden stage list -p example-app -l dev --output pretty
+ ID         Name       Landscape   Active Version           Status
+ dev-eu12   dev-eu12   dev         dev-eu12-5dk7wm6b9mxzb   Ready
 ```
 
 ```console [kubectl]
@@ -104,9 +93,9 @@ dev-eu12   True    5m    https://ghcr.io/konfidence-project/example-app//github.
 
 :::
 
-The `activeStageVersion` is the vector that `dev-eu12` runs, and its status is `Ready`. This is the example application deployed to development.
+`dev-eu12` runs the active version `dev-eu12-5dk7wm6b9mxzb`, and its status is `Ready`. This is the example application deployed to development.
 
-The `prod-eu12` stage in the `prod` landscape has no `activeStageVersion` yet. The [promotion](../reference/glossary.md#promotion) fills it in once you approve it.
+The `prod-eu12` stage in the `prod` landscape has no active version yet. The [promotion](../reference/glossary.md#promotion) fills it in once you approve it.
 
 ### Promotion
 
@@ -115,24 +104,10 @@ A promotion config defines a promotion flow from a source stage to a target stag
 ::: code-group
 
 ```console [kden]
-$ kden vector-promotion list -p example-app
-{
-  "data": [
-    {
-      "id": "dev-to-prod",
-      "source": { "kind": "Stage", "landscape": "dev", "name": "dev-eu12" },
-      "target": { "kind": "Stage", "landscape": "prod", "name": "prod-eu12" },
-      "promotions": [
-        {
-          "id": "dev-to-prod-1",
-          "requireApproval": true,
-          "status": "Waiting",
-          "vector": "https://ghcr.io/konfidence-project/example-app//github.com/konfidence-project/example-app/vector:0.1.0-f486ecb"
-        }
-      ]
-    }
-  ]
-}
+$ kden vector-promotion list -p example-app --output pretty
+dev-to-prod (dev-eu12 → prod-eu12)
+ ID              Source     Target      Vector                           Status
+ dev-to-prod-1   dev-eu12   prod-eu12   https://ghcr.io/konfidence-pr…   Waiting
 ```
 
 ```console [kubectl]
@@ -160,24 +135,10 @@ Confirm the promotion succeeded:
 ::: code-group
 
 ```console [kden]
-$ kden vector-promotion list -p example-app
-{
-  "data": [
-    {
-      "id": "dev-to-prod",
-      "source": { "kind": "Stage", "landscape": "dev", "name": "dev-eu12" },
-      "target": { "kind": "Stage", "landscape": "prod", "name": "prod-eu12" },
-      "promotions": [
-        {
-          "id": "dev-to-prod-1",
-          "requireApproval": true,
-          "status": "Succeeded",
-          "vector": "https://ghcr.io/konfidence-project/example-app//github.com/konfidence-project/example-app/vector:0.1.0-f486ecb"
-        }
-      ]
-    }
-  ]
-}
+$ kden vector-promotion list -p example-app --output pretty
+dev-to-prod (dev-eu12 → prod-eu12)
+ ID              Source     Target      Vector                           Status
+ dev-to-prod-1   dev-eu12   prod-eu12   https://ghcr.io/konfidence-pr…   Succeeded
 ```
 
 ```console [kubectl]
@@ -188,25 +149,14 @@ dev-to-prod-1   dev-to-prod   dev-eu12   prod-eu12   Succeeded   6m
 
 :::
 
-The `dev-to-prod-1` promotion is now in the `Succeeded` state and records who approved it. Check that `prod-eu12` runs the vector:
+The `dev-to-prod-1` promotion is now in the `Succeeded` state. Check that `prod-eu12` runs the vector:
 
 ::: code-group
 
 ```console [kden]
-$ kden stage list -p example-app -l prod
-{
-  "data": [
-    {
-      "id": "prod-eu12",
-      "landscapeId": "prod",
-      "name": "prod-eu12",
-      "activeStageVersion": {
-        "status": "Ready",
-        "vector": "https://ghcr.io/konfidence-project/example-app//github.com/konfidence-project/example-app/vector:0.1.0-f486ecb"
-      }
-    }
-  ]
-}
+$ kden stage list -p example-app -l prod --output pretty
+ ID          Name        Landscape   Active Version            Status
+ prod-eu12   prod-eu12   prod        prod-eu12-7f3k2m9d4qxzc   Ready
 ```
 
 ```console [kubectl]
