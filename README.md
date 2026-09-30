@@ -40,9 +40,11 @@ The site currently builds in pre-release mode (the default). It:
 - shows a fixed "pre-release software" banner on every page (`.vitepress/theme/components/PreReleaseBanner.vue`)
 - shows a `pre-alpha` badge next to the navbar logo
 - adds a `<meta name="robots" content="noindex">` tag so search engines do not index the site
-- hides the nav menu and search on the landing page and removes all landing-page links into the docs (hero buttons, final CTA points to GitHub instead); the docs remain reachable via direct URL
+- hides the nav menu and search on the landing page and points the final CTA to GitHub
 
-All of this is controlled by a single build-time flag in `.vitepress/config.mts`.
+The hero buttons always link to the Quickstart and the Konfidence GitHub repository.
+
+The pre-release behavior is controlled by a single build-time flag in `.vitepress/config.mts`.
 
 **On release**, build with the flag off to restore the full site:
 
@@ -50,7 +52,7 @@ All of this is controlled by a single build-time flag in `.vitepress/config.mts`
 KONFIDENCE_PRERELEASE=false pnpm build
 ```
 
-or flip the default in `.vitepress/config.mts` (`const prerelease = ...`) and delete this section. No other changes are needed — the hero buttons, docs CTA, nav, search and indexing all come back with the flag.
+or flip the default in `.vitepress/config.mts` (`const prerelease = ...`) and delete this section. No other changes are needed — the docs CTA, nav, search and indexing all come back with the flag.
 
 Independently of the flag, `srcExclude` in `.vitepress/config.mts` lists unfinished pages that are excluded from the build; review that list on release as well.
 

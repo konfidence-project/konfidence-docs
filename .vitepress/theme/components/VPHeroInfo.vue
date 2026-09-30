@@ -14,9 +14,12 @@ const logoUrl = withBase('/assets/logo/Icon_only/SVG/512_konfidence_icon_color.s
       </p>
 
       <div class="hero-actions">
-        <a href="https://github.com/konfidence-project" class="hero-button hero-button--primary">
+        <a :href="withBase('/docs/getting-started/quickstart')" class="hero-button hero-button--primary">
+          Get Konfidence running
+        </a>
+        <a href="https://github.com/konfidence-project/konfidence" class="hero-button hero-button--secondary">
           <Github aria-hidden="true" />
-          Follow on GitHub
+          View on GitHub
         </a>
       </div>
 
@@ -122,6 +125,23 @@ const logoUrl = withBase('/assets/logo/Icon_only/SVG/512_konfidence_icon_color.s
   color: #241300;
   background: var(--konfidence-gradient-action);
   box-shadow: 0 14px 30px rgba(255, 150, 12, 0.24);
+}
+
+.hero-button--secondary {
+  color: var(--konfidence-blue-dark);
+  border-color: rgba(19, 156, 199, 0.45);
+  background: rgba(128, 210, 224, 0.12);
+}
+
+:global(.dark) .hero-button--secondary {
+  color: var(--konfidence-blue-light);
+  border-color: rgba(185, 230, 235, 0.38);
+  background: rgba(31, 172, 208, 0.16);
+}
+
+.hero-button--secondary:hover {
+  color: var(--konfidence-blue);
+  border-color: var(--konfidence-blue);
 }
 
 .hero-button:hover {
