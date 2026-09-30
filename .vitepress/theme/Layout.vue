@@ -1,5 +1,5 @@
 <template>
-  <DefaultTheme.Layout :class="{ 'landing-page': prerelease && isHome }">
+  <DefaultTheme.Layout>
     <template #layout-top>
       <PreReleaseBanner v-if="prerelease" />
     </template>
@@ -22,8 +22,6 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted } from 'vue'
-import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import VPFooter from './components/VPFooter.vue'
 import VPHeroInfo from './components/VPHeroInfo.vue'
@@ -31,24 +29,6 @@ import FeatureOverview from './components/FeatureOverview.vue'
 import PreReleaseBanner from './components/PreReleaseBanner.vue'
 
 const prerelease = __PRERELEASE__
-
-const { frontmatter } = useData()
-const isHome = computed(() => frontmatter.value.layout === 'home')
-
-// the theme registers cmd/ctrl+k and / hotkeys for search even when the
-// search box is hidden; swallow them on the landing page (capture phase
-// runs before the theme's bubble-phase window listener)
-function blockSearchHotkey(e) {
-  if (!prerelease || !isHome.value) return
-  const cmdK = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'
-  const slash = e.key === '/' && !/^(?:input|textarea)$/i.test(e.target?.tagName ?? '')
-  if (!cmdK && !slash) return
-  e.preventDefault()
-  e.stopImmediatePropagation()
-}
-
-onMounted(() => window.addEventListener('keydown', blockSearchHotkey, true))
-onUnmounted(() => window.removeEventListener('keydown', blockSearchHotkey, true))
 </script>
 
 <style scoped>
@@ -69,16 +49,6 @@ onUnmounted(() => window.removeEventListener('keydown', blockSearchHotkey, true)
   color: var(--konfidence-orange);
 }
 
-/* pre-release mode hides the nav menu (desktop + mobile hamburger)
-   and search on the landing page */
-:global(.landing-page .VPNavBarMenu),
-:global(.landing-page .VPNavBarSearch),
-:global(.landing-page .VPNavBarHamburger),
-:global(.landing-page .VPNavScreen),
-:global(.landing-page .VPNavScreenMenu) {
-  display: none !important;
-}
-
 :global(.VPHome .VPHero) {
   padding: 0;
 }
@@ -91,12 +61,6 @@ onUnmounted(() => window.removeEventListener('keydown', blockSearchHotkey, true)
 
 :global(.VPHome .VPHero .main) {
   order: 0;
-}
-
-@media (max-width: 767px) {
-  :global(.landing-page .VPNavBar .content) {
-    display: none !important;
-  }
 }
 
 </style>

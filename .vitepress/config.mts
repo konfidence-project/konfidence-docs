@@ -1,13 +1,8 @@
-import { defineConfig, type HeadConfig } from "vitepress";
+import { defineConfig } from "vitepress";
 
-// pre-release mode: adds the banner, pre-alpha badge and noindex tag, and
-// strips docs links, nav and search from the landing page; build with
-// KONFIDENCE_PRERELEASE=false to restore the normal site
+// pre-release mode: shows the banner and pre-alpha badge; build with
+// KONFIDENCE_PRERELEASE=false to hide them
 const prerelease = process.env.KONFIDENCE_PRERELEASE !== "false";
-
-const prereleaseHead: HeadConfig[] = prerelease
-  ? [["meta", { name: "robots", content: "noindex" }]]
-  : [];
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -22,7 +17,6 @@ export default defineConfig({
     },
   },
   head: [
-    ...prereleaseHead,
     ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],
     [
       "link",
@@ -58,7 +52,7 @@ export default defineConfig({
     },
     siteTitle: false,
 
-    // Navigation bar (hidden on the landing page, see Layout.vue)
+    // Navigation bar
     nav: [{ text: "Docs", link: "/docs/getting-started/quickstart" }],
 
     socialLinks: [
