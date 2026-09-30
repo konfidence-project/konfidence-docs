@@ -5,7 +5,6 @@ import {
   Boxes,
   Check,
   CircleAlert,
-  Github,
   Layers3,
   Package,
   Recycle,
@@ -13,8 +12,6 @@ import {
   ShieldCheck,
   Users,
 } from 'lucide-vue-next'
-
-const prerelease = __PRERELEASE__
 </script>
 
 <template>
@@ -164,21 +161,11 @@ const prerelease = __PRERELEASE__
     <section class="landing-section final-cta" aria-labelledby="next-step">
       <div class="final-cta-copy">
         <p class="section-eyebrow">Next step</p>
-        <template v-if="prerelease">
-          <h2 id="next-step">Follow Konfidence as the platform takes shape.</h2>
-          <p>Konfidence is under active development. Watch the project on GitHub for progress and release updates.</p>
-        </template>
-        <template v-else>
-          <h2 id="next-step">Start with Konfidence.</h2>
-          <p>Run the quickstart or explore the documentation to understand the delivery model.</p>
-        </template>
+        <h2 id="next-step">Start with Konfidence.</h2>
+        <p>Run the quickstart or explore the documentation to understand the delivery model.</p>
       </div>
       <div class="cta-actions">
-        <a v-if="prerelease" href="https://github.com/konfidence-project" class="cta-button cta-button--primary">
-          <Github aria-hidden="true" />
-          Follow on GitHub
-        </a>
-        <a v-else href="/docs/getting-started/quickstart" class="cta-button cta-button--primary">
+        <a href="/docs/getting-started/quickstart" class="cta-button cta-button--primary">
           Explore Konfidence
           <ArrowRight aria-hidden="true" />
         </a>
