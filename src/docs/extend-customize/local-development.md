@@ -45,9 +45,9 @@ The following setup includes the local sign-in flow and trusted HTTPS addresses.
 make dev-up
 ```
 
-This starts the local identity provider, HTTPS proxy, and PostgreSQL. The first run create and trust the local development certificate authority in your operating system and may ask for your password or confirmation.
+This starts the local identity provider, HTTPS proxy, and PostgreSQL. On the first run, `make dev-up` creates a local certificate authority and adds it to your operating system's trust store. Your operating system may ask for your password or confirmation.
 
-The certificates are unique to your computer and stored under `local/certs`.
+The generated certificates are stored in `local/certs` and are specific to your computer. The shared development credentials in `hack/kden_local_dev` are for local use only.
 
 ### 2. Start the Kubernetes API
 
@@ -118,7 +118,7 @@ The main local addresses are:
 
 ## Customize your local settings
 
-Make loads the shared settings from `hack/kden_local_dev/konfidence.env` before it runs a target. These settings provide the local addresses and development credentials used throughout this guide. Each target uses the settings relevant to it.
+Make loads the shared settings from `hack/kden_local_dev/konfidence.env` before it runs a target. These settings provide the local addresses and development credentials used throughout this guide. Each target uses only the settings it needs.
 
 Do not edit that file for personal settings. For a one-time change, add the variable to the `make` command. For example, enable debug logging for the API server:
 
@@ -345,11 +345,11 @@ Then delete the kind cluster and local registry:
 make dev-cluster-down
 ```
 
-These commands do not remove the generated certificate files or uninstall the machine-local mkcert certificate authority. Host container images and webhook files under `/tmp/k8s-webhook-server/serving-certs` are also kept.
+These commands do not delete the certificates in `local/certs` or remove the local certificate authority from your trust store. Locally built container images and webhook files in `/tmp/k8s-webhook-server/serving-certs` also remain.
 
 ## Troubleshooting
 
-**The browser does not trust a local HTTPS address.** Run `make dev-certs`, restart the browser, and try again. This reinstalls the machine-local mkcert certificate authority and reuses existing certificates. If the certificate files came from another computer, stop the local services, remove the files under `local/certs`, and rerun `make dev-up`. Some browsers with their own certificate store may need separate trust settings.
+**The browser does not trust a local HTTPS address.** Run `make dev-certs` and restart the browser. This restores trust in the local certificate authority and reuses existing certificates. If the certificate files were copied from another computer, stop the local services, delete the files in `local/certs`, and run `make dev-up` to generate new certificates. Browsers with a separate certificate store may require you to trust the local certificate authority there too.
 
 **The API server reports that port 8090 is already in use.** Another API server is still running. Stop it before starting a new one.
 
