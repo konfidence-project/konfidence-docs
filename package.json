@@ -18,7 +18,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^26.6.2",
+    "@types/node": "^26.6.3",
     "vitepress": "2.0.0-alpha.20",
     "vitepress-openapi": "^0.2.5"
   },
