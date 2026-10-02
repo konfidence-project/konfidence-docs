@@ -71,12 +71,12 @@ export default defineConfig({
               link: "/docs/getting-started/quickstart",
             },
             {
-              text: "Installing the Kden CLI",
-              link: "/docs/getting-started/install-cli",
-            },
-            {
               text: "Deliver an application",
               link: "/docs/getting-started/deliver-an-application",
+            },
+            {
+              text: "Install the Kden CLI",
+              link: "/docs/getting-started/install-cli",
             },
           ],
         },

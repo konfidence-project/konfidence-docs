@@ -19,7 +19,7 @@ Vector data is available before the [vector](../../reference/glossary.md#vector)
 
 For HTTP workloads, the ingress gateway sets the `X-Vector-ID` HTTP header on every routed request. Use this header to identify which vector's data your application must load.
 
-Use the value from `X-Vector-ID` when requesting vector data, not the vector's OCM registry reference. For a local example without an ingress gateway, see [Try the running application](../../getting-started/deliver-an-application.md#try-the-running-application).
+Use the value from `X-Vector-ID` when requesting vector data, not the vector's OCM registry reference.
 
 Forward `X-Vector-ID` on every outbound HTTP call. This is a mandatory contract because vector routing depends on the header at the next hop.
 
