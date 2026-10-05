@@ -165,6 +165,68 @@ kden vector-deployment list -p example-app --output pretty
 
 The output should contain ready deployments for both `dev-eu12` and `prod-eu12`. Their **Vector** values are identical: Konfidence promoted the application version that ran in development instead of rebuilding it for production.
 
+## Optional: verify service-to-service communication
+
+The Quickstart does not expose the deployed application through an ingress gateway or route requests by vector. You can use port-forwarding to verify that the `interviews` service discovers and calls the `candidates` service in the same vector context.
+
+::: details Run the optional test
+
+Port-forwarding bypasses the ingress gateway, so you must supply `X-Vector-ID` yourself.
+
+1. In a new terminal, find the production `candidates` Service and forward it:
+
+   ```bash
+   CANDIDATES_SERVICE=$(kubectl -n kden-l-prod get service -l app=candidates -o name)
+   kubectl -n kden-l-prod port-forward "$CANDIDATES_SERVICE" 18091:80
+   ```
+
+2. Keep the command running. In another terminal, forward the `interviews` Service:
+
+   ```bash
+   INTERVIEWS_SERVICE=$(kubectl -n kden-l-prod get service -l app.kubernetes.io/name=interviews -o name)
+   kubectl -n kden-l-prod port-forward "$INTERVIEWS_SERVICE" 18092:80
+   ```
+
+3. Run the remaining commands in a third terminal. Get the runtime vector ID from the active production stage version:
+
+   ```bash
+   VECTOR_ID=$(kubectl -n kden-l-prod get stage prod-eu12 \
+     -o jsonpath='{.status.activeStageVersion.name}')
+   echo "$VECTOR_ID"
+   ```
+
+   The output is a name such as `prod-eu12-7f3k2m9d4qxzc`. Use the value from your cluster, not the registry reference beginning with `https://ghcr.io/`.
+
+4. Create a candidate with synthetic data:
+
+   ```bash
+   curl --include --silent --show-error http://localhost:18091/candidates \
+     -H 'Content-Type: application/json' \
+     -H "X-Vector-ID: $VECTOR_ID" \
+     --data '{"name":"Example Candidate","email":"candidate@example.invalid"}'
+   ```
+
+   Expect HTTP `201` and a JSON object containing `id`, `name`, and `email`. Copy the returned `id` into this variable:
+
+   ```bash
+   CANDIDATE_ID='<id from the response>'
+   ```
+
+5. Book a phone interview for the candidate:
+
+   ```bash
+   curl --include --silent --show-error http://localhost:18092/interviews \
+     -H 'Content-Type: application/json' \
+     -H "X-Vector-ID: $VECTOR_ID" \
+     --data "{\"candidateId\":\"$CANDIDATE_ID\",\"slotTime\":\"2030-01-15T10:00:00Z\",\"slotType\":\"phone\"}"
+   ```
+
+   Expect HTTP `201` and the booking details. The `interviews` service resolved the `candidates` service from the vector's deployment results and forwarded `X-Vector-ID` on its internal request.
+
+Stop the two application port-forwards with `Ctrl+C` when you are finished. The records remain in the local example database until you [delete the Quickstart cluster](./quickstart.md#clean-up).
+
+:::
+
 ## Next steps
 
 Read [Delivery flow](../core-concepts/delivery-flow.md) to learn how promotions connect stages and control which vector each stage selects.
