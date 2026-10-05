@@ -14,4 +14,5 @@ Extend Konfidence or contribute to the project through development and documenta
 - [Local development](./local-development.md)
 - [Style guide](./styleguide.md)
 - [Guide templates](./guide-templates.md)
+- [Architecture decisions](./decisions/index.md)
 - [GitHub repository](https://github.com/konfidence-project)
