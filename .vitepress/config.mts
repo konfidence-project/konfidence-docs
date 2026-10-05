@@ -1,4 +1,21 @@
+import { readdirSync, readFileSync } from "node:fs";
 import { defineConfig } from "vitepress";
+
+// ADR pages are numbered by id; the sidebar lists them from their
+// frontmatter so adding a record never needs a config change
+const adrDir = "src/docs/extend-customize/decisions";
+const adrItems = readdirSync(adrDir)
+  .filter((f) => /^adr-\d{4}-.*\.md$/.test(f))
+  .sort()
+  .map((f) => {
+    const src = readFileSync(`${adrDir}/${f}`, "utf8");
+    const id = src.match(/^id:\s*ADR-(\d{4})/m)?.[1] ?? f.slice(4, 8);
+    const title = src.match(/^title:\s*"?(.*?)"?\s*$/m)?.[1] ?? f;
+    return {
+      text: `${id} · ${title}`,
+      link: `/docs/extend-customize/decisions/${f.replace(/\.md$/, "")}`,
+    };
+  });
 
 // pre-release mode: shows the banner and pre-alpha badge; build with
 // KONFIDENCE_PRERELEASE=false to hide them
@@ -297,6 +314,12 @@ export default defineConfig({
             {
               text: "Guide templates",
               link: "/docs/extend-customize/guide-templates",
+            },
+            {
+              text: "Architecture decisions",
+              link: "/docs/extend-customize/decisions/",
+              collapsed: true,
+              items: adrItems,
             },
           ],
         },
