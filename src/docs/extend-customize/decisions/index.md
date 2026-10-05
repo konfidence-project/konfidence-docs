@@ -33,12 +33,40 @@ Gaps in the list are records that are superseded, internal to the project, or st
 
 Write an ADR when a change spans several components or is expensive to reverse.
 Write one too when it sets a pattern other contributors must follow.
-Open an issue in the [Konfidence GitHub organization](https://github.com/konfidence-project) first.
-The maintainers confirm there whether the change needs a record.
+ADRs live in the [konfidence-docs repository](https://github.com/konfidence-project/konfidence-docs/tree/main/src/docs/extend-customize/decisions).
+Propose a record as a pull request there.
 
-A record contains these sections:
+1. Take the next free number after the highest ADR in the decision log.
+2. Create `adr-<NNNN>-<slug>.md` in `src/docs/extend-customize/decisions/`.
+3. Start the file with this frontmatter, the heading, and the `<AdrHeader />` component:
 
-1. **Context**: the problem, the constraints, and the current state.
-2. **Considered options**: each option with its pros and cons.
-3. **Decision**: the option you chose and why.
-4. **Consequences**: what gets better, what gets worse, and what follow-up work it creates.
+   ```markdown
+   ---
+   id: ADR-<NNNN>
+   title: "<Short title>"
+   description: "<One sentence: what the record decides>"
+   status: proposed
+   date_proposed: <YYYY-MM-DD>
+   authors: [<github-handle>]
+   category: <Architecture Pattern | Technology Stack | Security | Deployment>
+   impact: <High | Medium | Low>
+   dependencies: [<ADR-NNNN>]
+   pageClass: adr
+   outline: deep
+   ---
+
+   # ADR-<NNNN>: <Short title>
+
+   <AdrHeader />
+   ```
+
+4. Write the sections **Context**, **Considered options**, **Decision** and **Consequences**.
+5. Put diagrams into `assets/` and reference them as `./assets/<file>`.
+6. Open the pull request with status `proposed`.
+
+The maintainers review the record in the pull request.
+On merge, they set `status: accepted` and `date_approved`.
+The sidebar and the decision log pick up the new file automatically.
+
+List authors by GitHub handle only.
+Records never name people, internal systems, or private repositories.
