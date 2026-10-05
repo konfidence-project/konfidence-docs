@@ -305,3 +305,16 @@ section.VPSidebarItem.level-1 + section.VPSidebarItem.level-1 {
   color: var(--vp-c-text-2);
   text-align: center;
 }
+
+/* =============================================
+   Architecture decision records
+   ============================================= */
+
+/* ADR diagrams are draw.io exports with dark strokes on a transparent
+   background; give them a light canvas so they stay legible in dark mode */
+.adr .vp-doc img {
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid var(--vp-c-divider);
+}
