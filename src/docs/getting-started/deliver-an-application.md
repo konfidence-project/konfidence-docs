@@ -49,7 +49,7 @@ kubectl -n kden-p-example-app wait --for=jsonpath='{.status.conditions[?(@.type=
 
 ### Create the delivery environment
 
-Apply the remaining environment resources: the stages, deployment targets, database, and promotion configuration.
+Apply the prepared delivery environment. It creates the `dev-eu12` stage in the `dev` landscape and `prod-eu12` in `prod`, along with the resources needed to deploy the Example App and promote it between them.
 
 ```bash
 kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/environment?ref=main'
