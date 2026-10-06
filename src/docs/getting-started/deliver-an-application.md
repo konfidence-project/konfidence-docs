@@ -14,8 +14,10 @@ The application artifacts and images are public, so you do not need registry cre
 
 ## Before you begin
 
+Complete these steps before starting the guide:
+
 - Complete the [Quickstart](./quickstart.md) and keep its `konfidence-quickstart` cluster running.
-- [Install the kden CLI](./install-cli.md).
+- [Install the `kden` CLI](./install-cli.md).
 
 Keep the port-forward from the Quickstart running. If you stopped it, start it again in a separate terminal:
 
@@ -71,7 +73,7 @@ The environment assigns the published Example App vector to `dev-eu12`, which st
 kubectl -n kden-l-dev get stage dev-eu12 -w
 ```
 
-Once `ACTIVE-VERSION` contains a value, the application is running in development. Press `Ctrl+C` to stop watching.
+Once `ACTIVE-VERSION` contains a value, the application is running in development. Press `Ctrl`+`C` to stop watching.
 
 ::: details Troubleshoot a deployment that does not become active
 
@@ -88,7 +90,7 @@ For further checks, see [Stage troubleshooting](../deploy-operate/manage-deliver
 
 ### Check the starting state
 
-Open [`http://localhost:8090`](http://localhost:8090) and select **Example App**. If prompted, sign in as **Local Admin**. The **Landscapes** view shows the result of the setup:
+Open the [local dashboard](http://localhost:8090), sign in as **Local Admin** if prompted, and select **Example App**. The **Landscapes** view shows the result of the setup:
 
 - `dev-eu12` is live with the Example App.
 - `prod-eu12` has no target version.
@@ -97,11 +99,11 @@ Open [`http://localhost:8090`](http://localhost:8090) and select **Example App**
 
 ## Promote to production
 
-The environment created a [promotion](../reference/glossary.md#promotion) that connects `dev-eu12` to `prod-eu12`. Use the kden CLI to inspect and approve it.
+The environment created a [promotion](../reference/glossary.md#promotion) that connects `dev-eu12` to `prod-eu12`. Use the `kden` CLI to inspect and approve it.
 
 ### Sign in to the CLI
 
-The CLI uses its own session. Start it with:
+The CLI uses its own session. Run the following command to sign in:
 
 ```bash
 kden login
@@ -141,7 +143,7 @@ dev-to-prod (dev-eu12 → prod-eu12)
  dev-to-prod-1   dev-eu12   prod-eu12   https://ghcr.io/konfidence-pr…   Succeeded
 ```
 
-The `Succeeded` status confirms that `prod-eu12` now selects the promoted vector. The production deployment may still be running.
+The `Succeeded` status confirms that `prod-eu12` now selects the promoted vector. The production rollout may still be in progress.
 
 ### Wait for production
 
@@ -209,7 +211,7 @@ Port-forwarding bypasses the ingress gateway, so you must supply `X-Vector-ID` y
    Expect HTTP `201` and a JSON object containing `id`, `name`, and `email`. Copy the returned `id` into this variable:
 
    ```bash
-   CANDIDATE_ID='<id from the response>'
+   CANDIDATE_ID='<candidate-id>'
    ```
 
 5. Book a phone interview for the candidate:
@@ -223,7 +225,7 @@ Port-forwarding bypasses the ingress gateway, so you must supply `X-Vector-ID` y
 
    Expect HTTP `201` and the booking details. The `interviews` service resolved the `candidates` service from the vector's deployment results and forwarded `X-Vector-ID` on its internal request.
 
-Stop the two application port-forwards with `Ctrl+C` when you are finished. The records remain in the local example database until you [delete the Quickstart cluster](./quickstart.md#clean-up).
+Stop the two application port-forwards with `Ctrl`+`C` when you are finished. The records remain in the local example database until you [delete the Quickstart cluster](./quickstart.md#clean-up).
 
 :::
 

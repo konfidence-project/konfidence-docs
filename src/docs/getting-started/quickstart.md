@@ -66,7 +66,7 @@ kubectl get deployments -n flux-system
 
 For every Flux deployment, the `READY` column should show that all replicas are ready.
 
-### Open the dashboard
+## Open the dashboard
 
 The local Quickstart does not include an ingress setup for the dashboard. To access it from your computer, use port-forwarding to connect to the Konfidence API, which also serves the dashboard:
 
@@ -74,7 +74,7 @@ The local Quickstart does not include an ingress setup for the dashboard. To acc
 kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
 ```
 
-Keep this command running and open [`http://localhost:8090`](http://localhost:8090) in your browser. You should see the Konfidence sign-in page:
+Keep this command running and open the [local dashboard](http://localhost:8090) in your browser. You should see the Konfidence sign-in page:
 
 ![Konfidence sign-in page with the Continue with SSO button.](./screenshot_dashboard_login.png)
 
@@ -82,15 +82,13 @@ Select **Continue with SSO** to sign in as **Local Admin**. No external identity
 
 Sessions are stored in memory, so you’ll need to sign in again if the API restarts.
 
-### Clean up
+## Clean up
 
-Keep the cluster running if you’re continuing with [Deliver an application](./deliver-an-application.md). When you’re finished exploring Konfidence, stop the port-forward with `Ctrl+C` and remove the cluster:
+Keep the cluster running if you’re continuing with [Deliver an application](./deliver-an-application.md). When you’re finished exploring Konfidence, stop the port-forward with `Ctrl`+`C` and remove the cluster. This deletes all workloads and data stored in it:
 
 ```bash
 kind delete cluster --name konfidence-quickstart
 ```
-
-This deletes the `konfidence-quickstart` cluster and all workloads and data stored in it.
 
 ## Next steps
 

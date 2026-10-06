@@ -75,7 +75,7 @@ export default defineConfig({
               link: "/docs/getting-started/deliver-an-application",
             },
             {
-              text: "Install the Kden CLI",
+              text: "Install the kden CLI",
               link: "/docs/getting-started/install-cli",
             },
           ],
