@@ -20,7 +20,8 @@
   "devDependencies": {
     "@types/node": "^26.6.3",
     "vitepress": "2.0.0-alpha.20",
-    "vitepress-openapi": "^0.2.5"
+    "vitepress-openapi": "^0.2.5",
+    "vitepress-plugin-llms": "^1.14.0"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0"
