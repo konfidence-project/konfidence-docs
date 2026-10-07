@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { defineConfig } from "vitepress";
+import llmstxt from "vitepress-plugin-llms";
 
 // ADR pages are numbered by id; the sidebar lists them from their
 // frontmatter so adding a record never needs a config change
@@ -21,6 +22,17 @@ const adrItems = readdirSync(adrDir)
 // KONFIDENCE_PRERELEASE=false to hide them
 const prerelease = process.env.KONFIDENCE_PRERELEASE !== "false";
 
+// Keep the LLM outputs in sync with the pages omitted from the public site.
+const excludedPages = [
+  "docs/overview.md",
+  "docs/getting-started/create-vector.md",
+  "docs/develop-integrate/observe-improve/paved-road.md",
+  "docs/develop-integrate/run-migrations.md",
+  "docs/extend-customize/create-deployer.md",
+  "docs/reference/deployer-specification.md",
+  "docs/reference/releases.md",
+];
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   srcDir: "./src",
@@ -29,6 +41,7 @@ export default defineConfig({
   ignoreDeadLinks: [/^https?:\/\/localhost(:\d+)?/],
   vite: {
     publicDir: "../public",
+    plugins: [llmstxt({ domain: "https://konfidence.cloud", ignoreFiles: excludedPages })],
     define: {
       __PRERELEASE__: JSON.stringify(prerelease),
     },
@@ -51,15 +64,7 @@ export default defineConfig({
   description: "Public Documentation for Project Konfidence",
   // pages for features that are not part of the initial release; recoverable
   // from git history / re-enabled by removing them here (issue #814)
-  srcExclude: [
-    "docs/overview.md",
-    "docs/getting-started/create-vector.md",
-    "docs/develop-integrate/observe-improve/paved-road.md",
-    "docs/develop-integrate/run-migrations.md",
-    "docs/extend-customize/create-deployer.md",
-    "docs/reference/deployer-specification.md",
-    "docs/reference/releases.md",
-  ],
+  srcExclude: excludedPages,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
 

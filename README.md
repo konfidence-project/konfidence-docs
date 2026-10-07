@@ -45,6 +45,10 @@ KONFIDENCE_PRERELEASE=false pnpm build
 
 Independently of the flag, `srcExclude` in `.vitepress/config.mts` lists unfinished pages that are excluded from the build.
 
+## AI crawler files
+
+`pnpm build` generates `/llms.txt`, `/llms-full.txt`, and Markdown versions of published pages in `.vitepress/dist`. The `llms.txt` index uses `https://konfidence.cloud` URLs. The plugin shares the `srcExclude` list in `.vitepress/config.mts`, so unfinished pages are omitted from the crawler files as well as the site. Check these generated files when adding or excluding pages; they are not committed to the repository.
+
 ## Support, Feedback, Contributing
 
 This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/konfidence-project/konfidence-docs/issues).
