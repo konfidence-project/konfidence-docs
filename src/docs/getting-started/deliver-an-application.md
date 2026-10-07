@@ -55,7 +55,7 @@ Apply the prepared delivery environment. It creates the `dev-eu12` stage in the 
 kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/environment?ref=main'
 ```
 
-The Quickstart installed the Vector Data Service in `konfidence-system`. The Example App needs an instance in each landscape namespace, so install it in `kden-l-dev` and `kden-l-prod` as well:
+The Example App reads its vector data from a Vector Data Service in each landscape namespace. Install it in `kden-l-dev` and `kden-l-prod`:
 
 ```bash
 for ns in kden-l-dev kden-l-prod; do
@@ -132,7 +132,9 @@ Approve the waiting promotion using the ID from the previous output:
 kden vector-promotion approve dev-to-prod-1 -p example-app
 ```
 
-Use the promotion ID `dev-to-prod-1`, not the configuration ID `dev-to-prod`.
+::: warning
+Use the promotion ID (`dev-to-prod-1`), not the configuration ID (`dev-to-prod`).
+:::
 
 List the promotions again to confirm that the approval succeeded:
 
