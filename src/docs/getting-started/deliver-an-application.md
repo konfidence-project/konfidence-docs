@@ -1,6 +1,6 @@
 ---
 title: Deliver an application
-description: Use the Konfidence CLI to explore the deployed example application and promote it from development to production.
+description: Prepare the Example App and promote the same application version from development to production.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -8,264 +8,229 @@ lastUpdated: true
 
 # Deliver an application
 
-In the [Quickstart](./quickstart.md), Konfidence was installed and the example application was deployed to a development [stage](../reference/glossary.md#stage). This guide uses the [kden CLI](./install-cli.md) to explore that setup and then promote the example application to the production stage.
+Use the prepared Example App to follow a delivery from development to production. You’ll create the required Konfidence resources, deploy one [vector](../reference/glossary.md#vector) to development, and approve its promotion to production.
 
-## Prerequisites
+The application artifacts and images are public, so you do not need registry credentials. By the end of the guide, the same vector will be running in development and production without being rebuilt.
 
-- A completed [Quickstart](./quickstart.md): a local cluster with the example application running.
-- The [kden CLI](./install-cli.md) installed.
-- The Konfidence API reachable at `http://localhost:8090`. Keep the port-forward from the Quickstart running:
+## Before you begin
 
-  ```bash
-  kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
-  ```
+Complete these steps before starting the guide:
 
-The dashboard's **Landscapes** view shows the starting point: `dev-eu12` is live with the example application, and `prod-eu12` has no version yet.
+- Complete the [Quickstart](./quickstart.md) and keep its `konfidence-quickstart` cluster running.
+- [Install the `kden` CLI](./install-cli.md).
 
-![Konfidence dashboard Landscapes view with a live dev-eu12 stage and an empty prod-eu12 stage.](./screenshot_dashboard_dev.png)
+Keep the port-forward from the Quickstart running. If you stopped it, start it again in a separate terminal:
 
-## Sign in to the CLI
+```bash
+kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
+```
 
-The CLI needs its own session. Sign in through the browser before running the commands in this guide:
+## Prepare the demo environment
+
+### Create the project
+
+Create the Example App project, then wait until Konfidence has created its namespace:
+
+```bash
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/project?ref=main'
+kubectl wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
+  project/example-app --timeout=60s
+```
+
+### Create the landscapes
+
+Next, create the `dev` and `prod` landscapes. Each landscape receives its own namespace:
+
+```bash
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/landscapes?ref=main'
+kubectl -n kden-p-example-app wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
+  landscape/dev landscape/prod --timeout=60s
+```
+
+### Create the delivery environment
+
+Apply the prepared delivery environment. It creates the `dev-eu12` stage in the `dev` landscape and `prod-eu12` in `prod`, along with the resources needed to deploy the Example App and promote it between them.
+
+```bash
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/environment?ref=main'
+```
+
+The Quickstart installed the Vector Data Service in `konfidence-system`. The Example App needs an instance in each landscape namespace, so install it in `kden-l-dev` and `kden-l-prod` as well:
+
+```bash
+for ns in kden-l-dev kden-l-prod; do
+  helm upgrade --install vector-data-service oci://ghcr.io/konfidence-project/charts/vector-data-service \
+    --version 0.0.0-4f194adf3c2e211514d41c59d1a446275bb093e3 \
+    --namespace "$ns" --wait
+done
+```
+
+### Wait for the development deployment
+
+The environment assigns the published Example App vector to `dev-eu12`, which starts the development deployment. Watch the `ACTIVE-VERSION` column:
+
+```bash
+kubectl -n kden-l-dev get stage dev-eu12 -w
+```
+
+Once `ACTIVE-VERSION` contains a value, the application is running in development. Press `Ctrl`+`C` to stop watching.
+
+::: details Troubleshoot a deployment that does not become active
+
+Inspect the pods and recent events to identify scheduling or rollout errors:
+
+```bash
+kubectl -n kden-l-dev get pods
+kubectl -n kden-l-dev get events --sort-by=.lastTimestamp
+```
+
+For further checks, see [Stage troubleshooting](../deploy-operate/manage-delivery/stages.md#troubleshooting).
+
+:::
+
+### Check the starting state
+
+Open the [local dashboard](http://localhost:8090), sign in as **Local Admin** if prompted, and select **Example App**. The **Landscapes** view shows the result of the setup:
+
+- `dev-eu12` is live with the Example App.
+- `prod-eu12` has no target version.
+
+![Konfidence dashboard with a live dev-eu12 stage and an empty prod-eu12 stage.](./screenshot_dashboard_dev.png)
+
+## Promote to production
+
+The environment created a [promotion](../reference/glossary.md#promotion) that connects `dev-eu12` to `prod-eu12`. Use the `kden` CLI to inspect and approve it.
+
+### Sign in to the CLI
+
+The CLI uses its own session. Run the following command to sign in:
 
 ```bash
 kden login
 ```
 
-Select **Continue with SSO**, then sign in as **Local Admin**. The CLI connects to `http://localhost:8090` by default.
+Complete the **Local Admin** sign-in in your browser. The CLI connects to `http://localhost:8090` by default.
 
-## Inspect the existing resources
+### Inspect the waiting promotion
 
-The Quickstart created a [project](../reference/glossary.md#project), two [landscapes](../reference/glossary.md#landscape), their stages, and a [promotion config](../reference/glossary.md#vectorpromotionconfig). Review each one with the CLI.
+List the promotions for the Example App. The output should contain one promotion in the `Waiting` state:
 
-### Project
-
-A project is the organizational boundary for an application's resources. It owns a dedicated namespace that holds its landscapes, [vector templates](../reference/glossary.md#vectortemplate), and promotion configs.
-
-::: code-group
-
-```console [kden]
-$ kden project list --output pretty
- ID            Name
- example-app   Example App
-```
-
-```console [kubectl]
-$ kubectl get projects
-NAME          DISPLAY NAME   NAMESPACE            READY   AGE
-example-app   Example App    kden-p-example-app   True    5m
-```
-
-:::
-
-Use the project ID, `example-app`, in the commands that follow.
-
-### Landscapes
-
-A landscape is an operational boundary within a project. It groups the stages, [deployment targets](../reference/glossary.md#deployment-target), and deployment resources that share operational requirements, and it owns a namespace for them.
-
-::: code-group
-
-```console [kden]
-$ kden landscape list -p example-app --output pretty
- ID     Name
- dev    Development
- prod   Production
-```
-
-```console [kubectl]
-$ kubectl -n kden-p-example-app get landscapes
-NAME   DISPLAY NAME   PROJECT       NAMESPACE     READY   AGE
-dev    Development    example-app   kden-l-dev    True    5m
-prod   Production     example-app   kden-l-prod   True    5m
-```
-
-:::
-
-### Stages
-
-A stage is a checkpoint in the [delivery flow](../reference/glossary.md#delivery-flow) that selects one [vector](../reference/glossary.md#vector) to deliver. List the stages in the `dev` landscape.
-
-::: code-group
-
-```console [kden]
-$ kden stage list -p example-app -l dev --output pretty
- ID         Name       Landscape   Active Version           Status
- dev-eu12   dev-eu12   dev         dev-eu12-5dk7wm6b9mxzb   Ready
-```
-
-```console [kubectl]
-$ kubectl -n kden-l-dev get stages
-NAME       READY   AGE   VECTOR                                                                                                           ACTIVE-VERSION
-dev-eu12   True    5m    https://ghcr.io/konfidence-project/example-app//github.com/konfidence-project/example-app/vector:0.1.0-f486ecb   dev-eu12-5dk7wm6b9mxzb
-```
-
-:::
-
-`dev-eu12` runs the active version `dev-eu12-5dk7wm6b9mxzb`, and its status is `Ready`. This is the example application deployed to development.
-
-The `prod-eu12` stage in the `prod` landscape has no active version yet. Approving the [promotion](../reference/glossary.md#promotion) selects the vector for that stage; the version becomes active after deployment succeeds.
-
-### Promotion
-
-A promotion config defines a promotion flow from a source stage to a target stage. When the source vector differs from the target's, Konfidence creates a promotion that updates the target stage to select that vector, without rebuilding or copying it.
-
-::: code-group
-
-```console [kden]
+```console
 $ kden vector-promotion list -p example-app --output pretty
 dev-to-prod (dev-eu12 → prod-eu12)
  ID              Source     Target      Vector                           Status
  dev-to-prod-1   dev-eu12   prod-eu12   https://ghcr.io/konfidence-pr…   Waiting
 ```
 
-```console [kubectl]
-$ kubectl -n kden-p-example-app get vectorpromotion
-NAME            CONFIG        SOURCE     TARGET      STATE     AGE
-dev-to-prod-1   dev-to-prod   dev-eu12   prod-eu12   Waiting   5m
-```
+`dev-to-prod-1` connects the development and production [stages](../reference/glossary.md#stage). Production remains unchanged while the promotion is waiting for approval.
 
-:::
+### Approve the promotion
 
-The promotion requires manual approval by default before it reaches production. The `dev-to-prod-1` promotion is in the `Waiting` state, holding the same vector that runs in `dev-eu12`.
-
-## Approve the promotion to production
-
-Approve the waiting promotion by its ID, `dev-to-prod-1`:
+Approve the waiting promotion using the ID from the previous output:
 
 ```bash
 kden vector-promotion approve dev-to-prod-1 -p example-app
 ```
 
-Pass the promotion ID (`dev-to-prod-1`), not the config ID (`dev-to-prod`). Konfidence updates `prod-eu12` to select that vector and deploys it.
+Use the promotion ID `dev-to-prod-1`, not the configuration ID `dev-to-prod`.
 
-Confirm the promotion succeeded:
+List the promotions again to confirm that the approval succeeded:
 
-::: code-group
-
-```console [kden]
+```console
 $ kden vector-promotion list -p example-app --output pretty
 dev-to-prod (dev-eu12 → prod-eu12)
  ID              Source     Target      Vector                           Status
  dev-to-prod-1   dev-eu12   prod-eu12   https://ghcr.io/konfidence-pr…   Succeeded
 ```
 
-```console [kubectl]
-$ kubectl -n kden-p-example-app get vectorpromotion
-NAME            CONFIG        SOURCE     TARGET      STATE       AGE
-dev-to-prod-1   dev-to-prod   dev-eu12   prod-eu12   Succeeded   6m
-```
+The `Succeeded` status confirms that `prod-eu12` now selects the promoted vector. The production rollout may still be in progress.
 
-:::
+### Wait for production
 
-The `dev-to-prod-1` promotion is now in the `Succeeded` state. This confirms that production selects the vector; the rollout can still be running. Watch the stage until `ACTIVE-VERSION` contains a value:
+Check the production stage. If it is not ready yet, wait and run the command again:
 
-```bash
-kubectl -n kden-l-prod get stage prod-eu12 -w
-```
-
-Press `Ctrl+C` to stop watching, then inspect the result. If the active version stays empty, check `kubectl -n kden-l-prod get pods` and `kubectl -n kden-l-prod get events --sort-by=.lastTimestamp`. For further checks, see [Stage troubleshooting](../deploy-operate/manage-delivery/stages.md#troubleshooting).
-
-::: code-group
-
-```console [kden]
+```console
 $ kden stage list -p example-app -l prod --output pretty
  ID          Name        Landscape   Active Version            Status
  prod-eu12   prod-eu12   prod        prod-eu12-7f3k2m9d4qxzc   Ready
 ```
 
-```console [kubectl]
-$ kubectl -n kden-l-prod get stages
-NAME        READY   AGE   VECTOR                                                                                                           ACTIVE-VERSION
-prod-eu12   True    6m    https://ghcr.io/konfidence-project/example-app//github.com/konfidence-project/example-app/vector:0.1.0-f486ecb   prod-eu12-7f3k2m9d4qxzc
+Once the status is `Ready`, the application is running in production. For rollout problems, see [Stage troubleshooting](../deploy-operate/manage-delivery/stages.md#troubleshooting).
+
+### Confirm the delivered vector
+
+List the vector deployments to compare development and production:
+
+```bash
+kden vector-deployment list -p example-app --output pretty
 ```
+
+The output should contain ready deployments for both `dev-eu12` and `prod-eu12`. Their **Vector** values are identical: Konfidence promoted the application version that ran in development instead of rebuilding it for production.
+
+## Optional: verify service-to-service communication
+
+The Quickstart does not expose the deployed application through an ingress gateway or route requests by vector. You can use port-forwarding to verify that the `interviews` service discovers and calls the `candidates` service in the same vector context.
+
+::: details Run the optional test
+
+Port-forwarding bypasses the ingress gateway, so you must supply `X-Vector-ID` yourself.
+
+1. In a new terminal, find the production `candidates` Service and forward it:
+
+   ```bash
+   CANDIDATES_SERVICE=$(kubectl -n kden-l-prod get service -l app=candidates -o name)
+   kubectl -n kden-l-prod port-forward "$CANDIDATES_SERVICE" 18091:80
+   ```
+
+2. Keep the command running. In another terminal, forward the `interviews` Service:
+
+   ```bash
+   INTERVIEWS_SERVICE=$(kubectl -n kden-l-prod get service -l app.kubernetes.io/name=interviews -o name)
+   kubectl -n kden-l-prod port-forward "$INTERVIEWS_SERVICE" 18092:80
+   ```
+
+3. Run the remaining commands in a third terminal. Get the runtime vector ID from the active production stage version:
+
+   ```bash
+   VECTOR_ID=$(kubectl -n kden-l-prod get stage prod-eu12 \
+     -o jsonpath='{.status.activeStageVersion.name}')
+   echo "$VECTOR_ID"
+   ```
+
+   The output is a name such as `prod-eu12-7f3k2m9d4qxzc`. Use the value from your cluster, not the registry reference beginning with `https://ghcr.io/`.
+
+4. Create a candidate with synthetic data:
+
+   ```bash
+   curl --include --silent --show-error http://localhost:18091/candidates \
+     -H 'Content-Type: application/json' \
+     -H "X-Vector-ID: $VECTOR_ID" \
+     --data '{"name":"Example Candidate","email":"candidate@example.invalid"}'
+   ```
+
+   Expect HTTP `201` and a JSON object containing `id`, `name`, and `email`. Copy the returned `id` into this variable:
+
+   ```bash
+   CANDIDATE_ID='<candidate-id>'
+   ```
+
+5. Book a phone interview for the candidate:
+
+   ```bash
+   curl --include --silent --show-error http://localhost:18092/interviews \
+     -H 'Content-Type: application/json' \
+     -H "X-Vector-ID: $VECTOR_ID" \
+     --data "{\"candidateId\":\"$CANDIDATE_ID\",\"slotTime\":\"2030-01-15T10:00:00Z\",\"slotType\":\"phone\"}"
+   ```
+
+   Expect HTTP `201` and the booking details. The `interviews` service resolved the `candidates` service from the vector's deployment results and forwarded `X-Vector-ID` on its internal request.
+
+Stop the two application port-forwards with `Ctrl`+`C` when you are finished. The records remain in the local example database until you [delete the Quickstart cluster](./quickstart.md#clean-up).
 
 :::
 
-`prod-eu12` now runs the same vector as `dev-eu12`. The application was promoted without rebuilding it.
-
-## Try the running application
-
-The example has a `candidates` service that stores candidates and an `interviews` service that books interviews. When you book an interview, the interviews service looks up the candidate through the candidates service. This lets you check a real request between the services in the deployed vector.
-
-### Connect to the services
-
-For this local exercise, use port-forwarding to call the services directly. In a new terminal, find the candidates Service in the Quickstart's production landscape and forward it:
-
-```bash
-CANDIDATES_SERVICE=$(kubectl -n kden-l-prod get service -l app=candidates -o name)
-kubectl -n kden-l-prod port-forward "$CANDIDATES_SERVICE" 18091:80
-```
-
-Keep it running. In another terminal, forward the interviews Service:
-
-```bash
-INTERVIEWS_SERVICE=$(kubectl -n kden-l-prod get service -l app.kubernetes.io/name=interviews -o name)
-kubectl -n kden-l-prod port-forward "$INTERVIEWS_SERVICE" 18092:80
-```
-
-Run the following requests in a third terminal. Because port-forwarding bypasses the ingress gateway, supply `X-Vector-ID` yourself. In this setup, use the active stage-version name as the runtime vector ID:
-
-```bash
-VECTOR_ID=$(kubectl -n kden-l-prod get stage prod-eu12 \
-  -o jsonpath='{.status.activeStageVersion.name}')
-echo "$VECTOR_ID"
-```
-
-The output is a name such as `prod-eu12-7f3k2m9d4qxzc`. Use the value from your cluster, not the OCM reference beginning with `https://ghcr.io/`. See [Access vector data](../develop-integrate/vector-data/access-vector-data.md#get-the-vector-id) for the runtime contract.
-
-### Create a candidate and book an interview
-
-Create a candidate with synthetic data:
-
-```bash
-curl --include --silent --show-error http://localhost:18091/candidates \
-  -H 'Content-Type: application/json' \
-  -H "X-Vector-ID: $VECTOR_ID" \
-  --data '{"name":"Example Candidate","email":"candidate@example.invalid"}'
-```
-
-Expect HTTP `201` and a JSON object containing `id`, `name`, and `email`. Copy the returned `id` into this variable:
-
-```bash
-CANDIDATE_ID='<id from the response>'
-```
-
-Book a phone interview for that candidate:
-
-```bash
-curl --include --silent --show-error http://localhost:18092/interviews \
-  -H 'Content-Type: application/json' \
-  -H "X-Vector-ID: $VECTOR_ID" \
-  --data "{\"candidateId\":\"$CANDIDATE_ID\",\"slotTime\":\"2030-01-15T10:00:00Z\",\"slotType\":\"phone\"}"
-```
-
-Expect HTTP `201` and the booking details. The interviews service has resolved the candidates service from the vector's deployment results and forwarded the vector ID on its request.
-
-### Observe a feature flag
-
-The example vector has the `allow-video-slots` flag disabled. Try booking a video interview:
-
-```bash
-curl --include --silent --show-error http://localhost:18092/interviews \
-  -H 'Content-Type: application/json' \
-  -H "X-Vector-ID: $VECTOR_ID" \
-  --data "{\"candidateId\":\"$CANDIDATE_ID\",\"slotTime\":\"2030-01-15T11:00:00Z\",\"slotType\":\"video\"}"
-```
-
-Expect HTTP `400` with `{"error":"slot type video is not enabled for this vector"}`. This is the expected application response for the disabled flag. Both requests reached the same deployed application; the vector's configuration determines which booking types it accepts.
-
-Stop the two application port-forwards with `Ctrl+C` when you are finished. The records remain in the local example database until you [delete the Quickstart cluster](./quickstart.md#clean-up).
-
-## What you've learned
-
-You have:
-
-- inspected the project, landscapes, stages, and promotion the Quickstart created,
-- approved the waiting promotion with the `kden` CLI,
-- confirmed the same vector runs in production, and
-- used the running application to check service communication and a feature flag.
-
 ## Next steps
 
-- [Delivery flow](../core-concepts/delivery-flow.md) to learn how promotions move a vector across stages.
+Read [Delivery flow](../core-concepts/delivery-flow.md) to learn how promotions connect stages and control which vector each stage selects.
+
+When you’re finished exploring Konfidence, follow the [Quickstart cleanup](./quickstart.md#clean-up) to delete the local cluster.
