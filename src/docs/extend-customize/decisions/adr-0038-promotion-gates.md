@@ -2,7 +2,7 @@
 id: ADR-0038
 title: "Promotion gates"
 description: "A readiness-gate mechanism that blocks a VectorPromotion from executing until every configured gate is satisfied, using one uniform contract for core and third-party gates. Refactors manual approval into it."
-status: draft
+status: proposed
 date_proposed: 2026-10-06
 authors: [JNKielmann]
 category: Architecture Pattern
@@ -14,10 +14,6 @@ outline: deep
 # ADR-0038: Promotion gates
 
 <AdrHeader />
-
-::: info Draft
-This record presents the options for a promotion gating mechanism. The **Decision** is left open while the maintainers iterate on the proposed solutions below.
-:::
 
 ## Context
 
@@ -204,7 +200,19 @@ Provenance, meaning by whom, when, and why, fits as native fields on each `Promo
 
 ## Decision
 
-*To be decided.* The maintainers are iterating on the options above before committing. Both satisfy the requirements. The open question is whether the lighter condition-based representation (Option 1) is enough, or whether a first-class per-gate object (Option 2) earns its extra moving parts.
+::: warning Under review
+This is a first proposal for the maintainers to react to. It is not accepted yet, and either option may still win.
+:::
+
+Adopt **Option 2**, a dedicated `PromotionGate` object per gate.
+
+The deciding factor is the extension boundary. Requirement 1 lets outside contributors ship their own gate writers, and Option 2 gives each writer RBAC on only its own `PromotionGate` objects. Option 1 would force every writer, including third-party ones, to patch `VectorPromotion` status, where any writer can in principle set any condition. For untrusted extensions that permission is too broad.
+
+Two further properties settle it. Per-gate provenance and gate parameters live natively on the gate object with a single writer, so there is no parallel `gateProvenance` record and none of the optimistic-retry churn that several writers sharing one status would need. Approval and override reduce to the API writing one gate object, nothing more.
+
+The cost is a new CRD and one child object per gate per promotion. Konfidence already models lifecycle steps as CRDs, for example the activation executions in ADR-0012, so this follows the existing grain rather than cutting against it. Requirement 5 still holds: the extra object earns its place by giving a clean and safe extension point that Option 1 cannot.
+
+Option 1 stays on the table as the lighter choice if the maintainers judge a new CRD not worth it for the two gates needed now.
 
 ## Consequences
 
