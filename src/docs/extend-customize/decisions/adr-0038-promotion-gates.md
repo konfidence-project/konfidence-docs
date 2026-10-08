@@ -221,13 +221,11 @@ Provenance, meaning by whom, when, and why, fits as native fields on each `Promo
 This is a first draft of the decision proposal.
 :::
 
-Adopt **Option 2**, a dedicated `PromotionGate` object per gate.
+Adopt **Option 1**, inline gate conditions on the `VectorPromotion`.
 
-The deciding factor is that each gate gets its own object with a single writer. There is no shared `status.conditions` slice for several writers to contend on, so Option 2 avoids the optimistic-concurrency retries Option 1 relies on. Provenance lives natively on the gate object next to its status, with no parallel `gateProvenance` record, and approval and override reduce to the API writing one gate object.
+With one gate per type, each condition is keyed cleanly by its gate `type`, and the whole gate state of a promotion lives on one object. Option 1 adds no new CRD and extends the `VectorPromotion` already in code, so it is the smaller design and the easier one to read, since a reviewer sees every gate in a single place rather than following a set of child objects. Conditions are set once, never seeded, and staggered, so the shared `status.conditions` slice sees optimistic-concurrency conflicts rarely for the few gates a promotion carries. The one piece of provenance a condition cannot hold, the entity that set the gate, lives in a small parallel `gateProvenance` record.
 
-The cost is a new CRD and one child object per gate per promotion. Konfidence already models lifecycle steps as CRDs, for example the activation executions in ADR-0012, so a gate CRD is consistent with the existing design.
-
-Option 1 stays on the table as the lighter choice.
+Option 2 stays the escalation path. It becomes the better choice if gates grow rich per-gate state such as history, events, or retries, if a promotion routinely carries many gates, or once the future `spec` extension makes gates parameter-heavy.
 
 ## Consequences
 
