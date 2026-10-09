@@ -13,14 +13,14 @@ importers:
         version: 1.0.0(vue@3.5.42)
     devDependencies:
       '@types/node':
-        specifier: ^26.6.3
-        version: 26.6.3
+        specifier: ^26.6.4
+        version: 26.6.4
       vitepress:
         specifier: 2.0.0-alpha.20
-        version: 2.0.0-alpha.20(@types/node@26.6.3)(postcss@8.5.28)
+        version: 2.0.0-alpha.20(@types/node@26.6.4)(postcss@8.5.28)
       vitepress-openapi:
         specifier: ^0.2.5
-        version: 0.2.5(vitepress@2.0.0-alpha.20(@types/node@26.6.3)(postcss@8.5.28))(vue@3.5.42)
+        version: 0.2.5(vitepress@2.0.0-alpha.20(@types/node@26.6.4)(postcss@8.5.28))(vue@3.5.42)
 
 packages:
 
@@ -245,8 +245,8 @@ packages:
   '@types/mdurl@2.0.0':
     resolution: {integrity: sha512-RGdgjQUZba5p6QEFAVx2OGb8rQDL/cPRG7GiedRzMcJ1tYnUANBncjbSB1NRGwbvjcPeikRABz2nshyPk1bhWg==}
 
-  '@types/node@26.6.3':
-    resolution: {integrity: sha512-dsqMQQoeTLqu9wynDD00q573mNzso3IdQOAfHRJqLCcmCFPoGo9A1bDpUcv/9tnKpErQWv9uKeGfl37EIS02Yg==}
+  '@types/node@26.6.4':
+    resolution: {integrity: sha512-ldVPDCzj7fsaGZrLB0NuHuTvJcsNasysBAqMolr/cgxrLd1xbqxIr3XJiPnHHJUCxj5sNF1vnRj9aWnrVh5Jcg==}
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
@@ -912,7 +912,7 @@ snapshots:
 
   '@types/mdurl@2.0.0': {}
 
-  '@types/node@26.6.3':
+  '@types/node@26.6.4':
     dependencies:
       undici-types: 8.9.0
 
@@ -922,10 +922,10 @@ snapshots:
 
   '@ungap/structured-clone@1.4.0': {}
 
-  '@vitejs/plugin-vue@6.0.8(vite@8.2.2(@types/node@26.6.3))(vue@3.5.42)':
+  '@vitejs/plugin-vue@6.0.8(vite@8.2.2(@types/node@26.6.4))(vue@3.5.42)':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.2.2(@types/node@26.6.3)
+      vite: 8.2.2(@types/node@26.6.4)
       vue: 3.5.42
 
   '@vue/compiler-core@3.5.42':
@@ -1316,7 +1316,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@8.2.2(@types/node@26.6.3):
+  vite@8.2.2(@types/node@26.6.4):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -1324,10 +1324,10 @@ snapshots:
       rolldown: 1.2.7
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       fsevents: 2.3.3
 
-  vitepress-openapi@0.2.5(vitepress@2.0.0-alpha.20(@types/node@26.6.3)(postcss@8.5.28))(vue@3.5.42):
+  vitepress-openapi@0.2.5(vitepress@2.0.0-alpha.20(@types/node@26.6.4)(postcss@8.5.28))(vue@3.5.42):
     dependencies:
       '@lucide/vue': 1.47.0(vue@3.5.42)
       '@vueuse/core': 14.4.0(vue@3.5.42)
@@ -1335,12 +1335,12 @@ snapshots:
       clsx: 2.1.1
       markdown-it-link-attributes: 4.0.1
       reka-ui: 2.10.5(vue@3.5.42)
-      vitepress: 2.0.0-alpha.20(@types/node@26.6.3)(postcss@8.5.28)
+      vitepress: 2.0.0-alpha.20(@types/node@26.6.4)(postcss@8.5.28)
       vue: 3.5.42
     transitivePeerDependencies:
       - '@vue/composition-api'
 
-  vitepress@2.0.0-alpha.20(@types/node@26.6.3)(postcss@8.5.28):
+  vitepress@2.0.0-alpha.20(@types/node@26.6.4)(postcss@8.5.28):
     dependencies:
       '@docsearch/css': 4.7.0
       '@docsearch/js': 4.7.0
@@ -1348,7 +1348,7 @@ snapshots:
       '@iconify-json/simple-icons': 1.2.95
       '@shikijs/transformers': 4.4.3
       '@types/markdown-it': 14.2.0
-      '@vitejs/plugin-vue': 6.0.8(vite@8.2.2(@types/node@26.6.3))(vue@3.5.42)
+      '@vitejs/plugin-vue': 6.0.8(vite@8.2.2(@types/node@26.6.4))(vue@3.5.42)
       '@vue/devtools-api': 8.2.1
       '@vue/shared': 3.5.42
       '@vueuse/core': 14.4.0(vue@3.5.42)
@@ -1357,7 +1357,7 @@ snapshots:
       mark.js: 8.11.1
       minisearch: 7.2.0
       shiki: 4.4.3
-      vite: 8.2.2(@types/node@26.6.3)
+      vite: 8.2.2(@types/node@26.6.4)
       vue: 3.5.42
     optionalDependencies:
       postcss: 8.5.28
