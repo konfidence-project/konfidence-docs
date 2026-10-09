@@ -126,15 +126,15 @@ dev-to-prod (dev-eu12 → prod-eu12)
 
 ### Approve the promotion
 
+::: warning
+Use the promotion ID (`dev-to-prod-1`), not the configuration ID (`dev-to-prod`).
+:::
+
 Approve the waiting promotion using the ID from the previous output:
 
 ```bash
 kden vector-promotion approve dev-to-prod-1 -p example-app
 ```
-
-::: warning
-Use the promotion ID (`dev-to-prod-1`), not the configuration ID (`dev-to-prod`).
-:::
 
 List the promotions again to confirm that the approval succeeded:
 

@@ -35,7 +35,7 @@ The script creates a kind cluster named `konfidence-quickstart` and selects it a
 2. **Konfidence** — the controller and API, which also serves the dashboard.
 3. **Kubernetes [Landscape Orchestrator](../reference/glossary.md#landscape-orchestrator)** — uses Flux to deploy Helm charts and Kustomize configurations for Konfidence.
 
-The [Vector Data Service](../reference/glossary.md#vector-data-service), which lets applications read configuration and [deployment results](../reference/glossary.md#deployment-result) for a vector at runtime, runs per landscape and is installed later, once landscapes exist.
+The [Vector Data Service](../reference/glossary.md#vector-data-service) runs in each landscape namespace. It lets applications read configuration and [deployment results](../reference/glossary.md#deployment-result) for a vector at runtime. Install it after creating the landscapes, as described in [Create the delivery environment](./deliver-an-application.md#create-the-delivery-environment).
 
 The script waits for the Flux deployments and Helm releases to become ready. Running it again reuses the cluster and updates the existing installation.
 
