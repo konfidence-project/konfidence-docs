@@ -34,7 +34,8 @@ The script creates a kind cluster named `konfidence-quickstart` and selects it a
 1. **[Flux](https://fluxcd.io/)** — controllers that reconcile Helm and Kustomize deployments.
 2. **Konfidence** — the controller and API, which also serves the dashboard.
 3. **Kubernetes [Landscape Orchestrator](../reference/glossary.md#landscape-orchestrator)** — uses Flux to deploy Helm charts and Kustomize configurations for Konfidence.
-4. **[Vector Data Service](../reference/glossary.md#vector-data-service)** — lets applications read configuration and [deployment results](../reference/glossary.md#deployment-result) for a vector at runtime.
+
+The [Vector Data Service](../reference/glossary.md#vector-data-service) runs in each landscape namespace. It lets applications read configuration and [deployment results](../reference/glossary.md#deployment-result) for a vector at runtime. Install it after creating the landscapes, as described in [Create the delivery environment](./deliver-an-application.md#create-the-delivery-environment).
 
 The script waits for the Flux deployments and Helm releases to become ready. Running it again reuses the cluster and updates the existing installation.
 
@@ -53,7 +54,6 @@ NAME                                READY   UP-TO-DATE   AVAILABLE   AGE
 konfidence                          1/1     1            1           61s
 konfidence-api                      1/1     1            1           61s
 kubernetes-landscape-orchestrator   1/1     1            1           42s
-vector-data-service                 1/1     1            1           27s
 ```
 
 The `READY` column should show that all replicas are ready.
