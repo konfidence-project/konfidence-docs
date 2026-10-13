@@ -51,9 +51,8 @@ The conformance tests supply required control-plane resources directly and subst
 
 ### Versioning
 
-The deployer specification is versioned independently, allowing several specification versions to coexist.
-Each release of Konfidence core has to specify which deployer specification versions it supports. 
-The Go bindings are versioned with Konfidence core and may support more than one specification version.
+The deployer specification, Go bindings, and conformance tests follow Konfidence core versioning. 
+They are versioned and released together with all other components in the `konfidence` core monorepo.
 
 ## Consequences
 
