@@ -1,6 +1,15 @@
 {
   "components": {
     "parameters": {
+      "ArtifactDeploymentPathId": {
+        "description": "ArtifactDeployment Id",
+        "in": "path",
+        "name": "artifactDeploymentId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
       "LandscapePathId": {
         "description": "Landscape Id",
         "in": "path",
@@ -23,6 +32,24 @@
         "description": "Project Id",
         "in": "path",
         "name": "projectId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "StagePathId": {
+        "description": "Stage Id",
+        "in": "path",
+        "name": "stageId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "VectorDeploymentPathId": {
+        "description": "VectorDeployment Id",
+        "in": "path",
+        "name": "vectorDeploymentId",
         "required": true,
         "schema": {
           "type": "string"
@@ -1018,6 +1045,183 @@
           }
         },
         "summary": "List all landscapes for a specific project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/landscapes/{landscapeId}": {
+      "get": {
+        "description": "Returns a single landscape resources for a project.",
+        "operationId": "getLandscapeV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/LandscapePathId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Landscape"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get a single landscape for a specific project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/landscapes/{landscapeId}/artifactDeployments/{artifactDeploymentId}": {
+      "get": {
+        "description": "Returns a single artifactDeployment resource for a project and landscape.",
+        "operationId": "getArtifactDeploymentV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/LandscapePathId"
+          },
+          {
+            "$ref": "#/components/parameters/ArtifactDeploymentPathId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactDeployment"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get a single artifactDeployment for a project and landscape",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/landscapes/{landscapeId}/stages/{stageId}": {
+      "get": {
+        "description": "Returns a single stage resource for a project.",
+        "operationId": "getStageV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/LandscapePathId"
+          },
+          {
+            "$ref": "#/components/parameters/StagePathId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get a single stage for a project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/landscapes/{landscapeId}/vectorDeployments/{vectorDeploymentId}": {
+      "get": {
+        "description": "Returns a single vectorDeployment resource for a project and landscape.",
+        "operationId": "getVectorDeploymentV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/LandscapePathId"
+          },
+          {
+            "$ref": "#/components/parameters/VectorDeploymentPathId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorDeployment"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get a single vectorDeployment for a project and landscape",
         "tags": [
           "projects"
         ]
