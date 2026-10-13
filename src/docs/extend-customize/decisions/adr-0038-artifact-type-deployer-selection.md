@@ -1,7 +1,7 @@
 ---
 id: ADR-0038
 title: "Select deployers by artifact type instead of DeploymentClass"
-description: "Remove DeploymentClass registration and select platform-wide deployers by vendor-owned artifact types, with targets reporting supported artifact versions."
+description: "Remove DeploymentClass registration and select platform-wide deployers directly by vendor-owned artifact types."
 status: approved
 date_proposed: 2026-10-07
 date_approved: 2026-10-08
@@ -39,16 +39,13 @@ Keep `DeploymentTarget` as a namespace-scoped resource in the landscape namespac
 This ADR supersedes ADR-0027's `DeploymentClass` registration and controller selection design.
 It does not supersede ADR-0027's landscape and project model.
 
-Use a stable `domain/type` identifier owned by the deployer provider.
-Artifacts specify a versioned contract, such as `konfidence.cloud/helm:v1`, while targets configure a destination for the unversioned `konfidence.cloud/helm` type.
-The target's deployer reports which artifact-contract versions it accepts at that destination.
+Use a stable, vendor-owned artifact type such as `helm.konfidence.cloud`.
+Artifacts declare that type in their manifest (currently `ArtifactDeployment.spec.manifest.type`), while targets configure a destination for the same type.
 Deployers select resources by their configured type identifiers.
 The exact syntax and behavior will be defined by the separate deployer specification.
 
-An artifact carries the full type and version in its manifest (currently `ArtifactDeployment.spec.manifest.type`).
-A `DeploymentTarget` instead selects `domain/type` without a version through a proposed `spec.artifactType` field.
-This lets one landscape target serve existing and new artifact versions at the same destination during a deployer upgrade.
-At most one target for a given `domain/type` is expected in a landscape namespace.
+A `DeploymentTarget` selects the same type through a proposed `spec.artifactType` field.
+At most one target for a given artifact type is expected in a landscape namespace.
 Two types may still use the same underlying destination or credential reference, as Helm and Kustomize do today.
 
 ## Consequences
@@ -57,5 +54,5 @@ Two types may still use the same underlying destination or credential reference,
 - **Weaker discovery and enforcement:** The API no longer enumerates installed deployer classes. Misconfigured controllers could race on status and runtime objects. This is mitigated by including the vendor domain into the artifact type. Cluster administrators are responsible to ensure compatibility when using multiple deployers. 
 - **Deployer Health/Availability still open:** A deployer that crashes after writing `Ready=True` can leave status stale. This is true for all kubernetes controllers. 
 
-The [deployer specification](https://github.com/konfidence-project/konfidence/blob/main/deployer-specification/index.md) will define field validation, status ownership, version negotiation, and deletion behavior in detail.
+The [deployer specification](https://github.com/konfidence-project/konfidence/blob/main/deployer-specification/index.md) will define field validation, status ownership, and deletion behavior in detail.
 This ADR records the architectural choice; its proposed fields and conditions do not describe the current CRDs.
