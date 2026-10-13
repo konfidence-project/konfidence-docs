@@ -27,7 +27,7 @@ This makes it difficult to tell which behavior every deployer MUST provide, whic
 ### Written contract alongside the core API
 
 The **written deployer specification** is the normative source of truth for the required and optional behavior of a deployer controller.
-It defines the control-plane resources deployers act on, how they interpret and process them, what status and results they report, and the guarantees they during the deployment lifecycle.
+It defines the control-plane resources deployers act on, how they interpret and process them, what status and results they report, and the guarantees they provide during the deployment lifecycle.
 Normative requirements use BCP 14 (RFC 2119 and RFC 8174) terminology and will have stable identifiers so they can be referenced by tests.
 The specification will define how optional capabilities are declared and how unsupported behavior is reported.
 
