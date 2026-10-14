@@ -331,6 +331,10 @@ export default defineConfig({
             { text: "CRDs", link: "/docs/reference/crd" },
             { text: "CLI", link: "/docs/reference/cli" },
             { text: "API", link: "/docs/reference/api" },
+            {
+              text: "Deployer specification",
+              link: "https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md",
+            },
             { text: "Helm values: konfidence", link: "/docs/reference/helm-values-konfidence" },
             { text: "Helm values: orchestrator", link: "/docs/reference/helm-values-orchestrator" },
           ],
