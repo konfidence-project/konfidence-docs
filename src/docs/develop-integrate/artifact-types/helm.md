@@ -1,6 +1,6 @@
 ---
 title: "Author a Helm artifact"
-description: "Package a container image and a Helm chart as one artifact that the Kubernetes deployer installs into a landscape."
+description: "Prepare a Helm chart and an OCM component constructor for publication as a Konfidence artifact."
 outline: deep
 editLink: true
 lastUpdated: true
@@ -8,7 +8,8 @@ lastUpdated: true
 
 # Author a Helm artifact
 
-After this guide, you have a Helm chart and an OCM component constructor ready to validate and publish as a Konfidence [artifact](../../reference/glossary.md#artifact). Once the published artifact is included in a [vector](../../reference/glossary.md#vector), the [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) installs the chart in the [landscape](../../reference/glossary.md#landscape).
+Create a Helm chart and an Open Component Model (OCM) component constructor for your service.
+These files are the inputs for [publishing a Konfidence artifact](./publish-artifacts.md).
 
 The examples build a service named `my-service` and push everything to `registry.example.com/my-org`.
 
@@ -16,10 +17,9 @@ The examples build a service named `my-service` and push everything to `registry
 
 Before you begin, make sure you have:
 
-- A container build tool such as `docker` and Helm 3.8 or later with Open Container Initiative (OCI) support.
+- A container build tool such as `docker` to build and push the container image.
+- The `helm` command-line tool, version 3.8 or later, to package and push the chart to an Open Container Initiative (OCI) registry.
 - Push access to an OCI registry for the image, the chart, and the artifact.
-- The `kden` command-line tool. See [Publish artifacts](./publish-artifacts.md).
-- A landscape with a ready `helm.konfidence.cloud` target. See [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md).
 - A service that reads and forwards `X-Vector-ID`. See [Prepare your application](../prepare-your-application.md).
 
 ## Build and push the container image
@@ -145,7 +145,7 @@ The chart is available as `registry.example.com/my-org/charts/my-service:1.0.0`.
    }
    ```
 
-   Set `allowReuse` to `true` only when one running instance can serve several vectors.
+   Set `allowReuse` to `true` only when your service meets the [requirements for sharing an instance](./index.md#what-reuse-demands-from-your-service).
 
 2. Create `component-constructor.yaml` with the manifest and the chart as resources:
 
@@ -241,8 +241,11 @@ Every name in the first output starts with `vector-a`, and every name in the sec
 
 ## Next steps
 
-Use the following guides to publish your artifact and expose its Service:
+Use the following guides to publish your artifact and expose its service endpoint:
 
 - [Validate and publish the artifact](./publish-artifacts.md#validate-the-artifact-files).
 - [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to other services in the vector.
-- Read [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.
+- [Install the Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.
+
+Before deploying the artifact, confirm that the landscape has a ready `helm.konfidence.cloud` target.
+See [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md).
