@@ -23,11 +23,10 @@ To learn how to create OCM components, see the [OCM guide on creating component 
 
 ## Artifact aliases
 
-Konfidence does not rely on the semantic version of each individual artifact when it decides what to deliver.
-It delivers a [vector](../reference/glossary.md#vector), which represents the application as a whole.
-That means the important version is the exact combination of artifacts inside the vector.
+An artifact reference identifies an OCM component in a repository and selects a version of it.
+A [`VectorTemplate`](../reference/glossary.md#vectortemplate) can reference a concrete version, such as `1.0.0`, or an artifact alias, such as `main`.
 
-[Artifact aliases](../reference/glossary.md#artifact-alias) are dynamic references that tell Konfidence which artifact flavor to include when it assembles a vector.
+[Artifact aliases](../reference/glossary.md#artifact-alias) are mutable tags that point to an existing artifact version.
 An alias can describe any dimension that matters to your delivery model, for example:
 
 - Maturity, such as `experimental` or `stable`.
@@ -35,13 +34,14 @@ An alias can describe any dimension that matters to your delivery model, for exa
 - Source branch, such as `main` or `develop`.
 - Team-specific or product-specific tracks.
 
-In most setups, one branch-based alias is enough.
-For example, a service can publish each successful build from the main branch under the `main` alias.
-The alias then acts as a floating pointer that lets [`VectorTemplate`](../reference/glossary.md#vectortemplate) detect artifact changes without requiring you to update the template for every new build.
+For example, your CI pipeline can update the `main` alias after publishing a new build.
+The `VectorTemplate` can keep referencing that alias without a template change for every build.
+During assembly, Konfidence resolves the alias and records the concrete artifact version in the vector.
+Updating the alias later does not change an existing vector.
 
 ## Vectors
 
-A vector is a complete, immutable snapshot of your application at a specific point in time.
+A [vector](../reference/glossary.md#vector) is a complete, immutable snapshot of your application at a specific point in time.
 It is an OCM component with a fixed collection of artifacts that belong together.
 
 Because a vector is immutable, the exact combination of services you tested is the exact combination you deliver.
@@ -49,18 +49,26 @@ When an artifact reference changes, Konfidence creates a new vector instead of c
 
 You can define vectors for different purposes, for example:
 
-- A production vector with stable artifact aliases.
-- A preview vector with experimental artifact aliases.
+- A production vector assembled from artifacts selected through `stable` aliases.
+- A preview vector assembled from artifacts selected through `experimental` aliases.
 - A team-focused vector that contains only the services owned by one team.
 
 ## Build: publish artifacts
 
 Konfidence does not prescribe how teams build their applications.
-A CI pipeline can use the build system that fits the application, as long as the resulting artifact is available in an OCM-compliant repository.
+It reads published artifacts as OCM component versions from an Open Container Initiative (OCI) registry.
+OCM describes the component, its resources, and metadata; the OCI registry stores that content.
 
-For Konfidence to assemble vectors from those artifacts, each artifact needs an alias that Konfidence can resolve.
-The alias does not replace semantic versioning for the artifact itself.
-It gives the vector model a stable name for a moving target, such as "the current main-branch build of this service."
+Publishing a container image alone does not create the OCM component version that a `VectorTemplate` references.
+You define an OCM component constructor: a YAML file that describes the component's contents.
+It references the Konfidence artifact manifest and your deployable content, such as a Helm chart or Kustomize bundle.
+Your CI pipeline can then run `kden artifact push` to validate those inputs and publish the component version.
+Follow [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md) for the required files and commands.
+
+An alias is optional.
+You or your CI pipeline create and update it with `kden artifact alias` after publishing the component version.
+Use an alias when a template should follow new builds, or reference a concrete version to select a specific build.
+See [Create an alias](../develop-integrate/artifact-types/publish-artifacts.md#optional-create-an-alias) for the command and reference format.
 
 ## Assemble: define the vector
 
@@ -68,15 +76,13 @@ A vector is the complete application version that Konfidence moves through the [
 It contains the selected artifact references and represents the desired application state at a specific point in time.
 
 The `VectorTemplate` custom resource defines how Konfidence assembles that vector.
-The most important fields are:
+Start with these fields:
 
 - `uploadTarget`, which defines where the assembled vector is stored.
-- `components`, which defines which previously built artifacts are part of the vector.
-- `credentials`, which references Secrets used to access the required registries.
-- `base`, which can optionally reference another `VectorTemplate` whose latest
-  assembled vector is used as the base.
+- `components`, which lists artifact references in the form `<repository>//<component>:<version-or-alias>`.
+- `credentials`, which optionally references Secrets used to access the required registries.
 
-The following example shows the relationship between those fields:
+The following illustrative template selects one artifact through an alias and another by a concrete version:
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -88,22 +94,36 @@ spec:
   uploadTarget: registry.example.com/my-project//example.com/vector/example-vector
   components:
     - name: registry.example.com/my-project//example.com/service1:main
-    - name: registry.example.com/my-project//example.com/service2:stable
+    - name: registry.example.com/my-project//example.com/service2:1.0.0
   credentials:
     ocm:
       refs:
         - name: registry-credentials
 ```
 
-The `uploadTarget` field contains only the component path without version. Konfidence generates a UTC timestamp version on each assembly. The entries under `components` use alias tags (such as `main` or `stable`) so that Konfidence can resolve the referenced resources.
+The `uploadTarget` field contains only the component path without a version.
+Konfidence generates a UTC timestamp version when it assembles a new vector.
+The first entry in `components` follows the `main` alias for `service1`; the second selects version `1.0.0` of `service2`.
+Both entries are artifact references. Only the first uses an alias.
+
 The component artifacts do not have to be stored in the same registry as the vector target.
 If a component artifact is stored elsewhere, Konfidence copies it into the target registry defined by `uploadTarget`.
 
-When `base` is set, the new vector includes the artifacts from the base vector and the additional artifacts listed under `components`.
-This lets teams derive a new vector from an existing vector without redefining every artifact reference.
+### Derive a vector from a base (optional)
+
+Use `base` when several vectors share a set of artifacts, such as common platform services.
+The field references another `VectorTemplate` in the same namespace.
+Konfidence uses that template's latest assembled vector as the starting set of artifacts.
+
+Your `components` can add artifacts or replace a base artifact with the same component name.
+Other base artifacts are kept, and the base vector remains unchanged.
+For the manifest and assembly behavior, see [Derive a vector from a base](../develop-integrate/observe-improve/build-vectors.md#derive-a-vector-from-a-base-optional).
 
 ## Related pages
 
-- [Delivery Flow](./delivery-flow.md) explains how vectors move from build outputs to controlled [stage](../reference/glossary.md#stage) state.
+Use these pages to publish artifacts, assemble vectors, and understand where they are delivered:
+
+- [Publish artifacts](../develop-integrate/artifact-types/publish-artifacts.md) shows how to create an OCM component version and an optional alias.
+- [Delivery flow](./delivery-flow.md) explains how vectors move from build outputs to controlled [stage](../reference/glossary.md#stage) state.
 - [Landscapes and stages](./landscapes-and-stages.md) explains where vectors are delivered and how stages express the desired application version.
 - [Build vectors](../develop-integrate/observe-improve/build-vectors.md) explains the task-oriented flow for assembling vectors.
