@@ -50,6 +50,8 @@ spec:
     name: integration
     landscape: dev
   ttlAfterFinished: 24h
+  keepLastPromotions: 10
+  keepOutstandingPromotions: 10
 ```
 
 `landscape` is the name of the `Landscape` resource in the project namespace, not its managed namespace. Apply the manifest:
@@ -88,12 +90,13 @@ spec:
 
 Promotions from a stage source require approval by default. Each config watches one source, so a three-stage flow needs two configs.
 
-### Retain or delete finished promotions
+### Control promotion retention
 
-Two fields on the config control cleanup:
+Three fields on the config control outstanding and finished promotions:
 
 - `ttlAfterFinished` deletes a promotion after the configured interval once it reaches a terminal state. Without it, promotions stay.
-- `keepLastPromotions` sets the maximum number of terminal promotions retained per configuration. The default is 10. Older promotions beyond the limit are deleted.
+- `keepLastPromotions` sets the maximum number of terminal promotions retained per configuration. The default is `10`. Older promotions beyond the limit are deleted.
+- `keepOutstandingPromotions` sets the maximum number of non-terminal promotions. The default is `10`. The oldest non-terminal promotions beyond the limit are set to `Superseded`. A value of `0` allows an unlimited number of non-terminal promotions.
 
 Promotions that are not terminal are never deleted. Deleting the config deletes its promotions.
 
@@ -153,16 +156,17 @@ The output equals the promotion's `spec.vector`. The promotion records the same 
 | `Blocked` | The target does not resolve. The config's `Ready` condition names the cause. |
 | `Succeeded` | The target stage references the vector. |
 | `Failed` | Execution ended without success. The conditions name the reason. |
-| `Superseded` | A promotion with a higher sequence number replaced this one. It can never be approved or executed. |
+| `Superseded` | A newer promotion replaced this one, or the outstanding promotion limit was exceeded. It can never be approved or executed. |
 
 ## Troubleshooting
 
-- `Blocked`: read the config's `Ready` condition. The target stage or landscape does not exist or has a different name.
-- `Failed` with reason `PromotionTimedOut`: the execution exceeded the fixed five-minute deadline. Inspect the target stage. The next vector the source selects creates a fresh promotion.
-- No promotion appears: the source vector equals the target stage's vector, or a live promotion already pins the same vector. Check `kubectl get vectorpromotions`.
-- `kden vector-promotion approve` returns `403`: the caller lacks the `pm` or `admin` role. See [Grant teams access to a project](../control-access/access-control.md).
+- `Blocked`: Read the config's `Ready` condition. The target stage or landscape does not exist or has a different name.
+- `Failed` with reason `PromotionTimedOut`: The execution exceeded the fixed five-minute deadline. Inspect the target stage. The next vector the source selects creates a fresh promotion.
+- `Superseded` with reason `OutstandingLimitReached`: The number of non-terminal promotions exceeded `keepOutstandingPromotions`. Approve one of the retained waiting promotions or increase the limit. Set it to `0` for unlimited non-terminal promotions.
+- No promotion appears: The source vector equals the target stage's vector, or a live promotion already pins the same vector. Check `kubectl get vectorpromotions`.
+- `kden vector-promotion approve` returns `403`: The caller lacks the `pm` or `admin` role. See [Grant teams access to a project](../control-access/access-control.md).
 
 ## Next steps
 
-- [Grant CI pipelines access](../control-access/grant-ci-access.md) lets a pipeline approve promotions.
+- [Grant CI pipelines access](../control-access/grant-ci-access.md) so that a pipeline can approve promotions.
 - [Verify the active version](./stages.md#verify-the-active-version) after a promotion succeeds to confirm which vector is receiving traffic.
