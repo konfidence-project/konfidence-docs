@@ -435,7 +435,7 @@ A `VectorDeployment` is a custom resource that deploys all artifacts of one vect
 
 ### VectorPromotion
 
-A `VectorPromotion` is a custom resource that runs a promotion flow once. It pins the concrete vector when it is created and records the status of the promotion. By default, Konfidence keeps the last 10 completed promotions and allows up to `10` non-terminal promotions to wait for each `VectorPromotionConfig`.
+A `VectorPromotion` is a custom resource that runs a promotion flow once. It pins the concrete vector when it is created and records the status of the promotion. By default, Konfidence keeps the last 10 completed promotions and allows up to `10` `waiting` promotions to wait for each `VectorPromotionConfig`.
 
 ::: details Pages that use this term
 

@@ -96,7 +96,7 @@ Three fields on the config control outstanding and finished promotions:
 
 - `ttlAfterFinished` deletes a promotion after the configured interval once it reaches a terminal state. Without it, promotions stay.
 - `keepLastPromotions` sets the maximum number of terminal promotions retained per configuration. The default is `10`. Older promotions beyond the limit are deleted.
-- `keepOutstandingPromotions` sets the maximum number of non-terminal promotions. The default is `10`. The oldest non-terminal promotions beyond the limit are set to `Superseded`. A value of `0` allows an unlimited number of non-terminal promotions.
+- `keepOutstandingPromotions` sets the maximum number of `waiting` promotions. The default is `10`. The oldest `waiting` promotions beyond the limit are set to `Superseded`. A value of `0` allows an unlimited number of `waiting` promotions.
 
 Promotions that are not terminal are never deleted. Deleting the config deletes its promotions.
 
@@ -162,7 +162,7 @@ The output equals the promotion's `spec.vector`. The promotion records the same 
 
 - `Blocked`: Read the config's `Ready` condition. The target stage or landscape does not exist or has a different name.
 - `Failed` with reason `PromotionTimedOut`: The execution exceeded the fixed five-minute deadline. Inspect the target stage. The next vector the source selects creates a fresh promotion.
-- `Superseded` with reason `OutstandingLimitReached`: The number of non-terminal promotions exceeded `keepOutstandingPromotions`. Approve one of the retained waiting promotions or increase the limit. Set it to `0` for unlimited non-terminal promotions.
+- `Superseded` with reason `OutstandingLimitReached`: The number of `waiting` promotions exceeded `keepOutstandingPromotions`. Approve one of the retained `waiting` promotions or increase the limit. Set it to `0` for unlimited `waiting` promotions.
 - No promotion appears: The source vector equals the target stage's vector, or a live promotion already pins the same vector. Check `kubectl get vectorpromotions`.
 - `kden vector-promotion approve` returns `403`: The caller lacks the `pm` or `admin` role. See [Grant teams access to a project](../control-access/access-control.md).
 
