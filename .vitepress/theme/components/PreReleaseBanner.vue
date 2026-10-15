@@ -28,7 +28,7 @@
   justify-content: center;
   padding: 0 1rem;
   text-align: center;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   line-height: 1.3;
   background: var(--konfidence-gradient-action);
