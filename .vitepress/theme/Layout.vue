@@ -63,4 +63,9 @@ const prerelease = __PRERELEASE__
   order: 0;
 }
 
+@media (max-width: 640px) {
+  .prerelease-badge {
+    display: none;
+  }
+}
 </style>
