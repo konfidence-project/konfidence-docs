@@ -1,7 +1,7 @@
 ---
 id: ADR-0019
 title: "OCM in vector assembly"
-status: draft
+status: accepted
 authors: [karstenkoehler]
 category: Architecture Pattern
 impact: Medium

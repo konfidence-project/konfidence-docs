@@ -33,7 +33,7 @@ Gaps in the list are records that are superseded, internal to the project, or st
 
 Write an ADR when a change spans several components or is expensive to reverse.
 Write one too when it sets a pattern other contributors must follow.
-ADRs live in the [konfidence-docs repository](https://github.com/konfidence-project/konfidence-docs/tree/main/src/docs/extend-customize/decisions).
+ADRs live in the [konfidence-docs](https://github.com/konfidence-project/konfidence-docs/tree/main/src/docs/extend-customize/decisions) repository.
 Propose a record as a pull request there.
 
 1. Take the next free number after the highest ADR in the decision log.
