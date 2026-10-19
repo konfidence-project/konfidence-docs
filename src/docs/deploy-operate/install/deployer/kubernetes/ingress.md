@@ -8,11 +8,15 @@ lastUpdated: true
 
 # Route external traffic to stages
 
-Konfidence routes requests to the active vector of a [stage](../../../../reference/glossary.md#stage). This applies to stages that the [Kubernetes deployer](../kubernetes.md) deploys. Konfidence does not ship a gateway. As the cluster administrator, you install a Gateway API implementation and create the Gateways. Konfidence creates only the HTTPRoutes behind them. [ADR-0037](../../../../extend-customize/decisions/adr-0037-ingress-routing-and-activation.md) records this decision.
+Konfidence routes every request for a [stage](../../../../reference/glossary.md#stage) to the stage's active vector. This applies to stages that the [Kubernetes deployer](../kubernetes.md) deploys. As the cluster administrator, you provide the Gateways that requests enter through. This page lists what those Gateways must provide.
 
-## You own the gateways and Konfidence owns the stage routes
+## Konfidence switches each stage to its active vector
 
-A request passes two Gateways. You own both of them.
+Konfidence keeps one HTTPRoute per stage. On each activation, it re-points that route at the newly active vector's deployment result Services. Clients keep the same address while the vector behind it changes.
+
+Konfidence attaches these routes to Gateways that you create. Whether a Gateway is reachable from outside or only inside the cluster depends on the Gateway API implementation. The Gateway API has no portable setting for it. Konfidence leaves the Gateways to you so that it never exposes an internal Gateway by accident. [ADR-0037](../../../../extend-customize/decisions/adr-0037-ingress-routing-and-activation.md) records this decision.
+
+A request passes two Gateways:
 
 ```text
 client
@@ -25,7 +29,7 @@ client
   → deployment result Service of the active vector
 ```
 
-Konfidence never sees your external hostname. It matches only the `x-konfidence-stage` header and the request path.
+You choose the external hostnames in your edge routes. Konfidence matches only the `x-konfidence-stage` header and the request path, so any hostname scheme works.
 
 ## Your setup provides four things
 
