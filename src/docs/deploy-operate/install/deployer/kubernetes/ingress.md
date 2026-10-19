@@ -14,7 +14,7 @@ Konfidence routes every request for a [stage](../../../../reference/glossary.md#
 
 Konfidence keeps one HTTPRoute per stage. On each activation, it re-points that route at the newly active vector's deployment result Services. Clients keep the same address while the vector behind it changes.
 
-Konfidence attaches these routes to Gateways that you create. Whether a Gateway is reachable from outside or only inside the cluster depends on the Gateway API implementation. The Gateway API has no portable setting for it. Konfidence leaves the Gateways to you so that it never exposes an internal Gateway by accident. [ADR-0037](../../../../extend-customize/decisions/adr-0037-ingress-routing-and-activation.md) records this decision.
+Konfidence attaches these routes to Gateways that you create. Whether a Gateway is reachable from outside or only inside the cluster depends on the Gateway API implementation. The Gateway API has no portable setting for it. Konfidence leaves the Gateways to you so that it never exposes an internal Gateway by accident.
 
 A request passes two Gateways:
 
