@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Route external traffic to stages
 
-Konfidence routes requests to the active vector of a [stage](../../../reference/glossary.md#stage). It does not ship a gateway. As the cluster administrator, you install a Gateway API implementation and create the Gateways. Konfidence creates only the HTTPRoutes behind them. [ADR-0037](../../../extend-customize/decisions/adr-0037-ingress-routing-and-activation.md) records this decision.
+Konfidence routes requests to the active vector of a [stage](../../../../reference/glossary.md#stage). This applies to stages that the [Kubernetes deployer](../kubernetes.md) deploys. Konfidence does not ship a gateway. As the cluster administrator, you install a Gateway API implementation and create the Gateways. Konfidence creates only the HTTPRoutes behind them. [ADR-0037](../../../../extend-customize/decisions/adr-0037-ingress-routing-and-activation.md) records this decision.
 
 ## You own the gateways and Konfidence owns the stage routes
 
@@ -31,12 +31,12 @@ Konfidence never sees your external hostname. It matches only the `x-konfidence-
 
 Any Gateway API implementation works if your setup provides the following:
 
-1. **Inner Gateway per landscape:** Create a Gateway named `konfidence-router` in each [landscape](../../../reference/glossary.md#landscape) namespace. Konfidence attaches its routes there.
+1. **Inner Gateway per landscape:** Create a Gateway named `konfidence-router` in each [landscape](../../../../reference/glossary.md#landscape) namespace. Konfidence attaches its routes there.
 2. **Cluster-internal inner Gateway:** Pin the Service of `konfidence-router` to `ClusterIP`. The Gateway API cannot express this, so every implementation configures it differently.
 3. **Stage header at the edge:** For each stage, set `x-konfidence-stage` to the stage name. Then forward the request to `konfidence-router`.
 4. **ReferenceGrant per landscape namespace:** Your edge routes live in another namespace. Allow them to reference the `konfidence-router` Service.
 
-Konfidence creates one HTTPRoute per stage, named `konfidence-stage-<stage>`. It has one rule per [deployment result](../../../reference/glossary.md#deployment-result). A rule matches the request path `/<deployment-result-name>` or the header `x-konfidence-service: <deployment-result-name>`.
+Konfidence creates one HTTPRoute per stage, named `konfidence-stage-<stage>`. It has one rule per [deployment result](../../../../reference/glossary.md#deployment-result). A rule matches the request path `/<deployment-result-name>` or the header `x-konfidence-service: <deployment-result-name>`.
 
 <!-- TODO(konfidence maintainers): verify the release that ships the gateway-route.konfidence.cloud activation (kubernetes-landscape-orchestrator PR #79), and document where to override the Gateway name and namespace. -->
 

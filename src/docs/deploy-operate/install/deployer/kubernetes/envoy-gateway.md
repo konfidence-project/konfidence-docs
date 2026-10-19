@@ -8,14 +8,14 @@ lastUpdated: true
 
 # Route traffic to stages with Envoy Gateway
 
-Use [Envoy Gateway](https://gateway.envoyproxy.io/) to route external requests to a [stage](../../../reference/glossary.md#stage) by hostname. You install Envoy Gateway, one edge Gateway, and one `konfidence-router` Gateway per landscape. [Route external traffic to stages](./overview.md) explains what each part does.
+Use [Envoy Gateway](https://gateway.envoyproxy.io/) to route external requests to a [stage](../../../../reference/glossary.md#stage) by hostname. You install Envoy Gateway, one edge Gateway, and one `konfidence-router` Gateway per landscape. [Route external traffic to stages](./ingress.md) explains what each part does.
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
-- [Konfidence](../konfidence-installation.md) and the [Kubernetes deployer](../deployer/kubernetes.md) installed.
-- At least one [landscape](../../../reference/glossary.md#landscape) with a stage. `kubectl get stages -A` lists them.
+- [Konfidence](../../konfidence-installation.md) and the [Kubernetes deployer](../kubernetes.md) installed.
+- At least one [landscape](../../../../reference/glossary.md#landscape) with a stage. `kubectl get stages -A` lists them.
 - Helm 3.8 or later and `kubectl` with cluster-admin permissions.
 - No other Gateway API implementation that manages the Gateway API CRDs. `kubectl get crd gateways.gateway.networking.k8s.io` shows whether they exist.
 
@@ -205,7 +205,7 @@ EOF
 
 ## Use a local kind cluster
 
-The [Quickstart](../../../getting-started/quickstart.md) cluster has no load balancer. Its script maps `localhost:9090` to NodePort `30080` on the kind node. Give the edge Gateway a NodePort Service on that port.
+The [Quickstart](../../../../getting-started/quickstart.md) cluster has no load balancer. Its script maps `localhost:9090` to NodePort `30080` on the kind node. Give the edge Gateway a NodePort Service on that port.
 
 1. Before you create the edge Gateway, create this `EnvoyProxy`:
 
@@ -260,5 +260,5 @@ The [Quickstart](../../../getting-started/quickstart.md) cluster has no load bal
 
 ## Next steps
 
-- [Route external traffic to stages](./overview.md) describes the contract for other gateway implementations.
-- [Create a stage](../../manage-delivery/stages.md), then route a hostname to it.
+- [Route external traffic to stages](./ingress.md) describes the contract for other gateway implementations.
+- [Create a stage](../../../manage-delivery/stages.md), then route a hostname to it.

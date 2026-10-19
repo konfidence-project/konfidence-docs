@@ -231,23 +231,23 @@ export default defineConfig({
                       text: "Install the Kubernetes deployer",
                       link: "/docs/deploy-operate/install/deployer/kubernetes",
                     },
-                  ],
-                },
-                {
-                  text: "Route external traffic to stages",
-                  collapsed: true,
-                  items: [
                     {
-                      text: "Choose a gateway",
-                      link: "/docs/deploy-operate/install/ingress/overview",
-                    },
-                    {
-                      text: "Supported Gateways",
-                      collapsed: false,
+                      text: "Route external traffic to stages",
+                      collapsed: true,
                       items: [
                         {
-                          text: "Envoy Gateway",
-                          link: "/docs/deploy-operate/install/ingress/envoy-gateway",
+                          text: "Choose a gateway",
+                          link: "/docs/deploy-operate/install/deployer/kubernetes/ingress",
+                        },
+                        {
+                          text: "Supported Gateways",
+                          collapsed: false,
+                          items: [
+                            {
+                              text: "Envoy Gateway",
+                              link: "/docs/deploy-operate/install/deployer/kubernetes/envoy-gateway",
+                            },
+                          ],
                         },
                       ],
                     },
