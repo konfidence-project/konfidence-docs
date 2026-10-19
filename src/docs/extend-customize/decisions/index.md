@@ -31,42 +31,4 @@ Gaps in the list are records that are superseded, internal to the project, or st
 
 ## Propose a new decision
 
-Write an ADR when a change spans several components or is expensive to reverse.
-Write one too when it sets a pattern other contributors must follow.
-ADRs live in the [konfidence-docs](https://github.com/konfidence-project/konfidence-docs/tree/main/src/docs/extend-customize/decisions) repository.
-Propose a record as a pull request there.
-
-1. Take the next free number after the highest ADR in the decision log.
-2. Create `adr-<NNNN>-<slug>.md` in `src/docs/extend-customize/decisions/`.
-3. Start the file with this frontmatter, the heading, and the `<AdrHeader />` component:
-
-   ```markdown
-   ---
-   id: ADR-<NNNN>
-   title: "<Short title>"
-   description: "<One sentence: what the record decides>"
-   status: proposed
-   date_proposed: <YYYY-MM-DD>
-   authors: [<github-handle>]
-   category: <Architecture Pattern | Technology Stack | Security | Deployment>
-   impact: <High | Medium | Low>
-   dependencies: [<ADR-NNNN>]
-   pageClass: adr
-   outline: deep
-   ---
-
-   # ADR-<NNNN>: <Short title>
-
-   <AdrHeader />
-   ```
-
-4. Write the sections **Context**, **Considered options**, **Decision** and **Consequences**.
-5. Put diagrams into `assets/` and reference them as `./assets/<file>`.
-6. Open the pull request with status `proposed`.
-
-The maintainers review the record in the pull request.
-On merge, they set `status: accepted` and `date_approved`.
-The sidebar and the decision log pick up the new file automatically.
-
-List authors by GitHub handle only.
-Records never name people, internal systems, or private repositories.
+Follow the [Architecture decision records](/docs/extend-customize/code-of-conduct#architecture-decision-records) section in the Contributing guide.
