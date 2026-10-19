@@ -29,7 +29,7 @@ Run the installation:
 curl -fsSL https://raw.githubusercontent.com/konfidence-project/konfidence/main/hack/quickstart/quickstart.sh | sh
 ```
 
-The script creates a kind cluster named `konfidence-quickstart` and selects it as your current kubeconfig context. The cluster maps `localhost:9090` to NodePort `30080` for a gateway you add later. It then installs these components in order:
+The script creates a kind cluster named `konfidence-quickstart` and selects it as your current kubeconfig context. The cluster maps `localhost:9090` to NodePort `30080` for the edge gateway that [Deliver an application](./deliver-an-application.md) installs. It then installs these components in order:
 
 1. **[Flux](https://fluxcd.io/)** — controllers that reconcile Helm and Kustomize deployments.
 2. **Konfidence** — the controller and API, which also serves the dashboard.
@@ -91,7 +91,5 @@ kind delete cluster --name konfidence-quickstart
 ```
 
 ## Next steps
-
-To receive application traffic on `localhost:9090`, follow [Route external traffic to stages](../deploy-operate/install/ingress/overview.md).
 
 Your local Konfidence instance is ready. Continue with [Deliver an application](./deliver-an-application.md) to prepare the Example App in development and approve its [promotion](../reference/glossary.md#promotion) to production.
