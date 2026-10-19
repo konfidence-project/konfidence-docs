@@ -157,6 +157,7 @@ Make the installed capabilities available to your applications:
 - [Create a landscape](../../manage-delivery/landscapes.md) if you do not have one yet.
 - [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) using the connection types on this page.
 - [Connect artifact registries](../connect-registries.md#give-the-deployer-credentials) supplies deployer credentials in each landscape that needs them.
+- [Route external traffic to stages](./kubernetes/ingress.md) with a Gateway API implementation.
 
 For artifact authoring and the deployment model, see:
 
