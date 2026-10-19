@@ -203,7 +203,7 @@ EOF
 
    Until Konfidence has created the stage's route, `konfidence-router` answers `404`. A `404` here shows that the edge forwarded the request.
 
-## Use a local kind cluster
+## Use in a local kind cluster
 
 The [Quickstart](../../../../getting-started/quickstart.md) cluster has no load balancer. Its script maps `localhost:9090` to NodePort `30080` on the kind node. Give the edge Gateway a NodePort Service on that port.
 
