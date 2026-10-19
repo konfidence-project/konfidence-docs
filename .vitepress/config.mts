@@ -242,8 +242,14 @@ export default defineConfig({
                       link: "/docs/deploy-operate/install/ingress/overview",
                     },
                     {
-                      text: "Route traffic with Envoy Gateway",
-                      link: "/docs/deploy-operate/install/ingress/envoy-gateway",
+                      text: "Supported Gateways",
+                      collapsed: false,
+                      items: [
+                        {
+                          text: "Envoy Gateway",
+                          link: "/docs/deploy-operate/install/ingress/envoy-gateway",
+                        },
+                      ],
                     },
                   ],
                 },
