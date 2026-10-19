@@ -25,17 +25,40 @@ Keep the port-forward from the Quickstart running. If you stopped it, start it a
 kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
 ```
 
+## Install the edge gateway
+
+Konfidence ships no gateway. In this guide, you act as the cluster admin and install Envoy Gateway. Its edge gateway receives traffic on `localhost:9090`. [Route traffic to stages with Envoy Gateway](../deploy-operate/install/ingress/envoy-gateway.md) explains each resource.
+
+1. Install the Gateway API and Envoy Gateway CRDs:
+
+   ```bash
+   helm template eg oci://docker.io/envoyproxy/gateway-crds-helm \
+     --version v1.9.2 \
+     --set crds.gatewayAPI.enabled=true \
+     --set crds.gatewayAPI.channel=standard \
+     --set crds.envoyGateway.enabled=true \
+     | kubectl apply --server-side -f -
+   ```
+
+2. Install the Envoy Gateway controller. Each gateway then runs its proxy in its own namespace:
+
+   ```bash
+   helm upgrade --install eg oci://docker.io/envoyproxy/gateway-helm \
+     --version v1.9.2 \
+     --namespace envoy-gateway-system --create-namespace \
+     --set crds.enabled=false \
+     --set config.envoyGateway.provider.kubernetes.deploy.type=GatewayNamespace \
+     --wait
+   ```
+
+3. Create the edge gateway on NodePort `30080`, then wait until it reports `Programmed`:
+
+   ```bash
+   kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/gateway?ref=main'
+   kubectl -n edge-gateway wait gateway/edge --for=condition=Programmed --timeout=180s
+   ```
+
 ## Prepare the demo environment
-
-::: tip Run all preparation steps at once
-The Example App quickstart script runs every step of this section on the Quickstart cluster. It also installs Envoy Gateway and routes `<stage>.example.kden.local` on `localhost:9090` to the stage:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/konfidence-project/example-app/main/hack/quickstart/quickstart.sh | sh
-```
-
-Then continue with [Check the starting state](#check-the-starting-state). [Route traffic to stages with Envoy Gateway](../deploy-operate/install/ingress/envoy-gateway.md) explains the gateway part.
-:::
 
 ### Create the project
 
@@ -72,6 +95,17 @@ for ns in kden-l-dev kden-l-prod; do
   helm upgrade --install vector-data-service oci://ghcr.io/konfidence-project/charts/vector-data-service \
     --version 0.0.0-4f194adf3c2e211514d41c59d1a446275bb093e3 \
     --namespace "$ns" --wait
+done
+```
+
+### Route traffic to the stages
+
+Create a `konfidence-router` gateway in each landscape namespace and an edge route per stage. The edge route sends `<stage>.example.kden.local` to the stage's landscape and sets the `x-konfidence-stage` header. Wait until both gateways report `Programmed`:
+
+```bash
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/routing?ref=main'
+for ns in kden-l-dev kden-l-prod; do
+  kubectl -n "$ns" wait gateway/konfidence-router --for=condition=Programmed --timeout=180s
 done
 ```
 
