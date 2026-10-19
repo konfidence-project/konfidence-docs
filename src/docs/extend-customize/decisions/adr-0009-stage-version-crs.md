@@ -2,7 +2,7 @@
 id: ADR-0009
 title: "StageVersion custom resources"
 description: "Refactoring of Landscape Control Plane domain model with StageVersion custom resources"
-status: proposed
+status: accepted
 authors: [JoergBastian, niklasschoenberger, schulzh]
 category: Architecture Pattern
 impact: Medium

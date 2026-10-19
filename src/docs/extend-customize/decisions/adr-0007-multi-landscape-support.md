@@ -2,7 +2,7 @@
 id: ADR-0007
 title: "Multi-landscape support and namespace separation"
 description: "Multi-landscape support architecture and namespace isolation strategy for the Landscape Control Plane"
-status: proposed
+status: accepted
 authors: [niklasschoenberger, schulzh]
 category: Architecture Pattern
 impact: High
