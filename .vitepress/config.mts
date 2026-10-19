@@ -234,6 +234,20 @@ export default defineConfig({
                   ],
                 },
                 {
+                  text: "Route external traffic to stages",
+                  collapsed: true,
+                  items: [
+                    {
+                      text: "Choose a gateway",
+                      link: "/docs/deploy-operate/install/ingress/overview",
+                    },
+                    {
+                      text: "Route traffic with Envoy Gateway",
+                      link: "/docs/deploy-operate/install/ingress/envoy-gateway",
+                    },
+                  ],
+                },
+                {
                   text: "Connect artifact registries",
                   link: "/docs/deploy-operate/install/connect-registries",
                 },
