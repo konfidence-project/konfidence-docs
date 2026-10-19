@@ -27,6 +27,16 @@ kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
 
 ## Prepare the demo environment
 
+::: tip Run all preparation steps at once
+The Example App quickstart script runs every step of this section on the Quickstart cluster. It also installs Envoy Gateway and routes `<stage>.example.kden.local` on `localhost:9090` to the stage:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/konfidence-project/example-app/main/hack/quickstart/quickstart.sh | sh
+```
+
+Then continue with [Check the starting state](#check-the-starting-state). [Route traffic to stages with Envoy Gateway](../deploy-operate/install/ingress/envoy-gateway.md) explains the gateway part.
+:::
+
 ### Create the project
 
 Create the Example App project, then wait until Konfidence has created its namespace:
