@@ -227,7 +227,7 @@ Adopt **Option 1**, inline gate conditions on the `VectorPromotion`.
 
 With one gate per type, each condition is keyed by its gate `type`, and the whole gate state of a promotion lives on one object. Option 1 adds no new CRD and extends the `VectorPromotion` already in code, so it is the smaller design and the easier one to read, since a reviewer sees every gate in a single place rather than following a set of child objects. Conditions are set once, never seeded, and staggered, so the shared `status.conditions` slice sees optimistic-concurrency conflicts rarely for the few gates a promotion carries. The one piece of provenance a condition cannot hold, the entity that set the gate, lives in a small parallel `gateProvenance` record.
 
-Option 2 stays the escalation path. It becomes the better choice if gates grow rich per-gate state such as history, events, or retries, if a promotion routinely carries many gates, or once the future `spec` extension makes gates parameter-heavy.
+Option 2 stays documented as an alternative, but it is not chosen, because it buys a first-class gate lifecycle at the cost of a new CRD and a child object per gate, and that complexity is not warranted. Even if gates grow richer state such as history, events, or retries, a promotion carries many gates, or the future `spec` extension makes gates parameter-heavy, the gate conditions remain an inherent part of the promotion object rather than state shared across promotions. Splitting them into child objects is a normalization we do not do in Kubernetes.
 
 ## Consequences
 
