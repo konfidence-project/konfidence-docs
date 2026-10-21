@@ -39,11 +39,11 @@ The design is provider-neutral and covers a single-page app, several apps on dis
 
 ## Lifecycle
 
-1. **Package** the app as an artifact (files + labels). → *Artifact packaging*
-2. **Configure storage** with a `DeploymentTarget`. → *Deployment target*
-3. **Upload**: fetch from OCM, copy into the bucket, publish a deployment result. → *Upload* + *Storage layout*
-4. **Activate**: a separate step advances the stage pointer. → *Activation*
-5. **Serve**: the admin's CDN resolves the pointer and serves files. → *Serving*
+1. **Package** the app as an artifact (files + labels).
+2. **Configure storage** with a `DeploymentTarget`.
+3. **Upload**: fetch from OCM, copy into the bucket, publish a deployment result.
+4. **Activate**: a separate step advances the stage pointer.
+5. **Serve**: the admin's CDN resolves the pointer and serves files.
 
 ## Scope — ownership
 
