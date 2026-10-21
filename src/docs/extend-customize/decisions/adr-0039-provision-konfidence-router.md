@@ -72,15 +72,16 @@ Adopt Option C.
 1. **Opt-in per landscape.** The `gateway-route.konfidence.cloud` registration takes `gatewayClassName`. Without it, Konfidence behaves as ADR-0037 describes.
 2. **The admin's Gateway wins.** Konfidence never provisions a Gateway in these cases:
    - The registration sets `gatewayName` or `gatewayNamespace`.
-   - A `konfidence-router` without the label `app.kubernetes.io/managed-by: konfidence` exists. Konfidence uses that Gateway and never modifies it.
+   - A `konfidence-router` without the label `konfidence.cloud/provisioned-by` exists. Konfidence uses that Gateway and never modifies it. The label is Konfidence-specific, because GitOps tooling often sets `app.kubernetes.io/managed-by` on every resource.
 3. **Provisioned shape.** The provisioned Gateway has these properties:
    - Its name is `konfidence-router`, and it lives in the landscape namespace.
-   - It carries the label `app.kubernetes.io/managed-by: konfidence`.
+   - It carries the label `konfidence.cloud/provisioned-by: kubernetes-landscape-orchestrator`.
    - It has one HTTP listener on port 80.
    - It has one address with `routability: Cluster`.
 4. **Fail closed on pruning.** Konfidence reads the Gateway back after it creates it. If `routability` is missing, the cluster runs the standard-channel CRDs, and Konfidence deletes the Gateway at once. The activation fails with a message that names the missing CRDs.
-5. **Fail closed on unsupported implementations.** Konfidence attaches routes only when `status.addresses[]` is not empty and every entry reports `routability: Cluster`. Until then, the activation retries.
-6. **Gateway lifecycle.** The provisioned Gateway belongs to the landscape, not to a stage. Deleting a stage does not delete it.
+5. **Fail closed on unsupported implementations.** Konfidence attaches routes only when `status.addresses[]` is not empty and every entry reports `routability: Cluster`. If the Gateway is programmed with any other address, Konfidence deletes it and fails the activation.
+6. **Bounded, visible waiting.** While Konfidence waits, the activation task execution reports `InProgress` with the reason. The activation fails after 5 minutes without a cluster-routable address. It also fails when the implementation rejects the Gateway. A missing GatewayClass reports `InProgress` first and fails after the same 5 minutes.
+7. **Gateway lifecycle.** The provisioned Gateway belongs to the landscape, not to a stage. Deleting a stage does not delete it.
 
 ADR-0037 stays accepted.
 This record extends it with a second way to provide the inner Gateway.
