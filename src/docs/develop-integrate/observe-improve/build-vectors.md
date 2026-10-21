@@ -30,7 +30,7 @@ This guide covers the automated path. You define a [`VectorTemplate`](../../refe
 tell Konfidence how to assemble and store that vector.
 
 For background on artifacts, aliases, and vectors, see
-[Vectors and artifacts](../../core-concepts/vectors-and-artifacts.md).
+[Artifacts and vectors](../../core-concepts/vectors-and-artifacts.md).
 
 ## Prerequisites
 
