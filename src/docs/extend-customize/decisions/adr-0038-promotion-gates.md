@@ -218,10 +218,6 @@ Provenance, meaning by whom, when, and why, fits as native fields on each `Promo
 
 ## Decision
 
-::: warning Under review
-This is a first draft of the decision proposal.
-:::
-
 Adopt **Option 1**, inline gate state and provenance on the `VectorPromotion`.
 
 With one gate per type, each gate is one entry in `status.gates` keyed by its `type`, carrying the gate's `state` (`Satisfied`, `Pending`, or `Error`) and its provenance together, and the whole gate state of a promotion lives on one object. Option 1 adds no new CRD and extends the `VectorPromotion` already in code, so it is the smaller design and the easier one to read, since a reviewer sees every gate in a single place rather than following a set of child objects. Each entry is seeded once and written once, so the shared `status.gates` slice sees optimistic-concurrency conflicts rarely for the few gates a promotion carries. Deliberately unlike Kubernetes readiness gates, the gate state is not a `metav1.Condition`, which is what lets each entry hold its provenance directly rather than in a parallel record.
