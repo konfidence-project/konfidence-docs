@@ -16,7 +16,7 @@ lastUpdated: true
 This guide explains how to publish a deployable [artifact](../../reference/glossary.md#artifact) as an Open Component Model (OCM) component version to an Open Container Initiative (OCI) registry.
 After you publish it, you can reference the component version or an alias in a [`VectorTemplate`](../../reference/glossary.md#vectortemplate).
 
-For background about artifacts, aliases, and [vectors](../../reference/glossary.md#vector), see [Vectors and artifacts](../../core-concepts/vectors-and-artifacts.md).
+For background about artifacts, aliases, and [vectors](../../reference/glossary.md#vector), see [Artifacts and vectors](../../core-concepts/vectors-and-artifacts.md).
 
 ## Prerequisites
 
