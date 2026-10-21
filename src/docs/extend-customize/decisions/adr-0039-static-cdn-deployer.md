@@ -50,23 +50,23 @@ The design is provider-neutral and covers a single-page app, several apps on dis
 - The **administrator** owns the bucket, credentials, DNS, HTTPS, and the CDN, and chooses the public path split: some paths (commonly `/api`, but any they pick) route to Konfidence's gateway, the rest to static files.
 - **Konfidence** owns only the files it writes and the stage pointer. It never configures the CDN and never learns the public hostname.
 - The deployer is **one cluster-wide controller** (like the Kubernetes deployer). Tenants are isolated by the per-landscape `DeploymentTarget` (its own storage area + credential), not by anything baked into file paths.
-- Builds on the [deployer spec](https://github.com/konfidence-project/konfidence/blob/main/deployer-specification/index.md), [ADR-0038](./adr-0038-artifact-type-deployer-selection.md) (type selection), [ADR-0037](./adr-0037-ingress-routing-and-activation.md) (routing), [ADR-0034](./adr-0034-artifact-deployment-naming.md) (naming), [ADR-0027](./adr-0027-landscape-deployment-target.md) (targets), and [ADR-0024](./adr-0024-vector-scoped-data-distribution.md) (vector data).
 
 ## Artifact packaging
 
 An artifact is one folder of built files plus the standard `konfidence-manifest`. The author sets labels that tell the deployer how the app is served:
 
-| Label | Meaning | Default |
+| Label | Meaning | Default / required |
 | --- | --- | --- |
-| `static.web.konfidence.cloud/entrypoint` | the HTML file to serve (the app's start page) | `index.html` |
-| `static.web.konfidence.cloud/path` | the public path the app is served at | `/` (required if a vector has several static apps) |
-| `static.web.konfidence.cloud/module` | optional: importable entry for a microfrontend (e.g. `remoteEntry.js`) | — |
+| `static.web.konfidence.cloud/entrypoint` | the entry file: the HTML page for a navigable app, or the importable JS (e.g. `remoteEntry.js`) for a microfrontend remote | `index.html`; always needed |
+| `static.web.konfidence.cloud/path` | public path the app is served at — **present ⇒ navigable; omitted ⇒ import-only remote** | `/`. Optional for a single app; **required and unique** when a vector has several static apps |
+
+In short: `entrypoint` is always needed; `path` is optional (defaults to `/`) but becomes required — and must be unique — once a vector has more than one static app, and is deliberately omitted for import-only remotes.
 
 **Validation.** The deployer defines checks that run on `kden` artifact push (upload) and again at deploy/activation time, rejecting a bad package before it serves:
 
 - exactly one payload folder, and the `entrypoint` file exists;
 - no path-escaping entries in the folder;
-- well-formed labels (`path` valid; `module`, if set, resolves to a real file);
+- well-formed labels (`path` valid; `entrypoint` resolves to a real file);
 - **no two apps claiming the same `path`**, and no duplicate result `name`, within a vector. (Duplicate-path checks need the whole vector, so they run at deploy/activation time, not on a single push.)
 
 Failures surface on the artifact/vector status with a reason; nothing is uploaded or activated.
@@ -130,7 +130,7 @@ When core creates an `ArtifactDeployment` of this type, the deployer:
 
 A deployment result tells the platform what was deployed and how to reach it. Every static app uses the **same shape**; optional fields encode how it is used.
 
-Navigable app (`path` + `document`):
+Navigable app (`path` + `entrypoint`):
 
 ```json
 {
@@ -139,12 +139,12 @@ Navigable app (`path` + `document`):
   "spec": {
     "assetBase": "/_v/shop-frontend-1.2.0-abc/",
     "path": "/",                  // present → navigable (becomes a route in the pointer)
-    "document": "index.html"      // present → the page served at that path
+    "entrypoint": "index.html"      // present → the page served at that path
   }
 }
 ```
 
-Microfrontend remote (`module`, no `path`):
+Microfrontend remote (`entrypoint` is the importable JS, no `path`):
 
 ```json
 {
@@ -152,12 +152,12 @@ Microfrontend remote (`module`, no `path`):
   "type": "static-web",
   "spec": {
     "assetBase": "/_v/checkout-0.9.1-def/",
-    "module": "remoteEntry.js"    // present → importable by a shell; no path → no route
+    "entrypoint": "remoteEntry.js"   // no path → not navigable; a shell imports it by name
   }
 }
 ```
 
-`path` + `document` → **navigable**; `module` → **importable**. A result with only `assetBase` + `module` has no route — a shell loads it by name (see *One app, many apps, or microfrontends*).
+`path` present → **navigable** (becomes a route). `path` absent → **import-only**: a shell loads the result's `entrypoint` by name (see *One app, many apps, or microfrontends*).
 
 Core aggregates every artifact's result into the vector's immutable **vector data** (feature flags + authored config + the app list) and writes the browser-safe copy to `_vectordata/<vector-id>/vector-data.json`. Storage coordinates (bucket, prefix) never appear in anything a browser can read.
 
@@ -170,8 +170,8 @@ Activation writes the stage pointer, `<stage>/_active` — plain JSON listing th
   "vectorId": "prod-7f3a",
   "vectorDataRef": "_vectordata/prod-7f3a/vector-data.json",
   "routes": [
-    { "path": "/",      "ad": "shop-frontend-1.2.0-abc", "document": "index.html" },
-    { "path": "/admin", "ad": "shop-admin-0.9.1-def",    "document": "index.html" }
+    { "path": "/",      "ad": "shop-frontend-1.2.0-abc", "entrypoint": "index.html" },
+    { "path": "/admin", "ad": "shop-admin-0.9.1-def",    "entrypoint": "index.html" }
   ]
 }
 ```
@@ -185,14 +185,14 @@ The pointer carries only **navigable routes**. Microfrontend remotes (no `path`)
   "features": { "betaCheckout": true },
   "authored": { "public": { "theme": "dark" } },
   "results": [
-    { "name": "shop",     "spec": { "assetBase": "/_v/shop-frontend-1.2.0-abc/", "path": "/", "document": "index.html" } },
-    { "name": "admin",    "spec": { "assetBase": "/_v/shop-admin-0.9.1-def/", "path": "/admin", "document": "index.html" } },
-    { "name": "checkout", "spec": { "assetBase": "/_v/checkout-0.9.1-def/", "module": "remoteEntry.js" } }
+    { "name": "shop",     "spec": { "assetBase": "/_v/shop-frontend-1.2.0-abc/", "path": "/", "entrypoint": "index.html" } },
+    { "name": "admin",    "spec": { "assetBase": "/_v/shop-admin-0.9.1-def/", "path": "/admin", "entrypoint": "index.html" } },
+    { "name": "checkout", "spec": { "assetBase": "/_v/checkout-0.9.1-def/", "entrypoint": "remoteEntry.js" } }
   ]
 }
 ```
 
-So one read of `<stage>/_active` yields the routes and a `vectorDataRef`; a shell then reads the bundle (served as `/__vector-data.json`) to discover each remote's `assetBase` + `module`.
+So one read of `<stage>/_active` yields the routes and a `vectorDataRef`; a shell then reads the bundle (served as `/__vector-data.json`) to discover each remote's `assetBase` + `entrypoint`.
 
 Behavior:
 
@@ -211,7 +211,7 @@ Three rules:
 1. /_v/<ad>/*            → serve <ad>/*            (version in the URL → immutable, no pointer read)
 2. /__vector-data.json   → read _active, serve the vector-data bundle
 3. any other static path → read <stage>/_active, longest-prefix match routes,
-                           serve <ad>/<document>   (SPA fallback to the document;
+                           serve <ad>/<entrypoint>   (SPA fallback to the entrypoint;
                            no matching route → 404, never another app)
 ```
 
@@ -256,13 +256,13 @@ status:
         if (path === "/__vector-data.json")
           return serve(env, prefix + ptr.vectorDataRef, false);
 
-        // 3. Navigable routes: longest-prefix match, SPA fallback to the document
+        // 3. Navigable routes: longest-prefix match, SPA fallback to the entrypoint
         const route = matchRoute(ptr.routes, path);
         if (!route) return new Response("not found", { status: 404 });
         const rest = path.slice(route.path.length).replace(/^\/+/, "");
-        const exact = await env.BUCKET.get(prefix + route.ad + "/" + (rest || route.document));
+        const exact = await env.BUCKET.get(prefix + route.ad + "/" + (rest || route.entrypoint));
         if (exact) return respond(exact, false);
-        return serve(env, prefix + route.ad + "/" + route.document, false);
+        return serve(env, prefix + route.ad + "/" + route.entrypoint, false);
       },
     };
 
@@ -332,12 +332,12 @@ Only `/` and `/__vector-data.json` read the pointer; everything else is immutabl
 
 All three share the result shape and the resolver; only which fields are set, and what the browser does, differ:
 
-- **Single-page app** — one app, `path` `/` + a `document`. One route.
-- **Several apps on paths** — each sets its own `path` + `document`. Several routes; longest-prefix match selects one, and deep links fall back to that app's `document`.
-- **Microfrontends** — a shell app (`path` `/`) plus remotes with `module` (usually no `path`). The shell:
+- **Single-page app** — one app, `path` `/` + an `entrypoint`. One route.
+- **Several apps on paths** — each sets its own `path` + `entrypoint`. Several routes; longest-prefix match selects one, and deep links fall back to that app's `entrypoint`.
+- **Microfrontends** — a shell app (`path` `/`) plus remotes with no `path`. The shell:
   1. loads and boots from `/`,
   2. fetches `/__vector-data.json`, **pins the vector id**, and uses `results` as a registry,
-  3. builds an import map from each remote's `assetBase + module`,
+  3. builds an import map from each remote's `assetBase + entrypoint`,
   4. imports each remote from `/_v/<ad>/…` and calls its `mount(element, ctx)`.
 
 The shared `ctx` (`{ vectorId, flags, config, shared deps }`) comes entirely from that one pinned bundle, so shell and remotes are the **same vector** — no version skew. The edge only serves files; composition is browser-side.
@@ -367,5 +367,6 @@ The shared `ctx` (`{ vectorId, flags, config, shared deps }`) comes entirely fro
 - **Coordinated cross-runtime activation** ("serve the UI only after everything else is live"). v1 uses Immediate; this needs core's cross-runtime ordering.
 - **Edge key-value store.** The resolver reads the pointer straight from the bucket.
 - **Content-hash deduplication.** Naming folders after the `ArtifactDeployment` is simpler and keeps cleanup correct.
+- **Hybrid apps** that are both navigable as a page *and* importable as a remote. That would need a second entry alongside `entrypoint` (an HTML page *and* an importable module); v1 treats an app as one or the other.
 - **Session stickiness.** The browser already pins its vector id and can send it on `/api` calls, so the plumbing exists. Deferred is *honouring* it to keep an open tab on its original version across a switch — so for now an old tab may call the new backend or request a removed asset. Addable later without changing this design.
 - **Multi-region convergence.**
