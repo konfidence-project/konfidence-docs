@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Route traffic to stages with Envoy Gateway
 
-Use [Envoy Gateway](https://gateway.envoyproxy.io/) to route external requests to a [stage](../../../../reference/glossary.md#stage) by hostname. You install Envoy Gateway, one edge Gateway, and one `konfidence-router` Gateway per landscape. [Route external traffic to stages](./ingress.md) explains what each part does.
+Use [Envoy Gateway](https://gateway.envoyproxy.io/) to route external requests to a [stage](../../../../reference/glossary.md#stage) by hostname. You install Envoy Gateway, one edge Gateway, and one `konfidence-router` Gateway per landscape. You also register the activation task that lets Konfidence attach its routes. [Route external traffic to stages](./ingress.md) explains what each part does.
 
 ## Prerequisites
 
@@ -26,7 +26,10 @@ export ENVOY_GATEWAY_VERSION=v1.9.2
 export LANDSCAPE_NAMESPACE=kden-l-dev
 export STAGE=dev-eu12
 export STAGE_HOSTNAME=dev-eu12.example.kden.local
+export SERVICE=my-service
 ```
+
+`SERVICE` is the name of a [deployment result](../../../../reference/glossary.md#deployment-result) of the stage.
 
 ## Install Envoy Gateway
 
@@ -58,6 +61,10 @@ The `helm upgrade` command reports `STATUS: deployed`.
 ## Create the edge Gateway
 
 The edge Gateway receives external traffic. Envoy Gateway gives it a `LoadBalancer` Service by default.
+
+::: tip Local kind cluster
+A kind cluster has no load balancer. On the [Quickstart](../../../../getting-started/quickstart.md) cluster, follow [Use in a local kind cluster](#use-in-a-local-kind-cluster) first, then create the edge Gateway with the `infrastructure` block from that section.
+:::
 
 ```bash
 kubectl apply -f - <<EOF
@@ -154,9 +161,32 @@ kubectl wait gateway/konfidence-router -n "$LANDSCAPE_NAMESPACE" --for=condition
 
 `kubectl get service konfidence-router -n "$LANDSCAPE_NAMESPACE"` shows the type `ClusterIP`.
 
+## Register the activation task for each landscape
+
+Repeat this step for every landscape namespace. Konfidence creates the stage routes on `konfidence-router` only if this registration exists. Without it, activations succeed but no route exists.
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: konfidence.cloud/v1alpha1
+kind: ActivationTaskRegistration
+metadata:
+  name: gateway-route
+  namespace: $LANDSCAPE_NAMESPACE
+spec:
+  type: gateway-route.konfidence.cloud
+  # Optional: gatewayName and gatewayNamespace override the Gateway that the
+  # routes attach to. They default to konfidence-router in this namespace.
+  spec: {}
+EOF
+```
+
+After the next activation of a stage in this landscape, `kubectl get httproute -n "$LANDSCAPE_NAMESPACE"` lists `konfidence-stage-<stage>`.
+
 ## Route a hostname to each stage
 
-Repeat this step for every stage. The route matches the stage's hostname and sets `x-konfidence-stage`. It then forwards the request to the landscape's `konfidence-router`.
+Repeat this step for every stage that you want to expose outside the cluster. The route matches the stage's hostname. Each rule matches a path, sets the headers that select the stage and the deployment result, and forwards the request to the landscape's `konfidence-router`. Add one rule per deployment result that you want to expose.
+
+`kubectl get httproute "konfidence-stage-$STAGE" -n "$LANDSCAPE_NAMESPACE" -o yaml` shows the `x-konfidence-service` values that Konfidence matches once the stage is active.
 
 ```bash
 kubectl apply -f - <<EOF
@@ -171,12 +201,22 @@ spec:
   hostnames:
     - $STAGE_HOSTNAME
   rules:
-    - filters:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /$SERVICE
+      filters:
         - type: RequestHeaderModifier
           requestHeaderModifier:
+            # set overwrites client-supplied values, so clients cannot
+            # pick another stage or service.
             set:
+              # Selects the stage.
               - name: x-konfidence-stage
                 value: $STAGE
+              # Selects the deployment result within the stage.
+              - name: x-konfidence-service
+                value: $SERVICE
       backendRefs:
         - name: konfidence-router
           namespace: $LANDSCAPE_NAMESPACE
@@ -195,17 +235,19 @@ EOF
 
    The output shows `Accepted=True` and `ResolvedRefs=True`.
 
-2. Send a request through the edge. `<EDGE_ADDRESS>` is the address that `kubectl get gateway edge -n edge-gateway` shows:
+2. Send a request through the edge. `<EDGE_ADDRESS>` is the address that `kubectl get gateway edge -n edge-gateway` shows. On a local kind cluster, use `localhost:9090` instead, as described in [Use in a local kind cluster](#use-in-a-local-kind-cluster):
 
    ```bash
-   curl -i -H "Host: $STAGE_HOSTNAME" http://<EDGE_ADDRESS>/
+   curl -i -H "Host: $STAGE_HOSTNAME" "http://<EDGE_ADDRESS>/$SERVICE"
    ```
 
-   Until Konfidence has created the stage's route, `konfidence-router` answers `404`. A `404` here shows that the edge forwarded the request.
+   The `Host` header selects the route, so you need no DNS entry or `/etc/hosts` change. Until Konfidence has created the stage's route, `konfidence-router` answers `404`. A `404` here shows that the edge forwarded the request.
 
 ## Use in a local kind cluster
 
 The [Quickstart](../../../../getting-started/quickstart.md) cluster has no load balancer. Its script maps `localhost:9090` to NodePort `30080` on the kind node. Give the edge Gateway a NodePort Service on that port.
+
+A kind cluster that you created yourself has no such mapping. Add an `extraPortMappings` entry from `containerPort: 30080` to `hostPort: 9090` to its configuration, then recreate the cluster.
 
 1. Before you create the edge Gateway, create this `EnvoyProxy`:
 
@@ -246,7 +288,7 @@ The [Quickstart](../../../../getting-started/quickstart.md) cluster has no load 
 3. Send requests to `localhost:9090`:
 
    ```bash
-   curl -i -H "Host: $STAGE_HOSTNAME" http://localhost:9090/
+   curl -i -H "Host: $STAGE_HOSTNAME" "http://localhost:9090/$SERVICE"
    ```
 
 ## Troubleshooting
@@ -256,6 +298,8 @@ The [Quickstart](../../../../getting-started/quickstart.md) cluster has no load 
 | `helm install` fails with `Too long: may not be more than 1048576 bytes` | You installed the CRD chart with `helm install` | Render it with `helm template` and apply it server-side, as in the first step. |
 | Edge route shows `ResolvedRefs=False` with reason `RefNotPermitted` | The ReferenceGrant is missing in the landscape namespace | Create the ReferenceGrant from the `konfidence-router` step. |
 | Edge route shows `ResolvedRefs=False` with reason `BackendNotFound` | The `konfidence-router` Service is in `envoy-gateway-system` | Install the controller with `deploy.type=GatewayNamespace`. Then recreate the Gateway. |
+| `kubectl get httproute -n "$LANDSCAPE_NAMESPACE"` lists no `konfidence-stage-<stage>` route after an activation | The activation task is not registered in the landscape namespace | Create the `ActivationTaskRegistration` from the registration step. Konfidence creates the route on the next activation of the stage. |
+| `curl` returns `404` although `konfidence-stage-<stage>` exists | The edge route does not set `x-konfidence-service`, or its value is not a deployment result name | Compare the edge route's `x-konfidence-service` value with the values in `konfidence-stage-<stage>`. |
 | `curl` returns `503` with `upstream connect error` | The backend Pod of the stage does not accept connections | Check the Pod with `kubectl get pods -n "$LANDSCAPE_NAMESPACE"`. |
 
 ## Next steps
