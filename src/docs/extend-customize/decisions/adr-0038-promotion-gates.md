@@ -2,8 +2,9 @@
 id: ADR-0038
 title: "Promotion gates"
 description: "A readiness-gate mechanism that blocks a VectorPromotion from executing until every configured gate is satisfied, using one uniform contract for core and third-party gates."
-status: proposed
+status: accepted
 date_proposed: 2026-10-06
+date_approved: 2026-10-21
 authors: [JNKielmann]
 category: Architecture Pattern
 impact: High
