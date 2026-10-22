@@ -1,5 +1,5 @@
 ---
-id: ADR-0038
+id: ADR-0039
 title: "Promotion gates"
 description: "A readiness-gate mechanism that blocks a VectorPromotion from executing until every configured gate is satisfied, using one uniform contract for core and third-party gates."
 status: accepted
@@ -12,7 +12,7 @@ dependencies: [ADR-0032, ADR-0012, ADR-0013]
 pageClass: adr
 outline: deep
 ---
-# ADR-0038: Promotion gates
+# ADR-0039: Promotion gates
 
 <AdrHeader />
 
@@ -65,7 +65,7 @@ spec:
     - type: example.com/E2ETests   # a third-party gate, declared the same way
 ```
 
-Each gate is identified by its `type`, and the gate list is a map keyed by `type` (`listType=map`), so a config declares at most one gate of each type and the `type` alone identifies a gate within a promotion. The `VectorPromotion` controller never interprets the `type`; it only tracks whether that gate is satisfied, which keeps the core agnostic to gate types (requirement 2). Core cannot know what a third-party gate requires, so validating a gate's configuration is the gate controller's job. It should detect a misconfiguration and report it rather than leave the promotion waiting on a gate that can never pass, such as a `konfidence.cloud/ActivatedOnSourceStage` gate on a `VectorPromotionConfig` whose source is a `VectorTemplate`, which has no source stage. How a controller reports such a problem is covered in the [open questions](#open-questions).
+Each gate is identified by its `type`, and the gate list is a map keyed by `type` (`listType=map`), so a config declares at most one gate of each type and the `type` alone identifies a gate within a promotion. The `VectorPromotion` controller never interprets the `type`; it only tracks whether that gate is satisfied, which keeps the core agnostic to gate types (requirement 2). Core cannot know what a third-party gate requires, so validating a gate's configuration is the gate controller's job. It should detect a misconfiguration and report it rather than leave the promotion waiting on a gate that can never pass, such as a `konfidence.cloud/ActivatedOnSourceStage` gate on a `VectorPromotionConfig` whose source is a `VectorTemplate`, which has no source stage. How a controller reports such a problem is described in [Option 1](#option-1-inline-gate-list-state-and-provenance-on-the-vectorpromotion) (set the gate entry to `Error` with a descriptive reason).
 
 A gate takes no parameters in this design. If a gate later needs extra information, the gate entry could gain an optional `spec` that only its writer interprets. That is a future extension, not part of this design.
 
@@ -89,6 +89,8 @@ A promotion stays `Waiting` until all its gates are satisfied, then derives `Rea
 The three rows share one mechanism. `konfidence.cloud/ExplicitApproval` and `konfidence.cloud/ActivatedOnSourceStage` are shipped by core only in the sense that their writers live in the Konfidence binary. They are declared and evaluated identically to any third-party gate.
 
 **Every gate records its provenance in the status.** When a gate is set satisfied, the VectorPromotion status records three facts about it as explicit fields: when it was set, which entity set it, and a reason. This mirrors the current `status.approval`, which records `approvedAt` and `approvedBy`, and it works the same way for every gate. A `konfidence.cloud/ActivatedOnSourceStage` gate records its gate controller as the entity, with the reason that the stage is active. A `konfidence.cloud/ExplicitApproval` gate records the approving user. A third-party gate records its own controller. For a human action the entity comes from the authenticated session rather than the request body, exactly as the current approval path takes `identity.Subject`. A gate is set satisfied at most once.
+
+A gate's state can be changed at any time while the `VectorPromotion` is in state `Waiting`.
 
 Gate controllers set gate state through a provided Go library that writes a gate's state and provenance in one update, so the `state` and the `setBy`, `setAt`, and reason never drift apart. The convention is that controllers always use this library and human callers always go through the Konfidence API, which takes the acting identity from the authenticated session rather than a client-supplied value. The provenance is advisory and not a security boundary. Nothing currently enforces that `setBy` is truthful, so any actor with enough cluster access to patch the promotion status can write or overwrite it with an arbitrary value.
 
