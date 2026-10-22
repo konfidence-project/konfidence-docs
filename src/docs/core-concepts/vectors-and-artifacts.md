@@ -21,7 +21,7 @@ The artifact can point to the deployable content or include binary resources dir
 
 ## Artifact aliases
 
-An [artifact alias](../reference/glossary.md#artifact-alias) is a dynamic reference (movable pointer) that tells Konfidence which artifact to include when it assembles a vector.
+An [artifact alias](../reference/glossary.md#artifact-alias) is a dynamic reference (movable pointer) that tells Konfidence which artifact is included in the vector assembly.
 
 An alias can describe any dimension that matters to your delivery model, for example:
 
