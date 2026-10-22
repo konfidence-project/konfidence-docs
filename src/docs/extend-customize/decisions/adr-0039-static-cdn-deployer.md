@@ -97,10 +97,7 @@ status:
 
 Rules, from the deployer spec:
 
-- One target per artifact type per landscape (§2.1). The deployer reconciles only its own `artifactType`, and after validating `parameters` sets `Ready` and reports its `controller` version (§2.1–§2.2).
-- The deployer defines and validates `parameters` (§2.2); core never interprets them.
-- The deployer MAY use installation-wide defaults applying to every landscape it serves (§2.2).
-- The credential SHOULD be limited to `landscapePrefix` so one landscape cannot overwrite another's files (best-effort; the deployer cannot always prove scope).
+### Deployment 
 
 ## Storage layout
 
