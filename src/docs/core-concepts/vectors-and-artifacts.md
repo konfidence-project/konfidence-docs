@@ -16,7 +16,7 @@ This page explains both concepts, how artifact aliases link them, and how to def
 An [artifact](../reference/glossary.md#artifact) describes one piece of your software, such as a microservice, a configuration file, or an asset.
 Development teams usually build and publish artifacts in their continuous integration (CI) pipelines.
 
-An artifact is an Open Component Model (OCM) component version that contains a reference to a build result, such as a Docker image, and its metadata.
+Artifacts are packaged via Open Component Model (OCM). They contain a reference to a build result, such as a Docker image, and its metadata.
 The artifact can point to the deployable content or include binary resources directly.
 
 ## Artifact aliases
@@ -51,10 +51,7 @@ A vector is the complete application version that Konfidence moves through the [
 
 A CI pipeline publishes each artifact as a component version. [`VectorTemplate`](../reference/glossary#vectortemplate) assembles a set of artifacts into a vector, either by resolving aliases that track moving build outputs, or by referencing specific component versions directly.
 
-<figure>
-  <img src="./img/artifact-to-vector-flow.drawio.svg" alt="A CI pipeline builds and publishes an artifact tagged with an alias such as :main. VectorTemplate resolves that alias and assembles an immutable vector snapshot stored in a registry.">
-  <figcaption>A CI pipeline publishes an artifact with an alias. VectorTemplate resolves the alias and assembles an immutable vector.</figcaption>
-</figure>
+<DrawioDiagram src="/assets/diagrams/artifact-to-vector-flow.drawio" />
 
 ## Related pages
 
