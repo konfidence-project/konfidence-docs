@@ -83,8 +83,8 @@ Do not create a new landscape solely because a stage has a different name in the
 
 Use these pages to explore related concepts or configure the resources described here:
 
-- [Vectors and Artifacts](./vectors-and-artifacts.md) explains the immutable application versions selected by stages.
-- [Promotions and Delivery Flow](./delivery-flow.md) explains how vectors move between delivery checkpoints.
+- [Artifacts and vectors](./vectors-and-artifacts.md) explains the immutable application versions selected by stages.
+- [Delivery flow](./delivery-flow.md) explains how vectors move between delivery checkpoints.
 - [Deployment model](./deployment-model.md) explains how artifacts, [deployment classes](../reference/glossary.md#deployment-class), deployers, and targets connect.
 - [Create a landscape](../deploy-operate/manage-delivery/landscapes.md) explains how operators establish landscape boundaries.
 - [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md) explains how a landscape is connected to infrastructure.
