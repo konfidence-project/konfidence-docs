@@ -18,164 +18,126 @@ outline: deep
 
 ## Context
 
-Every time the UI looks up which artifacts and versions are deployed on a stage, or a user opens a promotion for approval, Konfidence makes a live call to the OCI registry to fetch the vector descriptor and artifact manifests. There is no local storage or caching strategy. A remote registry call is a synchronous network round-trip - typically tens to hundreds of milliseconds under normal conditions, potentially seconds under load or degraded connectivity, and a hard failure when the registry is unavailable. This makes every UI page load that involves vector or artifact data directly dependent on registry latency, blocks read-only operations during registry outages, and produces redundant calls for the same content digest across concurrent reconciles.
+Every time a user opens a stage in the UI, inspects an artifact from the CLI, or opens a promotion for approval, Konfidence makes a live call to the OCI registry to fetch the vector descriptor and artifact manifests. There is no local storage or caching strategy. A remote registry call is a synchronous network round-trip — typically tens to hundreds of milliseconds under normal conditions, potentially seconds under load, and a hard failure when the registry is unavailable.
 
-As deployments grow we would have more projects, landscapes, concurrent promotions, hence this problem compounds. The controller reconciles every `VectorDeployment` at a configurable interval. Under load, dozens of reconciles for different deployments can hit the same vector digest simultaneously, each triggering an independent registry fetch. The API server is stateless and can be scaled horizontally, but any in-process cache lives only within a single replica; a multi-replica deployment today would multiply registry calls proportionally. The OCI registry itself becomes a scalability bottleneck if Konfidence does not reduce the call volume.
+There are three concrete use cases this ADR must address:
 
-The goal is to make obtaining OCM resources within Konfidence performant: controllers, API consumers, and interactive workflows should not be blocked by redundant remote registry calls. Specifically:
+**Stage detail view.** A user opens a stage in the UI to see which artifact versions are currently deployed and what configuration they carry. Today this triggers a live registry call. The data is already available in the cluster — `Stage.Status.LatestVectorDeploymentRef` points to the `VectorDeployment` CR, which holds `ResolvedVectorOcm` (full descriptor JSON) written by the deployment controller, and `VectorData` holds the resolved `features` and `authored` configuration — but neither is exposed through the API.
 
-- Dashboard and CLI development should be able to surface the contents of individual artifacts and full vector contents with latency comparable to a local Kubernetes API call, not a remote registry round-trip.
-- Operators approving promotions need the diff between the incoming and currently deployed vector to be available immediately when they open the approval UI - not computed on demand against the registry at decision time.
+**Promotion approval diff.** A user opens a pending promotion to compare the incoming vector against what is currently deployed before approving. Promotions are created automatically by the `VectorPromotionConfigReconciler` when it detects drift between source and target — the user does not trigger them. For `Stage` sources, `RequireApproval` defaults to `true`, so the promotion sits in `Waiting` state until a user acts. The current vector is available on the existing `VectorDeployment` CR. The incoming vector is not — the `VectorDeployment` for it is only created after the promotion executes (`Stage.Spec.Vector` is written on execution → stage controller creates `StageVersion` → `StageVersionReconciler` creates `VectorDeployment`). A registry call is therefore unavoidable for the incoming side under the current design, and it happens in the request path: every time a user opens the approval UI, the server waits on the registry before rendering the page.
 
-The data needed to solve the UI use cases is partially already in the system, but it's just not surfaced. `VectorDeployment.Status.ResolvedVectorOcm` holds the full OCM descriptor JSON after the first fetch, and `ArtifactDeployment.Spec.Component.Resources` holds parsed OCM resources. The `VectorDescriptor` struct (returned by `VectorOcmPort.GetVectorDescriptor`) now also carries a `Configuration []byte` field for the optional vector-scoped config resource, showing the codebase is already accumulating content on the port. None of this is exposed through the API server: the 18 paths in `api/openapi.yaml` include `getVectorDeploymentV1` and `getArtifactDeploymentV1` (added recently), but those return only reference strings and status, but no endpoint returns vector component lists, artifact versions, or vector configuration content. `VectorPromotionStatus` has no diff fields; the only comparison in the controller is a string equality check on the vector reference.
+**CLI artifact inspection.** A developer uses `kden artifact inspect` to examine the tasks, resources, and configuration of an artifact version, including versions that are not currently deployed (historical, from another landscape, or never promoted). There is no CR to read from; a registry call is always required today.
 
-Two caching patterns already exist in the codebase and inform the design: the `hashicorp/golang-lru/v2/expirable` LRU in `pkg/ocm/crypto/verifier_cache.go` (keyed by content digest, configurable size and TTL), and the `InMemoryCache` with `singleflight` in the KLO OFREP service (event-driven invalidation via Kubernetes informer, prevents thundering-herd on concurrent cache misses).
+The codebase already contains two patterns that inform the caching design: the `hashicorp/golang-lru/v2/expirable` LRU in `pkg/ocm/crypto/verifier_cache.go` (keyed by content digest, configurable size and TTL), and the singleflight pattern in `internal/auth/token_verifier.go` (collapses concurrent cache misses for the same key into a single in-flight call).
 
 This ADR is out of scope for changes to how vectors are assembled or promoted, and for metadata storage and vector lifecycle history.
 
 ## Considered solutions
 
-### Option 1 - Extend existing CR storage and surface via the API
+### Option 1 — CR storage + API endpoint
 
-The relevant data already exists on CRs. `VectorDeployment.Status.ResolvedVectorOcm` stores the full descriptor JSON after first fetch; `ArtifactDeployment.Spec.Component.Resources` stores parsed OCM resources. The missing piece is wiring this through the API response model and adding a content endpoint. No new infrastructure is required.
+Expose the content already stored on CRs (`VectorDeployment.Status.ResolvedVectorOcm`, `ArtifactDeployment.Spec.Component.Resources`, `VectorData`) through new API endpoints. Fall back to a live registry fetch for content not covered by a live CR.
 
-The immediate implementation reads from these CR fields with no registry calls at read time. For artifacts not currently represented by a live CR, the endpoint falls back to a direct registry fetch, serving as the API boundary behind which caching can be added transparently later.
+**What it covers.** Stage view is served from the existing `VectorDeployment` CR with no registry call. Promotion diff current side is also served from the CR. The promotion diff incoming side and all CLI inspect cases still require a live registry call — no CR exists at `Waiting` state, and non-deployed versions have no CR at all.
 
-Advantages:
+**Persistence.** Content is tied to the CR lifecycle. If the `VectorDeployment` is deleted (rollback, cleanup), the descriptor is gone and the diff endpoint returns 404 for that version.
 
-- Lowest implementation cost - data already exists in etcd, no new infrastructure
-- Replaces remote registry calls with local Kubernetes API reads for all currently deployed artifacts - a local etcd read is orders of magnitude faster and available even when the registry is not
-- Scales horizontally with the API server - etcd is the shared store, no per-replica cache coordination needed
+**Maintainability overhead.** Low — no new infrastructure, no new reconcilers, no new packages.
 
-Disadvantages:
+**Implementation time.** Fastest.
 
-- CRs are operational objects, not a content store - bloating status fields with large descriptor JSON is a misuse of etcd
-- etcd has a hard object size limit (default 1.5 MB) - large vectors with many components could approach this; as the number of managed components grows, this ceiling becomes a hard scalability constraint
-- Content is tied to the CR lifecycle - if a `VectorDeployment` is deleted, the content is gone
-- Does not cover the promotion diff view - the "before" vector may have no `VectorDeployment` in the target landscape yet
-- The fallback to a direct registry fetch for non-deployed artifacts means this option alone does not fully deliver on the performance goal for the general case - it is performant only for artifacts currently represented by a live CR
+**Assessment.** Not adopted as a standalone solution. etcd is not a content store and storing large JSON blobs in `status` fields is a misuse of Kubernetes API machinery and a pattern to avoid. The 1.5 MB per-object hard limit is a concrete blocker as vector size grows; a 50-component descriptor can already reach 200–400 KB. The option also leaves the two highest-priority use cases — promotion diff incoming side and CLI inspect — partially or fully unaddressed. The CR fields it relies on remain useful as an internal data source (the Phase 1 warmer reads `ResolvedVectorOcm` to get the current vector), but exposing them directly through the API as the primary content layer is not the right design.
 
-### Option 2 - Precompute and store the vector diff on VectorPromotion at creation time
+### Option 2+3 — Controller-side LRU cache + promotion diff pre-compute
 
-When a `VectorPromotion` enters `Waiting` state, fetch both vectors from OCM once, compute the artifact-level diff, and write it to `VectorPromotionStatus`. The approval UI reads the diff from the CR - zero registry calls at approval time. The "before" side of the diff is on `Stage.Spec.Vector`, which is already resolved by `resolveTargetStage` during promotion execution; the same call works at `Waiting` state.
+Wrap `VectorOcmPort` with a caching adapter (LRU + singleflight) shared across controllers. A new `VectorPromotionCacheWarmer` reconciler watches promotions entering `Waiting` state, pre-fetches both sides of the diff in the background, and writes the result to `VectorPromotionStatus.Diff`. The approval UI reads the diff from the CR with no registry call at request time.
 
-`VectorPromotionStatus` currently has no diff fields and the controller has no OCM client.
+`VectorOcmPort` is currently private to `internal/vectordeployment/internal/controller/` and must be promoted to a shared package before this work can start.
 
-Advantages:
+**What it covers.** Promotion diff is pre-computed before the user opens the approval page. The singleflight layer collapses concurrent cache misses for the same digest into a single in-flight registry call, eliminating thundering-herd across reconciles. Stage view and CLI inspect remain unaddressed — the controller-side cache is not accessible to the API server.
 
-- Directly solves the promotion approval performance problem - the diff is precomputed and stored; opening the approval UI requires no registry call
-- Registry calls happen exactly once per promotion at creation - not on every approval page load
-- Diff is immutable once written - consistent for all approvers regardless of timing
+**Persistence.** In-memory only, lost on controller restart. The cache self-heals quickly: any promotion in `Waiting` state re-triggers the warmer on the first informer event after startup.
 
-Disadvantages:
+**Maintainability overhead.** Medium — new `VectorPromotionCacheWarmer` reconciler, a new shared package for `VectorOcmPort`, LRU cache size tuning, and the `VectorPromotion` controller acquiring an OCM client dependency for the first time.
 
-- Only covers promotions - not the general vector content inspection use case (UI stage view, CLI artifact inspection)
-- Promotions that existed before this feature was deployed have no pre-computed diff; a fallback registry fetch or a "diff unavailable" state is needed for those
-- If the registry is unavailable at promotion creation time, diff computation fails
+**Implementation time.** Medium.
 
-### Option 3 - LRU cache keyed by content digest in the controller, pre-warmed by outstanding promotions
+**Assessment.** Adopted for the promotion diff use case. Moves the unavoidable registry call for the incoming vector out of the request path entirely and into the controller background. Incomplete on its ownm, so stage view and CLI inspect remain unaddressed.
 
-Wrap the `VectorOcmPort` interface (currently at `internal/vectordeployment/internal/controller/ocm_port.go:23`) with a caching adapter keyed by content digest. Introduce a dedicated `VectorPromotionCacheWarmer` reconciler that watches for `VectorPromotion` objects entering `Waiting` state and pre-warms the cache with both the incoming and currently deployed vector before the approval UI asks.
+### Option 4 — API server in-process cache
 
-Content digest is a natural cache key - the same digest always means the same content (immutable by definition in OCM/OCI), so there is no cache invalidation problem. The existing `VectorPromotionReconciler` returns `ctrl.Result{}` with no requeue while `Waiting`, relying entirely on update events; pre-warming therefore requires a separate reconciler.
+The API server acquires an OCM client and caches responses in-process using the `otter`-backed pattern already established in `internal/api/oidc/exchangestore.go`. All three use cases are served through a single code path. The API server currently makes zero OCM calls and has no OCM client wired in.
 
-Per reconcile, the warmer reads `VectorPromotion.Spec.Vector` (the incoming "after" reference), calls `resolveTargetStage` to get the currently deployed "before" reference from `Stage.Spec.Vector`, calls `ocmPort.GetVectorDescriptor` for both refs to populate the shared cache, computes the artifact-level diff in-process, and writes the result to `VectorPromotionStatus.Diff`. If the registry is unreachable, the warmer writes `DiffState: Failed` and returns an error (triggering controller-runtime exponential backoff); the main reconciler ignores the diff field entirely, so the promotion is never blocked.
+OCM content is digest-addressed — the same digest always produces the same bytes — so per-replica cache misses result in redundant fetches rather than stale reads. This is the same property that makes Harbor's in-process OCI manifest cache and the Kubernetes apiserver's watch cache safe without shared state. For mutable references (vector tags), a short TTL is required to prevent serving stale content after a tag moves.
 
-`VectorOcmPort` is currently private to the vectordeployment controller package and must be promoted to a shared package before the vectorpromotion controller can depend on it.
+**What it covers.** Stage view, promotion diff, and CLI inspect are all served from cache after the first request per version per replica. Independent of the controller lifecycle: reads are served even if controllers are restarted or temporarily unavailable.
 
-Advantages:
+**Persistence.** In-memory only, lost on API server restart. Each replica warms its cache independently; under many replicas, total registry call volume on cold start scales with replica count, though redundant fetches rather than stale reads.
 
-- The approval UI diff is served from cache - zero registry latency at approval time; the cache is warmed before the user opens the page, not in response to the request
-- Eliminates redundant registry calls across concurrent reconciles for the same content digest - the singleflight layer prevents thundering-herd when many reconciles race on the same digest simultaneously, which is the primary controller-side performance failure mode today
-- Failure is decoupled from promotion state - registry unavailability does not block approval
-- The implementation pattern (LRU + singleflight) already exists in the codebase - `pkg/ocm/crypto/verifier_cache.go` (keyed by content digest) and the `InMemoryCache` with singleflight in the KLO OFREP service
+**Maintainability overhead.** Medium — OCM client wired into the API server for the first time (credential secret env vars, RBAC, Helm chart values); cache size and TTL tuning; registry unavailability becomes a new failure mode for read operations where today it only affects writes.
 
-Disadvantages:
+**Implementation time.** Medium-fast.
 
-- Cache is lost on controller restart - cold start re-fetches until promotions re-trigger warming
-- Does not directly help the API server (separate process) or the UI stage view
-- Memory-bound - as the number of distinct vector digests in flight grows, the cache size must be tuned; a fixed-size LRU can evict entries that are still needed under high concurrency
-- In-process cache is not shared across controller replicas in a multi-replica HA setup - each replica warms its own cache independently, which reduces but does not eliminate redundant fetches across replicas
+**Assessment.** Adopted as the planned follow-on layer for stage view and CLI inspect. Covers what Options 2+3 leave out. Deferred until Phase 1 is stable, but treated as the explicit next step rather than a speculative future option. Becomes a priority if the API server is scaled beyond a few replicas or if the fallback registry path on the incoming-side lookup becomes measurable.
 
-### Option 4 - Caching at the API server level
+### Option 5 — Database storage
 
-The API server acquires an OCM client, fetches vector and artifact content on demand, and caches responses in-process using the `otter`-backed pattern already established in `internal/api/oidc/exchangestore.go`. The API server currently makes zero OCM calls and has no OCM client wired in. This option covers both the UI stage view and the promotion diff use case - the API server fetches and caches both sides of the diff on first request.
+Introduce a PostgreSQL schema for vector descriptors, artifact manifests, and computed diffs. The controller writes to the database after fetching from OCM; the API server reads from the database. The DB infrastructure already exists (`cmd/api/db/`, goose migrations, sqlc) but is currently opt-in — the API server only connects when `API_SESSION_STORAGE_TYPE=db-pg` is set.
 
-This pattern is well-validated in the industry. Harbor implements exactly this - an in-process OCI manifest cache within the API server process. The Kubernetes apiserver's watch cache is the reference implementation of per-replica in-process caching for immutable content without any shared state. The key property that makes per-replica caching safe here is that OCM content is digest-addressed: the same digest always produces the same bytes, so cache misses across replicas are consistent (not divergent) and simply result in redundant registry fetches rather than stale reads. Argo CD chose a different model (shared Redis backing a dedicated repo-server) driven by mutable tag lookups and large-scale deployments - a different operating regime from Konfidence today.
+**What it covers.** All three use cases, plus historical queries ("what was deployed on this stage six months ago", "which vectors have ever contained artifact X") — a capability class none of the other options provide. Content outlives the CRs that produced it; the diff endpoint never returns 404 due to a deleted `VectorDeployment`. Registry call volume is bounded by the number of distinct digests ever seen, not by replica count — the only option that scales horizontally without per-replica redundancy.
 
-Advantages:
+**Persistence.** Full — survives restarts, shared across all replicas.
 
-- Directly serves the UI - the API server is the natural boundary for UI-facing data
-- Covers both the stage view and promotion diff use cases without controller changes
-- Independent of the controller lifecycle
-- No additional infrastructure dependency (no Redis, no shared store)
+**Maintainability overhead.** High — new schema, migrations, queries, and repository layer in both the controller and API server; write-path coupling between controller and DB requires an async write buffer to decouple failure domains (a DB outage must not block reconciliation); Postgres becomes a hard runtime dependency for operators who do not need it today, since it is currently opt-in.
 
-Disadvantages:
+**Implementation time.** Slowest.
 
-- Adding an OCM dependency introduces a new failure mode - registry unavailability now affects reads, not just writes
-- Per-replica cache duplication means each replica independently warms its cache; under many replicas, total registry call volume on cold start scales with replica count - tolerable because digest-keyed content is immutable, so cache misses are redundant fetches rather than stale reads
-- For mutable references (vector tags, "latest"), per-replica in-process caches can serve different versions briefly after a tag moves; a short TTL or explicit invalidation signal is required
-- Higher implementation cost than Option 1 for the UI stage view use case, since the data already exists on CRs
-- The promotion diff still requires a live registry call on first request per replica, unlike Option 3 which pre-warms before the user opens the approval UI
+**Assessment.** Deferred. Architecturally the strongest long-term choice and the only option that fully solves the scalability and persistence problems. Too heavy to build and operate now. Re-evaluate when multi-replica coherence or historical content queries become a concrete requirement.
 
-### Option 5 - Database storage for artifact and vector content
+## Decision
 
-Introduce a PostgreSQL schema for vector descriptors, artifact manifests, and computed diffs. The controller writes to the database after fetching from OCM; the API server reads from the database. The DB infrastructure already exists (`cmd/api/db/`, goose migrations, sqlc) but its single migration creates only session and OIDC tables.
+Two combinations were considered before settling on the approach below.
 
-Advantages:
+### Option 1 + 2 + 3 — CR layer plus controller cache
 
-- Survives process restarts on both the controller and API server
-- Shared across all API server replicas without coordination - registry call volume does not grow with replica count, making this the only option that scales horizontally without per-replica redundancy
-- Enables historical queries
-- Content outlives the CRs that produced it - vectors deleted from the cluster remain queryable
+This combination adds Option 1 (expose CR-stored content through the API) on top of Options 2+3 (controller-side LRU cache and promotion diff pre-compute). The appeal is that Option 1 delivers the stage view immediately with zero new infrastructure, while Options 2+3 handle the promotion diff.
 
-Disadvantages:
+The problem is that Option 1 should not be built at all as a content layer. Storing large JSON blobs in `status` fields is a misuse of etcd — the 1.5 MB per-object hard limit becomes a real constraint as vector size grows, and the pattern sets a precedent of treating CRs as a content store that will be difficult to walk back. Building the stage view on top of `ResolvedVectorOcm` today means migrating off it later when the limit bites, which is a second migration that Options 2+3+4 avoid entirely. The CR fields remain useful as an internal data source for the Phase 1 warmer, but they should not be the API-facing layer.
 
-- Highest implementation cost - new schema, queries, and repository layer in both the controller and API server
-- Making OCM content require the database forces all operators to run Postgres; the feature is currently opt-in
-- Introduces write-path coupling between the controller and the database - a DB failure must not block reconciliation
+This combination also leaves the CLI inspect use case entirely unaddressed: there is no CR for non-deployed versions, so every `kden artifact inspect` call still hits the registry directly.
 
-## Potential Decision
+### Option 2 + 3 + 4 — Controller cache plus API server cache (proposed)
 
-A layered approach is chosen, combining Options 1, 2, and 3.
+Options 2+3 address the promotion diff by moving the unavoidable registry call for the incoming vector out of the request path and into the controller background. Option 4 addresses the stage view and CLI inspect by adding an in-process cache to the API server. Together they cover all three use cases without storing content in etcd.
 
-**Option 1** is adopted as the immediate layer: add an API endpoint that returns the content of any Konfidence OCM artifact - both vectors and component artifacts - regardless of whether the artifact is currently deployed. The response includes the component list with names and resolved versions for vectors, vector configuration (`vectorConfig` features and authored values), and raw artifact content for component artifacts. The implementation reads from `VectorDeployment.Status.ResolvedVectorOcm` and `ArtifactDeployment.Spec.Component.Resources` for deployed artifacts and falls back to a direct registry fetch for others. This directly unblocks the UI stage view and the `kden` CLI artifact inspection use cases.
+The tradeoff versus Option 1+2+3 is implementation time: Option 4 requires wiring an OCM client into the API server for the first time (credential secrets, RBAC, Helm values), whereas Option 1 would reuse data that already exists on CRs. That cost is real but one-time and the `vector-diff` branch has already paid it. The ongoing cost of maintaining a CR-based content layer including size monitoring, guards, potential migrations, is higher over the lifetime of the feature.
 
-**Options 2 and 3** are combined into a single design for the promotion diff use case: a shared LRU cache (with singleflight) wraps `VectorOcmPort` and is injected into both the `VectorDeployment` and `VectorPromotion` controllers at startup. A new `VectorPromotionCacheWarmer` reconciler watches for promotions entering `Waiting` state, pre-warms the cache with both the incoming and currently deployed vector, computes the diff in-process from the cached descriptors, and writes the result to `VectorPromotionStatus.Diff`. When content is already in cache, diff computation requires no registry calls. The diff is surfaced through an extended `VectorPromotion` API response with a nullable `diff` field (`state: pending | ready | failed`). The promotion itself is never blocked by a diff computation failure.
+**This is the proposed approach**, delivered in two phases.
 
-**Options 4 and 5 are deferred.** API-server-level caching (Option 4) is a well-validated pattern for digest-keyed immutable content - it is deferred not because it is wrong, but because Option 1 already serves the UI use case with lower cost by reading from CRs. Option 4 becomes the natural follow-on if the API server is scaled beyond a few replicas or if the fallback registry path becomes a bottleneck. Database storage (Option 5) is deferred until multi-replica or historical content requirements are concrete.
+---
+
+**Phase 1 — Promotion diff (Options 2+3).** A shared LRU cache with singleflight wraps `VectorOcmPort` and is injected into both the `VectorDeployment` and `VectorPromotion` controllers. A new `VectorPromotionCacheWarmer` reconciler watches for promotions entering `Waiting` state and immediately pre-fetches both sides of the diff in the background:
+
+- **Incoming vector** (`VectorPromotion.Spec.Vector`) — no CR exists yet at this point; the warmer makes the registry call off the request path and populates the cache.
+- **Current vector** (`Stage.Spec.Vector`) — the `VectorDeployment` CR is available; `ResolvedVectorOcm` is read directly.
+
+The warmer computes the artifact-level diff in-process from the cached descriptors and writes it to `VectorPromotionStatus.Diff`. When the user opens the approval UI, `getVectorPromotionDiffV1` reads the pre-computed diff from the CR — replacing the current `vector-diff` implementation which fetches both sides live from the registry on every request. The diff is exposed as a nullable field on the `VectorPromotion` API response (`state: pending | ready | failed`). A diff computation failure never blocks the promotion itself; the warmer writes `DiffState: Failed` and retries on backoff while the main reconciler proceeds normally.
+
+**Phase 2 — Stage view and CLI inspect (Option 4).** The `vector-diff` branch has already laid the foundation: `pkg/ocm/content.Reader`, `buildOCMReader`, and the `getVectorContentV1` / `getArtifactContentV1` endpoints are in place. What remains is adding an in-process `otter` cache in front of the `Reader` so that subsequent calls for the same digest are served without a registry round-trip. This phase is explicitly planned
+
+**Option 5** is deferred until multi-replica coherence or historical content queries become a concrete requirement.
 
 ## Consequences
 
-**From Option 1 (CR storage + API endpoint):**
-- etcd object size must be monitored once content fields are added to `VectorDeployment` status; as the number of managed components per vector grows, large descriptors may approach etcd's 1.5 MB object limit and require a size budget check before writing
-- Each API server replica reads from etcd - this scales well horizontally, but the fallback registry fetch for non-deployed artifacts is per-replica; since OCM content is digest-addressed, this causes redundant fetches rather than stale reads, tolerable at low replica count
-
-**From Options 2 + 3 (LRU cache + VectorPromotionCacheWarmer):**
-- `VectorOcmPort` must be promoted to a shared package before any of this work starts - it is currently private to the vectordeployment controller package and must be accessible to the vectorpromotion controller
+- `VectorOcmPort` must be promoted to a shared package before Phase 1 can start — it is currently private to `internal/vectordeployment/internal/controller/`
 - The `VectorPromotion` controller acquires an OCM client dependency for the first time
-- The LRU cache size must be tuned relative to the number of distinct vector digests expected to be in flight concurrently; an undersized cache under high load will evict entries that are still needed, increasing registry pressure rather than reducing it
-- The in-process cache is not shared across controller replicas in a multi-replica HA setup - each replica warms independently, which reduces but does not eliminate redundant registry fetches
-- The `VectorPromotionCacheWarmer` reconciler must be registered alongside the existing promotion controllers in `setup.go`
+- The `VectorPromotionCacheWarmer` reconciler must be registered in `setup.go` alongside the existing promotion controllers
+- LRU cache size must be tuned to the expected number of distinct vector digests in flight concurrently; an undersized cache evicts entries under high load, increasing registry pressure rather than reducing it; controller HA typically runs two replicas, so in practice each warms its own cache independently, doubling calls on cold start
+- Phase 2 introduces the OCI registry as a new failure mode for API read operations — registry unavailability currently only affects writes; operators must be informed of this change through release notes and Helm chart documentation. Note: the `vector-diff` branch has already introduced this dependency — all three content endpoints make live registry calls today.
+- Phase 2 requires credential secret management in the API server deployment (env vars, RBAC, Helm values) — new operational surface. The env vars and OCM client wiring are already in place in `vector-diff`; Helm chart values and RBAC may still need to be added.
 
-**Deferred (Options 4 + 5):**
-- Option 4 (API-server-level cache) should be re-evaluated if the API server is scaled beyond a few replicas and fallback registry calls become measurable - it is a low-infrastructure alternative to Option 5 for that scenario
-- Option 5 (database) should be re-evaluated if multi-replica coherence or historical content queries become a concrete requirement
+## Open questions
 
-## Implementation Order
-
-1. Promote `VectorOcmPort` to a shared package - it is currently private to `internal/vectordeployment/internal/controller/`; unblocks all subsequent steps
-2. Write caching adapter wrapping `VectorOcmPort` (LRU + singleflight, following the pattern in `pkg/ocm/crypto/verifier_cache.go`)
-3. Wire shared cache into `VectorDeployment` controller (replaces direct `ocm_adapter` calls at `ocm_adapter.go:81,179`)
-4. Add `Diff` and `DiffState` fields to `VectorPromotionStatus` - update CRD
-5. Write `VectorPromotionCacheWarmer` reconciler - register in `setup.go`
-6. Add OCM artifact content endpoints to the API server - `getVectorContentV1`, `getArtifactContentV1`, and `getVectorPromotionDiffV1`; document in `api/openapi.yaml`
-7. Implement handlers: reads from CR fields for deployed artifacts, falls back to registry for others; wire `VectorPromotionCacheWarmer` diff output into `getVectorPromotionDiffV1`
-8. Extend `toVectorPromotionResponse` with nullable `diff` field
-9. Regenerate `internal/api/openapi/server.go`, `internal/kden/apiclient/client.go`, and `packages/konfidence-api-client/src/schema.d.ts`
-
-## Open Questions
-
-- What is the right etcd size budget for `ResolvedVectorOcm`? Should there be a guard before writing large descriptors to status, or should content above a threshold be fetched live?
 - What LRU cache size is appropriate for the expected number of concurrent vector digests in flight? Should this be configurable via the Helm chart?
 - Should the `VectorPromotionCacheWarmer` also pre-warm on `Ready` state (approved but not yet executing), or only `Waiting`? Pre-warming on `Ready` would cover cache eviction between approval and execution.
+- For Phase 2: what TTL is appropriate for mutable vector tag references in the API server cache? A tag that moves several times per day needs a TTL of minutes; too long and the approval UI shows the wrong diff.
