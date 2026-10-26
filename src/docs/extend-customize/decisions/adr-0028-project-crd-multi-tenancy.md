@@ -55,6 +55,10 @@ tied to the Project by a controller owner reference. A finalizer deletes the
 namespace and waits for it to terminate before the Project is released.
 Deleting a Project deletes the namespace and everything in it.
 
+::: info Amendment
+Namespace handling has since changed. Namespaces are tied to the Project by labels instead of an owner reference. `spec.namespacePolicy` (`Create` or `Adopt`) controls whether an existing namespace is taken over, and `spec.deletionPolicy` (`Orphan` or `Delete`) controls whether the namespace is kept on deletion. The default is `Orphan`, so deleting a Project no longer deletes the namespace unless the policy is `Delete`.
+:::
+
 `spec.roleBindings` maps a role name to a list of subjects; a caller holds a
 role if any subject in the list matches. Roles are a fixed, well-known set
 today (admin, pm, dev), but the field is a map precisely so the set can grow

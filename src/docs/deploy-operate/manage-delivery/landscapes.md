@@ -63,6 +63,26 @@ The namespace setting is immutable. Decide whether an override is necessary befo
 
 :::
 
+::: details Adopt an existing namespace
+
+By default (`spec.namespacePolicy: Create`), Konfidence creates the namespace and reports an error if a namespace with that name already exists and isn't managed by the landscape. To manage a namespace that you already created, set `spec.namespacePolicy` to `Adopt`. `Adopt` requires `spec.namespace`, which names the namespace to adopt. Konfidence rejects a landscape that sets `Adopt` without it:
+
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: Landscape
+metadata:
+  name: prod-eu
+  namespace: kden-p-ecommerce-platform
+spec:
+  displayName: Production - EU Region
+  namespace: ecommerce-prod-eu
+  namespacePolicy: Adopt
+```
+
+Konfidence takes over the namespace by writing its management labels onto it. It refuses a namespace that another project or landscape already manages. If the namespace doesn't exist, the landscape isn't ready and Konfidence keeps retrying until the namespace is created.
+
+:::
+
 ## Verify the landscape
 
 Inspect the landscape to find its managed namespace:
@@ -93,14 +113,21 @@ kubectl patch landscape prod-eu \
 
 ## Delete a landscape
 
-Deleting a landscape also deletes its managed namespace and the resources contained in it, including stages and deployed artifacts. Confirm that the landscape is no longer needed before deleting it.
+When deleting a landscape, what happens to the managed namespace depends on `spec.deletionPolicy`:
+
+| Policy | Behavior |
+|--------|----------|
+| `Orphan` (default) | Konfidence keeps the namespace and its contents, and removes only the `konfidence.cloud/*` management labels. |
+| `Delete` | Konfidence deletes the namespace and everything in it, including stages and deployed artifacts. |
+
+Confirm that the landscape is no longer needed, then delete it:
 
 ```bash
 kubectl delete landscape prod-eu \
   --namespace=kden-p-ecommerce-platform
 ```
 
-Konfidence keeps the landscape in a terminating state until its managed namespace and all associated resources have been removed.
+With `Delete`, Konfidence keeps the landscape in a terminating state until its managed namespace and all associated resources have been removed.
 
 ## Next steps
 

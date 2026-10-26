@@ -53,6 +53,35 @@ The command prints `True`. Confirm the namespace exists:
 kubectl get namespace kden-p-ecommerce-platform
 ```
 
+## Manage the namespace lifecycle
+
+Two fields control how Konfidence treats the project namespace.
+
+`spec.namespacePolicy` controls how the namespace is taken over:
+
+- `Create` (default) creates the namespace and reports an error if one with that name already exists and isn't managed by the project.
+- `Adopt` takes over a namespace that already exists by writing Konfidence's management labels onto it. Konfidence refuses a namespace that another project or landscape manages. If the namespace doesn't exist yet, the project isn't ready and Konfidence retries.
+
+`Adopt` requires `spec.namespace`, which names the namespace to adopt. Konfidence rejects a project that sets `Adopt` without it:
+
+```yaml
+apiVersion: konfidence.cloud/v1alpha1
+kind: Project
+metadata:
+  name: ecommerce-platform
+spec:
+  displayName: E-Commerce Platform
+  namespace: ecommerce-platform
+  namespacePolicy: Adopt
+```
+
+`spec.deletionPolicy` controls what happens to the namespace when you delete the project:
+
+- `Orphan` (default) keeps the namespace and its contents, and removes only the `konfidence.cloud/*` management labels.
+- `Delete` deletes the namespace and everything in it, including the project's `Landscape` resources. Each landscape's own namespace follows that landscape's `spec.deletionPolicy`, so with the default `Orphan` it is kept. To remove the landscape namespaces as well, set `deletionPolicy: Delete` on each landscape.
+
+Set `deletionPolicy: Delete` before deleting the project if you want the namespace removed with it.
+
 ## Grant access
 
 A new project has no role bindings, so nobody can use it through the Konfidence API. Add them in `spec.roleBindings` as described in [Grant teams access to a project](./access-control.md).
