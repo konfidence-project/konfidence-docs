@@ -2,10 +2,9 @@
 id: ADR-0042
 title: "OCM Content Layer: Performant access to OCM resources"
 description: "Establish a caching and content-access strategy so that controllers, API consumers, and interactive workflows are no longer bottlenecked by redundant remote registry calls."
-status: accepted
+status: proposed
 date_proposed: 2026-10-20
-date_approved: 2026-10-26
-authors: [Aleksandar Muradyan, Stefan Shivarov]
+authors: [AleksandarMuradyan, StefanShivarov]
 category: Architecture Pattern
 impact: High
 dependencies: [ADR-0006, ADR-0019, ADR-0032]
@@ -33,7 +32,7 @@ The codebase already contains two patterns that inform the caching design: the `
 
 This ADR is out of scope for changes to how vectors are assembled or promoted, and for metadata storage and vector lifecycle history.
 
-## Considered solutions
+## Considered options
 
 ### Option 1 - CR storage + API endpoint
 
@@ -107,13 +106,13 @@ The problem is that Option 1 should not be built at all as a content layer. Stor
 
 This combination also leaves the CLI inspect use case entirely unaddressed: there is no CR for non-deployed versions, so every `kden artifact inspect` call still hits the registry directly.
 
-### Option 2 + 3 + 4 - Controller cache plus API server cache (accepted)
+### Option 2 + 3 + 4 - Controller cache plus API server cache (proposed)
 
 Options 2+3 address the promotion diff by moving the unavoidable registry call for the incoming vector out of the request path and into the controller background. Option 4 addresses the stage view and CLI inspect by adding an in-process cache to the API server. Together they cover all three use cases without storing content in etcd.
 
 The tradeoff versus Option 1+2+3 is implementation time: Option 4 requires wiring an OCM client into the API server for the first time (credential secrets, RBAC, Helm values), whereas Option 1 would reuse data that already exists on CRs. That cost is real but one-time and the `vector-diff` branch has already paid it. The ongoing cost of maintaining a CR-based content layer including size monitoring, guards, potential migrations, is higher over the lifetime of the feature.
 
-**This is the accepted approach**, delivered in two phases.
+**This is the proposed approach**, delivered in two phases.
 
 ---
 
