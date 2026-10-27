@@ -30,10 +30,12 @@ The conformance suite owns the test-resource lifecycle. The extension developer 
 flowchart LR
   Developer[Extension developer]
 
-  subgraph Release["Kden release"]
+  subgraph Release["Konfidence core release"]
     CLI[Kden CLI]
+    Binary[Deployer conformance Go binary]
     Suite[Deployer conformance suite]
     CLI --> Suite
+    Binary --> Suite
   end
 
   subgraph Cluster["Developer's test cluster"]
@@ -45,6 +47,7 @@ flowchart LR
 
   Developer -->|prepare| Cluster
   Developer -->|artifact and target inputs| CLI
+  Developer -->|artifact and target inputs| Binary
   Suite -->|create, observe, delete| Resources
   Deployer -->|reconcile| Resources
   Dependencies --> Deployer
@@ -89,7 +92,7 @@ The target input contains only the fields below `DeploymentTarget.spec`. The sui
 
 ### Running the suite
 
-The suite is distributed with Kden and uses the same inputs for local and CI executions:
+The conformance suite can be executed through the `kden` CLI:
 
 ```shell
 kden conformance deployer run \
@@ -99,7 +102,19 @@ kden conformance deployer run \
   --target-setup ./conformance/target-secret.yaml
 ```
 
-`--target-setup` is optional and repeatable.
+The `conformance` command provides a common entry point for deployer conformance and can later expose suites for other Konfidence extension points.
+
+The deployer conformance Go binary is also published as a versioned asset with the Konfidence core release. It can be downloaded and executed directly with the same inputs, which is useful for CI environments that do not install the CLI.
+
+```shell
+konfidence-conformance \
+  --kubeconfig ./conformance.kubeconfig \
+  --artifact-constructor ./conformance/component-constructor.yaml \
+  --deployment-target-spec ./conformance/deployment-target-spec.yaml \
+  --target-setup ./conformance/target-secret.yaml
+```
+
+`--target-setup` is optional and repeatable for both entry points. Both entry points execute the same suite and produce the same result.
 
 Before running the scenarios, the suite verifies that:
 
@@ -166,6 +181,8 @@ Rejected because deployers can target fundamentally different runtimes and packa
 
 - Extension developers maintain their normal OCM artifact definition and a small deployment-target spec.
 - Developers do not need to know the schemas or metadata conventions of the generated Konfidence resources.
+- The Kden CLI provides a common entry point for conformance suites.
+- The `kden conformance` command can accommodate suites for additional extension points in the future.
 - The suite controls ordering, readiness waits, isolation, and cleanup.
 - Base conformance requires the Konfidence CRDs, but not the complete control plane.
 - Provider-specific payload mutations may require additional fixtures or may be skipped when they cannot be derived safely.
