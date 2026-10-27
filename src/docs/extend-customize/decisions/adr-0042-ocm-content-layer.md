@@ -131,7 +131,7 @@ The warmer computes the artifact-level diff in-process from the cached descripto
 
 **API surface for UI consumers.** In case we proceed with the current desing of the endpoints as defined in the `vector-diff` branch, the backend exposes three distinct endpoints so that the UI team doesn't need to perform any content fetching, diff computation, or cache coordination itself. All heavy work happens in the backend before the response is served.
 
-`GET /v1/projects/{projectId}/vectors/content?ref=<ref>` — returns the full content of a vector by reference: the list of components with their resolved versions, and the vector configuration (`features` and `authored` values). Backed by the API server in-process cache (Phase 2). On cache miss, falls back to a direct OCI registry call. The UI could utilise this for the stage detail view.
+`GET /v1/projects/{projectId}/vectors/content?refs=<ref>&refs=<ref>&...` — returns the full content of one or more vectors by reference: for each ref, the list of components with their resolved versions and the vector configuration (`features` and `authored` values). The `refs` parameter is repeatable; pass multiple `refs=` values to batch-fetch several vectors in a single call. Backed by the API server in-process cache (Phase 2). On cache miss, falls back to a direct OCI registry call. The UI could utilise this for the stage detail view.
 
 `GET /v1/projects/{projectId}/artifacts/content?ref=<ref>` — returns the content of a single component artifact by reference: type, tasks, resources, and whether reuse is allowed. Also backed by the API server in-process cache (Phase 2) with OCI fallback. The UI and CLI use this for artifact inspection.
 
@@ -149,6 +149,7 @@ The key contract with the UI team is: the UI never calls the OCI registry direct
 - LRU cache size must be tuned to the expected number of distinct vector digests in flight concurrently; an undersized cache evicts entries under high load, increasing registry pressure rather than reducing it; controller HA typically runs two replicas, so in practice each warms its own cache independently, doubling calls on cold start
 - Phase 2 introduces the OCI registry as a new failure mode for API read operations, but registry unavailability currently only affects writes; operators must be informed of this change through release notes and Helm chart documentation. Note: the `vector-diff` branch has already introduced this dependency, but all three content endpoints make live registry calls today.
 - Phase 2 requires credential secret management in the API server deployment (env vars, RBAC, Helm values). The env vars and OCM client wiring are already in place in `vector-diff`; Helm chart values and RBAC may still need to be added.
+- `getVectorDiffV1` currently fetches both vector sides sequentially from the OCI registry. Until Phase 1 caching lands, these two independent calls should be made in parallel to halve per-request latency on cache miss.
 
 ## Open questions
 
