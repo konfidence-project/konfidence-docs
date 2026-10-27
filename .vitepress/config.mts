@@ -102,7 +102,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "Vectors and Artifacts",
+              text: "Artifacts and vectors",
               link: "/docs/core-concepts/vectors-and-artifacts",
             },
             {
@@ -114,7 +114,7 @@ export default defineConfig({
               link: "/docs/core-concepts/deployment-model",
             },
             {
-              text: "Promotions and Delivery Flow",
+              text: "Promotions and delivery flow",
               link: "/docs/core-concepts/delivery-flow",
             },
           ],

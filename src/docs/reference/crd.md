@@ -326,24 +326,6 @@ _Appears in:_
 | `spec` _[RawExtension](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#rawextension-runtime-pkg)_ | Spec contains deployer-specific structured data. Its format is determined by the Type field. |  |  |
 
 
-### ConnectionRef
-
-
-
-ConnectionRef identifies a Secret or ConfigMap in the same namespace.
-
-
-
-_Appears in:_
-- [DeploymentTargetConnection](#deploymenttargetconnection)
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiGroup` _string_ | APIGroup is the group for the resource being referenced.<br />Defaults to the core API group ("") for Secret and ConfigMap.<br />For deployer-specific CRDs, set this to the appropriate API group. |  | Optional: \{\} <br /> |
-| `kind` _string_ | Kind is the resource kind (e.g., "Secret", "ConfigMap", or a deployer-specific kind). |  | MaxLength: 64 <br />MinLength: 1 <br />Required: \{\} <br /> |
-| `name` _string_ | Name is the name of the referenced resource. |  | MaxLength: 253 <br />MinLength: 1 <br />Required: \{\} <br /> |
-
-
 ### CredentialRef
 
 
@@ -375,6 +357,25 @@ _Appears in:_
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
 | `ocm` _[OCMCredentials](#ocmcredentials)_ |  |  | Optional: \{\} <br /> |
+
+
+### DeletionPolicy
+
+_Underlying type:_ _string_
+
+DeletionPolicy controls what happens to the managed namespace when the owning
+Project or Landscape is deleted.
+
+
+
+_Appears in:_
+- [LandscapeSpec](#landscapespec)
+- [ProjectSpec](#projectspec)
+
+| Field | Description |
+| --- | --- |
+| `Delete` | DeletionPolicyDelete deletes the namespace together with the resource.<br /> |
+| `Orphan` | DeletionPolicyOrphan leaves the namespace in place and only strips the<br />konfidence.cloud/* management labels.<br /> |
 
 
 ### DeploymentClass
@@ -456,9 +457,8 @@ _Appears in:_
 
 DeploymentTarget is the Schema for the deploymenttargets API. A DeploymentTarget
 configures a concrete deployment destination within a landscape for a specific
-deployment class. It is namespace-scoped and created in landscape namespaces.
-Multiple DeploymentTargets can exist in the same landscape, but their deployment
-class names must be unique within the namespace.
+artifact type. It is namespace-scoped and created in landscape namespaces.
+At most one DeploymentTarget for a given artifact type is allowed in a namespace.
 
 
 
@@ -484,30 +484,12 @@ metadata:
   name: production-kustomize
   namespace: kden-l-production-abc123
 spec:
-  deploymentClassName: kustomize.konfidence.cloud
-  connection:
-    type: kubeconfig
-    ref:
-      kind: Secret
-      name: prod-cluster-kubeconfig
+  artifactType: kustomize.konfidence.cloud
+  parameters:
+    apiGroup: ""
+    kind: Secret
+    name: prod-cluster-kubeconfig
 ```
-
-### DeploymentTargetConnection
-
-
-
-DeploymentTargetConnection defines connection information for a deployment target.
-
-
-
-_Appears in:_
-- [DeploymentTargetSpec](#deploymenttargetspec)
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `type` _string_ | Type is a hint for how to interpret the connection reference. It is advisory<br />and informational only. The deployer controller interprets and enforces its meaning. |  | MaxLength: 64 <br />MinLength: 1 <br />Required: \{\} <br /> |
-| `ref` _[ConnectionRef](#connectionref)_ | Ref references a resource containing connection details. This can be a Secret, ConfigMap,<br />or a custom resource defined by the deployer. The deployer is responsible for interpreting<br />and validating the referenced resource. |  | Optional: \{\} <br /> |
-
 
 ### DeploymentTargetSpec
 
@@ -522,19 +504,15 @@ _Appears in:_
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
-| `deploymentClassName` _string_ | DeploymentClassName references a DeploymentClass by its metadata.name. The referenced DeploymentClass determines<br />which controller is responsible for reconciling the DeploymentTarget resource. If there is no DeploymentClass<br />with that name, the DeploymentTarget will be marked as not ready. DeploymentClassName<br />is immutable because changing it would transfer ownership of the DeploymentTarget to a different controller.<br />There can only be one DeploymentTarget for a given deployment class in a landscape, so DeploymentClassName must be unique<br />across DeploymentTargets in the same landscape namespace. This restriction might be loosened in future releases of<br />Konfidence. |  | Required: \{\} <br /> |
-| `connection` _[DeploymentTargetConnection](#deploymenttargetconnection)_ | Connection defines how to connect to this deployment target.<br />The structure and interpretation of connection details is specific to the<br />deployment class and its implementing controller. |  | Required: \{\} <br /> |
+| `artifactType` _string_ | ArtifactType identifies which type of artifact should be deployed to the specified target. The ArtifactType is<br />selected by a deployer whose controllers are responsible for reconciling the DeploymentTarget resource. If there<br />is no deployer covering the given ArtifactType, the DeploymentTarget will never become ready. ArtifactType is<br />immutable because changing it may transfer ownership of the DeploymentTarget to a different controller.<br />Currently, Konfidence only supports one DeploymentTarget per ArtifactType in a landscape, so this field should<br />be unique across all DeploymentTargets in the same landscape namespace. If multiple DeploymentTargets with the<br />same ArtifactType exist in a single landscape namespace, deployers may fail their deployments, as they cannot<br />determine which DeploymentTarget takes precedence. |  | Required: \{\} <br /> |
+| `parameters` _[Parameters](#parameters)_ | Parameters define how to connect to the target runtime described by this DeploymentTarget. It may point to<br />deployer-specific configuration containing connection details, credentials and further settings required to<br />connect to the target runtime. Their structure and interpretation are defined by the deployer that owns ArtifactType. |  | Optional: \{\} <br /> |
 
 
 ### DeploymentTargetStatus
 
 
 
-DeploymentTargetStatus defines the observed state of DeploymentTarget.
-The deployer controller responsible for this target's DeploymentClass is expected
-to set the Ready condition once it has accepted the resource. What "accepted" means
-is up to the deployer. It may include connectivity checks or simply validate the
-configuration.
+DeploymentTargetStatus defines the state observed by the responsible deployer.
 
 
 
@@ -543,6 +521,7 @@ _Appears in:_
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
+| `controller` _string_ | Controller identifies the deployer and release version reporting this status. |  | Optional: \{\} <br /> |
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  | Optional: \{\} <br /> |
 
 
@@ -640,6 +619,8 @@ _Appears in:_
 | --- | --- | --- | --- |
 | `displayName` _string_ | DisplayName is the human-readable name of the landscape, shown in user<br />interfaces. It does not affect the namespace name or any label, and it<br />may be changed at any time. |  | MaxLength: 253 <br />MinLength: 1 <br />Optional: \{\} <br /> |
 | `namespace` _string_ | Namespace overrides the name of the namespace created for this landscape.<br />When unset it defaults to `kden-l-<landscape-name>-<hash>`. It is<br />immutable once the Landscape exists, because the namespace and everything<br />it holds are bound to this name. |  | MaxLength: 63 <br />Pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$` <br />Optional: \{\} <br /> |
+| `namespacePolicy` _[NamespacePolicy](#namespacepolicy)_ | NamespacePolicy controls how the landscape namespace is taken over. Create<br />(the default) creates it and errors on conflict; Adopt takes over an<br />existing namespace and requires both that namespace to already exist and<br />spec.namespace to be set, so the adopted namespace is named explicitly. | Create | Enum: [Create Adopt] <br />Optional: \{\} <br /> |
+| `deletionPolicy` _[DeletionPolicy](#deletionpolicy)_ | DeletionPolicy controls what happens to the landscape namespace when the<br />Landscape is deleted. Orphan (the default) keeps the namespace and strips<br />its management labels; Delete removes the namespace with the Landscape. | Orphan | Enum: [Delete Orphan] <br />Optional: \{\} <br /> |
 
 
 ### LandscapeStatus
@@ -726,6 +707,24 @@ _Appears in:_
 | `name` _string_ | Name	is the name of the VectorDeployment. Required. |  |  |
 
 
+### NamespacePolicy
+
+_Underlying type:_ _string_
+
+NamespacePolicy controls how a controller takes ownership of its managed namespace.
+
+
+
+_Appears in:_
+- [LandscapeSpec](#landscapespec)
+- [ProjectSpec](#projectspec)
+
+| Field | Description |
+| --- | --- |
+| `Create` | NamespacePolicyCreate creates the namespace and errors if one with the<br />target name already exists and is not managed by this resource.<br /> |
+| `Adopt` | NamespacePolicyAdopt takes over a pre-existing namespace by writing the<br />management labels onto it. A namespace owned by a different Project or<br />Landscape is refused, and a missing namespace is a retryable error.<br /> |
+
+
 ### OCMComponent
 
 
@@ -779,6 +778,26 @@ _Appears in:_
 | `name` _string_ | Name is the resource name. |  |  |
 | `content` _[RawExtension](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#rawextension-runtime-pkg)_ | Content holds raw resource data, typically an embedded manifest, file, or<br />binary payload. |  |  |
 | `type` _string_ | Type describes the resource type, following OCM conventions. |  |  |
+
+
+### Parameters
+
+
+
+Parameters reference a resource containing deployer-specific configuration for connecting to the target runtime.
+The referenced resource's structure and interpretation are defined by the deployer responsible for the
+DeploymentTarget's ArtifactType.
+
+
+
+_Appears in:_
+- [DeploymentTargetSpec](#deploymenttargetspec)
+
+| Field | Description | Default | Validation |
+| --- | --- | --- | --- |
+| `apiGroup` _string_ | APIGroup is the group for the resource being referenced.<br />Defaults to the core API group ("") for Secret and ConfigMap.<br />For deployer-specific CRDs, set this to the appropriate API group. |  | Optional: \{\} <br /> |
+| `kind` _string_ | Kind is the resource kind (e.g., "Secret", "ConfigMap", or a deployer-specific kind). |  | MaxLength: 63 <br />MinLength: 1 <br />Required: \{\} <br /> |
+| `name` _string_ | Name is the name of the referenced resource. |  | MaxLength: 253 <br />MinLength: 1 <br />Required: \{\} <br /> |
 
 
 ### Project
@@ -856,6 +875,8 @@ _Appears in:_
 | --- | --- | --- | --- |
 | `displayName` _string_ | DisplayName is the human-readable name of the project, shown in user<br />interfaces. It does not affect the namespace name or any label, and it<br />may be changed at any time. |  | MaxLength: 253 <br />MinLength: 1 <br />Optional: \{\} <br /> |
 | `namespace` _string_ | Namespace overrides the name of the namespace created for this project.<br />When unset it defaults to `kden-p-<project-name>`. It is immutable<br />once the Project exists, because the namespace and everything it holds<br />are bound to this name. |  | MaxLength: 63 <br />Pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$` <br />Optional: \{\} <br /> |
+| `namespacePolicy` _[NamespacePolicy](#namespacepolicy)_ | NamespacePolicy controls how the project namespace is taken over. Create<br />(the default) creates it and errors on conflict; Adopt takes over an<br />existing namespace and requires both that namespace to already exist and<br />spec.namespace to be set, so the adopted namespace is named explicitly. | Create | Enum: [Create Adopt] <br />Optional: \{\} <br /> |
+| `deletionPolicy` _[DeletionPolicy](#deletionpolicy)_ | DeletionPolicy controls what happens to the project namespace when the<br />Project is deleted. Orphan (the default) keeps the namespace and strips<br />its management labels; Delete removes the namespace with the Project. | Orphan | Enum: [Delete Orphan] <br />Optional: \{\} <br /> |
 | `roleBindings` _object (keys:string, values:[Subjects](#subjects))_ | RoleBindings grants project roles to callers. It maps a role name to the<br />list of subjects that hold that role; a caller holds the role if any<br />subject in the list matches (OR). The role names are a fixed, well-known<br />set for now (for example "admin", "pm", "dev"), but the field is a map so<br />the set can be extended without a schema change. See the Project<br />multi-tenancy ADR for the meaning of each role and the authorization flow.<br />RoleBindings is currently schema-only: no authorization is enforced yet. |  | MaxProperties: 32 <br />Optional: \{\} <br /> |
 
 

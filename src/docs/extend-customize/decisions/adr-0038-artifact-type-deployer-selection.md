@@ -2,7 +2,7 @@
 id: ADR-0038
 title: "Select deployers by artifact type instead of DeploymentClass"
 description: "Remove DeploymentClass registration and select platform-wide deployers directly by vendor-owned artifact types."
-status: approved
+status: accepted
 date_proposed: 2026-10-07
 date_approved: 2026-10-08
 authors: [karstenkoehler]
