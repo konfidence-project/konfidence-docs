@@ -21,7 +21,7 @@ import {
         <p class="section-eyebrow">The delivery problem</p>
         <h2 id="problem-heading">Every environment can become a different version of the truth.</h2>
         <p class="section-lead">
-          As services, teams, and release frequency grow, it becomes harder to answer three basic questions: What was tested? What is running? What is ready to go next?
+          As services, teams, and release frequency grow, it becomes harder to answer three basic questions: What was tested? What is running? What can be promoted?
         </p>
       </div>
 
@@ -31,7 +31,7 @@ import {
           <div>
             <span>Without a shared delivery model</span>
             <h3>Builds and configuration drift between environments.</h3>
-            <p>Teams reconstruct application state for every target and lose confidence in the handoff to production.</p>
+            <p>Teams reconstruct application state for every target and lose confidence in the delivery to production.</p>
           </div>
         </article>
         <ArrowRight class="comparison-arrow" aria-hidden="true" />
@@ -47,7 +47,7 @@ import {
     </section>
 
     <section class="landing-section capabilities-section" aria-labelledby="capabilities-heading">
-      <div class="section-intro section-intro--center">
+      <div class="section-intro">
         <p class="section-eyebrow">Why Konfidence</p>
         <h2 id="capabilities-heading">Keep application versions consistent and traceable.</h2>
         <p class="section-lead">
@@ -60,7 +60,7 @@ import {
           <span class="feature-icon"><ShieldCheck aria-hidden="true" /></span>
           <span class="feature-label">Immutable application versions</span>
           <h3>Know exactly what will be deployed</h3>
-          <p>Every application version is recorded as a fixed set of service outputs, configuration, and metadata. What was tested cannot silently change later.</p>
+          <p>Every application version is recorded as a fixed set of artifacts, configuration, and metadata. What was tested cannot silently change later.</p>
         </article>
 
         <article class="feature-tile">
@@ -74,14 +74,14 @@ import {
           <span class="feature-icon"><Recycle aria-hidden="true" /></span>
           <span class="feature-label">Artifact reuse</span>
           <h3>Reuse unchanged service deployments</h3>
-          <p>Konfidence can reuse an unchanged service deployment for multiple application versions in the same environment. This avoids duplicate deployments.</p>
+          <p>Konfidence can reuse an unchanged service deployment for multiple application versions in the same environment. This avoids duplicate deployments and can reduce infrastructure costs.</p>
         </article>
 
         <article class="feature-tile">
           <span class="feature-icon"><Layers3 aria-hidden="true" /></span>
-          <span class="feature-label">Unified control plane</span>
+          <span class="feature-label">One delivery model</span>
           <h3>See the intended and running state</h3>
-          <p>Define delivery centrally and let Konfidence coordinate execution in each target environment. Teams see the intended version and the running state in one model.</p>
+          <p>Konfidence coordinates deployments across environments. For each stage, you can see which application version should run and which version is active.</p>
         </article>
       </div>
     </section>
@@ -103,7 +103,7 @@ import {
           <span class="workflow-icon"><Package aria-hidden="true" /></span>
           <div>
             <h3>Build</h3>
-            <p>CI produces versioned service outputs and registers them with Konfidence.</p>
+            <p>CI builds and publishes versioned artifacts.</p>
           </div>
         </li>
         <li>
@@ -111,7 +111,7 @@ import {
           <span class="workflow-icon"><Boxes aria-hidden="true" /></span>
           <div>
             <h3>Assemble</h3>
-            <p>Those outputs and configuration become one immutable application version.</p>
+            <p>Konfidence combines the selected artifacts and configuration into one immutable application version.</p>
           </div>
         </li>
         <li>
@@ -193,11 +193,6 @@ import {
   max-width: 720px;
 }
 
-.section-intro--center {
-  margin: 0 auto;
-  text-align: center;
-}
-
 .section-eyebrow {
   margin: 0 0 1rem;
   color: var(--konfidence-blue-dark) !important;
@@ -231,11 +226,6 @@ import {
   margin: 1.35rem 0 0;
   font-size: 1.04rem;
   line-height: 1.72;
-}
-
-.section-intro--center .section-lead {
-  margin-right: auto;
-  margin-left: auto;
 }
 
 .problem-section {
@@ -399,6 +389,10 @@ import {
 }
 
 .workflow-section {
+  padding: clamp(3rem, 6vw, 5rem);
+  border: 1px solid var(--konfidence-surface-border);
+  border-radius: 28px;
+  background: var(--konfidence-gradient-surface);
   scroll-margin-top: 7rem;
 }
 
@@ -489,13 +483,6 @@ import {
   margin: 0.75rem 0 0;
   font-size: 0.85rem;
   line-height: 1.62;
-}
-
-.audience-section {
-  padding: clamp(3rem, 6vw, 5rem);
-  border: 1px solid var(--konfidence-surface-border);
-  border-radius: 28px;
-  background: var(--konfidence-gradient-surface);
 }
 
 .audience-copy {
@@ -681,7 +668,7 @@ import {
     min-height: 0;
   }
 
-  .audience-section {
+  .workflow-section {
     padding: 1.5rem;
     border-radius: 20px;
   }
