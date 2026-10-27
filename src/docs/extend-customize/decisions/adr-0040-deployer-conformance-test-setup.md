@@ -22,7 +22,7 @@ Konfidence deployers can be developed outside the Konfidence repositories. Exten
 
 The conformance suite cannot create every input without help from the extension developer:
 
-- Konfidence do not know the kind of artifact the deployer handle. The deployer author defines its artifact packaging contract and knows what a valid application artifact looks like.
+- Konfidence does not know the kind of artifact handled by the deployer. The deployer author defines its artifact packaging contract and knows what a valid application artifact looks like.
 - The deployer author defines the parameters used to connect to a deployment target.
 - The deployer may require controllers, credentials, or runtime services which Konfidence cannot install generically.
 
@@ -35,9 +35,9 @@ Requiring developers to create all test resources manually is not acceptable eit
 An extension developer performs two steps:
 
 1. **Prepare a test cluster** containing the Konfidence CRDs, the deployer under test, and the deployer's dependencies.
-2. **Run the conformance suite** with a kubeconfig, one valid `ArtifactDeployment` template, and one `DeploymentTarget` template.
+2. **Run the conformance suite** with a kubeconfig, the artifact's OCM component constructor, and a deployment-target spec.
 
-The developer does not manually create a Project, Landscape, Stage, Vector, test namespace, `DeploymentTarget`, or test `ArtifactDeployment`. The conformance runner creates and removes the resources needed by its scenarios.
+The developer does not author or manually create a Project, Landscape, Stage, Vector, test namespace, `DeploymentTarget`, or `ArtifactDeployment`. The inputs are the same artifact authoring file used for publication and the deployer-specific target configuration. The conformance runner translates those inputs into Konfidence resources and removes the resources after the tests.
 
 ```mermaid
 flowchart LR
@@ -88,72 +88,71 @@ The conformance command requires the following inputs:
 | Input | Purpose |
 | --- | --- |
 | Kubeconfig | Selects and authenticates to the cluster containing the deployer under test. |
-| Valid `ArtifactDeployment` template | Supplies a real sample application encoded according to the deployer's artifact contract. |
-| `DeploymentTarget` template | Supplies the artifact type and deployer-specific target parameters. |
+| OCM component constructor | The same artifact YAML supplied to `kden artifact push`; it describes a real sample application according to the deployer's artifact contract. |
+| Deployment-target spec | Contains only `artifactType` and optional deployer-specific `parameters`, without Kubernetes resource metadata. |
 | Target setup manifests (optional) | Supply namespaced Secrets, ConfigMaps, or provider resources referenced by the target. |
 
-The two templates should be stored in the deployer's repository under a directory such as `conformance/`. The same files are used locally and in continuous integration.
+The artifact and target spec should be stored in the deployer's repository under a directory such as `conformance/`. The same files are used locally and in continuous integration.
 
-#### Valid ArtifactDeployment template
+#### Artifact component constructor
 
-The valid artifact template must contain:
+The developer supplies the OCM component constructor they would use to publish the artifact and later reference it from a Vector. The constructor must contain:
 
 - the vendor-owned artifact type supported by the deployer;
 - exactly one `konfidence-manifest` resource;
 - all deployer-specific resources and payloads required to deploy a minimal application; and
 - no dependency on a Project, Landscape, Stage, or Vector created outside the test run.
 
-The template's name and namespace are placeholders. The runner replaces them to isolate every test run.
+The suite does not connect to the developer's OCM repository. It reads the constructor and its local manifest files directly. Deployer-consumed resources must therefore use external, self-contained `access` specifications. A deployer-consumed resource using a local `input` would require the suite to publish or host that payload and is rejected during preflight.
 
 ```yaml
-apiVersion: konfidence.cloud/v1alpha1
-kind: ArtifactDeployment
-metadata:
-  name: artifact-placeholder
-  namespace: namespace-placeholder
-spec:
-  manifest:
-    type: app.example.com
-    allowReuse: false
-  component:
-    name: example.com/conformance-app
+components:
+  - name: example.com/conformance-app
     version: 1.0.0
+    provider:
+      name: example
     resources:
       - name: konfidence-manifest
         type: cloud.konfidence.artifact.manifest
-        content:
-          type: app.example.com
+        relation: local
+        input:
+          type: file/v1
+          path: ./manifest.json
       - name: application
         type: example-application
-        content:
-          # Payload defined by the deployer provider.
-          image: registry.example.com/conformance-app:1.0.0
-  taskManifests: []
+        version: 1.0.0
+        relation: external
+        access:
+          type: ociArtifact
+          imageReference: registry.example.com/conformance-app:1.0.0
 ```
 
-The application should be small, deterministic, publicly accessible to the target where possible, and require no manual interaction. It only needs to exercise deployment, status reporting, repeated reconciliation, and deletion.
+The referenced `manifest.json` contains the artifact type and reuse policy:
 
-#### DeploymentTarget template
+```json
+{
+  "type": "app.example.com",
+  "allowReuse": false
+}
+```
 
-The target template selects the same artifact type and contains the parameters understood by the deployer. The runner replaces its name and namespace before applying it.
+Paths in local manifest inputs are resolved relative to the component constructor. The application should be small, deterministic, accessible to the target, and require no manual interaction. It only needs to exercise deployment, status reporting, repeated reconciliation, and deletion.
+
+#### Deployment-target spec
+
+The target input contains only the desired spec. It selects the same artifact type and contains parameters understood by the deployer. The developer does not provide `apiVersion`, `kind`, `metadata`, a namespace, or a surrounding `spec` property.
 
 ```yaml
-apiVersion: konfidence.cloud/v1alpha1
-kind: DeploymentTarget
-metadata:
-  name: target-placeholder
-  namespace: namespace-placeholder
-spec:
-  artifactType: app.example.com
-  parameters:
-    apiGroup: ""
-    kind: Secret
-    name: conformance-target-credentials
+artifactType: app.example.com
+parameters:
+  apiGroup: ""
+  kind: Secret
+  name: conformance-target-credentials
 ```
 
-`spec.parameters` is optional when the deployer can use an installation-wide or local default. If it references a namespaced resource, that resource must be part of the conformance setup and be created in the test namespace before the target. The runner accepts target setup manifests together with the target template and rewrites their namespace in the same way. Secret values must be supplied by the test environment and must never be written to test output.
+`spec.parameters` is optional when the deployer can use an installation-wide or local default. If it references a namespaced resource, that resource must be part of the conformance setup and be created in the test namespace before the target. The runner accepts one resource per target setup file and rewrites its namespace. Secret values must be supplied by the test environment and must never be written to test output.
 
-The `ArtifactDeployment` and `DeploymentTarget` templates must use the same artifact type. A mismatch is a command-input error and the tests do not start.
+The type in the artifact's `konfidence-manifest` and the target spec must match. A mismatch is a command-input error and the tests do not start.
 
 ### Running the tests
 
@@ -162,8 +161,8 @@ The conformance suite is released with Kden and exposed through the Kden CLI:
 ```shell
 kden conformance deployer run \
   --kubeconfig ./conformance.kubeconfig \
-  --valid-artifact-deployment ./conformance/artifact-deployment.yaml \
-  --deployment-target ./conformance/deployment-target.yaml \
+  --artifact-constructor ./conformance/component-constructor.yaml \
+  --deployment-target-spec ./conformance/deployment-target-spec.yaml \
   --target-setup ./conformance/target-secret.yaml
 ```
 
@@ -173,12 +172,13 @@ The suite can also be executed as a Go binary while developing Konfidence itself
 
 Before executing Ginkgo, the command validates:
 
-- access to the cluster;
-- the presence and compatible versions of the required CRDs;
-- permission to create and delete the test resources;
-- that both templates can be decoded;
-- that both templates declare the same valid artifact type; and
-- that referenced target setup resources are available.
+- access to the cluster
+- the presence and compatible versions of the required CRDs
+- permission to create and delete the test resources
+- that the component constructor and target spec can be decoded
+- that the constructor contains exactly one component and one valid `konfidence-manifest`
+- that the artifact manifest and target spec declare the same valid artifact type
+- that referenced target setup resources are available
 
 A failed preflight exits before deploying the sample application and explains how to correct the input or cluster setup. Missing resources are setup failures, not pending tests.
 
@@ -186,15 +186,15 @@ A failed preflight exits before deploying the sample application and explains ho
 
 For each invocation, the runner:
 
-1. generates a unique run identifier;
-2. creates an isolated namespace labelled as a conformance landscape;
-3. creates target credentials and other supplied setup resources in that namespace;
-4. creates the `DeploymentTarget` from the template;
-5. waits for the deployer to report `DeploymentTarget.status.conditions[Ready]=True`;
-6. creates copies and controlled variants of the valid `ArtifactDeployment` fixture;
-7. executes the conformance scenarios with finite reconciliation timeouts;
-8. records passed, failed, and skipped test identifiers; and
-9. deletes all resources owned by the run.
+1. generates a unique run identifier
+2. creates an isolated namespace labelled as a conformance landscape
+3. creates target credentials and other supplied setup resources in that namespace
+4. creates the `DeploymentTarget` from the supplied spec
+5. waits for the deployer to report `DeploymentTarget.status.conditions[Ready]=True`
+6. creates an `ArtifactDeployment` from the component constructor and then creates controlled variants of it
+7. executes the conformance scenarios with finite reconciliation timeouts
+8. records passed, failed, and skipped test identifiers
+9. deletes all resources owned by the run
 
 ```mermaid
 sequenceDiagram
@@ -205,9 +205,10 @@ sequenceDiagram
   participant Deployer as Deployer under test
   participant Runtime as Target runtime
 
-  Developer->>Runner: Run with kubeconfig and two templates
+  Developer->>Runner: Run with kubeconfig, artifact constructor, and target spec
   Runner->>API: Validate CRDs and permissions
   Runner->>API: Create isolated namespace and target setup resources
+  Runner->>Runner: Build DeploymentTarget and ArtifactDeployment objects
   Runner->>API: Create DeploymentTarget
   Deployer->>API: Set target Ready
   Runner->>API: Wait for Ready=True
@@ -221,7 +222,7 @@ sequenceDiagram
   Runner-->>Developer: Print conformance report
 ```
 
-The valid fixture is the baseline for all scenarios. The runner changes only fields required by a scenario, for example by creating an unsupported artifact type, removing or duplicating required resources, repeating reconciliation, or deleting an artifact. It must not guess how to rewrite the provider-specific application payload. Tests requiring such a transformation need an explicit provider fixture extension and are skipped with a reason when it is absent.
+The generated valid `ArtifactDeployment` is the baseline for all scenarios. The runner maps component name and version, reads the Konfidence manifest and task manifests from their local files, and copies external resource access specifications into the component resources. It changes only fields required by a scenario, for example by creating an unsupported artifact type, removing required resources, repeating reconciliation, or deleting an artifact. It must not guess how to rewrite the provider-specific application payload. Tests requiring such a transformation need an explicit provider fixture extension and are skipped with a reason when it is absent.
 
 ### Waiting, failure reporting, and cleanup
 
@@ -241,7 +242,7 @@ Cleanup is attempted after success, failure, or interruption. Resources are sele
 
 ## Alternatives considered
 
-### Require pre-created targets and artifacts
+### Require pre-created Konfidence resources
 
 Rejected. It turns the suite into a passive validator, introduces readiness races, and prevents target mutation and deletion tests from running safely.
 
@@ -259,7 +260,8 @@ Rejected. A Kubernetes workload cannot represent deployers for object stores, CD
 
 ## Consequences
 
-- An extension developer must maintain two small conformance templates and an installation procedure for their deployer.
+- An extension developer maintains their normal OCM component constructor, one small deployment-target spec, and an installation procedure for their deployer.
+- The developer does not need to know the schemas or metadata conventions of `ArtifactDeployment` and `DeploymentTarget`.
 - The developer does not need to manually create Konfidence hierarchy or test-case resources.
 - Local and CI runs use the same command and fixture files.
 - Tests are deterministic because the runner controls resource ordering and readiness waits.
@@ -271,8 +273,8 @@ Rejected. A Kubernetes workload cannot represent deployers for object stores, CD
 ## Implementation direction
 
 1. Keep one Go suite package shared by the Kden CLI and the development binary.
-2. Load the valid `ArtifactDeployment` and `DeploymentTarget` from YAML files.
-3. Add support for namespace-rewritten target setup manifests, including Secrets and provider-specific resources.
+2. Load an OCM component constructor and a deployment-target spec from YAML files and translate them into the corresponding test resources.
+3. Load namespace-rewritten target setup manifests, including Secrets and provider-specific resources.
 4. Create the namespace, target, artifact variants, readiness waits, and cleanup inside the runner.
 5. Emit human-readable and machine-readable reports with stable conformance test identifiers.
 6. Provide `hack/conformance/cluster-setup.sh` for the optional local Kind workflow.
