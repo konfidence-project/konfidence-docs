@@ -1,5 +1,5 @@
 ---
-id: ADR-0039
+id: ADR-0042
 title: "OCM Content Layer: Performant access to OCM resources"
 description: "Establish a caching and content-access strategy so that controllers, API consumers, and interactive workflows are no longer bottlenecked by redundant remote registry calls."
 status: accepted
@@ -13,7 +13,7 @@ pageClass: adr
 outline: deep
 ---
 
-# ADR-0039: OCM Content Layer - Performant access to OCM resources
+# ADR-0042: OCM Content Layer - Performant access to OCM resources
 
 <AdrHeader />
 
