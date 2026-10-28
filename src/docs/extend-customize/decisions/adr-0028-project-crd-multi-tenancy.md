@@ -56,7 +56,7 @@ namespace and waits for it to terminate before the Project is released.
 Deleting a Project deletes the namespace and everything in it.
 
 ::: info Amendment
-Namespace handling has since changed. Namespaces are tied to the Project by labels instead of an owner reference. `spec.namespacePolicy` (`Create` or `Adopt`) controls whether an existing namespace is taken over, and `spec.deletionPolicy` (`Orphan` or `Delete`) controls whether the namespace is kept on deletion. The default is `Orphan`, so deleting a Project no longer deletes the namespace unless the policy is `Delete`.
+Konfidence now uses labels instead of an owner reference to associate a namespace with its `Project`. `spec.namespacePolicy` (`Create` or `Adopt`) controls whether Konfidence creates or adopts the namespace. `spec.deletionPolicy` (`Orphan` or `Delete`) controls whether Konfidence keeps or deletes the namespace when you delete the `Project`. The default is `Orphan`, so Konfidence deletes the namespace only if you set the policy to `Delete`.
 :::
 
 `spec.roleBindings` maps a role name to a list of subjects; a caller holds a
