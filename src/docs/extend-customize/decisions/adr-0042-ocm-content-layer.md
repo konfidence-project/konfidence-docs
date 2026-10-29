@@ -46,7 +46,7 @@ Expose the content already stored on CRs (`VectorDeployment.Status.ResolvedVecto
 
 **Implementation time.** Fastest.
 
-**Assessment.** Not adopted as a standalone solution. etcd is not a content store and storing large JSON blobs in `status` fields is a misuse of Kubernetes API machinery. The 1.5 MB per-object hard limit is a concrete blocker as vector size grows where a 50-component descriptor can already reach 200-400 KB. The option also leaves the primary use case - the promotion diff incoming side, unaddressed. The CR fields it relies on remain useful as an internal data source (the Phase 1 warmer reads `ResolvedVectorOcm` to get the current vector), but exposing them directly through the API as the primary content layer is not the right design.
+**Assessment.** Not adopted as a standalone solution. etcd is not a content store and storing large JSON blobs in `status` fields is a misuse of Kubernetes API machinery. The 1.5 MB per-object hard limit is a concrete blocker as vector size grows where a 50-component descriptor can already reach 200-400 KB. The option also leaves the promotion diff incoming side unaddressed. The CR fields it relies on remain useful as internal data sources, but exposing them directly through the API as the primary content layer is not the right design.
 
 ### Option 2+3 - Controller-side LRU cache + promotion diff pre-warm
 
@@ -54,7 +54,7 @@ Wrap `VectorOcmPort` with a caching adapter (LRU + singleflight) shared across c
 
 `VectorOcmPort` is currently private to `internal/vectordeployment/internal/controller/` and must be promoted to a shared package before this work can start.
 
-**What it covers.** The unavoidable registry call for the incoming vector is moved out of the request path and into the controller background. When the user opens the approval UI, the diff endpoint resolves both refs, looks up the cached descriptors, and computes the diff inline. If the cache is cold (controller restart, eviction), the endpoint falls back to a direct registry call. The singleflight layer collapses concurrent cache misses for the same digest into a single in-flight registry call, eliminating thundering-herd across reconciles.
+**What it covers.** The unavoidable registry call for the incoming vector is moved out of the request path and into the controller background. When the user opens the approval UI, the diff endpoint resolves both refs, looks up the cached descriptors, and returns the diff. If the cache is cold (controller restart, eviction), the endpoint falls back to a direct registry call. The singleflight layer collapses concurrent cache misses for the same digest into a single in-flight registry call, eliminating thundering-herd across reconciles.
 
 **Note on the current vector.** The currently deployed vector can change during the lifetime of a promotion (for example, a hotfix is deployed while a promotion is waiting for all gates to be satisfied). The cache must therefore re-resolve `Stage.Spec.Vector` at request time rather than fixing it at pre-warm time. Only the incoming vector is pre-warmed and the current vector is resolved on demand and served from cache if already present.
 
@@ -116,9 +116,9 @@ Options 2+3 address the promotion diff by moving the unavoidable registry call f
 
 ---
 
-**Phase 1 - Promotion diff (Options 2+3).** A shared LRU cache with singleflight wraps `VectorOcmPort` and is accessible to both the `VectorDeployment` and `VectorPromotion` controllers. A new `VectorPromotionCacheWarmer` reconciler pre-fetches the incoming vector when a promotion enters `Waiting` state. When the user opens the approval UI, `getVectorDiffV1` fetches both vectors (from cache or registry) and returns the diff between them. On cache miss, both vectors are fetched directly from the OCI registry. The diff computation is part of the ongoing work in the `vector-diff` branch.
+**Phase 1 - Promotion diff (Options 2+3).** A shared LRU cache with singleflight wraps `VectorOcmPort` and is accessible to both the `VectorDeployment` and `VectorPromotion` controllers. A new `VectorPromotionCacheWarmer` reconciler pre-fetches the incoming vector when a promotion enters `Waiting` state. The warmer caches the vector content only, as it does not pre-compute or store the diff. When the user opens the approval UI, `getVectorDiffV1` fetches both vectors (from cache or registry) and returns the diff between them. On cache miss, both vectors are fetched directly from the OCI registry. The diff computation is part of the ongoing implementation work. The API server requires an OCM client for this; that cost is the same whether the diff is pre-computed or computed on request.
 
-**Phase 2 - Stage view and artifact inspection (Option 4).** The `vector-diff` branch has already laid the foundation: `pkg/ocm/content.Reader`, `buildOCMReader`, and the three content endpoints are in place and make live registry calls. What remains is adding an in-process cache in front of the `Reader` so that subsequent calls for the same ref are served without a registry round-trip. The same fallback behaviour applies: a cache miss falls back to a direct OCI registry call.
+**Phase 2 - Stage view and artifact inspection (Option 4).** The foundation is already in place: `pkg/ocm/content.Reader`, `buildOCMReader`, and the three content endpoints make live registry calls today. What remains is adding an in-process cache in front of the `Reader` so that subsequent calls for the same ref are served without a registry round-trip. The same fallback behaviour applies: a cache miss falls back to a direct OCI registry call.
 
 **Cache key design.** Cache entries for digest-addressed content are keyed by OCI content digest (SHA-256). The same digest always means the same bytes regardless of project, landscape, or registry. Mutable aliases (tags) are keyed by their full ref string and held with a short TTL.
 
@@ -130,7 +130,7 @@ Options 2+3 address the promotion diff by moving the unavoidable registry call f
 
 `GET /v1/projects/{projectId}/artifacts/content?ref=<ref>` — returns the type, tasks, resources, and reuse policy of a single artifact by OCM ref. Backed by the API server cache (Phase 2) with OCI fallback.
 
-`GET /v1/projects/{projectId}/vectors/diff?incoming=<incomingVectorRef>&current=<currentVectorRef>` — returns the diff between two vectors. Both refs are fetched from the OCI registry (or cache in Phase 2). The diff computation is part of the ongoing work in the `vector-diff` branch. Because the endpoint accepts arbitrary vector refs rather than a promotion ID, the UI can request a diff between any two vectors at any point in their lifecycle, not only those involved in an active promotion.
+`GET /v1/projects/{projectId}/vectors/diff?incoming=<incomingVectorRef>&current=<currentVectorRef>` — returns the diff between two vectors. Both refs are fetched from the OCI registry (or cache in Phase 2). The diff computation is part of the ongoing implementation work. Because the endpoint accepts arbitrary vector refs rather than a promotion ID, the UI can request a diff between any two vectors at any point in their lifecycle, not only those involved in an active promotion.
 
 **Authorization.** Access to these endpoints is gated by the existing project-scoped authorization: a caller must have read access to the project identified by `projectId`. The `projectId` path parameter is validated via `resolveProjectNamespace`, which rejects requests for projects the caller is not authenticated for. Registry credentials are resolved from a single global credential secret configured at API server startup, not per-project.
 
@@ -143,7 +143,7 @@ Options 2+3 address the promotion diff by moving the unavoidable registry call f
 - The `VectorPromotionCacheWarmer` reconciler must be registered in `setup.go` alongside the existing promotion controllers
 - LRU cache size must be tuned to the expected number of distinct vector digests in flight concurrently; an undersized cache increases registry pressure rather than reducing it
 - Phase 2 introduces the OCI registry as a new failure mode for API read operations; operators must be informed through release notes and Helm chart documentation
-- Phase 2 requires credential secret management in the API server deployment. The env vars and OCM client wiring are already in place in the `vector-diff` branch; Helm chart values and RBAC may still need to be added
+- Phase 2 requires credential secret management in the API server deployment. The env vars and OCM client wiring are already in place; Helm chart values and RBAC may still need to be added
 
 ## Open questions
 
