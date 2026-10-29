@@ -31,10 +31,8 @@ flowchart LR
   Developer[Extension developer]
 
   subgraph Release["Konfidence core release"]
-    CLI[Kden CLI]
-    Binary[Deployer conformance Go binary]
+    Binary[Conformance executable]
     Suite[Deployer conformance suite]
-    CLI --> Suite
     Binary --> Suite
   end
 
@@ -46,7 +44,6 @@ flowchart LR
   end
 
   Developer -->|prepare| Cluster
-  Developer -->|artifact and target inputs| CLI
   Developer -->|artifact and target inputs| Binary
   Suite -->|create, observe, delete| Resources
   Deployer -->|reconcile| Resources
@@ -68,15 +65,24 @@ The developer supplies these inputs to the suite:
 | Input | Purpose |
 | --- | --- |
 | Kubeconfig | Selects the test cluster. |
-| OCM component constructor | Describes a minimal valid artifact for the deployer. This is the same artifact definition used with `kden artifact push`. |
+| Application artifact | Describes a minimal valid application using OCM. The concrete transport may be a component descriptor YAML or a component-version reference in an OCM repository. |
 | Deployment-target spec | Contains `artifactType` and optional deployer-specific `parameters`, without Kubernetes resource metadata. |
 | Target setup manifests (optional) | Provide namespaced resources, such as Secrets, referenced by the target parameters. |
 
-The artifact should be small, deterministic, and require no manual interaction. Its artifact type must match the type in the deployment-target spec.
+The application artifact should be small, deterministic, and require no manual interaction. Its artifact type must match the type in the deployment-target spec. It must contain the `konfidence-manifest`, task manifests, and deployer-specific resources needed to construct an `ArtifactDeployment`.
 
-The suite does not access the developer's OCM repository. The component constructor must therefore use self-contained external access specifications for deployer-consumed resources. Local Konfidence manifest and task-manifest files may be read from the constructor directory.
+The suite exposes this as one logical `applicationArtifact` input. The ADR does not prescribe whether the executable accepts descriptor YAML, an OCM repository reference, or both. For example, a file-based implementation may expose `--artifact ./component-descriptor.yaml`, while a repository-backed implementation may expose `--artifact-reference <component-version>`.
 
-The suite maps the component name, version, artifact manifest, task manifests, and external resource access specifications into the generated `ArtifactDeployment`. It adds the Kubernetes metadata and namespace itself.
+The suite resolves the input into the component name, version, artifact manifest, task manifests, and deployer resources used by the generated `ArtifactDeployment`. It adds the Kubernetes metadata and namespace itself.
+
+#### Artifact input options
+
+| Option | Advantages | Disadvantages |
+| --- | --- | --- |
+| Component descriptor YAML | Works offline, avoids registry credentials in the suite, and is easy to version with the deployer tests. | A descriptor may not contain local resource payloads and can differ from the artifact that was actually published. Additional files or externally accessible resources may be required. |
+| OCM component version from an OCI repository | Tests the real published artifact, including repository-managed local resources and access specifications. | Requires network access, OCM repository credentials, and secret handling. Registry availability can also make the test less deterministic. |
+
+The choice is deliberately left to the implementation. Both options resolve to the same logical application-artifact model, so changing the transport does not change the conformance scenarios.
 
 Example deployment-target spec:
 
@@ -92,35 +98,23 @@ The target input contains only the fields below `DeploymentTarget.spec`. The sui
 
 ### Running the suite
 
-The conformance suite can be executed through the `kden` CLI:
-
-```shell
-kden conformance deployer run \
-  --kubeconfig ./conformance.kubeconfig \
-  --artifact-constructor ./conformance/component-constructor.yaml \
-  --deployment-target-spec ./conformance/deployment-target-spec.yaml \
-  --target-setup ./conformance/target-secret.yaml
-```
-
-The `conformance` command provides a common entry point for deployer conformance and can later expose suites for other Konfidence extension points.
-
-The deployer conformance Go binary is also published as a versioned asset with the Konfidence core release. It can be downloaded and executed directly with the same inputs, which is useful for CI environments that do not install the CLI.
+The suite is bundled as its own Cobra-based executable and published as a versioned asset with the Konfidence core release. Cobra provides the command-line interface; a command in the Kden CLI is not required.
 
 ```shell
 konfidence-conformance \
   --kubeconfig ./conformance.kubeconfig \
-  --artifact-constructor ./conformance/component-constructor.yaml \
+  --artifact ./conformance/component-descriptor.yaml \
   --deployment-target-spec ./conformance/deployment-target-spec.yaml \
   --target-setup ./conformance/target-secret.yaml
 ```
 
-`--target-setup` is optional and repeatable for both entry points. Both entry points execute the same suite and produce the same result.
+The exact artifact flag depends on the selected artifact transport. `--target-setup` is optional and repeatable.
 
 Before running the scenarios, the suite verifies that:
 
 - the required CRDs are available
-- the component constructor and target spec are valid
-- the constructor contains one component and one `konfidence-manifest`
+- the application artifact and target spec are valid
+- the artifact resolves to one component and one `konfidence-manifest`
 - the artifact and target use the same artifact type
 
 Invalid inputs and missing prerequisites are reported as setup failures rather than skipped tests.
@@ -132,7 +126,7 @@ For each run, the suite:
 1. creates an isolated test namespace
 2. creates optional target setup resources
 3. creates a `DeploymentTarget` from the supplied spec
-4. creates an `ArtifactDeployment` and required test variants from the OCM artifact definition
+4. creates an `ArtifactDeployment` and required test variants from the resolved application artifact
 5. waits for and verifies the deployer's reconciliation results
 6. removes the resources created by the run
 
@@ -179,10 +173,9 @@ Rejected because deployers can target fundamentally different runtimes and packa
 
 ## Consequences
 
-- Extension developers maintain their normal OCM artifact definition and a small deployment-target spec.
+- Extension developers provide a minimal OCM application artifact and a small deployment-target spec.
 - Developers do not need to know the schemas or metadata conventions of the generated Konfidence resources.
-- The Kden CLI provides a common entry point for conformance suites.
-- The `kden conformance` command can accommodate suites for additional extension points in the future.
+- The conformance suite is independently executable and does not require Kden CLI integration.
 - The suite controls ordering, readiness waits, isolation, and cleanup.
 - Base conformance requires the Konfidence CRDs, but not the complete control plane.
 - Provider-specific payload mutations may require additional fixtures or may be skipped when they cannot be derived safely.
