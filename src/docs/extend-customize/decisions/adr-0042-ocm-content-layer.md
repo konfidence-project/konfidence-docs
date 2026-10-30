@@ -46,7 +46,7 @@ Expose the content already stored on CRs (`VectorDeployment.Status.ResolvedVecto
 
 **Assessment.** Not adopted as a standalone solution. etcd is not a content store and storing large JSON blobs in `status` fields is a misuse of Kubernetes API machinery. The 1.5 MB per-object hard limit is a concrete blocker as vector size grows where a 50-component descriptor can already reach 200-400 KB. The option also leaves the diff incoming side unaddressed. The CR fields it relies on remain useful as internal data sources, but exposing them directly through the API as the primary content layer is not the right design.
 
-### Option 2+3 - Controller-side LRU cache + promotion diff pre-warm
+### Option 2+3 - Controller-side LRU cache + diff pre-warm
 
 Wrap `VectorOcmPort` with a caching adapter (LRU + singleflight) shared across controllers. A new `VectorPromotionCacheWarmer` reconciler watches promotions entering `Waiting` state and pre-fetches the incoming vector in the background, populating the cache before the user opens the approval page.
 
@@ -62,7 +62,7 @@ Wrap `VectorOcmPort` with a caching adapter (LRU + singleflight) shared across c
 
 **Implementation time.** Medium.
 
-**Assessment.** Adopted for the promotion diff use case. Stage view and artifact inspection remain unaddressed by this option alone.
+**Assessment.** Adopted for the diff use case. Stage view and artifact inspection remain unaddressed by this option alone.
 
 ### Option 4 - API server in-process cache
 
@@ -72,7 +72,7 @@ The API server acquires an OCM client and caches responses in-process. All three
 
 **Credentials.** The API server uses the same credential resolution mechanism as the controllers, reading registry credentials from the Kubernetes secret referenced by `KONFIDENCE_API_CREDENTIALS_SECRET_NAME` and `KONFIDENCE_API_CREDENTIALS_SECRET_NAMESPACE`. See [#393](https://github.com/konfidence-project/konfidence/issues/393) for the credential propagation design.
 
-**What it covers.** Stage view, promotion diff, and artifact inspection are all served from cache after the first request per version per replica. Independent of the controller lifecycle.
+**What it covers.** Stage view, diff, and artifact inspection are all served from cache after the first request per version per replica. Independent of the controller lifecycle.
 
 **Persistence.** In-memory only, lost on API server restart. Each replica warms its cache independently, therefore under many replicas, redundant fetches on cold start rather than stale reads.
 
@@ -108,7 +108,7 @@ The problem is that Option 1 should not be built as a content layer. Storing lar
 
 ### Option 2 + 3 + 4 - Controller cache plus API server cache (proposed)
 
-Options 2+3 address the promotion diff by moving the unavoidable registry call for the incoming vector out of the request path. Option 4 addresses stage view and artifact inspection by adding an in-process cache to the API server. Together they cover all three use cases without storing content in etcd, delivered in two phases.
+Options 2+3 address the diff use case by moving the unavoidable registry call for the incoming vector out of the request path. Option 4 addresses stage view and artifact inspection by adding an in-process cache to the API server. Together they cover all three use cases without storing content in etcd, delivered in two phases.
 
 ---
 
