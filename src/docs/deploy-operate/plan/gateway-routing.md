@@ -70,7 +70,7 @@ spec:
 
 Konfidence then creates a cluster-internal `konfidence-router` in the landscape namespace. You still provide the ReferenceGrant and the edge routes. Provisioning needs the Gateway API experimental-channel CRDs of v1.7.0 or later. Your Gateway API implementation must support [GEP-5093](https://gateway-api.sigs.k8s.io/geps/gep-5093/).
 
-[ADR-0039](../../extend-customize/decisions/adr-0039-provision-konfidence-router.md) explains how Konfidence keeps the provisioned Gateway internal.
+[ADR-0043](../../extend-customize/decisions/adr-0043-provision-konfidence-router.md) explains how Konfidence keeps the provisioned Gateway internal.
 
 <!-- TODO(konfidence maintainers): verify the release that ships Gateway provisioning (kubernetes-landscape-orchestrator PR #87), and which Gateway API implementations honour routability: Cluster. -->
 
