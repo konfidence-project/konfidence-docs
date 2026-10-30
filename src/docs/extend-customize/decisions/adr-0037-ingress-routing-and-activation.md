@@ -159,7 +159,7 @@ This remains a first working solution; Option 1 (via GEP-5093) or Option 3 may s
 
 ## Related ADRs
 
-- **Extended by**: [ADR-0039](./adr-0039-provision-konfidence-router.md) — Konfidence provisions `konfidence-router` on request through GEP-5093 (proposed).
+- **Extended by**: [ADR-0043](./adr-0043-provision-konfidence-router.md) — Konfidence provisions `konfidence-router` on request through GEP-5093 (proposed).
 - **Depends on**: [ADR-0027](./adr-0027-landscape-deployment-target.md) — the `DeploymentTarget` that carries the per-landscape routing configuration (inner Gateway config, or a reference to the admin-owned Gateway).
 - **Related to**: [ADR-0012](./adr-0012-activation-controller.md) — activation lifecycle retained; executor replaced.
 - **Supersedes (partially)**: ADR-0015 — replaces the per-service HTTPRoute + hardcoded Gateway routing.

@@ -1,5 +1,5 @@
 ---
-id: ADR-0039
+id: ADR-0043
 title: "Provision a cluster-internal konfidence-router through GEP-5093"
 description: "Konfidence provisions konfidence-router on request. It attaches routes only once the Gateway reports a cluster-internal address."
 status: proposed
@@ -12,7 +12,7 @@ pageClass: adr
 outline: deep
 ---
 
-# ADR-0039: Provision a cluster-internal konfidence-router through GEP-5093
+# ADR-0043: Provision a cluster-internal konfidence-router through GEP-5093
 
 <AdrHeader />
 
