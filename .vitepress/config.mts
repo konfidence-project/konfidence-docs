@@ -206,6 +206,10 @@ export default defineConfig({
                   text: "Plan for high availability",
                   link: "/docs/deploy-operate/plan/high-availability",
                 },
+                {
+                  text: "Gateway routing",
+                  link: "/docs/deploy-operate/plan/gateway-routing",
+                },
               ],
             },
             {
@@ -230,6 +234,16 @@ export default defineConfig({
                     {
                       text: "Install the Kubernetes deployer",
                       link: "/docs/deploy-operate/install/deployer/kubernetes",
+                    },
+                    {
+                      text: "Supported Gateways",
+                      collapsed: true,
+                      items: [
+                        {
+                          text: "Envoy Gateway",
+                          link: "/docs/deploy-operate/install/deployer/kubernetes/envoy-gateway",
+                        },
+                      ],
                     },
                   ],
                 },
