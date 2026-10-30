@@ -360,21 +360,54 @@
         ],
         "type": "object"
       },
-      "PromotionApproval": {
+      "PromotionGate": {
         "properties": {
-          "approvedAt": {
-            "description": "Time the approval was granted",
-            "format": "date-time",
-            "type": "string"
-          },
-          "approvedBy": {
-            "description": "Identity that granted the approval",
+          "type": {
+            "description": "Gate type as `<gate-name>.<owner-domain>`, e.g. `explicit-approval.konfidence.cloud`",
             "type": "string"
           }
         },
         "required": [
-          "approvedBy",
-          "approvedAt"
+          "type"
+        ],
+        "type": "object"
+      },
+      "PromotionGateStatus": {
+        "properties": {
+          "message": {
+            "description": "Human-readable description of the latest state change",
+            "type": "string"
+          },
+          "reason": {
+            "description": "Machine-readable reason for the latest state change",
+            "type": "string"
+          },
+          "setAt": {
+            "description": "Time the gate state was last set",
+            "format": "date-time",
+            "type": "string"
+          },
+          "setBy": {
+            "description": "Entity that last set the gate state (controller name or user subject)",
+            "type": "string"
+          },
+          "state": {
+            "description": "Current state of the gate",
+            "enum": [
+              "Pending",
+              "Satisfied",
+              "Error"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "description": "Gate type as `<gate-name>.<owner-domain>`, e.g. `explicit-approval.konfidence.cloud`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "state"
         ],
         "type": "object"
       },
@@ -573,14 +606,15 @@
       },
       "VectorPromotion": {
         "properties": {
-          "approval": {
-            "$ref": "#/components/schemas/PromotionApproval"
+          "gates": {
+            "description": "State of every gate declared on the promotion, in declaration order. A declared gate without a recorded state is reported as Pending.\n",
+            "items": {
+              "$ref": "#/components/schemas/PromotionGateStatus"
+            },
+            "type": "array"
           },
           "id": {
             "$ref": "#/components/schemas/VectorPromotionId"
-          },
-          "requireApproval": {
-            "type": "boolean"
           },
           "sequence": {
             "format": "int64",
@@ -596,7 +630,6 @@
               "InProgress",
               "Blocked",
               "Succeeded",
-              "Failed",
               "Superseded"
             ],
             "type": "string"
@@ -621,6 +654,13 @@
       },
       "VectorPromotionConfig": {
         "properties": {
+          "gates": {
+            "description": "Gates every promotion created from this config must pass.",
+            "items": {
+              "$ref": "#/components/schemas/PromotionGate"
+            },
+            "type": "array"
+          },
           "id": {
             "$ref": "#/components/schemas/VectorPromotionConfigId"
           },
@@ -1436,7 +1476,7 @@
     },
     "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/approve": {
       "post": {
-        "description": "Grants approval for a vectorPromotion that has an approval gate. Approving an already-approved promotion is idempotent and returns 204. Returns 409 when the promotion is superseded, finished, or requires no approval.\n",
+        "description": "Satisfies the `explicit-approval.konfidence.cloud` gate of a vectorPromotion, recording the authenticated caller as the approver. Approving an already-approved promotion is idempotent and returns 204. Returns 409 when the promotion is superseded, finished, already executing, or does not declare the explicit-approval gate.\n",
         "operationId": "approveVectorPromotionV1",
         "parameters": [
           {
