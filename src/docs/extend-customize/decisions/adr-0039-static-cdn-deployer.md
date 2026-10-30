@@ -42,7 +42,7 @@ Both options use the same registration and execution contract. Users can adapt t
 
 ### Static resources with optional routes
 
-An artifact of type `static.konfidence.cloud/v1alpha1` contains one or more static content resources, each packaged as a tar archive, optionally gzip-compressed. Each resource can declare an optional public route through its labels. This OCM component constructor packages a directory for `storefront` and embeds a prebuilt archive for `widget`:
+An artifact of type `s3.konfidence.cloud/v1alpha1` contains one or more static content resources, each packaged as a tar archive, optionally gzip-compressed. Each resource can declare an optional public route through its labels. This OCM component constructor packages a directory for `storefront` and embeds a prebuilt archive for `widget`:
 
 ```yaml
 components:
@@ -59,10 +59,10 @@ components:
           mediaType: application/json
 
       - name: storefront
-        type: static.konfidence.cloud/v1alpha1
+        type: s3.konfidence.cloud/v1alpha1
         version: 1.2.0
         labels:
-          - name: static.konfidence.cloud/v1alpha1
+          - name: s3.konfidence.cloud/v1alpha1
             value:
               route: /
         input:
@@ -73,10 +73,10 @@ components:
           preserveDir: false
 
       - name: widget
-        type: static.konfidence.cloud/v1alpha1
+        type: s3.konfidence.cloud/v1alpha1
         version: 1.2.0
         labels:
-          - name: static.konfidence.cloud/v1alpha1
+          - name: s3.konfidence.cloud/v1alpha1
             value:
               route: /widget
         input:
@@ -91,7 +91,7 @@ The `konfidence-manifest.json` file contains:
 
 ```json
 {
-  "type": "static.konfidence.cloud/v1alpha1",
+  "type": "s3.konfidence.cloud/v1alpha1",
   "allowReuse": true
 }
 ```
@@ -114,7 +114,7 @@ OCM also specifies [S3-backed component repositories](https://github.com/open-co
 
 ### Configure the S3 target
 
-`DeploymentTarget.spec.parameters` references a deployer-owned `StaticDeploymentConfig` through `apiGroup`, `kind`, and `name`, following the [DeploymentTarget contract](https://github.com/konfidence-project/konfidence/blob/2f37342f0a2b113ffdc8eae52fec2aa3982c7215/conformance/specs/deployer.md#2-deploymenttarget). The configuration holds storage settings and references a Secret containing credentials. Both referenced resources live in the target's landscape namespace.
+`DeploymentTarget.spec.parameters` references a deployer-owned `S3DeploymentConfig` through `apiGroup`, `kind`, and `name`, following the [DeploymentTarget contract](https://github.com/konfidence-project/konfidence/blob/2f37342f0a2b113ffdc8eae52fec2aa3982c7215/conformance/specs/deployer.md#2-deploymenttarget). The configuration holds storage settings and references a Secret containing credentials. Both referenced resources live in the target's landscape namespace.
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -123,14 +123,14 @@ metadata:
   name: static-prod
   namespace: kden-l-prod-fz8g86s6
 spec:
-  artifactType: static.konfidence.cloud/v1alpha1
+  artifactType: s3.konfidence.cloud/v1alpha1
   parameters:
-    apiGroup: static.konfidence.cloud
-    kind: StaticDeploymentConfig
+    apiGroup: s3.konfidence.cloud
+    kind: S3DeploymentConfig
     name: static-prod
 ---
-apiVersion: static.konfidence.cloud/v1alpha1
-kind: StaticDeploymentConfig
+apiVersion: s3.konfidence.cloud/v1alpha1
+kind: S3DeploymentConfig
 metadata:
   name: static-prod
   namespace: kden-l-prod-fz8g86s6
@@ -145,7 +145,7 @@ spec:
       name: static-prod-s3-creds
 ```
 
-`StaticDeploymentConfig.spec.storagePathPrefix` defaults to an empty string, which uses the bucket root. A trailing slash is optional, so `prod-landscape` and `prod-landscape/` identify the same storage prefix. Landscapes sharing a bucket need distinct prefixes.
+`S3DeploymentConfig.spec.storagePathPrefix` defaults to an empty string, which uses the bucket root. A trailing slash is optional, so `prod-landscape` and `prod-landscape/` identify the same storage prefix. Landscapes sharing a bucket need distinct prefixes.
 
 The S3 client uses the configured API `endpoint`, signing `region`, and `usePathStyle` setting for AWS S3 or an S3-compatible service such as MinIO, Ceph RGW, or Cloudflare R2. `usePathStyle` defaults to `false` for virtual-hosted bucket addressing; `true` uses `<endpoint>/<bucket>/<key>`. The region is a provider-specific signing value. For example, MinIO can use `endpoint: https://minio.example.com`, `region: us-east-1`, and `usePathStyle: true`.
 
@@ -181,7 +181,7 @@ After deploying an artifact, the static deployer publishes one deployment result
 ```json
 {
   "name": "widget",
-  "type": "static.konfidence.cloud/v1alpha1",
+  "type": "s3.konfidence.cloud/v1alpha1",
   "spec": {
     "assetBase": "/shop-1.2.0-k3h9d7bq2f/widget/",
     "s3Url": "https://static-assets.s3.eu-central-1.amazonaws.com/prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/widget/",
@@ -198,7 +198,7 @@ After deploying an artifact, the static deployer publishes one deployment result
 
 The static deployer reports `ArtifactDeployment.Ready` after uploading the artifact's static resources and publishing their results.
 
-The static deployer's `VectorData` controller checks only for duplicate declared `route` values across artifacts in the immutable snapshot, using deployment results of type `static.konfidence.cloud/v1alpha1`. It compares route strings for exact equality, independently of Job templates and serving code.
+The static deployer's `VectorData` controller checks only for duplicate declared `route` values across artifacts in the immutable snapshot, using deployment results of type `s3.konfidence.cloud/v1alpha1`. It compares route strings for exact equality, independently of Job templates and serving code.
 
 Two resources declaring `/widget` are a conflict and block readiness. Nested prefixes such as `/` and `/widget` are valid because longest-prefix matching selects a single most-specific route. Omitted routes do not participate in the check.
 
@@ -220,7 +220,7 @@ With either activation approach described below, browsers and other clients can 
 
 ### Job templates and activation inputs
 
-The user creates an `ActivationTaskRegistration` in the landscape namespace, separately from the `DeploymentTarget`. Its type matches the artifact type, `static.konfidence.cloud/v1alpha1`, and selects the static deployer's activation controller. S3 and serving settings, including Secret references, belong to the Job configuration. The Job image contains the integration-specific logic.
+The user creates an `ActivationTaskRegistration` in the landscape namespace, separately from the `DeploymentTarget`. Its type matches the artifact type, `s3.konfidence.cloud/v1alpha1`, and selects the static deployer's activation controller. S3 and serving settings, including Secret references, belong to the Job configuration. The Job image contains the integration-specific logic.
 
 The controller mounts a read-only `/konfidence/activation.json` file in the Job containing:
 
@@ -243,7 +243,7 @@ metadata:
   name: activate-static
   namespace: kden-l-prod-fz8g86s6
 spec:
-  type: static.konfidence.cloud/v1alpha1
+  type: s3.konfidence.cloud/v1alpha1
   spec:
     jobTemplate:
       backoffLimit: 2
@@ -262,7 +262,7 @@ spec:
 
 ### Run the Job, report the outcome
 
-For each `ActivationTaskExecution` of type `static.konfidence.cloud/v1alpha1`, the static controller reads the linked `VectorActivation` and validated `VectorData`. It validates the Job template carried by the execution and creates the Job directly in the execution's namespace. The execution owns the Job through a Kubernetes owner reference.
+For each `ActivationTaskExecution` of type `s3.konfidence.cloud/v1alpha1`, the static controller reads the linked `VectorActivation` and validated `VectorData`. It validates the Job template carried by the execution and creates the Job directly in the execution's namespace. The execution owns the Job through a Kubernetes owner reference.
 
 The activation process runs inside the Job's Pod. It receives the serving API responses and reports success or failure through its exit code:
 
@@ -320,7 +320,7 @@ The file also carries the vector's `features` and `authored` data. Its `vectorId
     "common.konfidence.cloud/example/shop": [
       {
         "name": "storefront",
-        "type": "static.konfidence.cloud/v1alpha1",
+        "type": "s3.konfidence.cloud/v1alpha1",
         "spec": {
           "assetBase": "/shop-1.2.0-k3h9d7bq2f/storefront/",
           "s3Url": "https://static-assets.s3.eu-central-1.amazonaws.com/prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/storefront/",
@@ -329,7 +329,7 @@ The file also carries the vector's `features` and `authored` data. Its `vectorId
       },
       {
         "name": "widget",
-        "type": "static.konfidence.cloud/v1alpha1",
+        "type": "s3.konfidence.cloud/v1alpha1",
         "spec": {
           "assetBase": "/shop-1.2.0-k3h9d7bq2f/widget/",
           "s3Url": "https://static-assets.s3.eu-central-1.amazonaws.com/prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/widget/",
@@ -461,7 +461,7 @@ A future opt-in cleanup delay could keep the finalizer and S3 files in place for
 
 The static deployer implements and ships its own `VectorData` and activation controllers. The activation controller manages Job creation, activation inputs, monitoring, and status reporting through the Kubernetes API. The `VectorData` controller checks cross-artifact routes and reports the static deployer's contribution through the [per-deployer VectorData readiness contract](https://github.com/konfidence-project/konfidence/issues/395).
 
-The implementation includes the `StaticDeploymentConfig` CRD and both starter Job templates. The CDN provider for option 2 remains to be selected.
+The implementation includes the `S3DeploymentConfig` CRD and both starter Job templates. The CDN provider for option 2 remains to be selected.
 
 ## A vector sticky future
 
