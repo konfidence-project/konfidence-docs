@@ -62,9 +62,17 @@ The `helm upgrade` command reports `STATUS: deployed`.
 
 The edge Gateway receives external traffic. Envoy Gateway gives it a `LoadBalancer` Service by default.
 
+Create the namespace of the edge Gateway:
+
+```bash
+kubectl create namespace edge-gateway
+```
+
 ::: tip Local kind cluster
-A kind cluster has no load balancer. On the [Quickstart](../../../../getting-started/quickstart.md) cluster, follow [Use in a local kind cluster](#use-in-a-local-kind-cluster) first, then create the edge Gateway with the `infrastructure` block from that section.
+A kind cluster has no load balancer. On the [Quickstart](../../../../getting-started/quickstart.md) cluster, follow [Use in a local kind cluster](#use-in-a-local-kind-cluster) first. Then create the edge Gateway with the `infrastructure` block from that section.
 :::
+
+Create the GatewayClass and the edge Gateway:
 
 ```bash
 kubectl apply -f - <<EOF
@@ -74,11 +82,6 @@ metadata:
   name: envoy-gateway
 spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: edge-gateway
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -184,7 +187,7 @@ After the next activation of a stage in this landscape, `kubectl get httproute -
 
 ## Route a hostname to each stage
 
-Repeat this step for every stage that you want to expose outside the cluster. The route matches the stage's hostname. Each rule matches a path, sets the headers that select the stage and the deployment result, and forwards the request to the landscape's `konfidence-router`. Add one rule per deployment result that you want to expose.
+Repeat this step for every stage that you want to expose outside the cluster. The route matches the stage's hostname. Each rule matches a path and sets the headers that select the stage and the deployment result. It then forwards the request to the landscape's `konfidence-router`. Add one rule per deployment result that you want to expose.
 
 `kubectl get httproute "konfidence-stage-$STAGE" -n "$LANDSCAPE_NAMESPACE" -o yaml` shows the `x-konfidence-service` values that Konfidence matches once the stage is active.
 
@@ -241,7 +244,16 @@ EOF
    curl -i -H "Host: $STAGE_HOSTNAME" "http://<EDGE_ADDRESS>/$SERVICE"
    ```
 
-   The `Host` header selects the route, so you need no DNS entry or `/etc/hosts` change. Until Konfidence has created the stage's route, `konfidence-router` answers `404`. A `404` here shows that the edge forwarded the request.
+   The `Host` header selects the route, so you need no DNS entry or `/etc/hosts` change. Until Konfidence has created the stage's route, the response is `404`. The edge also answers `404` when no route matches, so the status does not show where the request ended.
+
+3. Check that the request reached `konfidence-router`:
+
+   ```bash
+   kubectl logs -n "$LANDSCAPE_NAMESPACE" -c envoy --tail=5 \
+     -l gateway.envoyproxy.io/owning-gateway-name=konfidence-router
+   ```
+
+   The output contains an access log entry with the path `/$SERVICE`. If no entry appears, the edge did not forward the request. Repeat the first step.
 
 ## Use in a local kind cluster
 
