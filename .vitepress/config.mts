@@ -206,6 +206,10 @@ export default defineConfig({
                   text: "Plan for high availability",
                   link: "/docs/deploy-operate/plan/high-availability",
                 },
+                {
+                  text: "Gateway routing",
+                  link: "/docs/deploy-operate/plan/gateway-routing",
+                },
               ],
             },
             {
@@ -232,22 +236,12 @@ export default defineConfig({
                       link: "/docs/deploy-operate/install/deployer/kubernetes",
                     },
                     {
-                      text: "Route external traffic to stages",
+                      text: "Supported Gateways",
                       collapsed: true,
                       items: [
                         {
-                          text: "Choose a gateway",
-                          link: "/docs/deploy-operate/install/deployer/kubernetes/ingress",
-                        },
-                        {
-                          text: "Supported Gateways",
-                          collapsed: false,
-                          items: [
-                            {
-                              text: "Envoy Gateway",
-                              link: "/docs/deploy-operate/install/deployer/kubernetes/envoy-gateway",
-                            },
-                          ],
+                          text: "Envoy Gateway",
+                          link: "/docs/deploy-operate/install/deployer/kubernetes/envoy-gateway",
                         },
                       ],
                     },

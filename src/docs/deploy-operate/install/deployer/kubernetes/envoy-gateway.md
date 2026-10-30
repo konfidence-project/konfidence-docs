@@ -1,14 +1,14 @@
 ---
-title: Route traffic to stages with Envoy Gateway
+title: Set up Envoy Gateway
 description: Install Envoy Gateway, an edge Gateway, and one konfidence-router Gateway per landscape.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
 ---
 
-# Route traffic to stages with Envoy Gateway
+# Set up Envoy Gateway
 
-Use [Envoy Gateway](https://gateway.envoyproxy.io/) to route external requests to a [stage](../../../../reference/glossary.md#stage) by hostname. You install Envoy Gateway, one edge Gateway, and one `konfidence-router` Gateway per landscape. You also register the activation task that lets Konfidence attach its routes. [Route external traffic to stages](./ingress.md) explains what each part does.
+Use [Envoy Gateway](https://gateway.envoyproxy.io/) to route external requests to a [stage](../../../../reference/glossary.md#stage) by hostname. You install Envoy Gateway, one edge Gateway, and one `konfidence-router` Gateway per landscape. You also register the activation task that lets Konfidence attach its routes. [Gateway routing](../../../plan/gateway-routing.md) explains what each part does.
 
 ## Prerequisites
 
@@ -304,5 +304,5 @@ A kind cluster that you created yourself has no such mapping. Add an `extraPortM
 
 ## Next steps
 
-- [Route external traffic to stages](./ingress.md) describes the contract for other gateway implementations.
+- [Gateway routing](../../../plan/gateway-routing.md) describes the contract for other gateway implementations.
 - [Create a stage](../../../manage-delivery/stages.md), then route a hostname to it.

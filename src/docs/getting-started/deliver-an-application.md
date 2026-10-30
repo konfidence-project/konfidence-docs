@@ -27,7 +27,7 @@ kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
 
 ## Install the edge gateway
 
-Konfidence ships no gateway. In this guide, you act as the cluster admin and install Envoy Gateway. Its edge gateway receives traffic on `localhost:9090`. [Route traffic to stages with Envoy Gateway](../deploy-operate/install/deployer/kubernetes/envoy-gateway.md) explains each resource.
+Konfidence ships no gateway. In this guide, you act as the cluster admin and install Envoy Gateway. Its edge gateway receives traffic on `localhost:9090`. [Set up Envoy Gateway](../deploy-operate/install/deployer/kubernetes/envoy-gateway.md) explains each resource.
 
 1. Install the Gateway API and Envoy Gateway CRDs:
 
