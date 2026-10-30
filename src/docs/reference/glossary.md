@@ -172,7 +172,7 @@ A feature flag is a named value in the [vector configuration](#vector-configurat
 
 A landscape is an operational boundary within a project. It groups stages, deployment targets, credentials, and deployment resources that share ownership, security, compliance, or reliability requirements.
 
-Konfidence creates a dedicated Kubernetes namespace for each landscape, `kden-l-<landscape-name>-<hash>` by default. Deployment targets connect the landscape to the infrastructure where deployments run.
+Konfidence creates or adopts a dedicated Kubernetes namespace for each landscape, `kden-l-<landscape-name>-<hash>` by default. Deployment targets connect the landscape to the infrastructure where deployments run.
 
 ::: details Pages that use this term
 
@@ -216,7 +216,7 @@ The landscape orchestrator executes deployments in a landscape. It runs in the s
 
 ### Project
 
-A project provides the organizational boundary for Konfidence resources. The API server grants the subjects in its role bindings access to the project. Each project owns a dedicated namespace, `kden-p-<project-name>` by default. That namespace holds the project's landscapes, vector templates, and promotion configurations.
+A project provides the organizational boundary for Konfidence resources. The API server grants the subjects in its role bindings access to the project. Each project manages a dedicated namespace, `kden-p-<project-name>` by default. That namespace holds the project's landscapes, vector templates, and promotion configurations.
 
 ::: details Pages that use this term
 
