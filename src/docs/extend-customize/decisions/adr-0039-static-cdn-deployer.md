@@ -228,7 +228,9 @@ The controller mounts a read-only `/konfidence/activation.json` file in the Job 
 - Stage name and `StageVersion` reference from `VectorActivation`.
 - Vector deployment ID from `VectorDeployment.metadata.name` and the vector's OCM reference.
 - The selected vector's `features` and `authored` data.
-- Its `deploymentResults`, grouped by artifact component.
+- Its `deploymentResults`, grouped by artifact.
+
+The controller reads `features`, `authored`, and deployment results from the selected vector's immutable `VectorData.spec`.
 
 The stage input lets the Job map stages to serving targets. Deployment results locate each artifact resource's files; the other vector data is available for serving configuration.
 
