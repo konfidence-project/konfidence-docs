@@ -20,19 +20,9 @@ Konfidence attaches these routes to Gateways that you create. Whether a Gateway 
 
 Konfidence creates and updates these routes only if the `gateway-route.konfidence.cloud` activation task is registered in the landscape namespace. Without the registration, activations succeed but no route exists.
 
-A request passes two Gateways:
+A request passes two Gateways. Your edge Gateway sets the stage and service headers. `konfidence-router` routes on them to the active vector.
 
-```text
-client
-  → edge Gateway            (yours, reachable from outside)
-      HTTPRoute per stage   (yours): match the hostname and path,
-                            set x-konfidence-stage: <stage>
-                            set x-konfidence-service: <deployment-result-name>
-  → konfidence-router       (yours, cluster-internal, one per landscape namespace)
-      HTTPRoute per stage   (Konfidence): match x-konfidence-stage
-                            and x-konfidence-service
-  → deployment result Service of the active vector
-```
+![A client request enters the edge Gateway, whose per-stage HTTPRoute sets the x-konfidence-stage and x-konfidence-service headers, passes to the cluster-internal konfidence-router Gateway in the landscape namespace, whose Konfidence-managed stage HTTPRoute matches and removes both headers and forwards to the deployment result Service of the active vector. The landscape namespace also holds the ReferenceGrant and the ActivationTaskRegistration you create.](./assets/stage-request-path.drawio.svg){ style="width: 90%; display: block; margin: auto;" }
 
 The two headers select the target. `x-konfidence-stage` selects the stage, and `x-konfidence-service` selects the deployment result within it. You choose the external hostnames and paths in your edge routes. Konfidence matches only the two headers, so any hostname and path scheme works.
 
