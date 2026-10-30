@@ -26,11 +26,9 @@ Two additional use cases are in scope for the content endpoints introduced by th
 
 **Stage detail view.** The data needed to show which artifact versions are currently deployed and what configuration they carry is available in the control plane (`VectorDeployment`, `VectorData`), but is not yet exposed through the API. The active deployment for a stage is reachable via `Stage.Status.ActiveStageVersion`, which references the active `StageVersion`, which in turn owns the `VectorDeployment` carrying `ResolvedVectorOcm` and the `VectorData` CR. Exposing this path through the API is an open task independent of registry access.
 
-**Artifact inspection.** The API exposes artifact content for versions reachable through the control plane. For versions that have never been deployed (historical or from another landscape), a registry call is required.
+**Artifact and vector data inspection.** The API exposes artifact content for versions reachable through the control plane. For versions not yet present in the current landscape, whether from another landscape or never promoted here then a registry call is required.
 
 The codebase already contains two patterns that inform the caching design: the `hashicorp/golang-lru/v2/expirable` LRU in `pkg/ocm/crypto/verifier_cache.go` (keyed by content digest, configurable size and TTL), and the singleflight pattern in `internal/auth/token_verifier.go` (collapses concurrent cache misses for the same key into a single in-flight call).
-
-This ADR is out of scope for changes to how vectors are assembled or promoted, and for metadata storage and vector lifecycle history.
 
 ## Considered options
 
@@ -46,7 +44,7 @@ Expose the content already stored on CRs (`VectorDeployment.Status.ResolvedVecto
 
 **Implementation time.** Fastest.
 
-**Assessment.** Not adopted as a standalone solution. etcd is not a content store and storing large JSON blobs in `status` fields is a misuse of Kubernetes API machinery. The 1.5 MB per-object hard limit is a concrete blocker as vector size grows where a 50-component descriptor can already reach 200-400 KB. The option also leaves the promotion diff incoming side unaddressed. The CR fields it relies on remain useful as internal data sources, but exposing them directly through the API as the primary content layer is not the right design.
+**Assessment.** Not adopted as a standalone solution. etcd is not a content store and storing large JSON blobs in `status` fields is a misuse of Kubernetes API machinery. The 1.5 MB per-object hard limit is a concrete blocker as vector size grows where a 50-component descriptor can already reach 200-400 KB. The option also leaves the diff incoming side unaddressed. The CR fields it relies on remain useful as internal data sources, but exposing them directly through the API as the primary content layer is not the right design.
 
 ### Option 2+3 - Controller-side LRU cache + promotion diff pre-warm
 
@@ -110,13 +108,11 @@ The problem is that Option 1 should not be built as a content layer. Storing lar
 
 ### Option 2 + 3 + 4 - Controller cache plus API server cache (proposed)
 
-Options 2+3 address the promotion diff by moving the unavoidable registry call for the incoming vector out of the request path. Option 4 addresses stage view and artifact inspection by adding an in-process cache to the API server. Together they cover all three use cases without storing content in etcd.
-
-**This is the proposed approach**, delivered in two phases.
+Options 2+3 address the promotion diff by moving the unavoidable registry call for the incoming vector out of the request path. Option 4 addresses stage view and artifact inspection by adding an in-process cache to the API server. Together they cover all three use cases without storing content in etcd, delivered in two phases.
 
 ---
 
-**Phase 1 - Promotion diff (Options 2+3).** A shared LRU cache with singleflight wraps `VectorOcmPort` and is accessible to both the `VectorDeployment` and `VectorPromotion` controllers. A new `VectorPromotionCacheWarmer` reconciler pre-fetches the incoming vector when a promotion enters `Waiting` state. The warmer caches the vector content only, as it does not pre-compute or store the diff. When the user opens the approval UI, `getVectorDiffV1` fetches both vectors (from cache or registry) and returns the diff between them. On cache miss, both vectors are fetched directly from the OCI registry. The diff computation is part of the ongoing implementation work. The API server requires an OCM client for this; that cost is the same whether the diff is pre-computed or computed on request.
+**Phase 1 - Promotion diff (Options 2+3).** A shared LRU cache with singleflight wraps `VectorOcmPort` and is accessible to both the `VectorDeployment` and `VectorPromotion` controllers. A new `VectorPromotionCacheWarmer` reconciler pre-fetches the incoming vector when a promotion enters `Waiting` state. The warmer caches the vector content only, as it does not pre-compute or store the diff. When the user opens the approval UI, `getVectorDiffV1` fetches both vectors (from cache or registry) and returns the diff between them. On cache miss, both vectors are fetched directly from the OCI registry. The diff computation is part of the ongoing implementation work. The API server requires an OCM client for this, which costs the same whether the diff is pre-computed or computed on request.
 
 **Phase 2 - Stage view and artifact inspection (Option 4).** The foundation is already in place: `pkg/ocm/content.Reader`, `buildOCMReader`, and the three content endpoints make live registry calls today. What remains is adding an in-process cache in front of the `Reader` so that subsequent calls for the same ref are served without a registry round-trip. The same fallback behaviour applies: a cache miss falls back to a direct OCI registry call.
 
@@ -124,15 +120,15 @@ Options 2+3 address the promotion diff by moving the unavoidable registry call f
 
 **Fallback behaviour.** The cache is an optimisation layer, not a hard dependency. All three endpoints fall back to a direct OCI registry call on cache miss, so the system degrades to the pre-cache behaviour rather than failing.
 
-**API surface.** The backend exposes three distinct endpoints so the UI never calls the OCI registry directly, never computes diffs, and never coordinates cache state.
+**API surface.** The backend exposes three distinct endpoints so the UI never calls the OCI registry directly, never computes diffs, and never coordinates cache state. The concrete paths and parameters are defined in the OpenAPI schema and the descriptions below cover the intent and caching behaviour of each.
 
-`GET /v1/projects/{projectId}/vectors/content?refs=<ref>&refs=<ref>&...` — returns the component list and configuration of one or more vectors by OCM ref. The `refs` parameter is repeatable for batch fetches. Backed by the API server cache (Phase 2) with OCI fallback.
+**Vector content endpoint** — returns the component list and configuration of one or more vectors by OCM ref. Accepts a repeatable ref parameter for batch fetches. Backed by the API server cache (Phase 2) with OCI fallback.
 
-`GET /v1/projects/{projectId}/artifacts/content?ref=<ref>` — returns the type, tasks, resources, and reuse policy of a single artifact by OCM ref. Backed by the API server cache (Phase 2) with OCI fallback.
+**Artifact content endpoint** — returns the type, tasks, resources, and reuse policy of a single artifact by OCM ref. Backed by the API server cache (Phase 2) with OCI fallback.
 
-`GET /v1/projects/{projectId}/vectors/diff?incoming=<incomingVectorRef>&current=<currentVectorRef>` — returns the diff between two vectors. Both refs are fetched from the OCI registry (or cache in Phase 2). The diff computation is part of the ongoing implementation work. Because the endpoint accepts arbitrary vector refs rather than a promotion ID, the UI can request a diff between any two vectors at any point in their lifecycle, not only those involved in an active promotion.
+**Vector diff endpoint** — returns the diff between two vectors identified by their OCM refs. Both refs are fetched from the OCI registry (or cache in Phase 2). The diff computation is part of the ongoing implementation work. Because the endpoint accepts arbitrary vector refs rather than a promotion ID, the UI can request a diff between any two vectors at any point in their lifecycle, not only those involved in an active promotion.
 
-**Authorization.** Access to these endpoints is gated by the existing project-scoped authorization: a caller must have read access to the project identified by `projectId`. The `projectId` path parameter is validated via `resolveProjectNamespace`, which rejects requests for projects the caller is not authenticated for. Registry credentials are resolved from a single global credential secret configured at API server startup, not per-project.
+**Authorization.** Access to these endpoints is gated by the existing project-scoped authorization, so a caller must have read access to the project identified by `projectId`. The `projectId` path parameter is validated via `resolveProjectNamespace`, which rejects requests for projects the caller is not authenticated for. Registry credentials are resolved from a single global credential secret configured at API server startup, not per-project.
 
 **Multi-replica behaviour.** Each replica warms its cache independently. Because all cache entries are digest-keyed and OCM content is immutable, concurrent misses across replicas result in redundant fetches rather than stale reads. Cross-replica cache synchronisation is not adopted; re-evaluate if registry call volume at scale becomes a measurable problem.
 
