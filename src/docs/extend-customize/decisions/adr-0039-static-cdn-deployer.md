@@ -42,7 +42,7 @@ Both options use the same registration and execution contract. Users can adapt t
 
 ### Static resources with optional routes
 
-An artifact of type `s3.konfidence.cloud/v1alpha1` contains one or more static content resources, each packaged as a tar archive, optionally gzip-compressed. Each resource can declare an optional public route through its labels. This OCM component constructor packages a directory for `storefront` and embeds a prebuilt archive for `widget`:
+An artifact of type `s3.konfidence.cloud` contains one or more static content resources, each packaged as a tar archive, optionally gzip-compressed. Each resource can declare an optional public route through its labels. This OCM component constructor packages a directory for `storefront` and embeds a prebuilt archive for `widget`:
 
 ```yaml
 components:
@@ -91,7 +91,7 @@ The `konfidence-manifest.json` file contains:
 
 ```json
 {
-  "type": "s3.konfidence.cloud/v1alpha1",
+  "type": "s3.konfidence.cloud",
   "allowReuse": true
 }
 ```
@@ -114,7 +114,7 @@ OCM also specifies [S3-backed component repositories](https://github.com/open-co
 
 ### Configure the S3 target
 
-`DeploymentTarget.spec.parameters` references a deployer-owned `S3DeploymentConfig` through `apiGroup`, `kind`, and `name`, following the [DeploymentTarget contract](https://github.com/konfidence-project/konfidence/blob/2f37342f0a2b113ffdc8eae52fec2aa3982c7215/conformance/specs/deployer.md#2-deploymenttarget). The configuration holds storage settings and references a Secret containing credentials. Both referenced resources live in the target's landscape namespace.
+`DeploymentTarget.spec.parameters` references a deployer-owned `S3DeploymentConfig` through `apiGroup`, `kind`, and `name`, following the [DeploymentTarget contract](https://github.com/konfidence-project/konfidence/blob/2f37342f0a2b113ffdc8eae52fec2aa3982c7215/conformance/specs/deployer.md#2-deploymenttarget). The configuration holds destination settings and optional OCM credential references. The configuration and any referenced Secrets live in the target's landscape namespace.
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -123,7 +123,7 @@ metadata:
   name: static-prod
   namespace: kden-l-prod-fz8g86s6
 spec:
-  artifactType: s3.konfidence.cloud/v1alpha1
+  artifactType: s3.konfidence.cloud
   parameters:
     apiGroup: s3.konfidence.cloud
     kind: S3DeploymentConfig
@@ -135,25 +135,97 @@ metadata:
   name: static-prod
   namespace: kden-l-prod-fz8g86s6
 spec:
+  bucket: static-assets
+  region: eu-central-1
   storagePathPrefix: prod-landscape
-  s3:
-    endpoint: https://s3.eu-central-1.amazonaws.com
-    bucket: static-assets
-    region: eu-central-1
-    usePathStyle: false
-    credentialRef:
-      name: static-prod-s3-creds
+  credentials: # optional
+    ocm:
+      refs:
+        - name: static-prod-ocm-config
 ```
+
+`S3DeploymentConfig.spec.bucket` is required. `spec.region` is optional when SDK configuration supplies a signing region; otherwise target validation fails. It can be set per landscape for multi-region deployments.
 
 `S3DeploymentConfig.spec.storagePathPrefix` defaults to an empty string, which uses the bucket root. A trailing slash is optional, so `prod-landscape` and `prod-landscape/` identify the same storage prefix. Landscapes sharing a bucket need distinct prefixes.
 
-The S3 client uses the configured API `endpoint`, signing `region`, and `usePathStyle` setting for AWS S3 or an S3-compatible service such as MinIO, Ceph RGW, or Cloudflare R2. `usePathStyle` defaults to `false` for virtual-hosted bucket addressing; `true` uses `<endpoint>/<bucket>/<key>`. The region is a provider-specific signing value. For example, MinIO can use `endpoint: https://minio.example.com`, `region: us-east-1`, and `usePathStyle: true`.
+`spec.endpoint` optionally overrides the s3 SDK's regional endpoint. `spec.usePathStyle` defaults to `false` for virtual-hosted addressing. S3-compatible services can override both; for example, MinIO can use `endpoint: https://minio.example.com`, `region: us-east-1`, and `usePathStyle: true`.
+
+#### OCM credentials and SDK fallback
+
+`S3DeploymentConfig.spec.credentials` is optional. When set, `credentials.ocm.refs` follows Konfidence's [same-namespace Secret reference schema](https://github.com/konfidence-project/konfidence/blob/f20b4e2d070683092ecaec45e2737197d6c6ca04/api/v1alpha1/credentials_types.go) and supplies one [OCM credential graph](https://ocm.software/docs/concepts/credential-system/) for source and destination access.
+
+Credentials are resolved independently for each source and destination. Matched OCM credentials take precedence. When none are configured or match, S3 reads, uploads, and cleanup use the SDK's default credential chain; OCI reads attempt anonymous access. Anonymous S3 reads require explicit configuration.
+
+Fallback applies only to absent credentials. Invalid configuration, credential-provider failures, and authentication failures stop the operation. A configuration containing only OCI credentials can use SDK authentication for S3.
+
+The [AWS SDK's default chain](https://docs.aws.amazon.com/sdk-for-go/v2/developer-guide/configure-gosdk.html#specifying-credentials) supports workload identity with automatic credential renewal. Its identity comes from the deployer runtime and can be authorized for multiple buckets across landscapes and regions.
+
+With workload identity configured on the deployer Pod, `S3DeploymentConfig.spec` can contain only destination settings:
+
+```yaml
+spec:
+  bucket: static-assets
+  region: eu-central-1
+  storagePathPrefix: prod-landscape
+```
+
+For explicit credentials, the Secret referenced above contains the unified OCI and S3 bindings:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: static-prod-ocm-config
+  namespace: kden-l-prod-fz8g86s6
+type: Opaque
+stringData:
+  .ocmconfig: |
+    type: generic.config.ocm.software/v1
+    configurations:
+      - type: credentials.config.ocm.software/v1
+        consumers:
+          # OCI component repository pulls and pushes.
+          - identity:
+              type: OCIRegistry
+              hostname: registry.example.com
+              scheme: https
+              port: "443"
+              path: "{ocm,ocm/**}"
+            credentials:
+              - type: OCICredentials/v1
+                username: static-deployer
+                password: "<oci-registry-password-or-token>"
+
+          # Pull the source archives referenced through S3/v2.
+          - identity:
+              type: S3
+              path: "build-artifacts/shop/**"
+            credentials:
+              - type: S3Credentials/v1
+                accessKeyId: "<source-access-key-id>"
+                secretAccessKey: "<source-secret-access-key>"
+                sessionToken: "<source-session-token>" # optional
+
+          # Read, upload and delete files at the deployment target.
+          - identity:
+              type: S3
+              path: "{static-assets/prod-landscape,static-assets/prod-landscape/**}"
+            credentials:
+              - type: S3Credentials/v1
+                accessKeyId: "<target-access-key-id>"
+                secretAccessKey: "<target-secret-access-key>"
+                sessionToken: "<target-session-token>" # optional
+```
+
+These bindings are selected by location for both reads and writes; registry and bucket permissions determine allowed operations. Both S3 consumers omit URL attributes because the examples omit `endpoint`. Explicit endpoints also participate in credential matching.
+
+Each reconciliation uses its landscape's configuration and credentials. Core supplies source S3 connection settings as OCM access-descriptor JSON in `ArtifactDeployment.spec.component.resources[].content`. Destination settings come from `S3DeploymentConfig`. Each access uses its own signing region, allowing cross-region reads and writes.
 
 #### Why a configuration CRD
 
-We choose a versioned configuration CRD over a direct Secret reference to give non-secret settings a typed schema with validation and defaults. The static deployer can evolve this API independently of Konfidence core, while users manage configuration through GitOps and rotate credentials through the referenced Secret. This adds a deployer-owned CRD to ship and maintain.
+We choose a versioned configuration CRD over a direct Secret reference to give non-secret settings a typed schema with validation and defaults. The static deployer can evolve this API independently of Konfidence core, while users manage configuration through GitOps and rotate credentials through the referenced Secrets. This adds a deployer-owned CRD to ship and maintain.
 
-The deployer validates the configuration and revalidates the target when it or the referenced Secret changes. Each `ArtifactDeployment` retains its resolved storage endpoint, bucket, and prefix for subsequent operations and cleanup.
+The deployer validates the configuration and revalidates the target when it or a referenced Secret changes. Credential changes take effect on subsequent reconciliations.
 
 ### Upload files, publish deployment results
 
@@ -220,7 +292,7 @@ With either activation approach described below, browsers and other clients can 
 
 ### Job templates and activation inputs
 
-The user creates an `ActivationTaskRegistration` in the landscape namespace, separately from the `DeploymentTarget`. Its type matches the artifact type, `s3.konfidence.cloud/v1alpha1`, and selects the static deployer's activation controller. S3 and serving settings, including Secret references, belong to the Job configuration. The Job image contains the integration-specific logic.
+The user creates an `ActivationTaskRegistration` in the landscape namespace, separately from the `DeploymentTarget`. Its `spec.type` value, `s3.konfidence.cloud/v1alpha1`, selects the static deployer's activation controller. S3 and serving settings, including Secret references, belong to the Job configuration. The Job image contains the integration-specific logic.
 
 The controller mounts a read-only `/konfidence/activation.json` file in the Job containing:
 
