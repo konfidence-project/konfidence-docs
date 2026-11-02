@@ -63,7 +63,7 @@ An artifact alias is a mutable tag, such as `main`, that points to one version o
 
 ### Delivery flow
 
-The delivery flow is the path from published artifacts to the vector each stage selects. It has four phases: build, assemble, assign, and promote. The assign phase is unrelated to the [`VectorAssignment`](#vectorassignment) resource. Deployment in a landscape starts after the delivery flow ends.
+The delivery flow is the path from published artifacts to the vector each stage selects. It has four phases: build, assemble, assign, and promote. Deployment in a landscape starts after the delivery flow ends.
 
 ::: details Pages that use this term
 
@@ -402,18 +402,6 @@ A `VectorActivation` is a custom resource that starts the activation of a vector
 ::: details Pages that use this term
 
 - [Create a stage](../deploy-operate/manage-delivery/stages.md)
-
-:::
-
-### VectorAssignment
-
-A `VectorAssignment` is a custom resource that binds one `ArtifactDeployment` to one `VectorDeployment`. One artifact deployment can serve several vectors, so vectors and artifact deployments form a many-to-many relationship. Each `VectorAssignment` represents one binding in that relationship.
-
-The vector deployment controller manages `VectorAssignment` resources. Deployers reconcile them and report readiness.
-
-::: details Pages that use this term
-
-- [Delivery Flow](../core-concepts/delivery-flow.md)
 
 :::
 

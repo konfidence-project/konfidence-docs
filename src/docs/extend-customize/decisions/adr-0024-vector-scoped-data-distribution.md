@@ -56,7 +56,7 @@ This ADR covers feature toggles, generic authored configuration, and deployment 
 
 ### Requirements
 
-1. **Distribution guarantee before migration** -- a vector's data must be distributed before its migration tasks run, so that service-to-service calls made during migration can resolve it. The `VectorMigration` is created only once the `VectorDeployment` is fully ready -- all artifacts deployed, all `VectorAssignment`s ready, and the `VectorData` materialised -- which guarantees the data is in place before migration begins and, transitively, before activation. From that point there must be no window in which a request could arrive at an application without the correct data being available.
+1. **Distribution guarantee before migration** -- a vector's data must be distributed before its migration tasks run, so that service-to-service calls made during migration can resolve it. The `VectorMigration` is created only once the `VectorDeployment` is fully ready -- all artifacts deployed and the `VectorData` materialised -- which guarantees the data is in place before migration begins and, transitively, before activation. From that point there must be no window in which a request could arrive at an application without the correct data being available.
 2. **Runtime resolution by vector-id** -- applications must be able to retrieve the correct configuration for the vector associated with the current request, without restart or redeployment of the service.
 3. **Language-agnostic** -- no mandatory SDK or client library.
 4. **Platform-agnostic concepts, platform-specific distribution** -- the *concepts* (data lives in OCM, contains both authored and deployment-derived data, scoped per vector, etc.) are platform-agnostic. The *distribution mechanism* itself realistically cannot be -- it is the responsibility of the deployer / landscape orchestrator to provide a suitable implementation per platform.
@@ -132,9 +132,9 @@ Note: This applies to the Kubernetes platform where Gateway API is available. Eq
 **Deployment flow:**
 
 1. Vector deployment begins; the authored artifact is resolved and the deployment results (e.g., service discovery) are computed
-2. The controllers that create HTTPRoutes add `RequestHeaderModifier` filters carrying the combined data:
-    - The **VectorAssignment controller** (landscape-flux-deployer) adds them to the service-to-service HTTPRoutes
-    - The **Activation Execution controller** adds them to the ingress/gateway HTTPRoutes
+2. Routing is handled differently by traffic direction:
+  - **East-west traffic** does not use synthesized Services or service-to-service `HTTPRoute` resources. Applications resolve peer Services from deployment results exposed through `VectorData` and forward `X-Vector-ID`.
+  - **North-south traffic** is handled by the Activation Execution controller. It creates or updates the per-stage `HTTPRoute` from routable deployment results and injects `X-Vector-ID` for the active vector.
 3. The HTTPRoute updates are reconciled by the gateway implementation (e.g., Istio/Envoy)
 4. Vector activation proceeds -- the data is now injected into every matching request
 
@@ -146,10 +146,10 @@ Note: This applies to the Kubernetes platform where Gateway API is available. Eq
 
 **Runtime flow (service-to-service):**
 
-1. Service A receives a request with `X-Vector-ID` and the injected `X-Vector-*` headers
-2. Service A calls Service B, forwarding only the `X-Vector-ID` header
-3. The waypoint/mesh routes the call through Service B's HTTPRoute, which injects Service B's `X-Vector-*` headers
-4. Service B reads its vector-scoped data from the injected headers
+1. Service A receives a request carrying `X-Vector-ID`.
+2. Service A uses that vector ID to resolve Service B from the deployment results exposed through `VectorData`.
+3. Service A calls the resolved Service directly and forwards `X-Vector-ID`.
+4. Service B uses the same vector ID when resolving its own vector-scoped data.
 
 **Pros:**
 

@@ -20,7 +20,6 @@ Package v1alpha1 contains API Schema definitions for the konfidence v1alpha1 API
 - [ActivationTaskExecution](#activationtaskexecution)
 - [ActivationTaskRegistration](#activationtaskregistration)
 - [ArtifactDeployment](#artifactdeployment)
-- [DeploymentClass](#deploymentclass)
 - [DeploymentTarget](#deploymenttarget)
 - [Landscape](#landscape)
 - [Project](#project)
@@ -29,7 +28,6 @@ Package v1alpha1 contains API Schema definitions for the konfidence v1alpha1 API
 - [StageVersionUsage](#stageversionusage)
 - [TaskExecution](#taskexecution)
 - [VectorActivation](#vectoractivation)
-- [VectorAssignment](#vectorassignment)
 - [VectorData](#vectordata)
 - [VectorDeployment](#vectordeployment)
 - [VectorMigration](#vectormigration)
@@ -226,9 +224,7 @@ spec:
         name: sample-service-1-helm-chart
         type: helmChart
     version: 1.0.0
-  manifest:
-    allowReuse: true
-    type: helm.konfidence.cloud
+  artifactType: helm.konfidence.cloud
   taskManifests: [ ]
 ```
 
@@ -247,7 +243,7 @@ _Appears in:_
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
-| `manifest` _[ArtifactManifest](#artifactmanifest)_ | Manifest contains information about the artifact itself and the deployer implementation responsible for handling it. |  |  |
+| `artifactType` _[ArtifactType](#artifacttype)_ | ArtifactType identifies which type of artifact is represented in the ArtifactDeployment. It must match the<br />syntax defined in section 1.1 of the deployer specification. |  | Pattern: `^[a-z0-9](?:[a-z0-9-]\{0,61\}[a-z0-9])?\.(?:[a-z0-9](?:[a-z0-9-]\{0,61\}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]\{0,61\}[a-z0-9])?$` <br /> |
 | `taskManifests` _[TaskManifest](#taskmanifest) array_ | TaskManifests describes optional post-deployment tasks (commonly used for vector migrations such as database<br />schema updates). Tasks are executed after the artifact has been deployed and may form a dependency graph via<br />DependsOn. |  |  |
 | `component` _[OCMComponent](#ocmcomponent)_ | Component contains OCM metadata associated with the artifact. This is a simplified mapping of the OCM ComponentVersion. |  |  |
 
@@ -270,23 +266,23 @@ _Appears in:_
 | `deploymentResult` _[DeploymentResult](#deploymentresult) array_ | DeploymentResults captures structured outputs produced by the deployer during the deployment process—such as<br />computed DNS names, service endpoints, generated configuration, or other workload-specific details.<br />Results should be treated as immutable for a given generation and may be consumed by later stages of a vector<br />rollout (e.g., routing configuration).<br />Results are unique by (name, type). |  | Optional: \{\} <br /> |
 
 
-### ArtifactManifest
+### ArtifactType
 
+_Underlying type:_ _string_
 
-
-ArtifactManifest describes the content of the artifact, thus it determines the deployer implementation responsible
-for handling it.
+ArtifactType is a type-and-domain identifier for a deployer's artifactType contract. Its syntax is defined in
+section 1.1 of conformance/specs/deployer.md. It is encouraged to use MustArtifactType for construction.
 
 
 
 _Appears in:_
 - [ArtifactDeploymentSpec](#artifactdeploymentspec)
-- [VectorAssignmentSpec](#vectorassignmentspec)
+- [DeploymentTargetSpec](#deploymenttargetspec)
 
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `type` _string_ | Type specifies the name of the DeploymentClass that should handle this artifact (e.g., "helm.konfidence.cloud").<br />This must match a DeploymentClass.metadata.name in the cluster.<br />Deployers implement their own interpretation of the artifact's contents. |  |  |
-| `allowReuse` _boolean_ | AllowReuse indicates whether the deployed artifact instance may be shared across multiple VectorDeployments.<br />Reuse allows more efficient resource consumption but requires the artifact to be independent of vector-specific<br />runtime context. |  |  |
+
+
+
+
 
 
 ### Component
@@ -378,59 +374,6 @@ _Appears in:_
 | `Orphan` | DeletionPolicyOrphan leaves the namespace in place and only strips the<br />konfidence.cloud/* management labels.<br /> |
 
 
-### DeploymentClass
-
-
-
-DeploymentClass declares a deployment capability provided by a deployer (controller). It is a cluster-scoped resource
-installed by deployers to advertise their capabilities. Its immutable spec ensures that ownership of resources using
-the class cannot change on the fly. Its metadata.name is the deployment class identifier referenced by
-ArtifactDeployments and DeploymentTargets. The name must be unique across all DeploymentClasses in the cluster and
-should follow the pattern `<class-name>.<vendor-domain>` (e.g., `helm.konfidence.cloud`).
-
-
-
-_Appears in:_
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `DeploymentClass` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#objectmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `spec` _[DeploymentClassSpec](#deploymentclassspec)_ |  |  |  |
-
-
-#### Example
-
-```yaml
-apiVersion: konfidence.cloud/v1alpha1
-kind: DeploymentClass
-metadata:
-  name: kustomize.konfidence.cloud
-spec:
-  controller: konfidence.cloud/kubernetes-landscape-orchestrator
-```
-
-### DeploymentClassSpec
-
-
-
-DeploymentClassSpec defines the desired state of DeploymentClass. It is immutable because changing it requires
-transfer of deployment ownership to a different controller. This process is currently not well-supported and
-is therefor not recommended.
-
-
-
-_Appears in:_
-- [DeploymentClass](#deploymentclass)
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `controller` _string_ | Controller is the name of the controller that implements this deployment class.<br />This identifies which operator/controller is responsible for reconciling<br />resources of this deployment class (e.g., "kubernetes-landscape-orchestrator"). |  | MaxLength: 253 <br />MinLength: 1 <br />Required: \{\} <br /> |
-
-
 ### DeploymentResult
 
 
@@ -504,7 +447,7 @@ _Appears in:_
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
-| `artifactType` _string_ | ArtifactType identifies which type of artifact should be deployed to the specified target. The ArtifactType is<br />selected by a deployer whose controllers are responsible for reconciling the DeploymentTarget resource. If there<br />is no deployer covering the given ArtifactType, the DeploymentTarget will never become ready. ArtifactType is<br />immutable because changing it may transfer ownership of the DeploymentTarget to a different controller.<br />Currently, Konfidence only supports one DeploymentTarget per ArtifactType in a landscape, so this field should<br />be unique across all DeploymentTargets in the same landscape namespace. If multiple DeploymentTargets with the<br />same ArtifactType exist in a single landscape namespace, deployers may fail their deployments, as they cannot<br />determine which DeploymentTarget takes precedence. |  | Required: \{\} <br /> |
+| `artifactType` _[ArtifactType](#artifacttype)_ | ArtifactType identifies which type of artifact should be deployed to the specified target. It must match the<br />syntax defined in section 1.1 of the deployer specification.<br />The ArtifactType is selected by a deployer whose controllers are responsible for reconciling the<br />DeploymentTarget resource. If there is no deployer covering the given ArtifactType, the DeploymentTarget<br />will never become ready. ArtifactType is immutable because changing it may transfer ownership of the<br />DeploymentTarget to a different controller.<br />Currently, Konfidence only supports one DeploymentTarget per ArtifactType in a landscape, so this field should<br />be unique across all DeploymentTargets in the same landscape namespace. If multiple DeploymentTargets with the<br />same ArtifactType exist in a single landscape namespace, deployers may fail their deployments, as they cannot<br />determine which DeploymentTarget takes precedence. |  | Pattern: `^[a-z0-9](?:[a-z0-9-]\{0,61\}[a-z0-9])?\.(?:[a-z0-9](?:[a-z0-9-]\{0,61\}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]\{0,61\}[a-z0-9])?$` <br />Required: \{\} <br /> |
 | `parameters` _[Parameters](#parameters)_ | Parameters define how to connect to the target runtime described by this DeploymentTarget. It may point to<br />deployer-specific configuration containing connection details, credentials and further settings required to<br />connect to the target runtime. Their structure and interpretation are defined by the deployer that owns ArtifactType. |  | Optional: \{\} <br /> |
 
 
@@ -619,7 +562,7 @@ _Appears in:_
 | --- | --- | --- | --- |
 | `displayName` _string_ | DisplayName is the human-readable name of the landscape, shown in user<br />interfaces. It does not affect the namespace name or any label, and it<br />may be changed at any time. |  | MaxLength: 253 <br />MinLength: 1 <br />Optional: \{\} <br /> |
 | `namespace` _string_ | Namespace overrides the name of the namespace created for this landscape.<br />When unset it defaults to `kden-l-<landscape-name>-<hash>`. It is<br />immutable once the Landscape exists, because the namespace and everything<br />it holds are bound to this name. |  | MaxLength: 63 <br />Pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$` <br />Optional: \{\} <br /> |
-| `namespacePolicy` _[NamespacePolicy](#namespacepolicy)_ | NamespacePolicy controls how the landscape namespace is taken over. Create<br />(the default) creates it and errors on conflict; Adopt takes over an<br />existing namespace and requires both that namespace to already exist and<br />spec.namespace to be set, so the adopted namespace is named explicitly. | Create | Enum: [Create Adopt] <br />Optional: \{\} <br /> |
+| `namespacePolicy` _[NamespacePolicy](#namespacepolicy)_ | NamespacePolicy controls how the landscape namespace is taken over. Create<br />(the default) creates it and errors on conflict; Adopt takes over an<br />existing namespace and requires both that namespace to already exist and<br />spec.namespace to be set, so the adopted namespace is named explicitly. It<br />is immutable once the Landscape exists, because it only governs how the<br />namespace is first acquired and has no effect once ownership is settled. | Create | Enum: [Create Adopt] <br />Optional: \{\} <br /> |
 | `deletionPolicy` _[DeletionPolicy](#deletionpolicy)_ | DeletionPolicy controls what happens to the landscape namespace when the<br />Landscape is deleted. Orphan (the default) keeps the namespace and strips<br />its management labels; Delete removes the namespace with the Landscape. | Orphan | Enum: [Delete Orphan] <br />Optional: \{\} <br /> |
 
 
@@ -650,7 +593,6 @@ LocalArtifactDeploymentReference holds a reference to an ArtifactDeployment in t
 
 
 _Appears in:_
-- [VectorAssignmentSpec](#vectorassignmentspec)
 - [VectorDeploymentStatus](#vectordeploymentstatus)
 
 | Field | Description | Default | Validation |
@@ -673,38 +615,6 @@ _Appears in:_
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
 | `name` _string_ | Name of the referenced object. |  |  |
-
-
-### LocalVectorAssignmentReference
-
-
-
-LocalVectorAssignmentReference holds a reference to a VectorAssignment in the same namespace.
-
-
-
-_Appears in:_
-- [VectorDeploymentStatus](#vectordeploymentstatus)
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `name` _string_ | Name	is the name of the VectorAssignment. Required. |  |  |
-
-
-### LocalVectorDeploymentReference
-
-
-
-LocalVectorDeploymentReference holds a reference to a VectorDeployment in the same namespace.
-
-
-
-_Appears in:_
-- [VectorAssignmentSpec](#vectorassignmentspec)
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `name` _string_ | Name	is the name of the VectorDeployment. Required. |  |  |
 
 
 ### NamespacePolicy
@@ -875,7 +785,7 @@ _Appears in:_
 | --- | --- | --- | --- |
 | `displayName` _string_ | DisplayName is the human-readable name of the project, shown in user<br />interfaces. It does not affect the namespace name or any label, and it<br />may be changed at any time. |  | MaxLength: 253 <br />MinLength: 1 <br />Optional: \{\} <br /> |
 | `namespace` _string_ | Namespace overrides the name of the namespace created for this project.<br />When unset it defaults to `kden-p-<project-name>`. It is immutable<br />once the Project exists, because the namespace and everything it holds<br />are bound to this name. |  | MaxLength: 63 <br />Pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$` <br />Optional: \{\} <br /> |
-| `namespacePolicy` _[NamespacePolicy](#namespacepolicy)_ | NamespacePolicy controls how the project namespace is taken over. Create<br />(the default) creates it and errors on conflict; Adopt takes over an<br />existing namespace and requires both that namespace to already exist and<br />spec.namespace to be set, so the adopted namespace is named explicitly. | Create | Enum: [Create Adopt] <br />Optional: \{\} <br /> |
+| `namespacePolicy` _[NamespacePolicy](#namespacepolicy)_ | NamespacePolicy controls how the project namespace is taken over. Create<br />(the default) creates it and errors on conflict; Adopt takes over an<br />existing namespace and requires both that namespace to already exist and<br />spec.namespace to be set, so the adopted namespace is named explicitly. It<br />is immutable once the Project exists, because it only governs how the<br />namespace is first acquired and has no effect once ownership is settled. | Create | Enum: [Create Adopt] <br />Optional: \{\} <br /> |
 | `deletionPolicy` _[DeletionPolicy](#deletionpolicy)_ | DeletionPolicy controls what happens to the project namespace when the<br />Project is deleted. Orphan (the default) keeps the namespace and strips<br />its management labels; Delete removes the namespace with the Project. | Orphan | Enum: [Delete Orphan] <br />Optional: \{\} <br /> |
 | `roleBindings` _object (keys:string, values:[Subjects](#subjects))_ | RoleBindings grants project roles to callers. It maps a role name to the<br />list of subjects that hold that role; a caller holds the role if any<br />subject in the list matches (OR). The role names are a fixed, well-known<br />set for now (for example "admin", "pm", "dev"), but the field is a map so<br />the set can be extended without a schema change. See the Project<br />multi-tenancy ADR for the meaning of each role and the authorization flow.<br />RoleBindings is currently schema-only: no authorization is enforced yet. |  | MaxProperties: 32 <br />Optional: \{\} <br /> |
 
@@ -897,11 +807,48 @@ _Appears in:_
 | `namespace` _string_ | Namespace is the name of the namespace managed for this project. |  | Optional: \{\} <br /> |
 
 
-### PromotionApproval
+### PromotionGate
 
 
 
-PromotionApproval records the granted approval.
+PromotionGate declares a gate a promotion must pass before it executes.
+
+
+
+_Appears in:_
+- [VectorPromotionConfigSpec](#vectorpromotionconfigspec)
+- [VectorPromotionSpec](#vectorpromotionspec)
+
+| Field | Description | Default | Validation |
+| --- | --- | --- | --- |
+| `type` _string_ | Type identifies the gate as `<gate-name>.<owner-domain>`, for example<br />`explicit-approval.konfidence.cloud` or `e2e-tests.example.com`. The<br />first label names the gate, the remaining labels name the party that<br />owns the gate type and ships its writer. The promotion controller never<br />interprets the type; it only tracks whether the gate is satisfied. |  | MaxLength: 253 <br />MinLength: 1 <br />Pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)\{2,\}$` <br /> |
+
+
+### PromotionGateState
+
+_Underlying type:_ _string_
+
+PromotionGateState is the state of a single promotion gate.
+
+_Validation:_
+- Enum: [Pending Satisfied Error]
+
+_Appears in:_
+- [PromotionGateStatus](#promotiongatestatus)
+
+| Field | Description |
+| --- | --- |
+| `Pending` | PromotionGateStatePending means the gate is still open.<br /> |
+| `Satisfied` | PromotionGateStateSatisfied means the gate has passed.<br /> |
+| `Error` | PromotionGateStateError means the gate writer detected a problem (e.g. a<br />misconfiguration) that keeps the gate from ever passing as is.<br /> |
+
+
+### PromotionGateStatus
+
+
+
+PromotionGateStatus reports the state of one declared gate together with
+its provenance: who set it, when, and why.
 
 
 
@@ -910,8 +857,12 @@ _Appears in:_
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
-| `approvedBy` _string_ | ApprovedBy is the identity that granted the approval, as reported by the<br />konfidence API. The value is an opaque, arbitrary string (username,<br />email, subject, ...); it is recorded verbatim and never interpreted. |  | MinLength: 1 <br /> |
-| `approvedAt` _[Time](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#time-v1-meta)_ | ApprovedAt is the time the approval was granted. |  |  |
+| `type` _string_ | Type is the gate type this entry reports on. |  | MaxLength: 253 <br />MinLength: 1 <br /> |
+| `state` _[PromotionGateState](#promotiongatestate)_ | State is the current state of the gate. |  | Enum: [Pending Satisfied Error] <br /> |
+| `reason` _string_ | Reason is a machine-readable CamelCase reason for the latest state change. |  | MaxLength: 1024 <br />Optional: \{\} <br /> |
+| `message` _string_ | Message is a human-readable description of the latest state change,<br />e.g. what is misconfigured when State is `Error`. |  | MaxLength: 32768 <br />Optional: \{\} <br /> |
+| `setBy` _string_ | SetBy is the entity that last set the gate state: a controller name or,<br />for human actions, the authenticated subject. The value is advisory and<br />not a security boundary. |  | Optional: \{\} <br /> |
+| `setAt` _[Time](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#time-v1-meta)_ | SetAt is the time the gate state was last set. |  | Optional: \{\} <br /> |
 
 
 ### PromotionSourceReference
@@ -931,7 +882,7 @@ _Appears in:_
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
-| `kind` _string_ | Kind is the kind of the source resource. A `VectorTemplate` source<br />promotes its latest assembled vector; a `Stage` source promotes the<br />vector currently configured on that stage (`spec.vector`). Whether the resulting promotion<br />requires approval is recorded on the promotion itself<br />(`VectorPromotionSpec.RequireApproval`); the controller defaults it<br />from the source kind. |  | Enum: [VectorTemplate Stage] <br /> |
+| `kind` _string_ | Kind is the kind of the source resource. |  | Enum: [VectorTemplate Stage] <br /> |
 | `name` _string_ | Name is the name of the source resource. |  | MaxLength: 253 <br />MinLength: 1 <br /> |
 | `landscape` _string_ | Landscape is the `metadata.name` of the `Landscape` in the config's<br />namespace (not its managed namespace) whose namespace hosts the<br />referenced `Stage`. Required for `Stage` references; must be omitted<br />for `VectorTemplate` references, which are resolved in the config's<br />namespace. |  | MaxLength: 63 <br />MinLength: 1 <br />Optional: \{\} <br /> |
 
@@ -1494,101 +1445,6 @@ _Appears in:_
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  |  |
 
 
-### VectorAssignment
-
-
-
-VectorAssignment is the Schema for the vectorassignments API.
-
-A VectorAssignment represents a single binding between a VectorDeployment and an ArtifactDeployment. It enables
-an n:m mapping where a single artifact may be reused across multiple vectors. These objects are automatically
-managed by the vector-deployment-controller and reconciled by deployers to apply vector-specific configuration.
-
-
-
-_Appears in:_
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `apiVersion` _string_ | `konfidence.cloud/v1alpha1` | | |
-| `kind` _string_ | `VectorAssignment` | | |
-| `kind` _string_ | Kind is a string value representing the REST resource this object represents.<br />Servers may infer this from the endpoint the client submits requests to.<br />Cannot be updated.<br />In CamelCase.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds |  | Optional: \{\} <br /> |
-| `apiVersion` _string_ | APIVersion defines the versioned schema of this representation of an object.<br />Servers should convert recognized schemas to the latest internal value, and<br />may reject unrecognized values.<br />More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources |  | Optional: \{\} <br /> |
-| `metadata` _[ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#objectmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `spec` _[VectorAssignmentSpec](#vectorassignmentspec)_ | Spec defines the desired state of the VectorAssignment and is immutable after it has been set |  | Optional: \{\} <br /> |
-| `status` _[VectorAssignmentStatus](#vectorassignmentstatus)_ |  |  |  |
-
-
-#### Example
-
-```yaml
-apiVersion: konfidence.cloud/v1alpha1
-kind: VectorAssignment
-metadata:
-  labels:
-    app.kubernetes.io/name: crds
-  name: vectorassignment-sample
-spec:
-  manifest:
-    type: helm.konfidence.cloud
-    allowReuse: true
-  artifactDeploymentRef:
-    name: artifactdeployment-1
-  vectorDeploymentRef:
-    name: vectordeployment-1
-```
-
-### VectorAssignmentSpec
-
-
-
-VectorAssignmentSpec defines the desired state of a VectorAssignment.
-
-A VectorAssignment represents one logical binding between a VectorDeployment and an ArtifactDeployment. Since a
-single artifact may be reused across multiple vectors, an n:m relationship exists between vectors and artifacts.
-VectorAssignment creates a concrete instance of that relationship.
-
-VectorAssignment resources are created automatically during vector rollouts and are typically not authored by users.
-Deployer implementations reconcile the VectorAssignment to perform vector-specific configuration based on the
-artifact selected for this vector.
-
-The VectorAssignmentSpec is immutable. If an artifact is replaced or added to a different vector, the old
-VectorAssignment is deleted and a new one created.
-
-
-
-_Appears in:_
-- [VectorAssignment](#vectorassignment)
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `manifest` _[ArtifactManifest](#artifactmanifest)_ | Manifest contains the ArtifactManifest describing the artifact to be assigned to the vector. This duplicates the<br />manifest stored in the ArtifactDeployment for efficiency: deployers often need to filter or select assignments<br />by artifact type, and embedding the manifest avoids repeated API lookups. |  |  |
-| `artifactDeploymentRef` _[LocalArtifactDeploymentReference](#localartifactdeploymentreference)_ | ArtifactDeploymentRef references the ArtifactDeployment instance that is associated with the vector. The<br />referenced artifact must exist in the same namespace as this VectorAssignment. |  |  |
-| `vectorDeploymentRef` _[LocalVectorDeploymentReference](#localvectordeploymentreference)_ | VectorDeploymentRef references the VectorDeployment that this artifact is assigned to. This creates the explicit<br />mapping "artifact X belongs to vector Y". |  |  |
-
-
-### VectorAssignmentStatus
-
-
-
-VectorAssignmentStatus defines the observed state of a VectorAssignment.
-
-A VectorAssignment progresses through a simple lifecycle driven by the deployer:
-
- 1. VectorAssignment is created by the vector-deployment-controller.
- 2. deployer reconciles it and configures vector-specific integration
- 3. VectorAssignmentReadyCondition is set to True
-
-
-
-_Appears in:_
-- [VectorAssignment](#vectorassignment)
-
-| Field | Description | Default | Validation |
-| --- | --- | --- | --- |
-| `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ | Conditions describes the latest observed state of the assignment. The primary condition is<br />VectorAssignmentReadyCondition, which becomes True once the deployer has finished processing the VectorAssignment. |  | Optional: \{\} <br /> |
-
-
 ### VectorConfig
 
 
@@ -1759,10 +1615,9 @@ The lifecycle consists of:
  1. Pulling the vector from the OCI registry and parsing its contents -> VectorDownloadedCondition
  2. Creating (or re-using) one ArtifactDeployment per artifact in the vector -> ArtifactDeploymentsCreatedCondition
  3. Waiting until all ArtifactDeployments have successfully deployed -> VectorDeployedCondition
- 4. Creating all VectorAssignment resources associated with this vector -> VectorAssignmentsCreatedCondition
- 5. Creating the VectorData CR with the resolved authored configuration + aggregated DeploymentResults; the
+ 4. Creating the VectorData CR with the resolved authored configuration + aggregated DeploymentResults; the
     runtime-specific implementor then materialises it (e.g. as a ConfigMap on Kubernetes) -> VectorDataCreatedCondition
- 6. Marking the vector as ready for use once VectorData reports its own Ready=True -> VectorReadyCondition
+ 5. Marking the vector as ready for use once VectorData reports its own Ready=True -> VectorReadyCondition
 
 
 
@@ -1773,9 +1628,8 @@ _Appears in:_
 | --- | --- | --- | --- |
 | `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ | Conditions represents the current set of status conditions for this vector<br />deployment. These conditions track progress through the lifecycle stages. |  |  |
 | `resolvedVectorOcm` _string_ | ResolvedVectorOcm contains the fully materialized content of the OCM ComponentVersion after it has been<br />downloaded and resolved from the OCI registry. Unlike the Spec.Vector value, which is only a reference (URL),<br />this field stores the actual resolved vector content as provided by OCM, including all artifacts and metadata.<br />It is not a reference but the inlined representation of the component version at reconciliation time. |  |  |
-| `resultingVectorData` _[LocalObjectReference](#localobjectreference)_ | ResultingVectorData records the name of the VectorData object created for this VectorDeployment. The VectorData<br />CR is the contract between the vector deployment controller (which resolves the OCM payload) and the runtime-specific implementor<br />(which materialises it on the target runtime). The field is empty until step 5 of the lifecycle has produced the<br />CR. Names are stable across reconciliations. |  |  |
+| `resultingVectorData` _[LocalObjectReference](#localobjectreference)_ | ResultingVectorData records the name of the VectorData object created for this VectorDeployment. The VectorData<br />CR is the contract between the vector deployment controller (which resolves the OCM payload) and the runtime-specific implementor<br />(which materialises it on the target runtime). The field is empty until step 4 of the lifecycle has produced the<br />CR. Names are stable across reconciliations. |  |  |
 | `resultingArtifactDeployments` _object (keys:string, values:[LocalArtifactDeploymentReference](#localartifactdeploymentreference))_ | ResultingArtifactDeployments lists the ArtifactDeployment resources created (or re-used) for this vector. The<br />map key is the component name of the artifact as defined inside the vector. Keys remain stable across<br />reconciliations and re-creations. |  |  |
-| `resultingVectorAssignments` _object (keys:string, values:[LocalVectorAssignmentReference](#localvectorassignmentreference))_ | ResultingVectorAssignments lists all VectorAssignment resources created for this vector. VectorAssignments are<br />not re-used like ArtifactDeployments, but instead each VectorDeployment results in a complete new set of<br />assignments.<br />The map key is the component name of the artifact. Keys are stable across reconcilations. |  |  |
 | `deploymentResults` _object (keys:string, values:[ComponentDeploymentResults](#componentdeploymentresults))_ | DeploymentResults exposes an aggregated view of the deployment results produced<br />by all underlying ArtifactDeployments. The map key is the artifact component name;<br />the value lists every result emitted by that ArtifactDeployment. Within a component's<br />list, results are unique by (name, type). |  | MaxProperties: 64 <br /> |
 
 
@@ -1886,7 +1740,8 @@ spec:
     name: sample-stage
     landscape: sample-landscape
   vector: registry.kdenv.lab/sample-project//konfidence-project.com/constructed-vector:2026.8.5-090000000Z
-  requireApproval: false
+  gates:
+    - type: explicit-approval.konfidence.cloud
   sequence: 1
   ttlAfterFinished: 1h
 ```
@@ -1928,6 +1783,8 @@ spec:
     kind: Stage
     name: sample-stage
     landscape: sample-landscape
+  gates:
+    - type: explicit-approval.konfidence.cloud
   ttlAfterFinished: 1h
   keepLastPromotions: 10
   keepOutstandingPromotions: 10
@@ -1948,6 +1805,7 @@ _Appears in:_
 | --- | --- | --- | --- |
 | `source` _[PromotionSourceReference](#promotionsourcereference)_ | Source references the resource to promote from. |  |  |
 | `target` _[PromotionTargetReference](#promotiontargetreference)_ | Target references the Stage to promote to. |  |  |
+| `gates` _[PromotionGate](#promotiongate) array_ | Gates declares the gates every promotion created from this config must<br />pass before it executes. The list is snapshotted into each promotion at<br />creation; later edits only affect promotions created afterwards. An<br />empty list promotes immediately. |  | MaxItems: 32 <br />Optional: \{\} <br /> |
 | `ttlAfterFinished` _[Duration](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#duration-v1-meta)_ | TTLAfterFinished will be copied onto every VectorPromotion the drift<br />controller creates for this config. See<br />`VectorPromotionSpec.TTLAfterFinished`. |  | Optional: \{\} <br /> |
 | `keepLastPromotions` _integer_ | KeepLastPromotions bounds how many terminal VectorPromotions are<br />retained per config; the oldest beyond the bound are deleted. Retention<br />by count keeps an audit trail even when `ttlAfterFinished` is short.<br />Non-terminal promotions are never deleted and do not count toward the<br />bound. | 10 | Minimum: 0 <br />Optional: \{\} <br /> |
 | `keepOutstandingPromotions` _integer_ | KeepOutstandingPromotions bounds how many gated and not yet processed VectorPromotions are<br />retained per config; the oldest beyond the bound are set to the terminal state "Superseded".<br />A value of 0 disables the bound and retains unlimited outstanding promotions. | 10 | Minimum: 0 <br />Optional: \{\} <br /> |
@@ -1989,32 +1847,9 @@ _Appears in:_
 | `source` _[PromotionSourceReference](#promotionsourcereference)_ | Source is a snapshot of the config's source reference at creation time,<br />recorded so a promotion is self-describing. |  |  |
 | `target` _[PromotionTargetReference](#promotiontargetreference)_ | Target is a snapshot of the config's target reference at creation time.<br />Execution resolves and writes this target: approving a promotion approves<br />exactly this destination, regardless of later config edits. |  |  |
 | `vector` _string_ | Vector is the concrete OCM component version reference<br />(`<registry>//<component>:<version>`) pinned when the promotion was created. |  | MinLength: 1 <br /> |
-| `requireApproval` _boolean_ | RequireApproval is true when the promotion must be approved before<br />execution; false means the promotion is approved automatically. It is<br />independent of the source kind: the config controller defaults it to<br />true for `Stage` sources, but any combination is valid. | false | Optional: \{\} <br /> |
-| `ttlAfterFinished` _[Duration](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#duration-v1-meta)_ | TTLAfterFinished defines how long the VectorPromotion should be kept after completion.<br />Once the TTL expires after the promotion reaches a terminal state (Completed or Failed),<br />the resource is eligible for automatic deletion. If no TTL is set, no deletion happens. |  | Optional: \{\} <br /> |
+| `gates` _[PromotionGate](#promotiongate) array_ | Gates is an immutable snapshot of the config's gates at creation time.<br />The promotion does not execute until every gate has a `Satisfied` entry<br />in `status.gates`. An empty list promotes immediately. The field is<br />required: creators set an empty list rather than omitting it. |  | MaxItems: 32 <br /> |
+| `ttlAfterFinished` _[Duration](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#duration-v1-meta)_ | TTLAfterFinished defines how long the VectorPromotion should be kept after completion.<br />Once the TTL expires after the promotion finished (`status.completionTime`),<br />the resource is eligible for automatic deletion. If no TTL is set, no deletion happens. |  | Optional: \{\} <br /> |
 | `sequence` _integer_ | Sequence is a monotonic ordinal assigned by the creator (the config<br />reconciler, from the config's `status.sequence`). It is the sole<br />ordering between promotions of the same config; creation timestamps<br />only have second resolution and are never consulted. |  | Minimum: 0 <br /> |
-
-
-### VectorPromotionState
-
-_Underlying type:_ _string_
-
-VectorPromotionState summarizes the promotion lifecycle for display.
-Conditions are the source of truth; the state is derived from them.
-
-
-
-_Appears in:_
-- [VectorPromotionStatus](#vectorpromotionstatus)
-
-| Field | Description |
-| --- | --- |
-| `Waiting` | PromotionStateWaiting means at least one gate is still open: the<br />promotion requires approval and has not been approved yet.<br /> |
-| `Ready` | PromotionStateReady means every gate has passed and the promotion is<br />queued for execution. Promotions that require no approval are Ready<br />from their first reconcile.<br /> |
-| `InProgress` | PromotionStateInProgress means the promotion is executing.<br /> |
-| `Blocked` | PromotionStateBlocked means the promotion is ready but cannot execute<br />because its target does not resolve; see the config's Ready condition.<br /> |
-| `Succeeded` | PromotionStateSucceeded means the promotion completed successfully.<br /> |
-| `Failed` | PromotionStateFailed means the promotion reached a terminal state without success.<br /> |
-| `Superseded` | PromotionStateSuperseded means a promotion was replaced by a newer one or<br />retired after the outstanding promotion limit was reached. Superseded<br />promotions can never be approved or executed afterward.<br /> |
 
 
 ### VectorPromotionStatus
@@ -2030,9 +1865,10 @@ _Appears in:_
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
-| `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ |  |  |  |
-| `state` _[VectorPromotionState](#vectorpromotionstate)_ | State summarizes Conditions for display. Conditions are the source of<br />truth; State is recomputed whenever conditions are written. `Superseded`<br />is a terminal state: a superseded promotion can never be<br />approved or executed afterward. |  | Enum: [Waiting Ready InProgress Blocked Succeeded Failed Superseded] <br />Optional: \{\} <br /> |
-| `approval` _[PromotionApproval](#promotionapproval)_ | Approval records the granted approval. A promotion is approved at most<br />once; re-approval attempts are rejected. |  | Optional: \{\} <br /> |
+| `conditions` _[Condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#condition-v1-meta) array_ | Conditions report GatesSatisfied, TargetResolved and Succeeded. |  | Optional: \{\} <br /> |
+| `startTime` _[Time](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#time-v1-meta)_ | StartTime is when execution started, i.e. the promotion began writing<br />its vector to the target Stage. Set at most once. |  | Optional: \{\} <br /> |
+| `completionTime` _[Time](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#time-v1-meta)_ | CompletionTime is when the promotion finished (Succeeded True or False). |  | Optional: \{\} <br /> |
+| `gates` _[PromotionGateStatus](#promotiongatestatus) array_ | Gates reports the state and provenance of each declared gate, keyed by<br />gate type. Entries are seeded `Pending` by the promotion controller and<br />set by the gate's writer (a gate controller or the konfidence API)<br />through `pkg/promotiongate`. A missing entry counts as `Pending`. |  | MaxItems: 32 <br />Optional: \{\} <br /> |
 | `promotedStageRef` _[TypedObjectReference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#typedobjectreference-v1-core)_ | PromotedStageRef records the Stage this promotion actually wrote its<br />vector to, so the promotion is self-describing even after the config<br />changed or was deleted. |  | Optional: \{\} <br /> |
 
 
