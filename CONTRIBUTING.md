@@ -101,7 +101,9 @@ The generated `crd.md`, `cli.md`, `helm-values-konfidence.md`, and `helm-values-
 
 During rollout, all active rules report `warning`. `MinAlertLevel = warning` displays warnings and errors; it hides suggestions. This setting controls visibility, not whether a GitHub check fails.
 
-The `Documentation prose` workflow runs the rule tests and checks the authored Markdown on pull requests to `main`, pushes to `main`, and manual runs. It uses the official Vale action with annotations and read-only repository permissions. Editorial findings are advisory (`fail_level: none`); installation, configuration, and test failures still fail the job. GitHub limits the number of annotations, so use the local command to review the complete findings.
+The `Documentation prose` workflow runs the rule tests and checks the authored Markdown on pull requests to `main`, pushes to `main`, and manual runs. It uses the official Vale action with annotations and read-only repository permissions, including access to the pull request diff. On pull requests, annotations show findings only on added or modified lines (`filter_mode: added`). Vale still checks complete documents for context. Pushes to `main`, manual runs, and `pnpm lint:prose` report findings across all checked content, so existing findings can be reviewed separately.
+
+Editorial findings are advisory (`fail_level: none`); installation, configuration, and test failures still fail the job. GitHub limits the number of annotations, so use the local command to review the complete findings.
 
 The workflow does not change branch protection or install Git hooks. A failed job blocks merging only when the repository rules require that check. Before making editorial findings mandatory, maintainers and the technical writer should review false positives and the existing backlog, choose the rules that should use `error`, set the action's `fail_level` to `error`, and make the `Vale` check required. If a merge queue is used, add the corresponding `merge_group` trigger at that time.
 

@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: read
+  # Read the pull request diff to filter annotations to changed lines.
+  pull-requests: read
 
 jobs:
   vale:
@@ -45,7 +47,8 @@ jobs:
           files: '["src", "README.md", "CONTRIBUTING.md"]'
           vale_flags: --no-global
           sync: false
-          reporter: github-pr-annotations
-          filter_mode: nofilter
+          reporter: ${{ github.event_name == 'pull_request' && 'github-pr-annotations' || 'github-annotations' }}
+          # PRs show changed lines; main and manual runs retain the full report.
+          filter_mode: ${{ github.event_name == 'pull_request' && 'added' || 'nofilter' }}
           # Editorial findings are advisory during rollout; tool/test failures are not.
           fail_level: none
