@@ -136,7 +136,7 @@ metadata:
   namespace: kden-l-prod-fz8g86s6
 spec:
   bucket: prod-landscapes
-  region: eu-central-1
+  region: us-east-1
   storagePathPrefix: prod-us10
   credentials: # optional
     ocm:
@@ -165,7 +165,7 @@ With workload identity configured on the deployer Pod, `S3DeploymentConfig.spec`
 ```yaml
 spec:
   bucket: prod-landscapes
-  region: eu-central-1
+  region: us-east-1
   storagePathPrefix: prod-us10
 ```
 
@@ -256,8 +256,8 @@ After deploying an artifact, the static deployer publishes one deployment result
   "type": "s3.konfidence.cloud/v1alpha1",
   "spec": {
     "bucket": "prod-landscapes",
-    "endpoint": "https://s3.eu-central-1.amazonaws.com",
-    "region": "eu-central-1",
+    "endpoint": "https://s3.us-east-1.amazonaws.com",
+    "region": "us-east-1",
     "usePathStyle": false,
     "prefix": "prod-us10/_k/shop-1.2.0-k3h9d7bq2f/widget/",
     "route": "/widget"
@@ -400,8 +400,8 @@ The file also carries the vector's `features` and `authored` data. Its `vectorId
         "type": "s3.konfidence.cloud/v1alpha1",
         "spec": {
           "bucket": "prod-landscapes",
-          "endpoint": "https://s3.eu-central-1.amazonaws.com",
-          "region": "eu-central-1",
+          "endpoint": "https://s3.us-east-1.amazonaws.com",
+          "region": "us-east-1",
           "usePathStyle": false,
           "prefix": "prod-us10/_k/shop-1.2.0-k3h9d7bq2f/storefront/",
           "route": "/"
@@ -412,8 +412,8 @@ The file also carries the vector's `features` and `authored` data. Its `vectorId
         "type": "s3.konfidence.cloud/v1alpha1",
         "spec": {
           "bucket": "prod-landscapes",
-          "endpoint": "https://s3.eu-central-1.amazonaws.com",
-          "region": "eu-central-1",
+          "endpoint": "https://s3.us-east-1.amazonaws.com",
+          "region": "us-east-1",
           "usePathStyle": false,
           "prefix": "prod-us10/_k/shop-1.2.0-k3h9d7bq2f/widget/",
           "route": "/widget"
@@ -480,7 +480,7 @@ sequenceDiagram
 The derived origin URL is also the file-cache key in this example:
 
 ```text
-https://prod-landscapes.s3.eu-central-1.amazonaws.com/prod-us10/_k/shop-1.2.0-k3h9d7bq2f/widget/logo.svg
+https://prod-landscapes.s3.us-east-1.amazonaws.com/prod-us10/_k/shop-1.2.0-k3h9d7bq2f/widget/logo.svg
 ```
 
 `_active` is routing and configuration JSON, typically much smaller than the artifact files. The worker never caches `_active` or the stage selection. It can cache immutable artifact files at the edge under their deployment-specific URLs across activations. On a file-cache hit, only `_active` is fetched from S3; a miss also fetches the selected file. Private-bucket reads use the worker's S3 credentials.
