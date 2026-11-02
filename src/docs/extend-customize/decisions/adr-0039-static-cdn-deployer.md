@@ -135,9 +135,9 @@ metadata:
   name: static-prod
   namespace: kden-l-prod-fz8g86s6
 spec:
-  bucket: static-assets
+  bucket: prod-landscapes
   region: eu-central-1
-  storagePathPrefix: prod-landscape
+  storagePathPrefix: prod-us10
   credentials: # optional
     ocm:
       refs:
@@ -146,7 +146,7 @@ spec:
 
 `S3DeploymentConfig.spec.bucket` is required. `spec.region` is optional when SDK configuration supplies a signing region; otherwise target validation fails. It can be set per landscape for multi-region deployments.
 
-`S3DeploymentConfig.spec.storagePathPrefix` defaults to an empty string, which uses the bucket root. A trailing slash is optional, so `prod-landscape` and `prod-landscape/` identify the same storage prefix. Landscapes sharing a bucket need distinct prefixes.
+`S3DeploymentConfig.spec.storagePathPrefix` defaults to an empty string, which uses the bucket root. A trailing slash is optional, so `prod-us10` and `prod-us10/` identify the same storage prefix. Landscapes sharing a bucket need distinct prefixes.
 
 `spec.endpoint` optionally overrides the s3 SDK's regional endpoint. `spec.usePathStyle` defaults to `false` for virtual-hosted addressing. S3-compatible services can override both; for example, MinIO can use `endpoint: https://minio.example.com`, `region: us-east-1`, and `usePathStyle: true`.
 
@@ -164,9 +164,9 @@ With workload identity configured on the deployer Pod, `S3DeploymentConfig.spec`
 
 ```yaml
 spec:
-  bucket: static-assets
+  bucket: prod-landscapes
   region: eu-central-1
-  storagePathPrefix: prod-landscape
+  storagePathPrefix: prod-us10
 ```
 
 For explicit credentials, the Secret referenced above contains the unified OCI and S3 bindings:
@@ -209,7 +209,7 @@ stringData:
           # Read, upload and delete files at the deployment target.
           - identity:
               type: S3
-              path: "{static-assets/prod-landscape,static-assets/prod-landscape/**}"
+              path: "{prod-landscapes/prod-us10,prod-landscapes/prod-us10/**}"
             credentials:
               - type: S3Credentials/v1
                 accessKeyId: "<target-access-key-id>"
@@ -234,7 +234,7 @@ The deployers provided pre OCM upload checks validate each artifact's static res
 The deployer extracts each static artifact resource beneath the configured `storagePathPrefix`, using the deployment and resource directories shown below. It owns those files under `_k/`. The example also shows the `_active` stage document created by [option 1](#option-1-atomic-stage-switches-through-s3):
 
 ```text
-prod-landscape/                         # configured storage prefix
+prod-us10/                              # configured storage prefix
 ├── _k/
 │   └── shop-1.2.0-k3h9d7bq2f/          # ArtifactDeployment name
 │       ├── storefront/                 # artifact resource name
@@ -255,11 +255,11 @@ After deploying an artifact, the static deployer publishes one deployment result
   "name": "widget",
   "type": "s3.konfidence.cloud/v1alpha1",
   "spec": {
-    "bucket": "static-assets",
+    "bucket": "prod-landscapes",
     "endpoint": "https://s3.eu-central-1.amazonaws.com",
     "region": "eu-central-1",
     "usePathStyle": false,
-    "prefix": "prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/widget/",
+    "prefix": "prod-us10/_k/shop-1.2.0-k3h9d7bq2f/widget/",
     "route": "/widget"
   }
 }
@@ -399,11 +399,11 @@ The file also carries the vector's `features` and `authored` data. Its `vectorId
         "name": "storefront",
         "type": "s3.konfidence.cloud/v1alpha1",
         "spec": {
-          "bucket": "static-assets",
+          "bucket": "prod-landscapes",
           "endpoint": "https://s3.eu-central-1.amazonaws.com",
           "region": "eu-central-1",
           "usePathStyle": false,
-          "prefix": "prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/storefront/",
+          "prefix": "prod-us10/_k/shop-1.2.0-k3h9d7bq2f/storefront/",
           "route": "/"
         }
       },
@@ -411,11 +411,11 @@ The file also carries the vector's `features` and `authored` data. Its `vectorId
         "name": "widget",
         "type": "s3.konfidence.cloud/v1alpha1",
         "spec": {
-          "bucket": "static-assets",
+          "bucket": "prod-landscapes",
           "endpoint": "https://s3.eu-central-1.amazonaws.com",
           "region": "eu-central-1",
           "usePathStyle": false,
-          "prefix": "prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/widget/",
+          "prefix": "prod-us10/_k/shop-1.2.0-k3h9d7bq2f/widget/",
           "route": "/widget"
         }
       }
@@ -436,7 +436,7 @@ For a stage-route `GET /k_vector`, the worker reads `_active` uncached and retur
 
 The administrator's CDN, proxy, or reverse proxy uses a handler or edge worker to read `_active` and route requests. For every request through a stage route such as `/widget/logo.svg`, the worker must fetch `_active` directly from S3, bypassing worker and CDN caches. The worker enforces this through its fetch and cache configuration and keeps the snapshot only for the current request.
 
-This example uses longest-prefix matching. The worker maps `shop.example.com` to stage `production`, bucket `static-assets`, and storage prefix `prod-landscape`. Static requests reach the worker before file-cache lookup. The activation Job has already published the `production-7dfrf69r5bc4v` document shown above.
+This example uses longest-prefix matching. The worker maps `shop.example.com` to stage `production`, bucket `prod-landscapes`, and storage prefix `prod-us10`. Static requests reach the worker before file-cache lookup. The activation Job has already published the `production-7dfrf69r5bc4v` document shown above.
 
 The worker selects the stage default through `_active`:
 
@@ -449,7 +449,7 @@ sequenceDiagram
     participant S3 as S3 bucket
     Client->>Worker: GET /widget/logo.svg<br/>Host shop.example.com
     Worker->>Worker: Host maps to production
-    Worker->>S3: GET prod-landscape/<br/>stages/production/_active<br/>Bypass caches
+    Worker->>S3: GET prod-us10/<br/>stages/production/_active<br/>Bypass caches
     S3-->>Worker: Current stage document or error
     break No usable _active
         Worker-->>Client: 503 Service Unavailable
@@ -480,7 +480,7 @@ sequenceDiagram
 The derived origin URL is also the file-cache key in this example:
 
 ```text
-https://static-assets.s3.eu-central-1.amazonaws.com/prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/widget/logo.svg
+https://prod-landscapes.s3.eu-central-1.amazonaws.com/prod-us10/_k/shop-1.2.0-k3h9d7bq2f/widget/logo.svg
 ```
 
 `_active` is routing and configuration JSON, typically much smaller than the artifact files. The worker never caches `_active` or the stage selection. It can cache immutable artifact files at the edge under their deployment-specific URLs across activations. On a file-cache hit, only `_active` is fetched from S3; a miss also fetches the selected file. Private-bucket reads use the worker's S3 credentials.
