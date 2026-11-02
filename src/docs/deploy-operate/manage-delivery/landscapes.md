@@ -133,7 +133,7 @@ With `Delete`, Konfidence keeps the landscape in a terminating state until its m
 
 ## Next steps
 
-- [Configure deployment targets for a landscape](./deployment-targets.md) makes the required deployment classes available.
+- [Configure deployment targets for a landscape](./deployment-targets.md) configures destinations for the required artifact types.
 - [Give the deployer registry credentials](../install/connect-registries.md#give-the-deployer-credentials) in this landscape when artifacts come from private registries.
 - [Choose landscape services](../install/runtime-components/overview.md) identifies services to install alongside your applications.
 - [Create a stage](./stages.md) once the landscape is prepared.

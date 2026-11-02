@@ -26,7 +26,7 @@ The platform consists of Konfidence and the deployers you install to provide dep
 | Konfidence API server | Provides the API, dashboard, login, and project authorization | The same `konfidence` Helm chart |
 | Kubernetes deployer | Deploys Helm and Kustomize artifacts through Flux | The separate `kubernetes-landscape-orchestrator` Helm chart |
 
-[Choose a deployer](../install/deployer/overview.md) explains how deployment classes connect artifact types to a target platform. Installing a deployer provides its classes centrally. A [deployment target](../manage-delivery/deployment-targets.md) makes one class available in a particular landscape.
+[Choose a deployer](../install/deployer/overview.md) explains how deployers support artifact types for a target platform. A [deployment target](../manage-delivery/deployment-targets.md) configures a destination for one artifact type in a particular landscape.
 
 ## Delivery management
 

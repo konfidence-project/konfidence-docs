@@ -16,7 +16,7 @@ The glossary defines the Konfidence terms used in this documentation. Each entry
 
 An artifact is a deployable part of your application, such as a microservice. Your CI pipeline packages it as an Open Component Model (OCM) component version.
 
-The artifact contains a manifest and a reference to the build result, such as a container image. It can also include binary resources directly. The manifest's `type` field names the [deployment class](#deployment-class) the artifact requires. The `allowReuse` field controls whether several vector deployments share one running instance.
+The artifact contains a manifest and a reference to the build result, such as a container image. It can also include binary resources directly. The manifest's `type` field declares the artifact's type, which is selected by a deployer. The `allowReuse` field controls whether several vector deployments share one running instance.
 
 Continuous integration (CI) pipelines publish artifacts to an OCM-compliant repository, such as an Open Container Initiative (OCI) registry.
 
@@ -78,7 +78,7 @@ The delivery flow is the path from published artifacts to the vector each stage 
 
 ### Deployer
 
-A deployer is a platform-specific controller that deploys artifacts of the deployment classes it provides. It reconciles [ArtifactDeployment](#artifactdeployment) resources and turns their deployable content into running workloads.
+A deployer is a platform-specific controller that deploys artifacts of the artifact types it supports. It reconciles matching [ArtifactDeployment](#artifactdeployment) (and other) resources and turns their deployable content into running workloads.
 
 The current release provides one deployer for Kubernetes, installed with the [landscape orchestrator](#landscape-orchestrator). It deploys artifacts through Flux.
 
@@ -101,14 +101,13 @@ The current release provides one deployer for Kubernetes, installed with the [la
 
 :::
 
-### Deployment class
+### Artifact type
 
-A deployment class is a named capability for deploying one kind of artifact, such as Helm or Kustomize. Each class is represented by a cluster-scoped `DeploymentClass` resource that names the controller responsible for it. The deployer's Helm chart installs these resources.
-
-By convention, the class name follows the pattern `<class-name>.<vendor-domain>`, for example `helm.konfidence.cloud`. The `type` field of the artifact manifest names the class the artifact requires.
+An artifact type is a vendor-owned identifier for an artifact's packaging and deployment contract, such as `helm.konfidence.cloud`. The manifest of an artifact declares its type. Deployers declare which types they support, and `DeploymentTarget.spec.artifactType` configures a destination for a type in a landscape.
 
 ::: details Pages that use this term
 
+- [Deployer specification](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md)
 - [Choose a deployer](../deploy-operate/install/deployer/overview.md)
 - [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
 - [Create a stage](../deploy-operate/manage-delivery/stages.md)
@@ -137,7 +136,7 @@ A deployment result is a value that a deployer produces while it deploys an arti
 
 ### Deployment target
 
-A deployment target makes one deployment class available in one landscape. It provides the connection that the responsible deployer uses: either the local cluster or a `Secret` with a kubeconfig. A landscape has one deployment target per deployment class. The `DeploymentTarget` resource lives in the landscape namespace.
+A deployment target configures a destination for one artifact type in a landscape. Its `spec.artifactType` identifies the type and its `spec.parameters` provides deployer-specific connection details. A landscape has at most one target per artifact type. The `DeploymentTarget` resource lives in the landscape namespace, and its responsible deployer reports whether it accepts the target through the `Ready` condition.
 
 ::: details Pages that use this term
 
@@ -362,7 +361,7 @@ Konfidence represents its concepts as Kubernetes custom resources in the API gro
 
 ### ArtifactDeployment
 
-An `ArtifactDeployment` is a custom resource that describes the deployment of one artifact in a landscape. A deployer reconciles it according to the deployment class in the artifact manifest. Vector deployments in one landscape share an `ArtifactDeployment` if the artifact sets `allowReuse` and their artifact versions match.
+An `ArtifactDeployment` is a custom resource that describes the deployment of one artifact in a landscape. Its `spec.artifactType` selects the responsible deployer. Vector deployments in one landscape share an `ArtifactDeployment` if the artifact sets `allowReuse` and their artifact versions match.
 
 ::: details Pages that use this term
 
