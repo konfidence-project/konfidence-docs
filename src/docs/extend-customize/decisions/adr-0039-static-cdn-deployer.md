@@ -248,23 +248,28 @@ prod-landscape/                         # configured storage prefix
         └── _active                    # written by the activation Job
 ```
 
-After deploying an artifact, the static deployer publishes one deployment result per static resource in `ArtifactDeployment.status.deploymentResult`. Each result uses the resource's name and optional `route`; the deployer generates `assetBase` and `s3Url` from the storage layout. This JSON shows the deployment result for the `widget` resource:
+After deploying an artifact, the static deployer publishes one deployment result per static resource in `ArtifactDeployment.status.deploymentResult`. Each result identifies the resource and its complete S3 location, with endpoint, region, and addressing defaults resolved before publication. This JSON shows the deployment result for the `widget` resource:
 
 ```json
 {
   "name": "widget",
   "type": "s3.konfidence.cloud/v1alpha1",
   "spec": {
-    "assetBase": "/shop-1.2.0-k3h9d7bq2f/widget/",
-    "s3Url": "https://static-assets.s3.eu-central-1.amazonaws.com/prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/widget/",
+    "bucket": "static-assets",
+    "endpoint": "https://s3.eu-central-1.amazonaws.com",
+    "region": "eu-central-1",
+    "usePathStyle": false,
+    "prefix": "prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/widget/",
     "route": "/widget"
   }
 }
 ```
 
-- `route` is optional and declares the resource's public mount path. Serving implementations may use or ignore it. When used, the serving configuration controls matching; longest-prefix matching is suggested. Files remain accessible through `s3Url` whether or not `route` is declared or used.
-- `assetBase` is the resource's extracted directory relative to the `_k/` content root beneath the configured storage prefix. Its leading slash denotes that content root.
-- `s3Url` is the absolute S3 URL prefix for the resource's files, with a trailing slash. Consumers resolve relative file paths beneath it and use their own credentials if the bucket is private. Backend services and consumers deployed from any artifact type can use it to read static content directly from S3.
+- `bucket`, `endpoint`, `region`, and `usePathStyle` are required, resolved connection settings. `endpoint` is the S3 API base URL, with the bucket supplied separately.
+- `prefix` is the complete object-key prefix for the resource's files, relative to the bucket root and ending with `/`.
+- `route` is optional and declares the resource's public mount path. Serving implementations may use or ignore it. When used, the serving configuration controls matching; longest-prefix matching is suggested. Direct S3 access is available independently of the route.
+
+Backend services and other consumers use these fields with an S3 client or derive an origin URL for HTTP serving. They supply their own credentials for private buckets.
 
 ## Catch route conflicts and report readiness
 
@@ -368,7 +373,7 @@ Options 1 and 2 are editable starter Job templates with input handling, configur
 
 ### Option 1: Atomic stage switches through S3
 
-The `_active` starter writes a JSON file at `stages/<stage>/_active` beneath the configured storage prefix in S3. This file tells the serving handler which vector is active and how public routes map to files in S3. Its deployment results contain each static resource's optional `route` and the `s3Url` where its files live.
+The `_active` starter writes a JSON file at `stages/<stage>/_active` beneath the configured storage prefix in S3. This file tells the serving handler which vector is active and how public routes map to files in S3. Its deployment results contain each static resource's optional `route` and resolved S3 location.
 
 The file also carries the vector's `features` and `authored` data. Its `vectorId` is the selected `VectorDeployment.metadata.name`. In this production example, `/` resolves to the `storefront` resource and `/widget` to `widget`:
 
@@ -394,8 +399,11 @@ The file also carries the vector's `features` and `authored` data. Its `vectorId
         "name": "storefront",
         "type": "s3.konfidence.cloud/v1alpha1",
         "spec": {
-          "assetBase": "/shop-1.2.0-k3h9d7bq2f/storefront/",
-          "s3Url": "https://static-assets.s3.eu-central-1.amazonaws.com/prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/storefront/",
+          "bucket": "static-assets",
+          "endpoint": "https://s3.eu-central-1.amazonaws.com",
+          "region": "eu-central-1",
+          "usePathStyle": false,
+          "prefix": "prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/storefront/",
           "route": "/"
         }
       },
@@ -403,8 +411,11 @@ The file also carries the vector's `features` and `authored` data. Its `vectorId
         "name": "widget",
         "type": "s3.konfidence.cloud/v1alpha1",
         "spec": {
-          "assetBase": "/shop-1.2.0-k3h9d7bq2f/widget/",
-          "s3Url": "https://static-assets.s3.eu-central-1.amazonaws.com/prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/widget/",
+          "bucket": "static-assets",
+          "endpoint": "https://s3.eu-central-1.amazonaws.com",
+          "region": "eu-central-1",
+          "usePathStyle": false,
+          "prefix": "prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/widget/",
           "route": "/widget"
         }
       }
@@ -450,7 +461,7 @@ sequenceDiagram
     end
     Worker->>Worker: Select /widget over /<br/>and its widget result
     Worker->>Worker: Remove /widget/ prefix<br/>Relative file = logo.svg
-    Worker->>Worker: Resolve logo.svg<br/>under s3Url
+    Worker->>Worker: Derive origin URL from<br/>S3 location and logo.svg
     Worker->>Cache: Look up origin URL
     alt File cache hit
         Cache-->>Worker: Cached file response
@@ -466,7 +477,7 @@ sequenceDiagram
     Worker-->>Client: HTTP status, headers, and body
 ```
 
-The resolved origin URL is also the file-cache key in this example:
+The derived origin URL is also the file-cache key in this example:
 
 ```text
 https://static-assets.s3.eu-central-1.amazonaws.com/prod-landscape/_k/shop-1.2.0-k3h9d7bq2f/widget/logo.svg
@@ -480,12 +491,12 @@ Browser-visible deployment-specific URLs resolve to the same files regardless of
 
 ### Option 2: Configure edge routing through CDN API calls
 
-In option 2, the CDN's deployed configuration holds the stage's active vector, route mappings, and client-facing vector data. The activation Job reads `/konfidence/activation.json` and translates its static deployment results into native CDN routing rules or worker configuration. It publishes the routes and vector data through the CDN's API. The artifact files remain in S3.
+In option 2, the CDN's deployed configuration holds the stage's active vector, route mappings, and client-facing vector data. The activation Job reads `/konfidence/activation.json` and translates the results' S3 locations and routes into native CDN routing rules or worker configuration. It publishes the routes and vector data through the CDN's API. The artifact files remain in S3.
 
 For stage `production`, activating `production-7dfrf69r5bc4v` configures:
 
-- `/` to resolve files under the `storefront` result's `s3Url` prefix.
-- `/widget` to resolve files under the `widget` result's `s3Url` prefix.
+- `/` to serve files from the `storefront` result's S3 location.
+- `/widget` to serve files from the `widget` result's S3 location.
 - `/k_vector` to serve the same vector's client-facing data.
 
 The Job uses its configured CDN target and credentials to apply the update. Its process exits `0` after the template's provider-specific completion check confirms that the requested configuration is applied. The CDN determines update atomicity and propagation across edge locations.
@@ -494,7 +505,7 @@ The template includes the provider API calls, required settings, and completion 
 
 #### Option 2: Resolve requests from CDN configuration
 
-A request for `shop.example.com/widget/logo.svg` uses the CDN's installed stage configuration to select the `widget` resource and resolve `logo.svg` under its `s3Url`. The CDN checks its file cache under that deployment-specific URL and fetches the file from S3 only on a miss. Stage selection uses the deployed CDN configuration.
+A request for `shop.example.com/widget/logo.svg` uses the CDN's installed stage configuration to select the `widget` resource and derive the origin URL for `logo.svg` from its S3 location. The CDN checks its file cache under that deployment-specific URL and fetches the file from S3 only on a miss. Stage selection uses the deployed CDN configuration.
 
 #### Option 2: Serve `/k_vector` through CDN routing
 
@@ -506,7 +517,7 @@ Each subsequent activation replaces the complete routing and vector-data snapsho
 
 With either option, the administrator's public path rules send backend requests to a, potentially konfidence powered, gateway and static requests to the configured CDN, proxy, or reverse proxy. The administrator can assign any path or set of paths to backend gateways.
 
-For a static request, the serving integration selects the stage, vector, and artifact resource before any file-cache lookup. Caching is optional. Other consumers can fetch files directly through `s3Url`:
+For a static request, the serving integration selects the stage, vector, and artifact resource before any file-cache lookup. Caching is optional. Other consumers can fetch files directly using the S3 location in deployment results:
 
 ```mermaid
 flowchart TD
@@ -516,7 +527,7 @@ flowchart TD
     Resolve -->|Caching enabled| Cache["Version-specific<br/>cache lookup"]
     Cache -->|Cache miss| S3["S3 files"]
     Resolve -->|Caching disabled| S3
-    Consumer["Backend service or<br/>other consumer"] -->|Fetch file under s3Url| S3
+    Consumer["Backend service or<br/>other consumer"] -->|Read file using S3 location| S3
 ```
 
 The selected vector determines which artifact resource a route serves and the data returned by `/k_vector`. Directory indexes, trailing-slash redirects, SPA fallbacks, and browser-safe data projection belong to the serving integration.
