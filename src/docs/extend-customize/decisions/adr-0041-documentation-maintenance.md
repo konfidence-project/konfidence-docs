@@ -63,11 +63,18 @@ Configure Vale around our [style guide](../styleguide.md) and
 [glossary](../../reference/glossary.md). For example, the proposed rules would flag
 these illustrative inconsistencies:
 
+<!-- This table intentionally contrasts incorrect and preferred wording. -->
+<!-- vale Konfidence.ConceptCasing = NO -->
+<!-- vale Vale.Terms = NO -->
+
 | Text to flag | Preferred text | Rule |
 | --- | --- | --- |
 | Build Vectors With Konfidence | Build vectors with Konfidence | Sentence case in headings. |
 | Deploy Artifacts in a Vector. | Deploy artifacts in a vector. | Lowercase concept names within a sentence. |
 | Configure konfidence | Configure Konfidence | Consistent product name. |
+
+<!-- vale Vale.Terms = YES -->
+<!-- vale Konfidence.ConceptCasing = YES -->
 
 Vale supports [sentence-case checks](https://docs.vale.sh/checks/capitalization)
 and [preferred-term replacements](https://docs.vale.sh/checks/substitution).

@@ -1,0 +1,318 @@
+- name: Valid prose, resource names, and technical frontmatter
+  input: |
+    ---
+    id: ADR-0041
+    title: Configure Konfidence with VectorTemplate
+    description: Configure a vector with Kubernetes and Helm.
+    pageClass: adr
+    status: proposed
+    category: Technology Stack
+    impact: High
+    layout: doc
+    outline: deep
+    ---
+
+    # ADR-0041: Configure Konfidence with VectorTemplate
+
+    Use ArtifactDeployment, StageVersion, StageVersionUsage, VectorActivation,
+    VectorDeployment, VectorPromotion, VectorPromotionConfig, and VectorTemplate.
+    A DeploymentClass provides a capability for a DeploymentTarget.
+    Use an HTTPRoute and a ConfigMap with Kubernetes.
+  want: ""
+
+- name: The six plain-language replacements preserve sentence capitalization
+  input: |
+    Utilize the file. Dispose of the file. Obtain the file.
+    In order to continue, use the file.
+    Continue due to the fact that the file exists.
+    Read all files with the exception of this file.
+  contains:
+    - "Konfidence.PlainLanguage:Use 'Use' instead of 'Utilize'."
+    - "Konfidence.PlainLanguage:Use 'Delete' instead of 'Dispose of'."
+    - "Konfidence.PlainLanguage:Use 'Get' instead of 'Obtain'."
+    - "Konfidence.PlainLanguage:Use 'To' instead of 'In order to'."
+    - "Konfidence.PlainLanguage:Use 'because' instead of 'due to the fact that'."
+    - "Konfidence.PlainLanguage:Use 'except' instead of 'with the exception of'."
+
+- name: Dismissive wording from the style guide
+  input: "Just use this simple example. It is easy."
+  contains:
+    - "Konfidence.DiscouragedWords:Remove 'Just'"
+    - "Konfidence.DiscouragedWords:Remove 'simple'"
+    - "Konfidence.DiscouragedWords:Remove 'easy'"
+
+- name: Heading example from ADR-0041
+  input: "# Build Vectors With Konfidence"
+  contains:
+    - "Konfidence.Headings:"
+  absent:
+    - "Konfidence.ConceptCasing:"
+
+- name: Concept example from ADR-0041
+  input: "Deploy Artifacts in a Vector."
+  contains:
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Artifacts'"
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Vector'"
+
+- name: Concept names at sentence starts, in quotes, and in table labels
+  input: |
+    Vectors contain artifacts. Artifacts belong to vectors.
+    "Vectors contain artifacts." 'Artifacts belong to vectors.'
+    (Vectors contain artifacts.) “Artifacts belong to vectors.”
+    Delivery flows select vectors. Deployment classes provide capabilities.
+    Feature flags control behavior. Vector data contains configuration.
+
+    | Concept | Description |
+    | --- | --- |
+    | Vector | Contains artifacts. |
+    | Landscape | Contains stages. |
+
+    - Vectors contain artifacts.
+    - Stages select vectors.
+  want: ""
+
+- name: Compound concepts preserve only the initial capital
+  input: |
+    Vector Data Service provides configuration.
+    Deployment Classes provide capabilities.
+    Feature Flags control behavior.
+    Use a Delivery flow and a Deployment target.
+  contains:
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Vector Data Service'"
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Deployment Classes'"
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Feature Flags'"
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Delivery'"
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Deployment'"
+
+- name: Product name spelling from ADR-0041
+  input: "Configure konfidence."
+  contains:
+    - "Vale.Terms:"
+
+- name: Built-in spelling detects typos
+  input: "Use the neccessary configuration."
+  contains:
+    - "Vale.Spelling:Did you really mean 'neccessary'?"
+
+- name: Spelling-only additions accept technical words and possessives
+  input: |
+    Check the deployer's configuration and the page's scannability.
+    Check the deployer’s configuration.
+
+    # Scannability
+
+    Deployer's configuration contains the settings.
+  want: ""
+
+- name: Spelling-only additions do not exempt words from capitalization
+  input: |
+    Check the Deployer's configuration.
+
+    # Improve Scannability
+  contains:
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Deployer'"
+    - "Konfidence.Headings:"
+  absent:
+    - "Vale.Spelling:"
+
+- name: Built-in word repetition
+  input: "Use the the configuration."
+  contains:
+    - "Vale.Repetition:"
+
+- name: Frontmatter titles use sentence case
+  input: |
+    ---
+    title: Build Vectors With Konfidence
+    ---
+
+    Configure the application.
+  contains:
+    - "Konfidence.Headings:"
+
+- name: Frontmatter descriptions use the same editorial rules
+  input: |
+    ---
+    description: Utilize Artifacts with konfidence and the neccessary configuration.
+    ---
+
+    Configure the application.
+  contains:
+    - "Konfidence.PlainLanguage:"
+    - "Konfidence.ConceptCasing:"
+    - "Vale.Terms:"
+    - "Vale.Spelling:"
+
+- name: Multiple sentences in descriptions preserve sentence starts
+  input: |
+    ---
+    description: Vectors contain artifacts. Artifacts belong to vectors.
+    ---
+
+    Configure the application.
+  want: ""
+
+- name: Image alternative text is checked
+  input: "![konfidence with neccessary configuration](diagram.png)"
+  contains:
+    - "Vale.Terms:"
+    - "Vale.Spelling:"
+
+- name: Vague link labels are checked
+  input: |
+    [Click here](guide.md), [here](guide.md), [this](guide.md),
+    and [this guide](guide.md).
+  contains:
+    - "Konfidence.LinkText:Use the page title or a descriptive link label instead of 'Click here'."
+    - "Konfidence.LinkText:Use the page title or a descriptive link label instead of 'here'."
+    - "Konfidence.LinkText:Use the page title or a descriptive link label instead of 'this'."
+    - "Konfidence.LinkText:Use the page title or a descriptive link label instead of 'this guide'."
+
+- name: Descriptive link labels pass
+  input: "[Open the dashboard](guide.md) to [configure a vector](vector.md)."
+  want: ""
+
+- name: Exact page titles in links preserve their capitalization
+  input: |
+    Read [Delivery flow](guide.md) to learn about vectors.
+    Read the [SAP Open Source Software Projects](guide.md) guideline.
+    Read about the [Landscape Orchestrator](guide.md) and [Vector Data Service](guide.md).
+  want: ""
+
+- name: Bold UI labels preserve their capitalization
+  input: |
+    Open the **Landscapes** view.
+    Check the **Vector** column.
+  want: ""
+
+- name: Link titles and UI labels do not hide nearby concept-casing mistakes
+  input: |
+    Read [Delivery flow](guide.md) to deploy Artifacts in a Vector.
+    Open **Landscapes** to configure a Stage.
+  contains:
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Artifacts'"
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Vector'"
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Stage'"
+  absent:
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Delivery'"
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Landscapes'"
+
+- name: Spelling, terminology, and link-text checks still inspect links
+  input: |
+    Read [neccessary konfidence instructions](guide.md).
+    Read [here](guide.md).
+  contains:
+    - "Vale.Spelling:"
+    - "Vale.Terms:"
+    - "Konfidence.LinkText:"
+
+- name: Spelling, terminology, and wording checks still inspect bold text
+  input: |
+    Check **neccessary konfidence settings** and **utilize** the configuration.
+  contains:
+    - "Vale.Spelling:"
+    - "Vale.Terms:"
+    - "Konfidence.PlainLanguage:"
+
+- name: Code and VitePress component syntax are not prose
+  input: |
+    Use `konfidence utilize neccessary Vector` in this example.
+
+    ```yaml
+    description: Just utilize Artifacts with konfidence.
+    ```
+
+    <AdrHeader />
+    <DrawioDiagram src="/assets/diagrams/neccessary.drawio" />
+    <DocsCards />
+
+    <script setup>
+    const neccessary = 'Just utilize Artifacts with konfidence';
+    </script>
+  want: ""
+
+- name: Prose inside VitePress containers is checked
+  input: |
+    ::: warning
+    Utilize the neccessary configuration.
+    :::
+
+    ::: details Example
+    Configure konfidence.
+    :::
+  contains:
+    - "Konfidence.PlainLanguage:"
+    - "Vale.Spelling:"
+    - "Vale.Terms:"
+
+- name: A narrow exception suppresses only the intended rule
+  input: |
+    <!-- vale Konfidence.PlainLanguage = NO -->
+    Utilize the file with konfidence.
+    <!-- vale Konfidence.PlainLanguage = YES -->
+  contains:
+    - "Vale.Terms:"
+  absent:
+    - "Konfidence.PlainLanguage:"
+
+- name: A narrow exception ends at its closing directive
+  input: |
+    <!-- vale Konfidence.PlainLanguage = NO -->
+    Utilize the file.
+    <!-- vale Konfidence.PlainLanguage = YES -->
+
+    Obtain the file.
+  contains:
+    - "Konfidence.PlainLanguage:Use 'Get' instead of 'Obtain'."
+  absent:
+    - "instead of 'Utilize'"
+
+- name: VitePress anchors and heading prefixes preserve sentence case
+  input: |
+    ## Install the Kubernetes deployer {#kubernetes-deployer}
+
+    ## Option 1: Configure a vector
+
+    ## Optional: Configure a vector
+
+    ## Optional: verify service-to-service communication
+
+    ## Get the vector ID
+
+    ## Use YAML with an SDK
+
+    ## Use plain English
+
+    ## Why reuse exists
+  want: ""
+
+- name: Heading prefixes do not hide title case in the following text
+  input: "## Option 1: Build Vectors With Konfidence"
+  contains:
+    - "Konfidence.Headings:"
+
+- name: Optional labels do not hide title case in the remaining words
+  input: |
+    ## Optional: verify Service-to-service Communication
+
+    ## Optional: Verify Service-to-service Communication
+  contains:
+    - "Konfidence.Headings:"
+
+- name: The ID heading exception does not recase identifiers in alternative text
+  input: "![The gateway adds the x-vector-id header.](diagram.svg)"
+  want: ""
+
+- name: An exception within a list item preserves checking of the next item
+  input: |
+    - State the requirement.
+    - <!-- vale Konfidence.DiscouragedWords = NO -->
+      Do not use *easy*, *simple*, or *just*.
+      <!-- vale Konfidence.DiscouragedWords = YES -->
+    - Just use the file.
+  contains:
+    - "Konfidence.DiscouragedWords:Remove 'Just'"
+  absent:
+    - "Remove 'easy'"
+    - "Remove 'simple'"
+    - "Remove 'just'"

@@ -33,6 +33,26 @@ This is the official documentation for the Konfidence project, built with [ViteP
 
    The docs will be available at `http://localhost:5173`
 
+## Check documentation prose
+
+[Vale](https://docs.vale.sh/topics/quickstart) checks spelling, terminology, and selected rules from our style guide. Install it separately from the Node.js dependencies. On macOS:
+
+```bash
+brew install vale
+vale --version
+```
+
+CI uses Vale **3.25.1**. For matching local results, use the same version from the [official releases](https://github.com/vale-cli/vale/releases/tag/v3.25.1); Homebrew may provide a newer version.
+
+Run these commands from the repository root:
+
+```bash
+pnpm lint:prose
+pnpm test:prose
+```
+
+The first command checks authored Markdown in `src/`, this README, and `CONTRIBUTING.md`. The second tests the Vale configuration against valid and invalid examples. The rules and vocabulary are included in the repository, so no `vale sync` or external style package is needed. See the [contribution guide](https://github.com/konfidence-project/konfidence-docs/blob/main/CONTRIBUTING.md#prose-checks-with-vale) for findings, exceptions, and rule maintenance.
+
 ## Pre-release mode
 
 The site builds in pre-release mode by default. It shows a fixed "pre-release software" banner on every page (`.vitepress/theme/components/PreReleaseBanner.vue`) and a `pre-alpha` badge next to the navbar logo.

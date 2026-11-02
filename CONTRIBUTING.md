@@ -51,7 +51,7 @@ For substantial new content or a new documentation area, [open an issue](https:/
 2. **Frame the page.** Choose the primary audience, state their user job, and select a content type using the [guide templates](/docs/extend-customize/guide-templates#start-writing-in-three-steps).
 3. **Write.** Copy the matching template and follow the [documentation style guide](/docs/extend-customize/styleguide).
 4. **Validate the content.** Ask the contributor or feature owner to confirm technical statements. Run commands and examples in the documented environment and check the expected results.
-5. **Preview the page.** Install the dependencies with `pnpm install`, start the site with `pnpm dev`, and inspect the rendered page. Run `pnpm build` before submitting the change.
+5. **Check and preview the page.** Run `pnpm lint:prose` and review the findings. Install the dependencies with `pnpm install`, start the site with `pnpm dev`, and inspect the rendered page. Run `pnpm build` before submitting the change.
 6. **Submit the change.** Include documentation with the related code change when the repository structure permits it. Otherwise, create a separate documentation pull request and link the related issue or code pull request.
 7. **Address both reviews.** Resolve feedback about technical accuracy as well as audience, structure, clarity, and style.
 
@@ -67,9 +67,52 @@ Confirm that:
 - [ ] Commands, code, manifests, and expected results have been tested.
 - [ ] Prerequisites, permissions, limitations, and known relevant failure modes are documented.
 - [ ] Links work, link text is descriptive, and visuals have an equivalent text explanation.
+- [ ] Findings from `pnpm lint:prose` have been reviewed for the changed content.
 - [ ] `pnpm build` completes successfully.
 - [ ] Generated reference files have not been edited directly.
 - [ ] AI-assisted content follows the project guideline and has been reviewed by a human.
+
+### Prose checks with Vale
+
+Use Vale 3.25.1, the version pinned in `.github/workflows/vale.yaml`. See the [README](https://github.com/konfidence-project/konfidence-docs/blob/main/README.md#check-documentation-prose) for installation. From the repository root, run:
+
+```bash
+pnpm lint:prose
+pnpm test:prose
+```
+
+To check one page while writing:
+
+```bash
+vale --no-global --config=.vale.ini src/docs/getting-started/quickstart.md
+```
+
+The repository configuration takes precedence over personal preferences; the commands also disable global configuration so local and CI results use the same rules.
+
+The built-in `Vale` style checks spelling with its US English dictionary, repeated words, and the spelling of accepted names. Our `Konfidence` style adds the six plain-language replacements from the style guide, discouraged wording, sentence case in headings and `title`, lowercase glossary concepts within sentences, and vague link labels such as “Click here”. Text in `description` and image alternative text is also checked. Code, VitePress component syntax, custom heading anchors, and technical frontmatter values are excluded.
+
+The concept-casing rule preserves link titles and bold UI labels. Other checks, including spelling and vague link labels, remain active there. After the heading label “Optional:”, either initial case is accepted; the remaining words still use sentence case.
+
+These checks cover selected editorial conventions. Vale is not a general grammar checker: tense, active voice, Oxford commas, first-use explanations, inclusive wording, and the usefulness of link labels still need review. Vale also does not validate metadata types, technical accuracy, working links, or the presence of image alternative text. See [ADR-0041](/docs/extend-customize/decisions/adr-0041-documentation-maintenance) for the separate responsibilities of the planned tools.
+
+The generated `crd.md`, `cli.md`, `helm-values-konfidence.md`, and `helm-values-orchestrator.md` files under `src/docs/reference/` are excluded. Correct their upstream sources instead of editing these files. Authored reference pages, including the glossary, are checked.
+
+#### Findings and pull requests
+
+During rollout, all active rules report `warning`. `MinAlertLevel = warning` displays warnings and errors; it hides suggestions. This setting controls visibility, not whether a GitHub check fails.
+
+The `Documentation prose` workflow runs the rule tests and checks the authored Markdown on pull requests to `main`, pushes to `main`, and manual runs. It uses the official Vale action with annotations and read-only repository permissions. Editorial findings are advisory (`fail_level: none`); installation, configuration, and test failures still fail the job. GitHub limits the number of annotations, so use the local command to review the complete findings.
+
+The workflow does not change branch protection or install Git hooks. A failed job blocks merging only when the repository rules require that check. Before making editorial findings mandatory, maintainers and the technical writer should review false positives and the existing backlog, choose the rules that should use `error`, set the action's `fail_level` to `error`, and make the `Vale` check required. If a merge queue is used, add the corresponding `merge_group` trigger at that time.
+
+#### Vocabulary, exceptions, and maintenance
+
+- Add product names and exact resource names to `.vale/styles/config/vocabularies/Konfidence/accept.txt`. This list also controls capitalization, so do not copy all glossary headings into it. Common nouns such as “vector” and “stage” stay lowercase within sentences; resource names belong in inline code.
+- Add valid words missing from the spelling dictionary to `.vale/styles/config/ignore/Konfidence.txt`, one word per line. `Vale.Spelling` loads this list automatically. These spelling-only exceptions do not change the rules for capitalization or terminology.
+- For an intentional bad example, disable only the relevant rule with a [Vale Markdown comment](https://docs.vale.sh/formats/markdown), explain the exception, and re-enable the rule immediately after the example. Do not disable checking for an entire page to silence unrelated findings.
+- Authors review findings in the content they change. Maintainers and the technical writer review vocabulary additions, exceptions, and rule changes against the style guide and glossary.
+- Keep rules in `.vale/styles/Konfidence/` and add valid and invalid examples to `.vale/config.test.yml` when changing their behavior. Run `pnpm test:prose` and `pnpm lint:prose` before proposing the change. Coverage requires every custom rule to produce a finding in at least one test.
+- When updating Vale, change `VALE_VERSION` in the workflow and the version documented here and in the README together. Re-run the tests and review changes in findings before merging the update. No downloaded style packages need to be maintained.
 
 ### Pull request titles
 

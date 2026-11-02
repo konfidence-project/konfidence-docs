@@ -1,0 +1,14 @@
+extends: existence
+message: "Use lowercase for the concept '%s', preserving capitalization at the start of a sentence."
+link: https://konfidence.cloud/docs/extend-customize/decisions/adr-0041-documentation-maintenance.html#consistent-terms-and-sentence-case
+level: warning
+scope:
+  # Link titles and bold UI labels retain their original capitalization.
+  - sentence & ~heading & ~link & ~strong
+  - text.frontmatter.description
+nonword: true
+tokens:
+  # Glossary concepts are common nouns. Allow sentence starts and opening quotes.
+  - '(?<!^\s*["“‘''(\[]*|[.!?]\s+["“‘''(\[]*)\b(?:Artifacts?|Deployers?|Landscapes?|Projects?|Promotions?|Stages?|Vectors?|Delivery(?= [Ff]lows?\b)|Deployment(?= (?:[Cc]lass(?:es)?|[Rr]esults?|[Tt]argets?)\b)|Feature(?= [Ff]lags?\b))\b'
+  # The remaining words in compound concepts stay lowercase at sentence starts too.
+  - '\b(?:[Aa]rtifact Alias(?:es)?|[Dd]elivery Flows?|[Dd]eployment (?:Class(?:es)?|Results?|Targets?)|[Ff]eature Flags?|[Ll]andscape Orchestrators?|[Vv]ector (?:Configurations?|Data)(?: [Ss]ervices?)?|[Vv]ector data Services?)\b'
