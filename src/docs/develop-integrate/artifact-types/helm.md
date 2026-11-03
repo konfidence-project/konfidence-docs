@@ -136,7 +136,7 @@ The chart is available as `registry.example.com/my-org/charts/my-service:1.0.0`.
 
 ## Reference the chart from the artifact component
 
-   1. Create `konfidence-manifest.json` with the Helm type:
+   1. Create `manifest.json` with the Helm type:
 
    ```json
    {
@@ -156,7 +156,7 @@ The chart is available as `registry.example.com/my-org/charts/my-service:1.0.0`.
        provider:
          name: my-org
        resources:
-         - name: my-service-manifest
+         - name: konfidence-manifest
            type: cloud.konfidence.artifact.manifest
            version: 1.0.0
            relation: local

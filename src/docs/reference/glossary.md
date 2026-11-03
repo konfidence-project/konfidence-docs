@@ -61,6 +61,23 @@ An artifact alias is a mutable tag, such as `main`, that points to one version o
 
 :::
 
+### Artifact type
+
+An artifact type is a vendor-owned identifier for an artifact's packaging and deployment contract, such as `helm.konfidence.cloud`. The manifest of an artifact declares its type. Deployers declare which types they support, and `DeploymentTarget.spec.artifactType` configures a destination for a type in a landscape.
+
+::: details Pages that use this term
+
+- [Deployer specification](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md)
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Deployment model](../core-concepts/deployment-model.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
+
+:::
+
 ### Delivery flow
 
 The delivery flow is the path from published artifacts to the vector each stage selects. It has four phases: build, assemble, assign, and promote. Deployment in a landscape starts after the delivery flow ends.
@@ -98,23 +115,6 @@ The current release provides one deployer for Kubernetes, installed with the [la
 - [System architecture](../deploy-operate/plan/system-architecture.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
-
-:::
-
-### Artifact type
-
-An artifact type is a vendor-owned identifier for an artifact's packaging and deployment contract, such as `helm.konfidence.cloud`. The manifest of an artifact declares its type. Deployers declare which types they support, and `DeploymentTarget.spec.artifactType` configures a destination for a type in a landscape.
-
-::: details Pages that use this term
-
-- [Deployer specification](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md)
-- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
-- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
-- [Create a stage](../deploy-operate/manage-delivery/stages.md)
-- [Deployment model](../core-concepts/deployment-model.md)
-- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
-- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
-- [Types of artifacts](../develop-integrate/artifact-types/index.md)
 
 :::
 

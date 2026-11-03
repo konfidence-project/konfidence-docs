@@ -36,7 +36,7 @@ export LANDSCAPE_NAMESPACE=$(kubectl get landscape dev \
 
 Each [artifact](../../reference/glossary.md#artifact) declares its artifact type. 
 A landscape needs one ready target for every type its [stages](../../reference/glossary.md#stage) deploy. 
-Use the exact type supported by the artifact's deployer
+Use the exact type supported by the artifact's deployer.
 For example, the Kubernetes deployer supports `helm.konfidence.cloud` and `kustomize.konfidence.cloud`.
 
 ## Create the target

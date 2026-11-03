@@ -48,7 +48,7 @@ Its `spec.artifactType` selects the responsible deployer, and `spec.parameters` 
 
 A landscape can contain several targets for different artifact types.
 For example, it might provide both Helm and Kustomize targets that connect to the same Kubernetes cluster.
-A landscape should have at most one target for each artifact type.
+A landscape must have at most one target for each artifact type.
 
 ## Landscapes define the operational scope
 

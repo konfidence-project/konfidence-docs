@@ -54,7 +54,7 @@ Every chart value is listed in the [Helm values reference](../../../reference/he
 ## Target parameters
 
 A [deployment target](../../manage-delivery/deployment-targets.md) sets `spec.artifactType` to one of the supported types. 
-Empty or omitted `spec.parameters` configures deployment to the cluster where the deployer runs. 
+Omitted `spec.parameters` configures deployment to the cluster where the deployer runs. 
 For a remote cluster, `spec.parameters` references a Secret in the landscape namespace that contains a kubeconfig.
 
 ::: warning Remote targets are work in progress

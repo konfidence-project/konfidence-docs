@@ -134,7 +134,7 @@ The bundle is available as `registry.example.com/my-org/my-service-manifests:1.0
        provider:
          name: my-org
        resources:
-         - name: my-service-manifest
+         - name: konfidence-manifest
            type: cloud.konfidence.artifact.manifest
            version: 1.0.0
            relation: local
