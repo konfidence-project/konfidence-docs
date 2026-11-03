@@ -1,8 +1,8 @@
 ---
-id: ADR-0039
+id: ADR-0042
 title: "Static content deployer, from artifacts to live traffic"
 description: "Deploy static artifacts to S3 and activate them with user-owned Jobs configured through ActivationTaskRegistration."
-status: draft
+status: accepted
 authors: [christophbleyer]
 category: Architecture Pattern
 impact: Medium
