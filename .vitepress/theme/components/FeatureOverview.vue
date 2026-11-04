@@ -153,7 +153,7 @@ import {
         </div>
         <div>
           <Layers3 aria-hidden="true" />
-          <span><strong>Engineering leaders</strong> who need traceability across services and environments.</span>
+          <span><strong>Engineering leaders</strong> who need to track application versions across environments.</span>
         </div>
       </div>
     </section>

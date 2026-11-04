@@ -56,14 +56,14 @@ Reuse avoids duplicate deployments when several vectors use an unchanged service
 A shared instance receives requests from several vectors at once. Those vectors can reference different versions of the other services. Vector A may pair `my-service 1.0.0` with `checkout 2.3.0`, while vector B pairs it with `checkout 2.4.0`.
 
 <figure>
-  <img src="../img/artifact-reuse.drawio.svg" alt="One shared instance of the service receives requests for vector A and vector B. For a request with X-Vector-ID A it calls checkout 2.3.0 inside vector A. For a request with X-Vector-ID B it calls checkout 2.4.0 inside vector B.">
+  <DrawioDiagram src="/assets/diagrams/artifact-types/artifact-reuse.drawio" />
   <figcaption>One shared instance serves two vectors and calls the service version that belongs to each request's vector.</figcaption>
 </figure>
 
 The same holds when the shared instance sits downstream. Each vector's own frontend calls one shared `catalog` instance and passes its vector ID along.
 
 <figure>
-  <img src="../img/artifact-reuse-fan-in.drawio.svg" alt="Requests for vector A and vector B reach the frontend inside their own vector. Both frontends call one shared instance of catalog 1.0.0 and forward their X-Vector-ID.">
+  <DrawioDiagram src="/assets/diagrams/artifact-types/artifact-reuse-fan-in.drawio" />
   <figcaption>Two vector-specific frontends fan in to one shared instance. The vector ID travels with every call.</figcaption>
 </figure>
 
