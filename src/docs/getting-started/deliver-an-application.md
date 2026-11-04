@@ -27,33 +27,13 @@ kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
 
 ## Prepare the demo environment
 
-### Create the project
-
-Create the Example App project, then wait until Konfidence has created its namespace:
+Apply the whole demo environment:
 
 ```bash
-kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/project?ref=main'
-kubectl wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
-  project/example-app --timeout=60s
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart?ref=main'
 ```
 
-### Create the landscapes
-
-Next, create the `dev` and `prod` landscapes. Each landscape receives its own namespace:
-
-```bash
-kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/landscapes?ref=main'
-kubectl -n kden-p-example-app wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
-  landscape/dev landscape/prod --timeout=60s
-```
-
-### Create the delivery environment
-
-Apply the prepared delivery environment. It creates the `dev-eu12` stage in the `dev` landscape and `prod-eu12` in `prod`, along with the resources needed to deploy the Example App and promote it between them.
-
-```bash
-kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/environment?ref=main'
-```
+This creates a Konfidence project named "Example App", the `dev` and `prod` landscapes, and their stages `dev-eu12` and `prod-eu12`, plus additional resources required to deploy and promote the Example App.
 
 The Example App reads its vector data from a Vector Data Service in each landscape namespace. Install it in `kden-l-dev` and `kden-l-prod`:
 
