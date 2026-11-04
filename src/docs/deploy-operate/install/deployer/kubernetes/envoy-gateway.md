@@ -44,7 +44,7 @@ export SERVICE=my-service
      | kubectl apply --server-side -f -
    ```
 
-2. Install the controller in `GatewayNamespace` mode. In this mode, each Gateway's proxy runs in the Gateway's own namespace. The `konfidence-router` Service then lands in the landscape namespace, where your edge routes can reference it.
+2. Install the controller in `GatewayNamespace` mode. In this mode, each Gateway's proxy runs in the Gateway's own namespace. The `konfidence-router` service then lands in the landscape namespace, where your edge routes can reference it.
 
    ```bash
    helm upgrade --install eg oci://docker.io/envoyproxy/gateway-helm \
@@ -60,7 +60,7 @@ The `helm upgrade` command reports `STATUS: deployed`.
 
 ## Create the edge Gateway
 
-The edge Gateway receives external traffic. Envoy Gateway gives it a `LoadBalancer` Service by default.
+The edge Gateway receives external traffic. Envoy Gateway gives it a `LoadBalancer` service by default.
 
 Create the namespace of the edge Gateway:
 
@@ -106,7 +106,7 @@ The `kubectl wait` command prints `condition met`.
 
 ## Create the konfidence-router Gateway for each landscape
 
-Repeat this step for every landscape namespace. The `EnvoyProxy` resource pins the Service to `ClusterIP` and gives it the stable name `konfidence-router`. The ReferenceGrant lets edge routes in `edge-gateway` use that Service.
+Repeat this step for every landscape namespace. The `EnvoyProxy` resource pins the service to `ClusterIP` and gives it the stable name `konfidence-router`. The ReferenceGrant lets edge routes in `edge-gateway` use that service.
 
 ```bash
 kubectl apply -f - <<EOF
@@ -257,7 +257,7 @@ EOF
 
 ## Use in a local kind cluster
 
-The [Quickstart](../../../../getting-started/quickstart.md) cluster has no load balancer. Its script maps `localhost:9090` to NodePort `30080` on the kind node. Give the edge Gateway a NodePort Service on that port.
+The [Quickstart](../../../../getting-started/quickstart.md) cluster has no load balancer. Its script maps `localhost:9090` to NodePort `30080` on the kind node. Give the edge Gateway a NodePort service on that port.
 
 A kind cluster that you created yourself has no such mapping. Add an `extraPortMappings` entry from `containerPort: 30080` to `hostPort: 9090` to its configuration, then recreate the cluster.
 
@@ -309,7 +309,7 @@ A kind cluster that you created yourself has no such mapping. Add an `extraPortM
 | --- | --- | --- |
 | `helm install` fails with `Too long: may not be more than 1048576 bytes` | You installed the CRD chart with `helm install` | Render it with `helm template` and apply it server-side, as in the first step. |
 | Edge route shows `ResolvedRefs=False` with reason `RefNotPermitted` | The ReferenceGrant is missing in the landscape namespace | Create the ReferenceGrant from the `konfidence-router` step. |
-| Edge route shows `ResolvedRefs=False` with reason `BackendNotFound` | The `konfidence-router` Service is in `envoy-gateway-system` | Install the controller with `deploy.type=GatewayNamespace`. Then recreate the Gateway. |
+| Edge route shows `ResolvedRefs=False` with reason `BackendNotFound` | The `konfidence-router` service is in `envoy-gateway-system` | Install the controller with `deploy.type=GatewayNamespace`. Then recreate the Gateway. |
 | `kubectl get httproute -n "$LANDSCAPE_NAMESPACE"` lists no `konfidence-stage-<stage>` route after an activation | The activation task is not registered in the landscape namespace | Create the `ActivationTaskRegistration` from the registration step. Konfidence creates the route on the next activation of the stage. |
 | `curl` returns `404` although `konfidence-stage-<stage>` exists | The edge route does not set `x-konfidence-service`, or its value is not a deployment result name | Compare the edge route's `x-konfidence-service` value with the values in `konfidence-stage-<stage>`. |
 | `curl` returns `503` with `upstream connect error` | The backend Pod of the stage does not accept connections | Check the Pod with `kubectl get pods -n "$LANDSCAPE_NAMESPACE"`. |
