@@ -10,7 +10,7 @@ lastUpdated: true
 
 Install the Kubernetes [deployer](../../../reference/glossary.md#deployer) to deliver Helm and Kustomize artifacts to Kubernetes through Flux. 
 It supports the artifact types `helm.konfidence.cloud` and `kustomize.konfidence.cloud` and is the reference implementation of Konfidence's deployer interface.
-See the [deployer specification](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md) for the control-plane contract.
+See the [deployer specification](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md) for the control plane contract.
 
 After installation, use the target parameters on this page to configure targets in your landscapes. 
 The later sections describe supported artifact types and Service [deployment results](../../../reference/glossary.md#deployment-result). 
@@ -113,7 +113,7 @@ An `ArtifactDeployment` whose `spec.artifactType` does not match either value is
 
 Each `ArtifactDeployment` must carry at most one OCM resource of the matching type. Deployments with more than one matching resource are rejected with `[Ready=False] MultipleKustomizeResources` (Kustomize path) or `[Ready=False] MultipleHelmChartResources` (Helm path). Deployments with zero matching resources produce no Flux resources.
 
-## Expose a Service as a deployment result
+## How deployment results work
 
 By default, the Services in your bundle or chart are internal. To let other components in the same [vector](../../../reference/glossary.md#vector) discover and call a Service, annotate it:
 
