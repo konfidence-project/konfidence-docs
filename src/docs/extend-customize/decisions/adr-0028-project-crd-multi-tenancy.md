@@ -55,6 +55,10 @@ tied to the Project by a controller owner reference. A finalizer deletes the
 namespace and waits for it to terminate before the Project is released.
 Deleting a Project deletes the namespace and everything in it.
 
+::: info Amendment
+Konfidence now uses labels instead of an owner reference to associate a namespace with its `Project`. `spec.namespacePolicy` (`Create` or `Adopt`) controls whether Konfidence creates or adopts the namespace. `spec.deletionPolicy` (`Orphan` or `Delete`) controls whether Konfidence keeps or deletes the namespace when you delete the `Project`. The default is `Orphan`, so Konfidence deletes the namespace only if you set the policy to `Delete`.
+:::
+
 `spec.roleBindings` maps a role name to a list of subjects; a caller holds a
 role if any subject in the list matches. Roles are a fixed, well-known set
 today (admin, pm, dev), but the field is a map precisely so the set can grow
