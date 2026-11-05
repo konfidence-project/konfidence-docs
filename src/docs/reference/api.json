@@ -146,6 +146,38 @@
       }
     },
     "schemas": {
+      "ArtifactContent": {
+        "properties": {
+          "allowReuse": {
+            "type": "boolean"
+          },
+          "ref": {
+            "description": "OCM ref string (registry//component:version)",
+            "type": "string"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/ArtifactResource"
+            },
+            "type": "array"
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/ArtifactTask"
+            },
+            "type": "array"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "type",
+          "allowReuse"
+        ],
+        "type": "object"
+      },
       "ArtifactDeployment": {
         "properties": {
           "artifact": {
@@ -217,6 +249,51 @@
           }
         ]
       },
+      "ArtifactResource": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "type": "object"
+      },
+      "ArtifactTask": {
+        "properties": {
+          "dependsOn": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "type": "object"
+      },
+      "ChangeType": {
+        "enum": [
+          "added",
+          "removed",
+          "changed",
+          "unchanged"
+        ],
+        "type": "string"
+      },
       "ComponentReference": {
         "properties": {
           "componentName": {
@@ -233,6 +310,27 @@
           "repository",
           "componentName",
           "componentVersion"
+        ],
+        "type": "object"
+      },
+      "ConfigEntryDiff": {
+        "properties": {
+          "changeType": {
+            "$ref": "#/components/schemas/ChangeType"
+          },
+          "key": {
+            "type": "string"
+          },
+          "leftValue": {
+            "description": "Value on the left side. Absent when changeType is \"added\"."
+          },
+          "rightValue": {
+            "description": "Value on the right side. Absent when changeType is \"removed\"."
+          }
+        },
+        "required": [
+          "key",
+          "changeType"
         ],
         "type": "object"
       },
@@ -553,6 +651,112 @@
         "description": "The stageVersion id",
         "type": "string"
       },
+      "VectorComponent": {
+        "properties": {
+          "componentName": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "componentName",
+          "version"
+        ],
+        "type": "object"
+      },
+      "VectorComponentDiff": {
+        "properties": {
+          "changeType": {
+            "$ref": "#/components/schemas/ChangeType"
+          },
+          "componentName": {
+            "type": "string"
+          },
+          "leftVersion": {
+            "description": "Version on the left side. Absent when changeType is \"added\".",
+            "type": "string"
+          },
+          "rightVersion": {
+            "description": "Version on the right side. Absent when changeType is \"removed\".",
+            "type": "string"
+          }
+        },
+        "required": [
+          "componentName",
+          "changeType"
+        ],
+        "type": "object"
+      },
+      "VectorConfig": {
+        "properties": {
+          "authored": {
+            "additionalProperties": true,
+            "description": "Raw authored blob from VectorConfigurationV1",
+            "type": "object"
+          },
+          "features": {
+            "additionalProperties": true,
+            "description": "Raw features blob from VectorConfigurationV1",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "VectorConfigDiff": {
+        "properties": {
+          "authored": {
+            "items": {
+              "$ref": "#/components/schemas/ConfigEntryDiff"
+            },
+            "type": "array"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/ConfigEntryDiff"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "VectorContent": {
+        "properties": {
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/VectorComponent"
+            },
+            "type": "array"
+          },
+          "config": {
+            "$ref": "#/components/schemas/VectorConfig"
+          },
+          "ref": {
+            "description": "OCM ref string (registry//component:version)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "components"
+        ],
+        "type": "object"
+      },
+      "VectorContentList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/VectorContent"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
       "VectorDeployment": {
         "properties": {
           "id": {
@@ -601,6 +805,33 @@
         },
         "required": [
           "data"
+        ],
+        "type": "object"
+      },
+      "VectorDiff": {
+        "properties": {
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/VectorComponentDiff"
+            },
+            "type": "array"
+          },
+          "config": {
+            "$ref": "#/components/schemas/VectorConfigDiff"
+          },
+          "left": {
+            "description": "OCM ref string of the left-hand vector",
+            "type": "string"
+          },
+          "right": {
+            "description": "OCM ref string of the right-hand vector",
+            "type": "string"
+          }
+        },
+        "required": [
+          "left",
+          "right",
+          "components"
         ],
         "type": "object"
       },
@@ -1046,6 +1277,57 @@
           }
         },
         "summary": "List all artifactDeployments for a project.",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/artifacts/content": {
+      "get": {
+        "description": "Returns the manifest details of any artifact available in OCI, including type, allowReuse, tasks, and OCM resources.\n",
+        "operationId": "getArtifactContentV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "description": "OCM ref string identifying the artifact (registry//component:version). Must be percent-encoded. Passed as a query parameter because the OCM ref contains // which cannot be used in a path segment.\n",
+            "in": "query",
+            "name": "ref",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactContent"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get OCM content for an artifact by ref.",
         "tags": [
           "projects"
         ]
@@ -1507,6 +1789,137 @@
           }
         },
         "summary": "Approves the given vectorPromotion for the specified project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectors/content": {
+      "get": {
+        "description": "Returns the component list and configuration of any vector available in OCI, regardless of whether it has been deployed.\n",
+        "operationId": "getVectorContentV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "description": "One or more OCM ref strings (registry//component:version). Must be percent-encoded. Repeat the parameter for multiple refs.\n",
+            "explode": true,
+            "in": "query",
+            "name": "refs",
+            "required": true,
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 20,
+              "minItems": 1,
+              "type": "array"
+            },
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorContentList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get OCM content for vectors by refs.",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectors/diff": {
+      "get": {
+        "operationId": "getVectorDiffV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "description": "OCM ref string for the one of the compared vectors (registry//component:version). Must be percent-encoded.\n",
+            "in": "query",
+            "name": "left",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "OCM ref string for the other compared vector (registry//component:version). Must be percent-encoded.\n",
+            "in": "query",
+            "name": "right",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "When true, unchanged components and config entries are included in the diff.",
+            "in": "query",
+            "name": "includeUnchanged",
+            "required": false,
+            "schema": {
+              "default": "false",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorDiff"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get the diff between two vectors by ref.",
         "tags": [
           "projects"
         ]
