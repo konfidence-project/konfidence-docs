@@ -55,7 +55,7 @@ Every chart value is listed in the [Helm values reference](../../../reference/he
 
 A [deployment target](../../manage-delivery/deployment-targets.md) sets `spec.artifactType` to one of the supported types. 
 Omitted `spec.parameters` configures deployment to the cluster where the deployer runs. 
-For a remote cluster, `spec.parameters` references a Secret in the landscape namespace that contains a kubeconfig.
+For a remote cluster, `spec.parameters` references a secret in the landscape namespace that contains a kubeconfig.
 
 ::: warning Remote targets are work in progress
 Use targets with empty parameters to deploy into the local cluster. 
@@ -70,7 +70,7 @@ spec:
   artifactType: helm.konfidence.cloud
 ```
 
-A remote target references a Secret in the landscape namespace. 
+A remote target references a secret in the landscape namespace. 
 The deployer reads the kubeconfig from the key `value` or `value.yaml`, the keys Flux uses:
 
 ```bash
@@ -94,10 +94,10 @@ The deployer validates target parameters and reports the result in the `Ready` c
 | Reason | Meaning |
 | --- | --- |
 | `Accepted` | The target passed validation. |
-| `InvalidParameters` | Parameters do not identify a Kubernetes Secret containing a kubeconfig. |
-| `ValidationError` | The deployer could not complete validation, for example because the referenced Secret could not be read. |
+| `InvalidParameters` | Parameters do not identify a Kubernetes secret containing a kubeconfig. |
+| `ValidationError` | The deployer could not complete validation, for example because the referenced secret could not be read. |
 
-Pulling artifacts from private registries needs a Secret in the landscape namespace as well. See [Connect artifact registries](../connect-registries.md#give-the-deployer-credentials).
+Pulling artifacts from private registries needs a secret in the landscape namespace as well. See [Connect artifact registries](../connect-registries.md#give-the-deployer-credentials).
 
 ## Supported artifact types
 

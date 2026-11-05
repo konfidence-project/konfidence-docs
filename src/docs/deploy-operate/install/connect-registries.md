@@ -8,18 +8,18 @@ lastUpdated: true
 
 # Connect artifact registries
 
-Give Konfidence credentials for the private OCI registries that hold artifacts and vectors. Two components read registries on their own, and each needs its own Secret. The control plane pulls a vector when a stage changes. The Kubernetes deployer pulls artifact contents when it creates workloads. Without credentials, both access the registry unauthenticated and private registries return `401` or `403`.
+Give Konfidence credentials for the private OCI registries that hold artifacts and vectors. Two components read registries on their own, and each needs its own secret. The control plane pulls a vector when a stage changes. The Kubernetes deployer pulls artifact contents when it creates workloads. Without credentials, both access the registry unauthenticated and private registries return `401` or `403`.
 
 Configure the control plane credentials during installation. Return to [Give the deployer credentials](#give-the-deployer-credentials) after creating each landscape that uses a private registry.
 
-Vector assembly credentials belong to the project, not to the installation. A `VectorTemplate` names its own Secrets in `spec.credentials.ocm.refs`. See [Configure signing and verification](/docs/develop-integrate/advanced-features/configure-signing-and-verification) and the [Credentials reference](/docs/reference/crd#credentials).
+Vector assembly credentials belong to the project, not to the installation. A `VectorTemplate` names its own secrets in `spec.credentials.ocm.refs`. See [Configure signing and verification](/docs/develop-integrate/advanced-features/configure-signing-and-verification) and the [Credentials reference](/docs/reference/crd#credentials).
 
 ## Prerequisites
 
 - A registry account with pull permission, its username, and its password or token.
 - The registry host name, for example `registry.example.com`.
-- For the control plane steps, `kubectl` access to create Secrets in `konfidence-system` and restart the operator Deployment.
-- For the deployer steps, a [landscape](../manage-delivery/landscapes.md#verify-the-landscape) and permission to create Secrets in its namespace. The registry-to-Secret mapping also requires permission to configure a ConfigMap in `konfidence-system`.
+- For the control plane steps, `kubectl` access to create secrets in `konfidence-system` and restart the operator Deployment.
+- For the deployer steps, a [landscape](../manage-delivery/landscapes.md#verify-the-landscape) and permission to create secrets in its namespace. The registry-to-secret mapping also requires permission to configure a ConfigMap in `konfidence-system`.
 
 Set the values used below:
 
@@ -31,7 +31,7 @@ export REGISTRY_PASSWORD='<TOKEN>'
 
 ## Give the control plane credentials
 
-The vector deployment controllers read one Secret named `registry-credentials` in `konfidence-system`. Create it as a Docker registry Secret:
+The vector deployment controllers read one secret named `registry-credentials` in `konfidence-system`. Create it as a Docker registry secret:
 
 ```bash
 kubectl create secret docker-registry registry-credentials \
@@ -41,7 +41,7 @@ kubectl create secret docker-registry registry-credentials \
   --docker-password="$REGISTRY_PASSWORD"
 ```
 
-The controllers load the Secret at startup. Restart the operator so it loads the Secret:
+The controllers load the secret at startup. Restart the operator so it loads the secret:
 
 ```bash
 kubectl rollout restart deployment/konfidence --namespace konfidence-system
@@ -58,7 +58,7 @@ Set the namespace reported by your `Landscape` resource's status. Replace `<land
 export LANDSCAPE_NAMESPACE='<landscape-namespace>'
 ```
 
-The Kubernetes deployer looks up credentials by registry host name. It searches the namespace of the resource it reconciles, the landscape namespace. Create a Docker registry Secret named exactly like the registry host:
+The Kubernetes deployer looks up credentials by registry host name. It searches the namespace of the resource it reconciles, the landscape namespace. Create a Docker registry secret named exactly like the registry host:
 
 ```bash
 kubectl create secret docker-registry "$REGISTRY_HOST" \
@@ -70,9 +70,9 @@ kubectl create secret docker-registry "$REGISTRY_HOST" \
 
 Repeat this for every landscape that deploys from the registry. The next deployment in the landscape pulls the artifact with these credentials.
 
-## Map registries to Secrets with different names
+## Map registries to secrets with different names
 
-A Secret name must be a DNS subdomain name. A registry with a port, such as `registry.example.com:5000`, cannot name the Secret. Map the host to a Secret name in the ConfigMap `flux-deployer-configuration` in `konfidence-system` instead:
+A secret name must be a DNS subdomain name. A registry with a port, such as `registry.example.com:5000`, cannot name the secret. Map the host to a secret name in the ConfigMap `flux-deployer-configuration` in `konfidence-system` instead:
 
 ```yaml
 apiVersion: v1
@@ -85,13 +85,13 @@ data:
     registry.example.com:5000: registry-example
 ```
 
-The Secret `registry-example` still lives in the landscape namespace and has the type `kubernetes.io/dockerconfigjson`. The deployer checks the ConfigMap first and falls back to the host name.
+The secret `registry-example` still lives in the landscape namespace and has the type `kubernetes.io/dockerconfigjson`. The deployer checks the ConfigMap first and falls back to the host name.
 
 ## Use an OCM configuration instead of a Docker configuration
 
-The control plane Secret accepts an Open Component Model (OCM) configuration under the `.ocmconfig` key instead of `.dockerconfigjson`. Use it when the same Secret also carries signing or verification keys. [Configure signing and verification](/docs/develop-integrate/advanced-features/configure-signing-and-verification#configure-cli-credentials) shows the `credentials.config.ocm.software/v1` format.
+The control plane secret accepts an Open Component Model (OCM) configuration under the `.ocmconfig` key instead of `.dockerconfigjson`. Use it when the same secret also carries signing or verification keys. [Configure signing and verification](/docs/develop-integrate/advanced-features/configure-signing-and-verification#configure-cli-credentials) shows the `credentials.config.ocm.software/v1` format.
 
-The operator can load a second Secret with another name or namespace. Set both environment variables through the chart's `env` value:
+The operator can load a second secret with another name or namespace. Set both environment variables through the chart's `env` value:
 
 ```yaml
 env:
@@ -109,8 +109,8 @@ The credentials on this page cover the artifacts and vectors that Konfidence pul
 
 ## Troubleshooting
 
-- A stage rollout fails with `401` or `403` from the registry. The control plane Secret is missing, or the operator was not restarted after creating it.
-- A deployment in a landscape fails to pull. No Secret named after the host exists in the landscape namespace. The ConfigMap has no entry for the host either.
+- A stage rollout fails with `401` or `403` from the registry. The control plane secret is missing, or the operator was not restarted after creating it.
+- A deployment in a landscape fails to pull. No secret named after the host exists in the landscape namespace. The ConfigMap has no entry for the host either.
 - The operator does not start after setting `env`: both environment variables must be set together.
 
 ## Next steps

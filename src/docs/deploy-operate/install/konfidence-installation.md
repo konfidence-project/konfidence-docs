@@ -57,7 +57,7 @@ helm upgrade --install konfidence oci://ghcr.io/konfidence-project/charts/konfid
   --wait
 ```
 
-The two `enabled=false` flags keep the first install self-contained. With the chart defaults, the API server refuses to start without an OIDC issuer URL. The admission webhook needs a TLS Secret named `konfidence-webhook-server-cert`. [Give teams access to the dashboard and API](./expose-api.md) turns OIDC on. [Enable the admission webhook with cert-manager](#enable-the-admission-webhook-with-cert-manager) below creates the Secret. Every chart value is listed in the [Helm values reference](/docs/reference/helm-values-konfidence).
+The two `enabled=false` flags keep the first install self-contained. With the chart defaults, the API server refuses to start without an OIDC issuer URL. The admission webhook needs a TLS secret named `konfidence-webhook-server-cert`. [Give teams access to the dashboard and API](./expose-api.md) turns OIDC on. [Enable the admission webhook with cert-manager](#enable-the-admission-webhook-with-cert-manager) below creates the secret. Every chart value is listed in the [Helm values reference](/docs/reference/helm-values-konfidence).
 
 ## Verify the installation
 
@@ -69,7 +69,7 @@ You see `konfidence` and `konfidence-api` with all replicas available.
 
 ## Enable the admission webhook with cert-manager
 
-The webhook validates `Project`, `Landscape`, and `DeploymentTarget` resources before the API server stores them. It serves TLS from the Secret `konfidence-webhook-server-cert`, and the Kubernetes API server must trust the certificate's CA. cert-manager issues the certificate and injects the CA into the webhook configuration.
+The webhook validates `Project`, `Landscape`, and `DeploymentTarget` resources before the API server stores them. It serves TLS from the secret `konfidence-webhook-server-cert`, and the Kubernetes API server must trust the certificate's CA. cert-manager issues the certificate and injects the CA into the webhook configuration.
 
 Prerequisite: cert-manager runs in the cluster. Check: `kubectl get crd certificates.cert-manager.io` finds the CRD.
 
@@ -98,7 +98,7 @@ spec:
     - konfidence-webhook-service.konfidence-system.svc.cluster.local
 ```
 
-Apply it and wait for the Secret:
+Apply it and wait for the secret:
 
 ```bash
 kubectl apply -f webhook-cert.yaml
@@ -108,7 +108,7 @@ kubectl wait certificate/konfidence-webhook-server-cert \
   --timeout=60s
 ```
 
-The Secret `konfidence-webhook-server-cert` now holds `tls.crt` and `tls.key`. Enable the webhook and let cert-manager inject the CA. Save the following as `webhook-values.yaml`:
+The secret `konfidence-webhook-server-cert` now holds `tls.crt` and `tls.key`. Enable the webhook and let cert-manager inject the CA. Save the following as `webhook-values.yaml`:
 
 ```yaml
 webhook:
@@ -137,7 +137,7 @@ The API server keeps login sessions in memory by default. A restart signs every 
 
 Prerequisite: a PostgreSQL database the API server can reach, and its connection string in the URL form `postgres://konfidence:<PASSWORD>@postgres.example.com:5432/konfidence`.
 
-Store the connection string in a Secret:
+Store the connection string in a secret:
 
 ```bash
 kubectl create secret generic konfidence-api-db \

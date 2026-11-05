@@ -51,7 +51,7 @@ Platform operators need to ensure that only one deployer is configured to reconc
 ## Deployment targets configure destinations
 
 A deployment target configures a destination for one artifact type in one landscape.
-Its `spec.artifactType` selects the responsible deployer, and `spec.parameters` carries deployer-defined connection information such as a Secret reference for remote credentials.
+Its `spec.artifactType` selects the responsible deployer, and `spec.parameters` carries deployer-defined connection information such as a secret reference for remote credentials.
 
 A landscape can contain several targets for different artifact types.
 For example, it might provide both Helm and Kustomize targets that connect to the same Kubernetes cluster.
