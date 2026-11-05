@@ -35,7 +35,7 @@ kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickst
 
 This creates a Konfidence project named *Example App*, the `dev` and `prod` landscapes, and their stages `dev-eu12` and `prod-eu12`, plus additional resources required to deploy and promote the *Example App*.
 
-The Example App reads its vector data from a Vector Data Service in each landscape namespace. Install it in `kden-l-dev` and `kden-l-prod`:
+The *Example App* reads its vector data from a vector data service in each landscape namespace. Install it in `kden-l-dev` and `kden-l-prod`:
 
 ```bash
 for ns in kden-l-dev kden-l-prod; do
