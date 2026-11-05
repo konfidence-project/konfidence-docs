@@ -1,5 +1,5 @@
 ---
-id: ADR-0043
+id: ADR-0045
 title: "OCM Content Layer: Exposing storage-level OCM data through the Konfidence API"
 description: "The Konfidence API previously only exposed in-cluster deployment state. This ADR extends it to also expose storage-level OCM data where vector descriptors and artifact manifests read directly from the OCI registry and establishes the caching strategy to keep registry calls out of the request path."
 status: proposed
@@ -12,7 +12,7 @@ pageClass: adr
 outline: deep
 ---
 
-# ADR-0043: OCM Content Layer - Exposing storage-level OCM data through the Konfidence API
+# ADR-0045: OCM Content Layer - Exposing storage-level OCM data through the Konfidence API
 
 <AdrHeader />
 
