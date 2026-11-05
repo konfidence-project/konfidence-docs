@@ -12,7 +12,7 @@ Konfidence is a software delivery framework for microservice-based software-as-a
 
 Before you install Konfidence, it helps to know what this setup is for: teams promote the same verified application version across environments instead of rebuilding or reconfiguring it for each deployment.
 
-## Cluster setup
+## Set up a cluster
 
 Use the Quickstart script to create a local Kubernetes cluster with Konfidence installed. By the end of this setup, you’ll have a running instance and access to its dashboard.
 
@@ -33,9 +33,9 @@ The script creates a kind cluster named `konfidence-quickstart` and selects it a
 
 1. **[Flux](https://fluxcd.io/)** — controllers that reconcile Helm and Kustomize deployments.
 2. **Konfidence** — the controller and API, which also serves the dashboard.
-3. **Kubernetes [Landscape Orchestrator](../reference/glossary.md#landscape-orchestrator)** — uses Flux to deploy Helm charts and Kustomize configurations for Konfidence.
+3. **Kubernetes [landscape orchestrator](../reference/glossary.md#landscape-orchestrator)** — uses Flux to deploy Helm charts and Kustomize configurations for Konfidence.
 
-The [Vector Data Service](../reference/glossary.md#vector-data-service) runs in each landscape namespace. It lets applications read configuration and [deployment results](../reference/glossary.md#deployment-result) for a vector at runtime. Install it after creating the landscapes, as described in [Create the delivery environment](./deliver-an-application.md#create-the-delivery-environment).
+The [vector data service](../reference/glossary.md#vector-data-service) runs in each landscape namespace. It lets applications read configuration and [deployment results](../reference/glossary.md#deployment-result) for a vector at runtime. Install it after creating the landscapes, as described in [Prepare the demo environment](./deliver-an-application.md#prepare-the-demo-environment).
 
 The script waits for the Flux deployments and Helm releases to become ready. Running it again reuses the cluster and updates the existing installation.
 
@@ -92,4 +92,4 @@ kind delete cluster --name konfidence-quickstart
 
 ## Next steps
 
-Your local Konfidence instance is ready. Continue with [Deliver an application](./deliver-an-application.md) to prepare the Example App in development and approve its [promotion](../reference/glossary.md#promotion) to production.
+Your local Konfidence instance is ready. Continue with [Deliver an application](./deliver-an-application.md) to prepare the *Example App*, a prepared demo project, in development and approve its [promotion](../reference/glossary.md#promotion) to production.
