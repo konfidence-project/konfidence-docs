@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Deliver an application
 
-Use the prepared Example App to follow a delivery from development to production. You’ll create the required Konfidence resources, deploy one [vector](../reference/glossary.md#vector) to development, and approve its promotion to production.
+In this guide, you deliver an application from development to production. You’ll create the required Konfidence resources, deploy one [vector](../reference/glossary.md#vector) to development, and approve its promotion to production using the *Example App*, a prepared demo project.
 
 The application artifacts and images are public, so you do not need registry credentials. By the end of the guide, the same vector will be running in development and production without being rebuilt.
 
