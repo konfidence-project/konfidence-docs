@@ -47,7 +47,7 @@ done
 
 ### Wait for the development deployment
 
-The environment assigns the published Example App vector to `dev-eu12`, which starts the development deployment. Watch the `ACTIVE-VERSION` column:
+The environment assigns the published *Example App* vector to `dev-eu12`, which starts the development deployment. Watch the `ACTIVE-VERSION` column:
 
 ```bash
 kubectl -n kden-l-dev get stage dev-eu12 -w
@@ -72,10 +72,10 @@ For further checks, see [Stage troubleshooting](../deploy-operate/manage-deliver
 
 Open the [local dashboard](http://localhost:8090), sign in as **Local Admin** if prompted, and select **Example App**. The **Landscapes** view shows the result of the setup:
 
-- `dev-eu12` is live with the Example App.
+- `dev-eu12` is live with the *Example App*.
 - `prod-eu12` has no target version.
 
-![Konfidence dashboard with a live dev-eu12 stage and an empty prod-eu12 stage.](./screenshot_dashboard_dev.png)
+[![Konfidence dashboard with a live dev-eu12 stage and an empty prod-eu12 stage.](./screenshot_dashboard_dev.png)](./screenshot_dashboard_dev.png)
 
 ## Promote to production
 
@@ -93,7 +93,7 @@ Complete the **Local Admin** sign-in in your browser. The CLI connects to `http:
 
 ### Inspect the waiting promotion
 
-List the promotions for the Example App. The output should contain one promotion in the `Waiting` state:
+List the promotions for the *Example App*. The output should contain one promotion in the `Waiting` state:
 
 ```console
 $ kden vector-promotion list -p example-app --output pretty

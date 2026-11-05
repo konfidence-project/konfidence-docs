@@ -76,7 +76,7 @@ kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
 
 Keep this command running and open the [local dashboard](http://localhost:8090) in your browser. You should see the Konfidence sign-in page:
 
-![Konfidence sign-in page with the Continue with SSO button.](./screenshot_dashboard_login.png)
+[![Konfidence sign-in page with the Continue with SSO button.](./screenshot_dashboard_login.png)](./screenshot_dashboard_login.png)
 
 Select **Continue with SSO** to sign in as **Local Admin**. No external identity provider is required.
 
