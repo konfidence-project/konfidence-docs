@@ -64,6 +64,27 @@ pnpm test:markdown
 
 The first command checks heading levels, list indentation, code block language labels, image alternative text, reference links, and table columns. The second tests the configuration with valid and invalid examples, including VitePress syntax. These checks complement Vale's prose checks. Findings are warnings during rollout; the commands do not rewrite files. See the [contribution guide](https://github.com/konfidence-project/konfidence-docs/blob/main/CONTRIBUTING.md#markdown-structure-checks) for single-page checks, pull request annotations, and maintenance.
 
+## Link checks with lychee
+
+[lychee](https://lychee.cli.rs/guides/getting-started/) checks links, heading fragments, and static assets in the built website. Install it separately from the Node.js dependencies. On macOS:
+
+```bash
+brew install lychee
+lychee --version
+```
+
+CI uses lychee **0.24.2**. For matching local results, use the same version from the [official releases](https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.2); Homebrew may provide a newer version.
+
+Build the current content before checking links:
+
+```bash
+pnpm build
+pnpm lint:links
+pnpm test:links
+```
+
+The link check runs without network access. To check external URLs as well, run `pnpm lint:links:external` after building. GitHub checks internal targets on pull requests and checks external availability on weekly and manual runs. See the [contribution guide](https://github.com/konfidence-project/konfidence-docs/blob/main/CONTRIBUTING.md#link-checks-with-lychee) for reports, exceptions, and maintenance.
+
 ## Pre-release mode
 
 The site builds in pre-release mode by default. It shows a fixed "pre-release software" banner on every page (`.vitepress/theme/components/PreReleaseBanner.vue`) and a `pre-alpha` badge next to the navbar logo.

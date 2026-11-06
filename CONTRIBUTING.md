@@ -51,7 +51,7 @@ For substantial new content or a new documentation area, [open an issue](https:/
 2. **Frame the page.** Choose the primary audience, state their user job, and select a content type using the [guide templates](/docs/extend-customize/guide-templates#start-writing-in-three-steps).
 3. **Write.** Copy the matching template and follow the [documentation style guide](/docs/extend-customize/styleguide).
 4. **Validate the content.** Ask the contributor or feature owner to confirm technical statements. Run commands and examples in the documented environment and check the expected results.
-5. **Check and preview the page.** Install the dependencies with `pnpm install`. Run `pnpm lint:prose` and `pnpm lint:markdown`, and review the findings. Start the site with `pnpm dev` and inspect the rendered page. Run `pnpm build` before submitting the change.
+5. **Check and preview the page.** Install the dependencies with `pnpm install`. Run `pnpm lint:prose` and `pnpm lint:markdown`, and review the findings. Start the site with `pnpm dev` and inspect the rendered page. Run `pnpm build`, then `pnpm lint:links`, before submitting the change.
 6. **Submit the change.** Include documentation with the related code change when the repository structure permits it. Otherwise, create a separate documentation pull request and link the related issue or code pull request.
 7. **Address both reviews.** Resolve feedback about technical accuracy as well as audience, structure, clarity, and style.
 
@@ -69,6 +69,7 @@ Confirm that:
 - [ ] Links work, link text is descriptive, and visuals have an equivalent text explanation.
 - [ ] Findings from `pnpm lint:prose` and `pnpm lint:markdown` have been reviewed for the changed content.
 - [ ] `pnpm build` completes successfully.
+- [ ] Findings from `pnpm lint:links` have been reviewed against the current build.
 - [ ] Generated reference files have not been edited directly.
 - [ ] AI-assisted content follows the project guideline and has been reviewed by a human.
 
@@ -93,7 +94,7 @@ The built-in `Vale` style checks spelling with its US English dictionary, repeat
 
 The concept-casing rule preserves link titles and bold UI labels. Other checks, including spelling and vague link labels, remain active there. After the heading label “Optional:”, either initial case is accepted; the remaining words still use sentence case.
 
-These checks cover selected editorial conventions. Vale is not a general grammar checker: tense, active voice, Oxford commas, first-use explanations, inclusive wording, and the usefulness of link labels still need review. Vale also does not validate metadata types, technical accuracy, working links, or the presence of image alternative text. See [ADR-0041](/docs/extend-customize/decisions/adr-0041-documentation-maintenance) for the separate responsibilities of the planned tools.
+These checks cover selected editorial conventions. Vale is not a general grammar checker: tense, active voice, Oxford commas, first-use explanations, inclusive wording, and the usefulness of link labels still need review. Vale also does not validate metadata types, technical accuracy, working links, or the presence of image alternative text. See [ADR-0041](/docs/extend-customize/decisions/adr-0041-documentation-maintenance) for the separate responsibilities of these tools.
 
 The generated `crd.md`, `cli.md`, `helm-values-konfidence.md`, and `helm-values-orchestrator.md` files under `src/docs/reference/` are excluded. Correct their upstream sources instead of editing these files. Authored reference pages, including the glossary, are checked.
 
@@ -142,7 +143,7 @@ The root `.markdownlint-cli2.yaml` checks authored Markdown in `src/`, `README.m
 | MD052 | A full or collapsed reference link or image uses an undefined label. |
 | MD056 | A table row has a different number of cells from its header. |
 
-Vale continues to check spelling, terminology, and wording. VitePress checks missing internal pages during the build. Link destinations, heading fragments, and static image targets are reserved for the planned lychee check. Markdown structure checks do not judge whether alternative text is useful or whether commands work.
+Vale continues to check spelling, terminology, and wording. VitePress checks missing internal pages during the build. The separate lychee check covers link destinations, heading fragments, and static image targets. Markdown structure checks do not judge whether alternative text is useful or whether commands work.
 
 #### Findings and maintenance
 
@@ -157,6 +158,48 @@ The `.github/markdownlint-cli2.ci.mjs` file adds the official output formatter f
 For an intentional exception, use a [markdownlint configuration comment](https://github.com/DavidAnson/markdownlint#configuration) such as `<!-- markdownlint-disable-next-line MD040 -->` and explain why the exception is needed. Limit it to the relevant rule and example. Update generated content at its source.
 
 When changing rules or updating the tool, update the examples in `tests/markdownlint.test.mjs` and run `pnpm test:markdown`, `pnpm lint:markdown`, `pnpm test:prose`, `pnpm lint:prose`, and `pnpm build`. Review changes in findings before merging. Keep dependency updates in `package.json` and `pnpm-lock.yaml` together; CI uses `pnpm install --frozen-lockfile`.
+
+### Link checks with lychee
+
+Use lychee 0.24.2, the version pinned in `.github/workflows/lychee.yaml`. See the [README](https://github.com/konfidence-project/konfidence-docs/blob/main/README.md#link-checks-with-lychee) for installation. It is installed separately; `pnpm install` does not install lychee. From the repository root, run:
+
+```bash
+pnpm build
+pnpm lint:links
+pnpm test:links
+```
+
+Always rebuild after changing content. The link check reads the generated HTML in `.vitepress/dist/`, including published generated references. It checks relative links, root-relative links, directory indexes, URLs without `.html`, heading fragments, and static image and asset references. Absolute links to `konfidence.cloud` are checked against the same local build. This lets new pages and anchors be checked before publication.
+
+The internal check makes no network requests. It checks the complete built site because changing a target can break links on unchanged pages. It complements Vale and markdownlint without changing their rules or the VitePress build.
+
+#### External links
+
+After building, run the external check when needed:
+
+```bash
+pnpm lint:links:external
+```
+
+This checks public HTTP and HTTPS targets. Links to our own site remain the responsibility of the internal check. Local dashboards and private addresses in examples are excluded. Code examples are not scanned as navigation, and email delivery is not checked.
+
+External checks limit concurrent requests, retry failures, and cache responses for up to one day. Responses with HTTP status codes from 400 through 599 are excluded from the cache so that the next run checks them again. Remove `.lycheecache` when a successful cached result needs to be checked immediately.
+
+Review the reported status before changing a link. A 404 or 410 usually indicates a missing target. Authentication failures, rate limits such as 429, server errors, and connection problems need a separate availability check; they do not prove that the target was removed. Timeouts appear in their own report category. These responses remain visible and are not accepted as successful checks.
+
+#### GitHub reports and maintenance
+
+The `Documentation links` workflow builds the site and checks internal targets on pull requests to `main`, pushes to `main`, and manual and weekly runs. External checks run only weekly and on manual runs, with a separate report. The weekly schedule starts once the workflow is merged into the default branch.
+
+Findings appear in the terminal locally and in the GitHub Actions run summary. During rollout, link findings produce a workflow warning; installation, configuration, build, and test failures still fail the job. Locally, lychee returns exit code 2 for link findings. The workflow does not change branch protection, publish PR comments, or open issues.
+
+Reports identify the built HTML page and affected URL. They are not filtered to changed source lines: VitePress can combine many source lines into one HTML line, and broken incoming links may be on unchanged pages. Use the corresponding Markdown source to correct authored content, or update the upstream source of a generated reference.
+
+Keep shared options and narrowly justified URL exclusions in `lychee.toml`. The small `scripts/check-links.mjs` helper supplies the build paths and the same arguments for local checks and the official GitHub action. Avoid blanket exclusions for a host merely because one check fails. Maintainers and the technical writer review exceptions and link findings.
+
+When changing options or updating lychee, run `pnpm test:links`, rebuild, and run both link checks. Also run `pnpm test:markdown`, `pnpm test:prose`, `pnpm lint:markdown`, and `pnpm lint:prose`. Keep the workflow version and the version documented here and in the README together. Add regression examples to `tests/lychee.test.mjs`; the network tests use a local test server instead of depending on external websites.
+
+The checks cover static output. JavaScript-generated anchors and assets loaded only in the browser, such as interactive diagrams, still need preview and manual review. They also do not establish technical accuracy, useful image descriptions, or correct commands.
 
 ### Pull request titles
 

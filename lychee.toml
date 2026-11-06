@@ -1,0 +1,21 @@
+# Check the HTML VitePress produces, including the site's actual heading IDs.
+include_fragments = "anchor-only"
+index_files = ["index.html"]
+fallback_extensions = ["html"]
+
+# The build is inside a hidden directory and is excluded by .gitignore.
+hidden = true
+no_ignore = true
+no_progress = true
+
+# Local dashboards and private addresses in examples are not public targets.
+exclude_all_private = true
+
+# Be considerate of external sites; keep failures visible for review.
+max_concurrency = 8
+host_concurrency = 2
+host_request_interval = "200ms"
+max_retries = 2
+timeout = 20
+max_cache_age = "1d"
+cache_exclude_status = "400..=599"

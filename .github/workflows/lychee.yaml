@@ -1,0 +1,101 @@
+name: Documentation links
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Recheck external targets weekly, including links on unchanged pages.
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    name: Lychee
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LYCHEE_VERSION: v0.24.2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build the site
+        run: pnpm build
+      - name: Prepare the same arguments used locally
+        id: arguments
+        run: |
+          node scripts/check-links.mjs internal --github-args >> "$GITHUB_OUTPUT"
+          node scripts/check-links.mjs external --github-args >> "$GITHUB_OUTPUT"
+      - name: Check internal links, fragments, and assets
+        id: internal
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          lycheeVersion: ${{ env.LYCHEE_VERSION }}
+          args: ${{ steps.arguments.outputs.internal }}
+          output: ${{ runner.temp }}/lychee-internal.md
+          format: markdown
+          fail: false
+          # Offline checks do not need a token.
+          token: ""
+      - name: Test link-checking behavior
+        run: pnpm test:links
+      - name: Report the internal check outcome
+        env:
+          EXIT_CODE: ${{ steps.internal.outputs.exit_code }}
+          REPORT: ${{ runner.temp }}/lychee-internal.md
+        run: |
+          # The action can append a footer even when argument parsing failed.
+          if ! grep -Eq 'Total[[:space:]]+\|[[:space:]]+[0-9]+' "$REPORT"; then
+            echo "::error::lychee did not produce a report. Check its command and configuration."
+            exit 1
+          fi
+          case "$EXIT_CODE" in
+            0) ;;
+            2) echo "::warning title=Internal link findings::Review the lychee report in this run's summary." ;;
+            *) echo "::error::lychee could not complete the internal check (exit $EXIT_CODE)."; exit 1 ;;
+          esac
+      - name: Cache successful external responses
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        uses: actions/cache@v6
+        with:
+          path: .lycheecache
+          key: lychee-${{ runner.os }}-${{ env.LYCHEE_VERSION }}-${{ hashFiles('lychee.toml', 'scripts/check-links.mjs') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            lychee-${{ runner.os }}-${{ env.LYCHEE_VERSION }}-${{ hashFiles('lychee.toml', 'scripts/check-links.mjs') }}-
+      - name: Check external URL availability
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        id: external
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          lycheeVersion: ${{ env.LYCHEE_VERSION }}
+          args: ${{ steps.arguments.outputs.external }}
+          output: ${{ runner.temp }}/lychee-external.md
+          format: markdown
+          fail: false
+      - name: Report the external check outcome
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          EXIT_CODE: ${{ steps.external.outputs.exit_code }}
+          REPORT: ${{ runner.temp }}/lychee-external.md
+        run: |
+          if ! grep -Eq 'Total[[:space:]]+\|[[:space:]]+[0-9]+' "$REPORT"; then
+            echo "::error::lychee did not produce a report. Check its command and configuration."
+            exit 1
+          fi
+          case "$EXIT_CODE" in
+            0) ;;
+            2) echo "::warning title=External URL findings::Review HTTP status codes and timeouts in the separate external report; network failures do not prove a link is broken." ;;
+            *) echo "::error::lychee could not complete the external check (exit $EXIT_CODE)."; exit 1 ;;
+          esac
