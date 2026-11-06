@@ -1,0 +1,9 @@
+extends: existence
+message: "Use the page title or a descriptive link label instead of '%s'."
+link: https://konfidence.cloud/docs/extend-customize/styleguide.html#links-and-user-journeys
+level: warning
+scope: link
+ignorecase: true
+nonword: true
+tokens:
+  - '^(?:click here|here|this|this guide)$'

@@ -10,6 +10,8 @@
   "packageManager": "pnpm@10.25.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:prose": "vale --no-global --config=.vale.ini src README.md CONTRIBUTING.md",
+    "test:prose": "vale --no-global --config=.vale.ini test --coverage .vale",
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview"

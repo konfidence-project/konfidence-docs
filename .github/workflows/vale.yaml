@@ -1,0 +1,54 @@
+name: Documentation prose
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Read the pull request diff to filter annotations to changed lines.
+  pull-requests: read
+
+jobs:
+  vale:
+    name: Vale
+    runs-on: ubuntu-latest
+    env:
+      VALE_VERSION: "3.25.1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Put the pinned release on PATH for both the tests and the official action.
+      - name: Install Vale
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/vale"
+          cd "$RUNNER_TEMP/vale"
+          archive="vale_${VALE_VERSION}_Linux_64-bit.tar.gz"
+          release="https://github.com/vale-cli/vale/releases/download/v${VALE_VERSION}"
+          curl --fail --show-error --location --retry 3 --output "$archive" "$release/$archive"
+          curl --fail --show-error --location --retry 3 --output checksums.txt "$release/vale_${VALE_VERSION}_checksums.txt"
+          sha256sum --check --ignore-missing checksums.txt
+          tar -xzf "$archive" vale
+          echo "$PWD" >> "$GITHUB_PATH"
+
+      - name: Test the configuration and rules
+        run: vale --no-global --config=.vale.ini test --coverage .vale
+
+      - name: Check documentation prose
+        uses: vale-cli/vale-action@v3
+        with:
+          version: none
+          config: .vale.ini
+          files: '["src", "README.md", "CONTRIBUTING.md"]'
+          vale_flags: --no-global
+          sync: false
+          reporter: ${{ github.event_name == 'pull_request' && 'github-pr-annotations' || 'github-annotations' }}
+          # PRs show changed lines; main and manual runs retain the full report.
+          filter_mode: ${{ github.event_name == 'pull_request' && 'added' || 'nofilter' }}
+          # Editorial findings are advisory during rollout; tool/test failures are not.
+          fail_level: none
