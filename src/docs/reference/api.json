@@ -1794,6 +1794,44 @@
         ]
       }
     },
+    "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/revoke-approval": {
+      "post": {
+        "description": "Sets the `explicit-approval.konfidence.cloud` gate of a waiting vectorPromotion back to Pending, recording the authenticated caller as the revoker. Revoking an already revoked approval (Pending with reason ApprovalRevokedByUser) is idempotent and returns 204 without changing the revocation record. Other approvals that are not Satisfied return 409 because there is nothing to revoke. Also returns 409 when the promotion is superseded, finished, already executing, or does not declare the explicit-approval gate.\n",
+        "operationId": "revokeApprovalVectorPromotionV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/VectorPromotionPathId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Approval of the VectorPromotion successfully revoked."
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Revoke the approval of the given vectorPromotion for the specified project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
     "/v1/projects/{projectId}/vectors/content": {
       "get": {
         "description": "Returns the component list and configuration of any vector available in OCI, regardless of whether it has been deployed.\n",
