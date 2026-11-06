@@ -10,18 +10,18 @@ lastUpdated: true
 
 An [artifact](../../reference/glossary.md#artifact) is a deployable part of your application, such as a microservice, packaged as an Open Component Model (OCM) component. A [vector](../../reference/glossary.md#vector) references artifacts by version, and a [deployer](../../reference/glossary.md#deployer) renders each one into a [landscape](../../reference/glossary.md#landscape).
 
-The component holds your deployable content, such as a Helm chart or a Kustomize bundle, and a small manifest. The manifest names the required [deployment class](../../reference/glossary.md#deployment-class) and states whether one running instance may serve several vectors. The authoring guides show both.
+The component holds your deployable content, such as a Helm chart or a Kustomize bundle, and a small manifest. The manifest declares the artifact type and whether one running instance may serve several vectors. The authoring guides show both.
 
 <figure>
   <img src="../img/artifact-vector.drawio.svg" alt="A vector named shop 1.4.0 contains two artifacts and an optional vector configuration. Each artifact contains a manifest with the deployment method and its deployable content: a Helm chart or a Kustomize bundle in a registry. The vector configuration holds feature flags and authored settings.">
   <figcaption>A vector bundles artifacts. Each artifact bundles a manifest and its deployable content.</figcaption>
 </figure>
 
-## Choose a deployment class
+## Declare an artifact type
 
-The artifact manifest's `type` is a deployment-class identifier. It selects both the deployer that understands the artifact and the capability a target landscape must provide.
+The artifact manifest's `type` identifies the artifact's packaging and deployment contract. The deployer that supports this exact type handles the artifact, and each target landscape needs a ready `DeploymentTarget` of the same type.
 
-Before choosing a class, confirm that the landscapes where the artifact will run have a matching [deployment target](../../reference/glossary.md#deployment-target). See the [Deployment model](../../core-concepts/deployment-model.md) for the complete relationship and [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md) for the operator workflow.
+Before publishing an artifact, confirm that the deployer supports its type and that its destination landscapes have matching [deployment targets](../../reference/glossary.md#deployment-target). See the [Deployment model](../../core-concepts/deployment-model.md) and [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md).
 
 ## Konfidence deploys these artifact types
 
