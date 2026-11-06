@@ -10,6 +10,8 @@
   "packageManager": "pnpm@10.25.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:markdown": "markdownlint-cli2",
+    "test:markdown": "node --test tests/markdownlint.test.mjs",
     "lint:prose": "vale --no-global --config=.vale.ini src README.md CONTRIBUTING.md",
     "test:prose": "vale --no-global --config=.vale.ini test --coverage .vale",
     "dev": "vitepress dev",
@@ -21,6 +23,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^26.6.5",
+    "markdownlint-cli2": "0.24.0",
+    "markdownlint-cli2-formatter-sarif": "0.0.5",
     "vitepress": "2.0.0-alpha.20",
     "vitepress-openapi": "^0.2.5"
   },

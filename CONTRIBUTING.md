@@ -51,7 +51,7 @@ For substantial new content or a new documentation area, [open an issue](https:/
 2. **Frame the page.** Choose the primary audience, state their user job, and select a content type using the [guide templates](/docs/extend-customize/guide-templates#start-writing-in-three-steps).
 3. **Write.** Copy the matching template and follow the [documentation style guide](/docs/extend-customize/styleguide).
 4. **Validate the content.** Ask the contributor or feature owner to confirm technical statements. Run commands and examples in the documented environment and check the expected results.
-5. **Check and preview the page.** Run `pnpm lint:prose` and review the findings. Install the dependencies with `pnpm install`, start the site with `pnpm dev`, and inspect the rendered page. Run `pnpm build` before submitting the change.
+5. **Check and preview the page.** Install the dependencies with `pnpm install`. Run `pnpm lint:prose` and `pnpm lint:markdown`, and review the findings. Start the site with `pnpm dev` and inspect the rendered page. Run `pnpm build` before submitting the change.
 6. **Submit the change.** Include documentation with the related code change when the repository structure permits it. Otherwise, create a separate documentation pull request and link the related issue or code pull request.
 7. **Address both reviews.** Resolve feedback about technical accuracy as well as audience, structure, clarity, and style.
 
@@ -67,7 +67,7 @@ Confirm that:
 - [ ] Commands, code, manifests, and expected results have been tested.
 - [ ] Prerequisites, permissions, limitations, and known relevant failure modes are documented.
 - [ ] Links work, link text is descriptive, and visuals have an equivalent text explanation.
-- [ ] Findings from `pnpm lint:prose` have been reviewed for the changed content.
+- [ ] Findings from `pnpm lint:prose` and `pnpm lint:markdown` have been reviewed for the changed content.
 - [ ] `pnpm build` completes successfully.
 - [ ] Generated reference files have not been edited directly.
 - [ ] AI-assisted content follows the project guideline and has been reviewed by a human.
@@ -115,6 +115,48 @@ The workflow does not change branch protection or install Git hooks. A failed jo
 - Authors review findings in the content they change. Maintainers and the technical writer review vocabulary additions, exceptions, and rule changes against the style guide and glossary.
 - Keep rules in `.vale/styles/Konfidence/` and add valid and invalid examples to `.vale/config.test.yml` when changing their behavior. Run `pnpm test:prose` and `pnpm lint:prose` before proposing the change. Coverage requires every custom rule to produce a finding in at least one test.
 - When updating Vale, change `VALE_VERSION` in the workflow and the version documented here and in the README together. Re-run the tests and review changes in findings before merging the update. No downloaded style packages need to be maintained.
+
+### Markdown structure checks
+
+`pnpm install` installs the version of `markdownlint-cli2` pinned in `package.json` and `pnpm-lock.yaml`. No separate global installation is needed. Run these commands from the repository root:
+
+```bash
+pnpm lint:markdown
+pnpm test:markdown
+```
+
+To check one page while writing, use `--no-globs` to replace the configured file selection:
+
+```bash
+pnpm exec markdownlint-cli2 --no-globs src/docs/getting-started/quickstart.md
+```
+
+The root `.markdownlint-cli2.yaml` checks authored Markdown in `src/`, `README.md`, and `CONTRIBUTING.md`. It excludes the same four generated reference files as Vale. The configuration enables only these structural rules:
+
+| Rule | Finding |
+| --- | --- |
+| MD001 | A heading skips a level. Frontmatter titles are not treated as extra headings. |
+| MD005 | List items at the same level use inconsistent indentation. |
+| MD040 | A fenced code block has no language label. VitePress code block metadata is allowed. |
+| MD045 | A Markdown or HTML image lacks alternative text. |
+| MD052 | A full or collapsed reference link or image uses an undefined label. |
+| MD056 | A table row has a different number of cells from its header. |
+
+Vale continues to check spelling, terminology, and wording. VitePress checks missing internal pages during the build. Link destinations, heading fragments, and static image targets are reserved for the planned lychee check. Markdown structure checks do not judge whether alternative text is useful or whether commands work.
+
+#### Findings and maintenance
+
+Findings appear in the terminal with a file path, line number, and rule identifier. During rollout, all six rules use `warning`: findings are visible, but the command succeeds. Installation, configuration, and test failures still fail the check. Neither command automatically edits content.
+
+The separate `Documentation Markdown` workflow runs on pull requests to `main`, pushes to `main`, and manual runs. It uses the same locked dependency and configuration as local checks. Like Vale, it checks complete documents and uses `reviewdog` to show GitHub Actions warning annotations only on added or modified pull request lines. Pushes to `main`, manual runs, and local checks report the full findings. GitHub limits annotations; use `pnpm lint:markdown` for the full list.
+
+The workflow runs independently of Vale and the site build. It does not add Git hooks or change branch protection. Maintainers and the technical writer should review findings and false positives before making any rules mandatory.
+
+The `.github/markdownlint-cli2.ci.mjs` file adds the official output formatter for CI. It writes a temporary report for annotations and keeps all rules and file selection in the root YAML configuration.
+
+For an intentional exception, use a [markdownlint configuration comment](https://github.com/DavidAnson/markdownlint#configuration) such as `<!-- markdownlint-disable-next-line MD040 -->` and explain why the exception is needed. Limit it to the relevant rule and example. Update generated content at its source.
+
+When changing rules or updating the tool, update the examples in `tests/markdownlint.test.mjs` and run `pnpm test:markdown`, `pnpm lint:markdown`, `pnpm test:prose`, `pnpm lint:prose`, and `pnpm build`. Review changes in findings before merging. Keep dependency updates in `package.json` and `pnpm-lock.yaml` together; CI uses `pnpm install --frozen-lockfile`.
 
 ### Pull request titles
 

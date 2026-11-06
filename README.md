@@ -53,6 +53,17 @@ pnpm test:prose
 
 The first command checks authored Markdown in `src/`, this README, and `CONTRIBUTING.md`. The second tests the Vale configuration against valid and invalid examples. The rules and vocabulary are included in the repository, so no `vale sync` or external style package is needed. See the [contribution guide](https://github.com/konfidence-project/konfidence-docs/blob/main/CONTRIBUTING.md#prose-checks-with-vale) for findings, exceptions, and rule maintenance.
 
+## Markdown structure checks
+
+[markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) is included in the development dependencies. After `pnpm install`, run:
+
+```bash
+pnpm lint:markdown
+pnpm test:markdown
+```
+
+The first command checks heading levels, list indentation, code block language labels, image alternative text, reference links, and table columns. The second tests the configuration with valid and invalid examples, including VitePress syntax. These checks complement Vale's prose checks. Findings are warnings during rollout; the commands do not rewrite files. See the [contribution guide](https://github.com/konfidence-project/konfidence-docs/blob/main/CONTRIBUTING.md#markdown-structure-checks) for single-page checks, pull request annotations, and maintenance.
+
 ## Pre-release mode
 
 The site builds in pre-release mode by default. It shows a fixed "pre-release software" banner on every page (`.vitepress/theme/components/PreReleaseBanner.vue`) and a `pre-alpha` badge next to the navbar logo.
