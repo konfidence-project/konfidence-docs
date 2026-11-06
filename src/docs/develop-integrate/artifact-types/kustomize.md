@@ -1,6 +1,6 @@
 ---
 title: "Author a Kustomize artifact"
-description: "Package a container image and a Kustomize bundle as one artifact that the Kubernetes deployer renders into a landscape."
+description: "Prepare a Kustomize bundle and an OCM component constructor for publication as a Konfidence artifact."
 outline: deep
 editLink: true
 lastUpdated: true
@@ -8,7 +8,8 @@ lastUpdated: true
 
 # Author a Kustomize artifact
 
-After this guide, your service deploys onto Kubernetes as one Kustomize [artifact](../../reference/glossary.md#artifact) of a [vector](../../reference/glossary.md#vector). The [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) renders the bundle once per vector into the [landscape](../../reference/glossary.md#landscape).
+Create a Kustomize bundle and an Open Component Model (OCM) component constructor for your service.
+These files are the inputs for [publishing a Konfidence artifact](./publish-artifacts.md).
 
 The examples build a service named `my-service` and push everything to `registry.example.com/my-org`.
 
@@ -16,10 +17,10 @@ The examples build a service named `my-service` and push everything to `registry
 
 Before you begin, make sure you have:
 
-- A container build tool such as `docker` and the `flux` command-line tool for pushing Open Container Initiative (OCI) artifacts.
+- A container build tool such as `docker` to build and push the container image.
+- The `flux` command-line tool to package and push the Kustomize bundle to an Open Container Initiative (OCI) registry.
+- The `kubectl` command-line tool to render the bundle locally for verification.
 - Push access to an OCI registry for the image, the bundle, and the artifact.
-- The `kden` command-line tool. See [Publish artifacts](./publish-artifacts.md).
-- A landscape with a ready `kustomize.konfidence.cloud` target. See [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md).
 - A service that reads and forwards `X-Vector-ID`. See [Prepare your application](../prepare-your-application.md).
 
 ## Build and push the container image
@@ -123,7 +124,7 @@ The bundle is available as `registry.example.com/my-org/my-service-manifests:1.0
    }
    ```
 
-   Set `allowReuse` to `true` only when one running instance can serve several vectors.
+   Set `allowReuse` to `true` only when your service meets the [requirements for sharing an instance](./index.md#what-reuse-demands-from-your-service).
 
 2. Create `component-constructor.yaml` with the manifest and the bundle as resources:
 
@@ -195,8 +196,11 @@ The first command prints the Deployment and the Service. The second command prin
 
 ## Next steps
 
-Use the following guides to publish your artifact and expose its Service:
+Use the following guides to publish your artifact and expose its service endpoint:
 
 - [Validate and publish the artifact](./publish-artifacts.md#validate-the-artifact-files).
 - [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to other services in the vector.
-- Read [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.
+- [Install the Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.
+
+Before deploying the artifact, confirm that the landscape has a ready `kustomize.konfidence.cloud` target.
+See [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md).
