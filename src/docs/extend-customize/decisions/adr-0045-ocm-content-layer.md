@@ -22,13 +22,26 @@ Previously the Konfidence API only exposed in-cluster deployment state: what is 
 
 **This ADR crosses a new boundary: the API now also exposes storage-level OCM data.** Vector descriptors and artifact manifests are read directly from the OCI registry and served through the API. The OCI registry is a network dependency outside the cluster where latency is higher and availability is not guaranteed, so **eliminating redundant registry calls is the central engineering concern.** Without a cache, every request for the same ref pays a full registry round-trip for identical bytes.
 
-The concrete use case that drives this is the **vector diff**: a user submits 10 vector deployments and monitors their progress in the UI, repeatedly opening the diff view to check each one. Without a cache, every page load triggers a registry call. With the two-layer cache described here, each distinct ref pays exactly one cold-miss registry call, so every subsequent request, across refreshes and concurrent users, is served from memory.
+The concrete use cases that drive this are:
 
-The concrete driver for the diff is the incoming vector: it has no CR yet (a `VectorDeployment` is only created after promotion executes), so the only way to read it is a live registry call. Two additional use cases follow from the same extension:
+**UI — vector diff and deployment monitoring.** A user submits 10 vector deployments and monitors their progress, repeatedly opening the diff view to check each one. Without a cache, every page load triggers a registry call. With the two-layer cache described here, each distinct ref pays exactly one cold-miss registry call, so every subsequent request, across refreshes and concurrent users, is served from memory. The incoming vector has no CR yet (a `VectorDeployment` is only created after promotion executes), so the only way to read it is a live registry call.
 
-**Stage detail view** — expose which artifact versions are deployed and what configuration they carry.
+**UI — stage detail view.** Expose which artifact versions are currently deployed to a stage and what configuration they carry.
 
-**Artifact and vector data inspection** — expose artifact and vector content by OCM ref for the CLI and UI.
+**CLI — artifact and vector data inspection.** The CLI commands for these endpoints are not yet implemented but follow naturally from the API surface. The intended commands are:
+
+```
+# inspect the component list and config of a vector
+kden vector content <ocmRef> --project <projectId>
+
+# inspect the tasks, resources, and type of an artifact
+kden artifact content <ocmRef> --project <projectId>
+
+# compare two vectors
+kden vector diff <leftRef> <rightRef> --project <projectId>
+```
+
+CLI usage is inherently sequential, so the singleflight layer has no practical effect. The LRU benefit is about not re-fetching the same ref on back-to-back commands within a short window. For example, a user inspecting the content of the same vector before and after a config change, or running `vector diff` and `vector content` against the same ref in the same session, pays one registry call rather than two.
 
 ## Considered options
 
@@ -36,15 +49,15 @@ The concrete driver for the diff is the incoming vector: it has no CR yet (a `Ve
 
 Expose content already stored on CRs (`VectorDeployment.Status.ResolvedVectorOcm`, `ArtifactDeployment.Spec.Component.Resources`, `VectorData`) through new API endpoints, falling back to a live registry fetch for content not covered by a live CR.
 
-**Assessment.** Not adopted. etcd is not a content store — storing large JSON blobs in `status` fields misuses Kubernetes API machinery and the 1.5 MB per-object hard limit is a concrete blocker as vector size grows. The option also leaves the diff incoming side unaddressed. The CR fields remain useful as internal data sources but are not the right primary content layer.
+**Assessment.** Not adopted. etcd is not a content store and storing large JSON blobs in `status` fields misuses Kubernetes API machinery and the 1.5 MB per-object hard limit is a concrete blocker as vector size grows. The option also leaves the diff incoming side unaddressed. The CR fields remain useful as internal data sources but are not the right primary content layer.
 
 ### Option 2+3 - Controller-side LRU cache + diff pre-warm
 
 A `VectorCacheWarmer` reconciler watches `VectorPromotion` objects and pre-fetches referenced vectors in the background, populating a controller-side LRU cache before the user requests a diff.
 
-**Assessment.** Not adopted. This was the right design when the API server had no OCM client — moving the registry call into the controller background was the only way to keep it out of the request path. Once the API server gained a direct OCM client, the approach became redundant.
+**Assessment.** Moving forward with the implementation where the API server has a OCM client. Without that change, moving the registry call into the controller background was the only way to keep it out of the request path.
 
-More importantly, pre-warming does not reduce total registry call volume — it only shifts *when* the call happens. The LRU in Option 4 achieves the same result: one registry call per ref, every subsequent request served from memory. The pre-warm only saves the latency of the very first cold-miss request, which costs 50–200 ms in a workflow where the `VectorPromotion` has been sitting `Waiting` for human approval for minutes to hours (per ADR-0032). That saving is imperceptible in a UI context and does not justify introducing a new reconciler, promoting `VectorOcmPort` to a shared package, and adding an OCM dependency to the controller tier purely to serve the API server's read path.
+More importantly, pre-warming does not reduce total registry call volume, but it only shifts *when* the call happens. The LRU in Option 4 achieves the same result: one registry call per ref, every subsequent request served from memory. The pre-warm only saves the latency of the very first cold-miss request, which costs 50–200 ms in a workflow where the `VectorPromotion` has been sitting `Waiting` for human approval for minutes to hours (per ADR-0032). That saving is imperceptible in a UI context and does not justify introducing a new reconciler, promoting `VectorOcmPort` to a shared package, and adding an OCM dependency to the controller tier purely to serve the API server's read path.
 
 ### Option 4 - API server in-process cache
 
@@ -60,30 +73,30 @@ The API server caches OCM responses in-process. All three use cases are served t
 
 Store vector descriptors and artifact manifests in PostgreSQL. Content survives restarts and is shared across replicas.
 
-**Assessment.** Deferred. OCM is the intended primary storage layer — a parallel database store would duplicate that responsibility and create a synchronisation problem. Re-evaluate if historical content queries become a hard requirement the OCI registry cannot satisfy.
+**Assessment.** Deferred. OCM is the intended primary storage layer, so a parallel database store would duplicate that responsibility and create a synchronisation problem. Re-evaluate if historical content queries become a hard requirement the OCI registry cannot satisfy.
 
 ## Decision
 
 **Option 4 — API server in-process cache.**
 
-The three content endpoints (`getVectorContentV1`, `getArtifactContentV1`, `getVectorDiffV1`) are already shipped and make live registry calls on every request today. The remaining work is adding a two-layer cache in front of `pkg/ocm/content.Reader` so that each distinct ref pays exactly one registry call — the cold miss — and every subsequent request is served from memory.
+The three content endpoints (`getVectorContentV1`, `getArtifactContentV1`, `getVectorDiffV1`) are already shipped and make live registry calls on every request today. The remaining work is adding a two-layer cache in front of `pkg/ocm/content.Reader` so that each distinct ref pays exactly one registry call where the cold miss and every subsequent request is served from memory.
 
 **How a registry call is made** — a request arrives for a ref:
 
 1. **LRU check** — ref already in cache → return immediately, no network call.
-2. **Singleflight** — ref not in cache, but another request for the same ref is already in-flight → block and share that result; no second registry call.
+2. **Singleflight** — ref not in cache, but another request for the same ref is already in-flight → block and share that result, so no second registry call.
 3. **Registry call** — no in-flight call exists → fetch from registry, write to LRU, return to all waiters.
 
-The only time the registry is called is when the LRU misses **and** no other goroutine is already fetching the same ref. A user checking 10 vector deployments repeatedly triggers at most 10 registry calls total — one per distinct ref on first load — regardless of how many times they refresh or how many colleagues are looking at the same views.
+The only time the registry is called is when the LRU misses **and** no other goroutine is already fetching the same ref. For instance, a user checking 10 vector deployments repeatedly triggers at most 10 registry calls total, one per distinct ref on first load and regardless of how many times they refresh or how many colleagues are looking at the same views.
 
-**Cache key design.** Digest-keyed entries are keyed by OCI content digest (SHA-256) — the same digest always means the same bytes regardless of project or landscape, so these never expire. Tag-keyed entries are keyed by their full ref string and held with a short TTL.
+**Cache key design.** Digest-keyed entries are keyed by OCI content digest (SHA-256), so the same digest always means the same bytes regardless of project or landscape, so these never expire. Tag-keyed entries are keyed by their full ref string and held with a short TTL.
 
 **Fallback behaviour.** The cache is an optimisation layer, not a hard dependency. All three endpoints fall back to a direct registry call on cache miss, so the system degrades to pre-cache behaviour rather than failing.
 
 **Configuration** via Helm chart values:
 
-- `api.ocmCache.size` — LRU capacity (default ~500 entries). An undersized cache increases registry pressure rather than reducing it; operators with large vector catalogs should tune this up.
-- `api.ocmCache.tagTTL` — TTL for tag-keyed entries (default 5 minutes). Shorter values increase registry call volume; longer values risk serving stale content after a tag reassignment.
+- `api.ocmCache.size` — LRU capacity (default ~500 entries). An undersized cache increases registry pressure rather than reducing it, so operators with large vector catalogs should tune this up.
+- `api.ocmCache.tagTTL` — TTL for tag-keyed entries (default 5 minutes). Shorter values increase registry call volume while longer values risk serving stale content after a tag reassignment.
 
 **API surface.** Three endpoints so the UI never calls the registry directly, never computes diffs, and never coordinates cache state:
 
@@ -93,10 +106,10 @@ The only time the registry is called is when the LRU misses **and** no other gor
 
 **Authorization.** Gated by existing project-scoped authorization via `resolveProjectNamespace`. Registry credentials are resolved from a single global secret at API server startup, not per-project.
 
-**Multi-replica behaviour.** Each replica warms its cache independently. Concurrent cold misses across replicas result in redundant fetches rather than stale reads. Cross-replica synchronisation is not adopted; re-evaluate if registry call volume at scale becomes a measurable problem.
+**Multi-replica behaviour.** Each replica warms its cache independently. Concurrent cold misses across replicas result in redundant fetches rather than stale reads. Cross-replica synchronisation is not adopted, this could be re-evaluated if registry call volume at scale becomes a measurable problem.
 
 ## Consequences
 
 - The OCI registry is now a failure mode for API read operations. Prior to this change, registry unavailability only affected the controller write path. Operators must be informed through release notes and Helm chart documentation.
 - The OCM client, credential env vars, and the three content endpoints are already shipped. Remaining work: cache layer implementation in `pkg/ocm/content/`, Helm chart values (`api.ocmCache.size`, `api.ocmCache.tagTTL`), and credential Helm chart wiring (`api.ocm.credentialsSecretName`, `api.ocm.credentialsSecretNamespace`).
-- Cache entries are in-memory only and lost on API server restart. The first request after restart for any given ref pays the registry round-trip cost. This is acceptable — the cache is a latency optimisation, not a reliability mechanism.
+- Cache entries are in-memory only and lost on API server restart. The first request after restart for any given ref pays the registry round-trip cost. This is acceptable as the cache is a latency optimisation and not a reliability mechanism.
