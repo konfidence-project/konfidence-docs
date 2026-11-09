@@ -41,6 +41,8 @@ Only Kubernetes Services can be exposed this way today. For how the deployer tur
 
 A deployment result is identified by the pair `(name, type)`, which must be unique within a component. Giving two Services in the same component the same annotation value is rejected at deploy time.
 
+This annotation does not opt the Service into stage ingress. To select a port for external requests, see [Expose a Service through stage ingress](../advanced-features/expose-service.md).
+
 ## Read deployment results at runtime
 
 Deployment results are part of the vector configuration bundle. Request the whole bundle by passing the vector ID as the flag key (see [Access vector data in your application](./access-vector-data.md)).

@@ -150,7 +150,7 @@ This remains a first working solution; Option 1 (via GEP-5093) or Option 3 may s
 3. **Gateway reference.** Konfidence attaches its HTTPRoutes to a Gateway referenced by name/namespace (default `konfidence-router` in the landscape namespace), configurable via the `DeploymentTarget`.
 4. **Activation lifecycles the HTTPRoutes.** On each activation the controller patches (or creates) the stage's HTTPRoute in place with the active vector's deployment-result backend and `x-vector-id` header value.
 5. **Gateway API implementation is a prerequisite.** It must be present in the cluster; providing/installing it is the admin's responsibility (to be revisited once GEP-5093 enables portable internal Gateways, or with Option 3).
-6. **North-south exposure is opt-in (whitelist).** Only explicitly whitelisted deployment results get an ingress route; being an (east-west) deployment result does not automatically make a service internet-reachable. The stable path segment is the deployment result `Name` — the deployed Service name is Flux-suffixed and not stable. How the whitelist is expressed (its annotation/field name) is TBD.
+6. **North-south exposure is opt-in (whitelist).** Being an east-west deployment result does not automatically add a stage ingress rule. A Service declares its stable result name with `konfidence.cloud/deployment-result` and selects one TCP port with `konfidence.cloud/exposed-port-name`. The Kubernetes deployer records the selection as `IngressExposedPortName` in the deployment-result spec; only results with a selected port get a stage ingress rule. See [Expose a Service through stage ingress](../../develop-integrate/advanced-features/expose-service.md).
 
 ## Open Questions
 

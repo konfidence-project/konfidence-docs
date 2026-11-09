@@ -162,6 +162,10 @@ export default defineConfig({
                         link: "/docs/develop-integrate/advanced-features/feature-flags",
                     },
                     {
+                        text: "Expose a Service through stage ingress",
+                        link: "/docs/develop-integrate/advanced-features/expose-service",
+                    },
+                    {
                         text: "Configure signing and verification",
                         link: "/docs/develop-integrate/advanced-features/configure-signing-and-verification",
                     },

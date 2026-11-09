@@ -1,6 +1,6 @@
 ---
 title: "Advanced features"
-description: "Optional capabilities for applications that run in a vector: runtime configuration, feature flags, and signed artifacts."
+description: "Optional capabilities for applications that run in a vector: runtime configuration, feature flags, stage ingress, and signed artifacts."
 outline: deep
 editLink: true
 lastUpdated: true
@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Advanced features
 
-Use these pages when your service needs data from its [vector](../../reference/glossary.md#vector) at runtime or when your environment requires signed [artifacts](../../reference/glossary.md#artifact).
+Use these pages when your service needs data from its [vector](../../reference/glossary.md#vector) at runtime, accepts stage ingress traffic, or requires signed [artifacts](../../reference/glossary.md#artifact).
 
 ## Read configuration and sibling addresses from the vector
 
@@ -21,6 +21,10 @@ Konfidence includes configuration in each vector and provides it at runtime thro
 ## Switch behavior per vector with feature flags
 
 [Read feature flags in your application](./feature-flags.md) evaluates a flag for the current vector with an OpenFeature client.
+
+## Opt in to stage ingress
+
+[Expose a Service through stage ingress](./expose-service.md) selects one named Service port for external requests. Other deployment results do not get stage ingress rules.
 
 ## Sign artifacts and verify them before deployment
 
