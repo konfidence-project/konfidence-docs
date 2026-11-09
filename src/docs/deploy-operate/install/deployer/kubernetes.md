@@ -166,7 +166,7 @@ An invalid selection sets `DeploymentResultCreated=False`, `Ready=False`, and `S
 | `ExposePortNotFound` | No Service port has the exact annotated name. |
 | `ExposePortUnsupportedProtocol` | The selected port does not use TCP. |
 
-If no result selects a port, the gateway-route activation removes any existing stage `HTTPRoute` and succeeds. Services and workloads remain deployed. For the application developer procedure and version requirement, see [Expose a Service through stage ingress](../../../develop-integrate/advanced-features/expose-service.md).
+If no result selects a port, the gateway-route activation removes any existing stage `HTTPRoute` and succeeds. Services and workloads remain deployed. For the application developer procedure, see [Expose a Service through stage ingress](../../../develop-integrate/advanced-features/expose-service.md).
 
 ## Next steps {#related}
 

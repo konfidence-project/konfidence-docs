@@ -10,10 +10,6 @@ lastUpdated: true
 
 Opt one named TCP port of your Kubernetes Service into the Konfidence-managed stage route. Publishing a [deployment result](../vector-data/deployment-results.md) alone does not add an ingress rule.
 
-::: warning Version requirement
-The Kubernetes landscape orchestrator release `0.1.0-alpha.1` does not support this annotation. Use a build that includes [Service port exposure](https://github.com/konfidence-project/kubernetes-landscape-orchestrator/pull/88).
-:::
-
 ## Prerequisites
 
 Before you begin, make sure you have:
