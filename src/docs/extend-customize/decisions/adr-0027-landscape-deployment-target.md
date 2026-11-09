@@ -13,6 +13,10 @@ outline: deep
 
 <AdrHeader />
 
+::: note
+This ADR's deployment-class registration and selection design was replaced by [ADR-0038](./adr-0038-artifact-type-deployer-selection.md). The landscape and project model remains in effect.
+::: 
+
 ## Context
 
 Konfidence needs infrastructure-agnostic definitions for organizing deployments across different landscapes and target platforms. 

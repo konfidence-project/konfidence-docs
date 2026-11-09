@@ -25,11 +25,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "markdownlint-cli2": "0.24.0",
     "markdownlint-cli2-formatter-sarif": "0.0.5",
-    "vitepress": "2.0.0-alpha.20",
-    "vitepress-openapi": "^0.2.5"
+    "vitepress": "2.0.0-alpha.21",
+    "vitepress-openapi": "^0.2.8"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0"

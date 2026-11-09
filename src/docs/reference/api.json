@@ -146,6 +146,38 @@
       }
     },
     "schemas": {
+      "ArtifactContent": {
+        "properties": {
+          "allowReuse": {
+            "type": "boolean"
+          },
+          "ref": {
+            "description": "OCM ref string (registry//component:version)",
+            "type": "string"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/ArtifactResource"
+            },
+            "type": "array"
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/ArtifactTask"
+            },
+            "type": "array"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "type",
+          "allowReuse"
+        ],
+        "type": "object"
+      },
       "ArtifactDeployment": {
         "properties": {
           "artifact": {
@@ -217,6 +249,51 @@
           }
         ]
       },
+      "ArtifactResource": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "type": "object"
+      },
+      "ArtifactTask": {
+        "properties": {
+          "dependsOn": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "type": "object"
+      },
+      "ChangeType": {
+        "enum": [
+          "added",
+          "removed",
+          "changed",
+          "unchanged"
+        ],
+        "type": "string"
+      },
       "ComponentReference": {
         "properties": {
           "componentName": {
@@ -233,6 +310,27 @@
           "repository",
           "componentName",
           "componentVersion"
+        ],
+        "type": "object"
+      },
+      "ConfigEntryDiff": {
+        "properties": {
+          "changeType": {
+            "$ref": "#/components/schemas/ChangeType"
+          },
+          "key": {
+            "type": "string"
+          },
+          "leftValue": {
+            "description": "Value on the left side. Absent when changeType is \"added\"."
+          },
+          "rightValue": {
+            "description": "Value on the right side. Absent when changeType is \"removed\"."
+          }
+        },
+        "required": [
+          "key",
+          "changeType"
         ],
         "type": "object"
       },
@@ -360,21 +458,54 @@
         ],
         "type": "object"
       },
-      "PromotionApproval": {
+      "PromotionGate": {
         "properties": {
-          "approvedAt": {
-            "description": "Time the approval was granted",
-            "format": "date-time",
-            "type": "string"
-          },
-          "approvedBy": {
-            "description": "Identity that granted the approval",
+          "type": {
+            "description": "Gate type as `<gate-name>.<owner-domain>`, e.g. `explicit-approval.konfidence.cloud`",
             "type": "string"
           }
         },
         "required": [
-          "approvedBy",
-          "approvedAt"
+          "type"
+        ],
+        "type": "object"
+      },
+      "PromotionGateStatus": {
+        "properties": {
+          "message": {
+            "description": "Human-readable description of the latest state change",
+            "type": "string"
+          },
+          "reason": {
+            "description": "Machine-readable reason for the latest state change",
+            "type": "string"
+          },
+          "setAt": {
+            "description": "Time the gate state was last set",
+            "format": "date-time",
+            "type": "string"
+          },
+          "setBy": {
+            "description": "Entity that last set the gate state (controller name or user subject)",
+            "type": "string"
+          },
+          "state": {
+            "description": "Current state of the gate",
+            "enum": [
+              "Pending",
+              "Satisfied",
+              "Error"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "description": "Gate type as `<gate-name>.<owner-domain>`, e.g. `explicit-approval.konfidence.cloud`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "state"
         ],
         "type": "object"
       },
@@ -520,6 +651,112 @@
         "description": "The stageVersion id",
         "type": "string"
       },
+      "VectorComponent": {
+        "properties": {
+          "componentName": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "componentName",
+          "version"
+        ],
+        "type": "object"
+      },
+      "VectorComponentDiff": {
+        "properties": {
+          "changeType": {
+            "$ref": "#/components/schemas/ChangeType"
+          },
+          "componentName": {
+            "type": "string"
+          },
+          "leftVersion": {
+            "description": "Version on the left side. Absent when changeType is \"added\".",
+            "type": "string"
+          },
+          "rightVersion": {
+            "description": "Version on the right side. Absent when changeType is \"removed\".",
+            "type": "string"
+          }
+        },
+        "required": [
+          "componentName",
+          "changeType"
+        ],
+        "type": "object"
+      },
+      "VectorConfig": {
+        "properties": {
+          "authored": {
+            "additionalProperties": true,
+            "description": "Raw authored blob from VectorConfigurationV1",
+            "type": "object"
+          },
+          "features": {
+            "additionalProperties": true,
+            "description": "Raw features blob from VectorConfigurationV1",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "VectorConfigDiff": {
+        "properties": {
+          "authored": {
+            "items": {
+              "$ref": "#/components/schemas/ConfigEntryDiff"
+            },
+            "type": "array"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/ConfigEntryDiff"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "VectorContent": {
+        "properties": {
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/VectorComponent"
+            },
+            "type": "array"
+          },
+          "config": {
+            "$ref": "#/components/schemas/VectorConfig"
+          },
+          "ref": {
+            "description": "OCM ref string (registry//component:version)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "components"
+        ],
+        "type": "object"
+      },
+      "VectorContentList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/VectorContent"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
       "VectorDeployment": {
         "properties": {
           "id": {
@@ -571,16 +808,44 @@
         ],
         "type": "object"
       },
+      "VectorDiff": {
+        "properties": {
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/VectorComponentDiff"
+            },
+            "type": "array"
+          },
+          "config": {
+            "$ref": "#/components/schemas/VectorConfigDiff"
+          },
+          "left": {
+            "description": "OCM ref string of the left-hand vector",
+            "type": "string"
+          },
+          "right": {
+            "description": "OCM ref string of the right-hand vector",
+            "type": "string"
+          }
+        },
+        "required": [
+          "left",
+          "right",
+          "components"
+        ],
+        "type": "object"
+      },
       "VectorPromotion": {
         "properties": {
-          "approval": {
-            "$ref": "#/components/schemas/PromotionApproval"
+          "gates": {
+            "description": "State of every gate declared on the promotion, in declaration order. A declared gate without a recorded state is reported as Pending.\n",
+            "items": {
+              "$ref": "#/components/schemas/PromotionGateStatus"
+            },
+            "type": "array"
           },
           "id": {
             "$ref": "#/components/schemas/VectorPromotionId"
-          },
-          "requireApproval": {
-            "type": "boolean"
           },
           "sequence": {
             "format": "int64",
@@ -596,7 +861,6 @@
               "InProgress",
               "Blocked",
               "Succeeded",
-              "Failed",
               "Superseded"
             ],
             "type": "string"
@@ -621,6 +885,13 @@
       },
       "VectorPromotionConfig": {
         "properties": {
+          "gates": {
+            "description": "Gates every promotion created from this config must pass.",
+            "items": {
+              "$ref": "#/components/schemas/PromotionGate"
+            },
+            "type": "array"
+          },
           "id": {
             "$ref": "#/components/schemas/VectorPromotionConfigId"
           },
@@ -1006,6 +1277,57 @@
           }
         },
         "summary": "List all artifactDeployments for a project.",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/artifacts/content": {
+      "get": {
+        "description": "Returns the manifest details of any artifact available in OCI, including type, allowReuse, tasks, and OCM resources.\n",
+        "operationId": "getArtifactContentV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "description": "OCM ref string identifying the artifact (registry//component:version). Must be percent-encoded. Passed as a query parameter because the OCM ref contains // which cannot be used in a path segment.\n",
+            "in": "query",
+            "name": "ref",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactContent"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get OCM content for an artifact by ref.",
         "tags": [
           "projects"
         ]
@@ -1436,7 +1758,7 @@
     },
     "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/approve": {
       "post": {
-        "description": "Grants approval for a vectorPromotion that has an approval gate. Approving an already-approved promotion is idempotent and returns 204. Returns 409 when the promotion is superseded, finished, or requires no approval.\n",
+        "description": "Satisfies the `explicit-approval.konfidence.cloud` gate of a vectorPromotion, recording the authenticated caller as the approver. Approving an already-approved promotion is idempotent and returns 204. Returns 409 when the promotion is superseded, finished, already executing, or does not declare the explicit-approval gate.\n",
         "operationId": "approveVectorPromotionV1",
         "parameters": [
           {
@@ -1467,6 +1789,175 @@
           }
         },
         "summary": "Approves the given vectorPromotion for the specified project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/revoke-approval": {
+      "post": {
+        "description": "Sets the `explicit-approval.konfidence.cloud` gate of a waiting vectorPromotion back to Pending, recording the authenticated caller as the revoker. Revoking an already revoked approval (Pending with reason ApprovalRevokedByUser) is idempotent and returns 204 without changing the revocation record. Other approvals that are not Satisfied return 409 because there is nothing to revoke. Also returns 409 when the promotion is superseded, finished, already executing, or does not declare the explicit-approval gate.\n",
+        "operationId": "revokeApprovalVectorPromotionV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/VectorPromotionPathId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Approval of the VectorPromotion successfully revoked."
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Revoke the approval of the given vectorPromotion for the specified project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectors/content": {
+      "get": {
+        "description": "Returns the component list and configuration of any vector available in OCI, regardless of whether it has been deployed.\n",
+        "operationId": "getVectorContentV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "description": "One or more OCM ref strings (registry//component:version). Must be percent-encoded. Repeat the parameter for multiple refs.\n",
+            "explode": true,
+            "in": "query",
+            "name": "refs",
+            "required": true,
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 20,
+              "minItems": 1,
+              "type": "array"
+            },
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorContentList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get OCM content for vectors by refs.",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectors/diff": {
+      "get": {
+        "operationId": "getVectorDiffV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "description": "OCM ref string for the one of the compared vectors (registry//component:version). Must be percent-encoded.\n",
+            "in": "query",
+            "name": "left",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "OCM ref string for the other compared vector (registry//component:version). Must be percent-encoded.\n",
+            "in": "query",
+            "name": "right",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "When true, unchanged components and config entries are included in the diff.",
+            "in": "query",
+            "name": "includeUnchanged",
+            "required": false,
+            "schema": {
+              "default": "false",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorDiff"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Get the diff between two vectors by ref.",
         "tags": [
           "projects"
         ]
