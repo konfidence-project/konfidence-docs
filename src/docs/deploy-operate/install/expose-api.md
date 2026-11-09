@@ -15,10 +15,10 @@ This configures the installation's endpoint and login. [Create a project](../con
 ## Prerequisites
 
 - Konfidence installed with the release name `konfidence` in `konfidence-system`. See [Install Konfidence](./konfidence-installation.md).
-- Helm and `kubectl` access to upgrade the release and configure Secrets and routing in its namespace.
+- Helm and `kubectl` access to upgrade the release and configure secrets and routing in its namespace.
 - An Ingress controller in the cluster, or a Gateway API implementation such as Envoy Gateway. Check: `kubectl get ingressclass` or `kubectl get gatewayclass` lists at least one class.
 - A DNS name for the API that resolves to that controller, for example `konfidence.example.com`.
-- A TLS certificate for that name as a Secret in `konfidence-system`. An issuer such as cert-manager can create it from Ingress annotations instead.
+- A TLS certificate for that name as a secret in `konfidence-system`. An issuer such as cert-manager can create it from Ingress annotations instead.
 - An OIDC client at your identity provider with the redirect URL `https://konfidence.example.com/api/v1/auth/callback`. Note its issuer URL, client ID, and client secret.
 
 The session cookie is marked `secure`, so browsers send it over HTTPS only. Plain HTTP works for `curl` but not for the dashboard login.
@@ -32,7 +32,7 @@ export KONFIDENCE_HOST=konfidence.example.com
 
 ## Store the client secret
 
-The chart reads the client secret from a Secret in the release namespace:
+The chart reads the client secret from a `Secret` in the release namespace:
 
 ```bash
 kubectl create secret generic konfidence-oidc-client \
@@ -167,7 +167,7 @@ A browser window opens for the identity provider. After sign-in, `kden project l
 - The API pod restarts with `oidc-issuer-url must not be empty`: `api.oidc.issuerURL` is missing from the values file.
 - The provider rejects the login with a redirect URI error: `redirectURL` differs from the URL registered at the provider.
 - Sign-in succeeds but `kden project list` is empty: the token carries no group that a project binds. Check the scope and [Grant teams access to a project](../control-access/access-control.md).
-- `curl` reports a certificate error: the TLS Secret named in `ingress.tls` does not exist or covers a different host.
+- `curl` reports a certificate error: the TLS secret named in `ingress.tls` does not exist or covers a different host.
 
 ## Next steps
 

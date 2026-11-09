@@ -1,6 +1,6 @@
 ---
 title: Install the Kubernetes deployer
-description: Install and verify the Kubernetes deployer, then use its connection types, artifact formats, and deployment results.
+description: Install and verify the Kubernetes deployer, then use its target parameters, artifact formats, and deployment results.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -8,17 +8,18 @@ lastUpdated: true
 
 # Install the Kubernetes deployer {#kubernetes-deployer}
 
-Install the Kubernetes [deployer](../../../reference/glossary.md#deployer) to deliver Helm and Kustomize artifacts to Kubernetes through Flux. It provides the [deployment classes](../../../reference/glossary.md#deployment-class) `helm.konfidence.cloud` and `kustomize.konfidence.cloud` and is the reference implementation of Konfidence's deployer interface.
+Install the Kubernetes [deployer](../../../reference/glossary.md#deployer) to deliver Helm and Kustomize artifacts to Kubernetes through Flux. 
+It supports the artifact types `helm.konfidence.cloud` and `kustomize.konfidence.cloud` and is the reference implementation of Konfidence's deployer interface.
+See the [deployer specification](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md) for the control plane contract.
 
-<!-- TODO: link to the Deployer interface specification once available; see
-[Deployer Specification](../../../reference/deployer-specification.md). -->
-
-After installation, use the connection types on this page to configure targets in your landscapes. The later sections describe supported manifest types and Service [deployment results](../../../reference/glossary.md#deployment-result). For packaging and naming requirements, see [Author a Helm artifact](../../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../../develop-integrate/artifact-types/kustomize.md).
+After installation, use the target parameters on this page to configure targets in your landscapes. 
+The later sections describe supported artifact types and Service [deployment results](../../../reference/glossary.md#deployment-result). 
+For packaging and naming requirements, see [Author a Helm artifact](../../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../../develop-integrate/artifact-types/kustomize.md).
 
 ## Prerequisites
 
 - [Konfidence installed](../konfidence-installation.md) in the cluster, including the listed Flux prerequisites.
-- Helm and `kubectl` access with permission to install the chart and its cluster-scoped resources, and to inspect `Deployment` and `DeploymentClass` resources.
+- Helm and `kubectl` access with permission to install the chart and its resources.
 
 ## Install the deployer
 
@@ -39,38 +40,38 @@ helm upgrade --install kubernetes-landscape-orchestrator oci://ghcr.io/konfidenc
 
 ## Verify the installation
 
-Verify that the deployer runs and registered its deployment classes:
+Verify that the deployer is running:
 
 ```bash
 kubectl get deployment kubernetes-landscape-orchestrator -n "$KONFIDENCE_NAMESPACE"
-kubectl get deploymentclasses
 ```
 
-The first command shows one available replica. The second lists `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. Every chart value is listed in the [Helm values reference](../../../reference/helm-values-orchestrator.md). [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) makes the classes available in a landscape.
+The deployment should show one available replica. 
+The supported types are `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. 
+Every chart value is listed in the [Helm values reference](../../../reference/helm-values-orchestrator.md). 
+[Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) configures destinations for these types.
 
-## Connection types
+## Target parameters
 
-A [deployment target](../../manage-delivery/deployment-targets.md) for one of this deployer's classes carries a `connection` block with one of two types.
+A [deployment target](../../manage-delivery/deployment-targets.md) sets `spec.artifactType` to one of the supported types. 
+Omitted `spec.parameters` configures deployment to the cluster where the deployer runs. 
+For a remote cluster, `spec.parameters` references a secret in the landscape namespace that contains a kubeconfig.
 
-::: warning Only local targets work as documented
-Use `local` targets. The `kubeconfig` type is work in progress. The deployer validates the kubeconfig and marks the target `Ready`. It does not yet create every resource on the remote cluster. Deployments through a `kubeconfig` target are incomplete.
+::: warning Remote targets are work in progress
+Use targets with empty parameters to deploy into the local cluster. 
+Remote targets can validate a kubeconfig and become `Ready`, but deployment of all resources to the remote cluster is not yet complete.
 :::
 
-| `connection.type` | Deploys into | Status |
-| --- | --- | --- |
-| `local` | The cluster the deployer runs in, through its own service account | Supported |
-| `kubeconfig` | The cluster a kubeconfig in a Secret points to | Work in progress, incomplete |
-
-A `local` connection has no further fields:
+An in-cluster target needs no parameters:
 
 ```yaml
+kind: DeploymentTarget
 spec:
-  deploymentClassName: helm.konfidence.cloud
-  connection:
-    type: local
+  artifactType: helm.konfidence.cloud
 ```
 
-A `kubeconfig` connection references a Secret in the landscape namespace. The deployer reads the kubeconfig from the key `value` or `value.yaml`, the keys Flux uses:
+A remote target references a secret in the landscape namespace. 
+The deployer reads the kubeconfig from the key `value` or `value.yaml`, the keys Flux uses:
 
 ```bash
 kubectl create secret generic prod-eu-kubeconfig \
@@ -79,43 +80,40 @@ kubectl create secret generic prod-eu-kubeconfig \
 ```
 
 ```yaml
+kind: DeploymentTarget
 spec:
-  deploymentClassName: helm.konfidence.cloud
-  connection:
-    type: kubeconfig
-    ref:
-      kind: Secret
-      name: prod-eu-kubeconfig
+  artifactType: helm.konfidence.cloud
+  parameters:
+    apiGroup: ""
+    kind: Secret
+    name: prod-eu-kubeconfig
 ```
 
-The deployer validates every target and reports the result in the `Ready` condition:
+The deployer validates target parameters and reports the result in the `Ready` condition:
 
 | Reason | Meaning |
 | --- | --- |
 | `Accepted` | The target passed validation. |
-| `UnsupportedConnectionType` | `connection.type` is neither `local` nor `kubeconfig`. |
-| `UnsupportedRefKind` | `connection.ref.kind` is not `Secret`. |
-| `SecretNotFound` | The referenced Secret does not exist in the landscape namespace. |
-| `InvalidSecret` | The Secret has neither a `value` nor a `value.yaml` key. |
-| `InvalidKubeconfig` | The key exists but does not parse as a kubeconfig. |
+| `InvalidParameters` | Parameters do not identify a Kubernetes secret containing a kubeconfig. |
+| `ValidationError` | The deployer could not complete validation, for example because the referenced secret could not be read. |
 
-Pulling artifacts from private registries needs a Secret in the landscape namespace as well. See [Connect artifact registries](../connect-registries.md#give-the-deployer-credentials).
+Pulling artifacts from private registries needs a secret in the landscape namespace as well. See [Connect artifact registries](../connect-registries.md#give-the-deployer-credentials).
 
-## Supported manifest types
+## Supported artifact types
 
-The value of `.spec.manifest.type` on an [`ArtifactDeployment`](../../../reference/glossary.md#artifactdeployment) selects the
-sub-controller that reconciles it. The following table lists the supported manifest types, their Open Component Model (OCM) resource types, and the Flux resources the deployer creates:
+The `.spec.artifactType` on an [`ArtifactDeployment`](../../../reference/glossary.md#artifactdeployment) selects the deployer. 
+The following table lists its supported types, their Open Component Model (OCM) resource types, and the Flux resources created:
 
-| Deployment class | OCM resource type | Flux resources created |
+| Artifact type | OCM resource type | Flux resources created |
 | :--- | :--- | :--- |
 | `kustomize.konfidence.cloud` | `kustomize` | `OCIRepository` (source) and `Kustomization` (`kustomize.toolkit.fluxcd.io`) |
 | `helm.konfidence.cloud` | `helmChart` | `HelmRepository` (source) and `HelmRelease` (`helm.toolkit.fluxcd.io`) |
 
-An `ArtifactDeployment` whose `manifest.type` does not match either value is ignored by this deployer.
+An `ArtifactDeployment` whose `spec.artifactType` does not match either value is ignored by this deployer.
 
 Each `ArtifactDeployment` must carry at most one OCM resource of the matching type. Deployments with more than one matching resource are rejected with `[Ready=False] MultipleKustomizeResources` (Kustomize path) or `[Ready=False] MultipleHelmChartResources` (Helm path). Deployments with zero matching resources produce no Flux resources.
 
-## Expose a Service as a deployment result
+## How deployment results work
 
 By default, the Services in your bundle or chart are internal. To let other components in the same [vector](../../../reference/glossary.md#vector) discover and call a Service, annotate it:
 
@@ -152,10 +150,10 @@ Only Kubernetes `Service` objects can be exposed this way today (deployment-resu
 
 ## Next steps {#related}
 
-Make the installed capabilities available to your applications:
+Configure destinations for the supported types:
 
 - [Create a landscape](../../manage-delivery/landscapes.md) if you do not have one yet.
-- [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) using the connection types on this page.
+- [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) using the parameters on this page.
 - [Connect artifact registries](../connect-registries.md#give-the-deployer-credentials) supplies deployer credentials in each landscape that needs them.
 - Read [Gateway routing](../../plan/gateway-routing.md), then [set up Envoy Gateway](./kubernetes/envoy-gateway.md) to route external traffic to stages.
 

@@ -18,7 +18,7 @@ For help deciding how stages and landscapes should relate, see [Landscapes and s
 
 Before you begin, make sure you have:
 
-- A [ready landscape](./landscapes.md) with [targets](./deployment-targets.md) for the vector's required [deployment classes](../../reference/glossary.md#deployment-class).
+- A [ready landscape](./landscapes.md) with ready [targets](./deployment-targets.md) for the vector's artifact types.
 - [Registry credentials](../install/connect-registries.md) for private artifacts and vectors, and the [landscape services](../install/runtime-components/overview.md) your applications need.
 - A concrete vector reference in an Open Component Model (OCM)-compatible repository.
 - `kubectl` access with Kubernetes permission to read the Landscape, create and update `Stage` resources, and inspect rollout resources in the landscape namespace. Konfidence project roles alone do not authorize these commands.
@@ -120,7 +120,7 @@ Use the following checks if stage creation or activation does not complete:
 | Symptom | Likely cause | Resolution |
 | --- | --- | --- |
 | The `Stage` is rejected at admission. | It was created outside a landscape namespace. | Use the namespace reported in `Landscape.status.namespace`. |
-| The desired vector does not deploy. | The landscape lacks a ready target for an [artifact](../../reference/glossary.md#artifact)'s deployment class. | Inspect the vector's required classes and [configure the missing target](./deployment-targets.md). |
+| The desired vector does not deploy. | The landscape lacks a ready target for an [artifact](../../reference/glossary.md#artifact)'s type. | Inspect the vector's artifact types and [configure the missing target](./deployment-targets.md). |
 | The active version does not change. | Deployment, migration, or activation has not completed. | Inspect the related `StageVersion`, [`VectorDeployment`](../../reference/glossary.md#vectordeployment), `VectorMigration`, and [`VectorActivation`](../../reference/glossary.md#vectoractivation) resources. |
 | The selected vector cannot be resolved. | The reference is incorrect or the registry is inaccessible. | Verify the concrete OCM reference and registry credentials. |
 
