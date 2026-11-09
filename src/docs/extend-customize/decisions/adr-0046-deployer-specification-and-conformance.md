@@ -1,8 +1,9 @@
 ---
-id: ADR-0039
+id: ADR-0046
 title: "Deployer specification and conformance"
 description: "Make the written deployer specification the source of truth for controller behavior, supported by Go bindings and conformance tests."
-status: draft
+status: accepted
+date_approved: 2026-11-09
 date_proposed: 2026-10-07
 authors: [karstenkoehler]
 category: Architecture Pattern
@@ -12,7 +13,7 @@ pageClass: adr
 outline: deep
 ---
 
-# ADR-0039: Deployer specification and conformance
+# ADR-0046: Deployer specification and conformance
 
 <AdrHeader />
 
