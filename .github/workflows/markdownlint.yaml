@@ -29,6 +29,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Test the configuration
         run: pnpm test:markdown
+      - name: Test PR reporting
+        run: pnpm test:reports
       - name: Setup reviewdog
         uses: reviewdog/action-setup@v1
         with:
@@ -46,3 +48,16 @@ jobs:
           reviewdog -f=sarif -name=markdownlint \
             -reporter="$REPORTER" -filter-mode="$FILTER_MODE" \
             -level=warning -fail-level=none < "$RUNNER_TEMP/markdownlint-results.sarif"
+
+  report:
+    name: Report findings
+    needs: markdownlint
+    if: always() && github.event_name == 'pull_request'
+    permissions:
+      actions: read
+      checks: read
+      pull-requests: write
+    uses: ./.github/workflows/documentation-comment.yaml
+    with:
+      tool: Markdownlint
+      result: ${{ needs.markdownlint.result }}

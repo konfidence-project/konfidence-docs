@@ -52,3 +52,16 @@ jobs:
           filter_mode: ${{ github.event_name == 'pull_request' && 'added' || 'nofilter' }}
           # Editorial findings are advisory during rollout; tool/test failures are not.
           fail_level: none
+
+  report:
+    name: Report findings
+    needs: vale
+    if: always() && github.event_name == 'pull_request'
+    permissions:
+      actions: read
+      checks: read
+      pull-requests: write
+    uses: ./.github/workflows/documentation-comment.yaml
+    with:
+      tool: Vale
+      result: ${{ needs.vale.result }}

@@ -73,6 +73,16 @@ Confirm that:
 - [ ] Generated reference files have not been edited directly.
 - [ ] AI-assisted content follows the project guideline and has been reviewed by a human.
 
+### Review automated findings in a pull request
+
+For pull requests from a branch in this repository, the tools maintain one **Documentation checks** comment in the PR conversation. It updates as each check finishes and shows the checked commit, source locations, findings, and links to the full reports. Open the linked file, review the finding, and push any correction; the next run updates the same comment.
+
+Vale and Markdownlint show reported findings on changed PR lines. Lychee covers the complete website and README, including unchanged pages, and prioritizes changed files in the preview. Repeated links from a shared component appear once with an occurrence count. Link findings include guidance for missing targets, access restrictions, and network failures. For generated references, correct the upstream source.
+
+The comment previews up to ten findings per tool. GitHub also limits annotations, so use the local checks for a complete prose or Markdown report. A green check means the configured check completed; advisory findings can still need review. An incomplete check is shown separately from a check with no findings.
+
+Fork and Dependabot pull requests keep their existing annotations and run summaries without posting this comment. Only the separate reporting job receives comment access; the checking jobs keep read-only permissions. When changing reporting, run `pnpm test:reports`.
+
 ### Prose checks with Vale
 
 Use Vale 3.25.1, the version pinned in `.github/workflows/vale.yaml`. See the [README](https://github.com/konfidence-project/konfidence-docs/blob/main/README.md#check-documentation-prose) for installation. From the repository root, run:
@@ -191,7 +201,7 @@ Review the reported status before changing a link. A 404 or 410 usually indicate
 
 The `Documentation links` workflow builds the site and checks both internal and external targets on pull requests to `main`, pushes to `main`, and manual and weekly runs. It produces separate reports for internal website links, local README links, and external URLs. The weekly schedule starts once the workflow is merged into the default branch and also checks links when no content has changed.
 
-Findings appear in the terminal locally and in the GitHub Actions run summary. During rollout, link findings produce a workflow warning; installation, configuration, build, and test failures still fail the job. Locally, lychee returns exit code 2 for link findings. The workflow does not change branch protection, publish PR comments, or open issues.
+Findings appear in the terminal locally, in the GitHub Actions run summary, and in the shared PR comment described above. During rollout, link findings produce a workflow warning; installation, configuration, build, and test failures still fail the job. Locally, lychee returns exit code 2 for link findings. The workflow does not change branch protection or open issues.
 
 Reports identify the built HTML page or README and the affected URL. They are not filtered to changed source lines: VitePress can combine many source lines into one HTML line, and broken incoming links may be on unchanged pages. Use the corresponding Markdown source to correct authored content, or update the upstream source of a generated reference.
 

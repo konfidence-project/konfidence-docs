@@ -20,6 +20,8 @@ jobs:
     timeout-minutes: 15
     env:
       LYCHEE_VERSION: v0.24.2
+    outputs:
+      report: ${{ steps.summary.outputs.report }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -122,3 +124,21 @@ jobs:
             2) echo "::warning title=External URL findings::Review HTTP status codes and timeouts in the separate external report; network failures do not prove a link is broken." ;;
             *) echo "::error::lychee could not complete the external check (exit $EXIT_CODE)."; exit 1 ;;
           esac
+      - name: Summarize link findings for the PR
+        id: summary
+        if: always() && github.event_name == 'pull_request'
+        run: node scripts/summarize-links.mjs
+
+  report:
+    name: Report findings
+    needs: links
+    if: always() && github.event_name == 'pull_request'
+    permissions:
+      actions: read
+      checks: read
+      pull-requests: write
+    uses: ./.github/workflows/documentation-comment.yaml
+    with:
+      tool: Lychee
+      result: ${{ needs.links.result }}
+      links: ${{ needs.links.outputs.report }}
