@@ -2,11 +2,9 @@
 
 # Konfidence Docs
 
-This is the official documentation for the Konfidence project, built with [VitePress](https://vitpress.de/).
+This is the official documentation for the Konfidence project, built with [VitePress](https://vitepress.dev/).
 
-#### Requirements
-
-This step is neccessary.
+## Requirements
 
 ### Prerequisites
 
