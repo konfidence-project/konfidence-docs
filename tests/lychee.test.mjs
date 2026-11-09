@@ -19,6 +19,8 @@ async function fixture(t, html) {
   await mkdir(path.join(root, "empty"));
   await mkdir(path.join(root, "assets"));
   await writeFile(path.join(root, "index.html"), html);
+  await writeFile(path.join(root, "README.md"), "# Project\n");
+  await writeFile(path.join(root, "guide.md"), "# Guide\n\n## Details\n");
   await writeFile(path.join(root, "guide.html"), '<h1 id="custom-anchor">Guide</h1>');
   await writeFile(path.join(root, "section/index.html"), '<h1 id="nested">Section</h1>');
   await writeFile(path.join(root, "assets/diagram with spaces.svg"), '<svg xmlns="http://www.w3.org/2000/svg" />');
@@ -38,9 +40,9 @@ async function command(binary, args, cwd) {
   }
 }
 
-async function check(root, mode = "internal", extra = []) {
-  const args = linkArguments(mode, root);
-  args.splice(args.length - 2, 0, "--format", "json", ...extra);
+async function check(root, mode = "internal", extra = [], options = {}) {
+  const args = linkArguments(mode, root, { readme: path.join(root, "README.md"), ...options });
+  args.splice(args.indexOf("--"), 0, "--format", "json", ...extra);
   const result = await command("lychee", args, root);
   assert.ok([0, 2].includes(result.code), result.stderr);
   return { ...result, report: JSON.parse(result.stdout) };
@@ -85,8 +87,42 @@ for (const [name, html] of [
 test("missing builds and invalid modes cannot silently pass", async (t) => {
   const root = await fixture(t, '<a href="guide.html">Guide</a>');
   assert.throws(() => linkArguments("internal", path.join(root, "missing")), /Run pnpm build/);
-  assert.throws(() => linkArguments("typo", root), /internal or external/);
+  assert.throws(() => linkArguments("typo", root), /internal, readme, or external/);
+  assert.throws(() => linkArguments("readme", root, { readme: path.join(root, "missing.md") }), /README is missing/);
 });
+
+test("README links accept repository files, directories, Markdown anchors, and own-site URLs", async (t) => {
+  const root = await fixture(t, "<h1>Home</h1>");
+  await writeFile(path.join(root, "README.md"), [
+    "# Project", "",
+    "[Same page](#project)",
+    "[Guide](guide.md#details)",
+    "[Directory](empty)",
+    "![Diagram](assets/diagram%20with%20spaces.svg)",
+    "[Website guide](https://konfidence.cloud/guide.html#custom-anchor)",
+    "[External example](https://example.com/)"
+  ].join("\n"));
+  const result = await check(root, "readme");
+  assert.equal(result.code, 0, result.stdout);
+  assert.equal(result.report.successful, 5);
+  assert.equal(result.report.excludes, 1);
+});
+
+for (const [name, link] of [
+  ["missing file", "[Guide](missing.md)"],
+  ["missing directory", "[Directory](missing/)"],
+  ["missing Markdown heading", "[Guide](guide.md#missing)"],
+  ["missing image", "![Diagram](assets/missing.svg)"]
+]) {
+  test(`README ${name} produces a finding without weakening website checks`, async (t) => {
+    const root = await fixture(t, "<h1>Home</h1>");
+    await writeFile(path.join(root, "README.md"), `# Project\n\n${link}\n`);
+    const result = await check(root, "readme");
+    assert.equal(result.code, 2, result.stdout);
+    assert.equal(result.report.errors, 1);
+    assert.ok(result.report.error_map[path.join(root, "README.md")]);
+  });
+}
 
 test("a malformed configuration fails separately from link findings", async (t) => {
   const root = await fixture(t, '<a href="guide.html">Guide</a>');
@@ -140,6 +176,37 @@ test("external checks accept reachable URLs and redirects", async (t) => {
   assert.equal(result.code, 0, result.stdout);
   assert.equal(result.report.errors, 0);
   assert.equal(result.report.successful, 2);
+});
+
+test("external checks include both the built website and README and report the source file", async (t) => {
+  const requests = [];
+  const url = await server(t, (request, response) => {
+    requests.push(request.url);
+    response.writeHead(request.url === "/readme" ? 404 : 200);
+    response.end("Result");
+  });
+  const root = await fixture(t, `<a href="${url}/website">Website link</a>`);
+  await writeFile(path.join(root, "README.md"), `# Project\n\n[README link](${url}/readme)\n`);
+  const result = await check(root, "external", networkOptions, { cache: false });
+  assert.equal(result.code, 2, result.stdout);
+  assert.equal(result.report.successful, 1);
+  assert.equal(result.report.errors, 1);
+  assert.deepEqual(requests.sort(), ["/readme", "/website"]);
+  assert.equal(result.report.error_map[path.join(root, "README.md")][0].url, `${url}/readme`);
+});
+
+test("fresh checks detect a broken URL even when an earlier successful response was cached", async (t) => {
+  let requests = 0;
+  const url = await server(t, (_request, response) => {
+    response.writeHead(++requests === 1 ? 200 : 404);
+    response.end("Result");
+  });
+  const root = await fixture(t, `<a href="${url}/changing">Changing site</a>`);
+  assert.equal((await check(root, "external", networkOptions)).code, 0);
+  const fresh = await check(root, "external", networkOptions, { cache: false });
+  assert.equal(fresh.code, 2, fresh.stdout);
+  assert.equal(fresh.report.errors, 1);
+  assert.equal(requests, 2);
 });
 
 test("missing pages, rate limits, and server errors stay visible with their HTTP status", async (t) => {

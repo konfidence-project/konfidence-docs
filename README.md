@@ -66,7 +66,7 @@ The first command checks heading levels, list indentation, code block language l
 
 ## Link checks with lychee
 
-[lychee](https://lychee.cli.rs/guides/getting-started/) checks links, heading fragments, and static assets in the built website. Install it separately from the Node.js dependencies. On macOS:
+[lychee](https://lychee.cli.rs/guides/getting-started/) checks links, heading fragments, and static assets in the built website and this README. Install it separately from the Node.js dependencies. On macOS:
 
 ```bash
 brew install lychee
@@ -83,7 +83,7 @@ pnpm lint:links
 pnpm test:links
 ```
 
-The link check runs without network access. To check external URLs as well, run `pnpm lint:links:external` after building. GitHub checks internal targets on pull requests and checks external availability on weekly and manual runs. See the [contribution guide](https://github.com/konfidence-project/konfidence-docs/blob/main/CONTRIBUTING.md#link-checks-with-lychee) for reports, exceptions, and maintenance.
+The internal link check runs without network access and includes local links in this README. To check external URLs in the website and README, run `pnpm lint:links:external` after building. GitHub runs both checks on pull requests, pushes to `main`, and weekly and manual runs. Pull requests and pushes check external targets without cached responses. See the [contribution guide](https://github.com/konfidence-project/konfidence-docs/blob/main/CONTRIBUTING.md#link-checks-with-lychee) for reports, exceptions, and maintenance.
 
 ## Pre-release mode
 

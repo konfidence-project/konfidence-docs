@@ -171,7 +171,7 @@ pnpm test:links
 
 Always rebuild after changing content. The link check reads the generated HTML in `.vitepress/dist/`, including published generated references. It checks relative links, root-relative links, directory indexes, URLs without `.html`, heading fragments, and static image and asset references. Absolute links to `konfidence.cloud` are checked against the same local build. This lets new pages and anchors be checked before publication.
 
-The internal check makes no network requests. It checks the complete built site because changing a target can break links on unchanged pages. It complements Vale and markdownlint without changing their rules or the VitePress build.
+The internal check makes no network requests. It checks the complete built site because changing a target can break links on unchanged pages. It also checks local links in the repository's README, including Markdown heading fragments, images, and directories such as `LICENSES`. Directory links in the README may point to a repository folder; directory links in the built website still require an index page. It complements Vale and markdownlint without changing their rules or the VitePress build.
 
 #### External links
 
@@ -181,19 +181,19 @@ After building, run the external check when needed:
 pnpm lint:links:external
 ```
 
-This checks public HTTP and HTTPS targets. Links to our own site remain the responsibility of the internal check. Local dashboards and private addresses in examples are excluded. Code examples are not scanned as navigation, and email delivery is not checked.
+This checks public HTTP and HTTPS targets from both the built website and the repository's README. Links to our own site remain the responsibility of the internal check. Local dashboards and private addresses in examples are excluded. Code examples are not scanned as navigation, and email delivery is not checked.
 
-External checks limit concurrent requests, retry failures, and cache responses for up to one day. Responses with HTTP status codes from 400 through 599 are excluded from the cache so that the next run checks them again. Remove `.lycheecache` when a successful cached result needs to be checked immediately.
+External checks limit concurrent requests and retry failures. Pull requests and pushes to `main` check targets without restoring cached responses. Local, scheduled, and manual checks cache responses for up to one day. Responses with HTTP status codes from 400 through 599 are excluded from the cache so that the next run checks them again. Remove `.lycheecache` when a successful cached result needs to be checked immediately in a local run.
 
 Review the reported status before changing a link. A 404 or 410 usually indicates a missing target. Authentication failures, rate limits such as 429, server errors, and connection problems need a separate availability check; they do not prove that the target was removed. Timeouts appear in their own report category. These responses remain visible and are not accepted as successful checks.
 
 #### GitHub reports and maintenance
 
-The `Documentation links` workflow builds the site and checks internal targets on pull requests to `main`, pushes to `main`, and manual and weekly runs. External checks run only weekly and on manual runs, with a separate report. The weekly schedule starts once the workflow is merged into the default branch.
+The `Documentation links` workflow builds the site and checks both internal and external targets on pull requests to `main`, pushes to `main`, and manual and weekly runs. It produces separate reports for internal website links, local README links, and external URLs. The weekly schedule starts once the workflow is merged into the default branch and also checks links when no content has changed.
 
 Findings appear in the terminal locally and in the GitHub Actions run summary. During rollout, link findings produce a workflow warning; installation, configuration, build, and test failures still fail the job. Locally, lychee returns exit code 2 for link findings. The workflow does not change branch protection, publish PR comments, or open issues.
 
-Reports identify the built HTML page and affected URL. They are not filtered to changed source lines: VitePress can combine many source lines into one HTML line, and broken incoming links may be on unchanged pages. Use the corresponding Markdown source to correct authored content, or update the upstream source of a generated reference.
+Reports identify the built HTML page or README and the affected URL. They are not filtered to changed source lines: VitePress can combine many source lines into one HTML line, and broken incoming links may be on unchanged pages. Use the corresponding Markdown source to correct authored content, or update the upstream source of a generated reference.
 
 Keep shared options and narrowly justified URL exclusions in `lychee.toml`. The small `scripts/check-links.mjs` helper supplies the build paths and the same arguments for local checks and the official GitHub action. Avoid blanket exclusions for a host merely because one check fails. Maintainers and the technical writer review exceptions and link findings.
 
