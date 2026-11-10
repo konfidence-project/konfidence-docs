@@ -1,0 +1,63 @@
+name: Documentation Markdown
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Read the pull request diff to filter annotations to changed lines.
+  pull-requests: read
+
+jobs:
+  markdownlint:
+    name: Markdownlint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Test the configuration
+        run: pnpm test:markdown
+      - name: Test PR reporting
+        run: pnpm test:reports
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: v0.21.0
+      - name: Check Markdown structure
+        shell: bash
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
+          REPORTER: ${{ github.event_name == 'pull_request' && 'github-pr-annotations' || 'github-annotations' }}
+          FILTER_MODE: ${{ github.event_name == 'pull_request' && 'added' || 'nofilter' }}
+        run: |
+          # Warnings are advisory; tool/configuration failures stop the step.
+          set -euo pipefail
+          pnpm exec markdownlint-cli2 --config .github/markdownlint-cli2.ci.mjs
+          reviewdog -f=sarif -name=markdownlint \
+            -reporter="$REPORTER" -filter-mode="$FILTER_MODE" \
+            -level=warning -fail-level=none < "$RUNNER_TEMP/markdownlint-results.sarif"
+
+  report:
+    name: Report findings
+    needs: markdownlint
+    if: always() && github.event_name == 'pull_request'
+    permissions:
+      actions: read
+      checks: read
+      pull-requests: write
+    uses: ./.github/workflows/documentation-comment.yaml
+    with:
+      tool: Markdownlint
+      result: ${{ needs.markdownlint.result }}

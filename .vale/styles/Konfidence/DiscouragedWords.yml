@@ -1,0 +1,10 @@
+extends: existence
+message: "Remove '%s' or explain the specific action or requirement."
+link: https://konfidence.cloud/docs/extend-customize/styleguide.html#be-clear-and-specific
+level: warning
+scope: text
+ignorecase: true
+tokens:
+  - easy
+  - simple
+  - just

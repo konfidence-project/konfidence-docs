@@ -33,6 +33,58 @@ This is the official documentation for the Konfidence project, built with [ViteP
 
    The docs will be available at `http://localhost:5173`
 
+## Check documentation prose
+
+[Vale](https://docs.vale.sh/topics/quickstart) checks spelling, terminology, and selected rules from our style guide. Install it separately from the Node.js dependencies. On macOS:
+
+```bash
+brew install vale
+vale --version
+```
+
+CI uses Vale **3.25.1**. For matching local results, use the same version from the [official releases](https://github.com/vale-cli/vale/releases/tag/v3.25.1); Homebrew may provide a newer version.
+
+Run these commands from the repository root:
+
+```bash
+pnpm lint:prose
+pnpm test:prose
+```
+
+The first command checks authored Markdown in `src/`, this README, and `CONTRIBUTING.md`. The second tests the Vale configuration against valid and invalid examples. The rules and vocabulary are included in the repository, so no `vale sync` or external style package is needed. See the [contribution guide](https://github.com/konfidence-project/konfidence-docs/blob/main/CONTRIBUTING.md#prose-checks-with-vale) for findings, exceptions, and rule maintenance.
+
+## Markdown structure checks
+
+[markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) is included in the development dependencies. After `pnpm install`, run:
+
+```bash
+pnpm lint:markdown
+pnpm test:markdown
+```
+
+The first command checks heading levels, list indentation, code block language labels, image alternative text, reference links, and table columns. The second tests the configuration with valid and invalid examples, including VitePress syntax. These checks complement Vale's prose checks. Findings are warnings during rollout; the commands do not rewrite files. See the [contribution guide](https://github.com/konfidence-project/konfidence-docs/blob/main/CONTRIBUTING.md#markdown-structure-checks) for single-page checks, pull request annotations, and maintenance.
+
+## Link checks with lychee
+
+[lychee](https://lychee.cli.rs/guides/getting-started/) checks links, heading fragments, and static assets in the built website and this README. Install it separately from the Node.js dependencies. On macOS:
+
+```bash
+brew install lychee
+lychee --version
+```
+
+CI uses lychee **0.24.2**. For matching local results, use the same version from the [official releases](https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.2); Homebrew may provide a newer version.
+
+Build the current content before checking links:
+
+```bash
+pnpm build
+pnpm lint:links
+pnpm test:links
+```
+
+The internal link check runs without network access and includes local links in this README. To check external URLs in the website and README, run `pnpm lint:links:external` after building. GitHub runs both checks on pull requests, pushes to `main`, and weekly and manual runs. Pull requests and pushes check external targets without cached responses. See the [contribution guide](https://github.com/konfidence-project/konfidence-docs/blob/main/CONTRIBUTING.md#link-checks-with-lychee) for reports, exceptions, and maintenance.
+
 ## Pre-release mode
 
 The site builds in pre-release mode by default. It shows a fixed "pre-release software" banner on every page (`.vitepress/theme/components/PreReleaseBanner.vue`) and a `pre-alpha` badge next to the navbar logo.
