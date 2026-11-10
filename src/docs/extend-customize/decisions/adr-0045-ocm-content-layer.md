@@ -24,9 +24,7 @@ Previously the Konfidence API only exposed in-cluster deployment state: what is 
 
 The concrete use cases that drive this are:
 
-**UI — vector diff and deployment monitoring.** A user submits 10 vector deployments and monitors their progress, repeatedly opening the diff view to check each one. Without a cache, every page load triggers a registry call. With the two-layer cache described here, each distinct ref pays exactly one cold-miss registry call, so every subsequent request, across refreshes and concurrent users, is served from memory. The incoming vector has no CR yet (a `VectorDeployment` is only created after promotion executes), so the only way to read it is a live registry call.
-
-**UI — stage detail view.** Expose which artifact versions are currently deployed to a stage and what configuration they carry.
+**UI — vector and artifact content inspection.** Users inspect vectors and artifacts that may have no corresponding CR and browsing available versions before deploying, reviewing what a vector contains, drilling into an artifact's task graph and resource list, or comparing two arbitrary vector versions outside of an active promotion. In all these cases the registry is the only source of truth. Without a cache, every page load or view transition triggers a live registry call for data that hasn't changed. With a two-layer cache design, each distinct ref pays exactly one cold-miss registry call and every subsequent request across refreshes and concurrent users is served from memory. The incoming vector in a promotion diff has no `VectorDeployment` yet (one is only created after promotion executes), so a live registry call is the only way to read it.
 
 **CLI — artifact and vector data inspection.** The CLI commands for these endpoints are not yet implemented but follow naturally from the API surface. The intended commands are:
 
@@ -67,7 +65,7 @@ The API server caches OCM responses in-process. All three use cases are served t
 
 **Credentials.** Registry credentials are read from the Kubernetes secret referenced by `KONFIDENCE_API_CREDENTIALS_SECRET_NAME` and `KONFIDENCE_API_CREDENTIALS_SECRET_NAMESPACE`. See [#393](https://github.com/konfidence-project/konfidence/issues/393) for the credential propagation design.
 
-**Assessment.** Adopted. Covers all three use cases without controller coupling, without promoting internal packages, and without a new reconciler. The OCM client and all three content endpoints are already shipped.
+**Assessment.** Adopted. Covers both use cases without controller coupling, without promoting internal packages, and without a new reconciler. The OCM client and all three content endpoints are already shipped.
 
 ### Option 5 - Database storage
 
