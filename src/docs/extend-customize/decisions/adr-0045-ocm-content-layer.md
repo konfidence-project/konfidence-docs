@@ -41,7 +41,7 @@ kden artifact content <ocmRef> --project <projectId>
 kden vector diff <leftRef> <rightRef> --project <projectId>
 ```
 
-CLI usage is inherently sequential, so the singleflight layer has no practical effect. The LRU benefit is about not re-fetching the same ref on back-to-back commands within a short window. For example, a user inspecting the content of the same vector before and after a config change, or running `vector diff` and `vector content` against the same ref in the same session, pays one registry call rather than two.
+The singleflight layer is server-side and collapses concurrent in-flight requests from any combination of callers including UI tabs, CLI invocations, or background processes that arrive for the same ref at the same time. CLI usage is inherently sequential from the client side, while multiple users can hit the API in parallel through both the UI and CLI simultaneously. The LRU benefit for CLI is about not re-fetching the same ref on back-to-back commands within a short window. For example, a user running `vector diff` and `vector content` against the same ref in the same session pays one registry call rather than two.
 
 ## Considered options
 
@@ -110,6 +110,6 @@ The only time the registry is called is when the LRU misses **and** no other gor
 
 ## Consequences
 
-- The OCI registry is now a failure mode for API read operations. Prior to this change, registry unavailability only affected the controller write path. Operators must be informed through release notes and Helm chart documentation.
+- The OCI registry is now a failure mode for the three content endpoints (`getVectorContentV1`, `getArtifactContentV1`, `getVectorDiffV1`). All other API endpoints continue to serve Kubernetes CR state only and are unaffected by registry unavailability. Prior to this change, registry unavailability only affected the controller write path (artifact downloads, promotions). Operators must be informed through release notes and Helm chart documentation.
 - The OCM client, credential env vars, and the three content endpoints are already shipped. Remaining work: cache layer implementation in `pkg/ocm/content/`, Helm chart values (`api.ocmCache.size`, `api.ocmCache.tagTTL`), and credential Helm chart wiring (`api.ocm.credentialsSecretName`, `api.ocm.credentialsSecretNamespace`).
 - Cache entries are in-memory only and lost on API server restart. The first request after restart for any given ref pays the registry round-trip cost. This is acceptable as the cache is a latency optimisation and not a reliability mechanism.
