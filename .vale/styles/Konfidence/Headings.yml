@@ -1,0 +1,15 @@
+extends: capitalization
+message: "Use sentence case, preserving proper names and acronyms."
+link: https://konfidence.cloud/docs/extend-customize/styleguide.html#structure-and-scannability
+level: warning
+scope:
+  - heading
+  - text.frontmatter.title
+match: $sentence
+threshold: 1
+prefix: '(?:ADR-\d+:|Option (?:\d+|[A-Z]''?)\s*[:—-])\s*'
+exceptions:
+  # Preserve this acronym without changing identifiers such as x-vector-id.
+  - ID
+  # Either case is valid after this label; check the remaining words.
+  - 'Optional: [A-Za-z][A-Za-z-]*'

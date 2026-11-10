@@ -243,6 +243,14 @@ export default defineConfig({
                           text: "Envoy Gateway",
                           link: "/docs/deploy-operate/install/deployer/kubernetes/envoy-gateway",
                         },
+                        {
+                          text: "Istio",
+                          link: "/docs/deploy-operate/install/deployer/kubernetes/istio",
+                        },
+                        {
+                          text: "Traefik",
+                          link: "/docs/deploy-operate/install/deployer/kubernetes/traefik",
+                        },
                       ],
                     },
                   ],

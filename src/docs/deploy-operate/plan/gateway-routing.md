@@ -10,7 +10,7 @@ lastUpdated: true
 
 Konfidence routes every request for a [stage](../../reference/glossary.md#stage) to the stage's active vector. This applies to stages that the [Kubernetes deployer](../install/deployer/kubernetes.md) deploys.
 
-As the cluster administrator, you provide the gateways that external requests enter through. This guide explains how Konfidence uses those gateways and describes what you set up.
+As the cluster administrator, you provide the gateways that external requests enter through. Konfidence attaches its routes to those gateways, and you set up the rest.
 
 ## How the two-gateway architecture works
 
@@ -18,7 +18,7 @@ Konfidence keeps one HTTPRoute per stage. On each activation, it re-points that 
 
 Konfidence attaches these routes to Gateways that you create. Whether a Gateway is reachable from outside or only inside the cluster depends on the Gateway API implementation. Konfidence leaves the Gateways to you so that it never exposes an internal Gateway by accident.
 
-Konfidence creates and updates these routes only if the `gateway-route.konfidence.cloud` activation task is registered in the landscape namespace. Without the registration, activations succeed but no route exists.
+Konfidence creates and updates these routes only if the `gateway-route.konfidence.cloud` activation task has a registration in the landscape namespace. Without the registration, activations succeed but no route exists.
 
 A request passes two Gateways. Your edge Gateway sets the stage and service headers. `konfidence-router` routes on them to the active vector.
 
@@ -32,7 +32,7 @@ Konfidence works with any Gateway API implementation. Whichever you use, the fiv
 
 1. **Activation task registration per landscape:** Create an `ActivationTaskRegistration` of type `gateway-route.konfidence.cloud` in each [landscape](../../reference/glossary.md#landscape) namespace. Konfidence attaches routes only for registered landscapes.
 2. **Inner Gateway per landscape:** Create a Gateway named `konfidence-router` in each landscape namespace. Konfidence attaches its routes there.
-3. **Cluster-internal inner Gateway:** Make `konfidence-router` reachable only from inside the cluster. A client that reaches it directly can set `x-konfidence-stage` and `x-konfidence-service` itself and select any stage. [GEP-5093](https://gateway-api.sigs.k8s.io/geps/gep-5093/) adds `routability: Cluster` to Gateway addresses for this. Use it if your implementation supports it. Otherwise, pin the service of `konfidence-router` to `ClusterIP` the way your implementation provides. In both cases, restrict traffic between the edge and the inner Gateways with NetworkPolicies.
+3. **Cluster-internal inner Gateway:** Make `konfidence-router` reachable only from inside the cluster. A client that reaches it directly can set `x-konfidence-stage` and `x-konfidence-service` itself and select any stage. [GEP-5093](https://gateway-api.sigs.k8s.io/geps/gep-5093/) adds `routability: Cluster` to Gateway addresses for this. Use it if your implementation supports it. Otherwise, pin the service of `konfidence-router` to `ClusterIP` the way your implementation provides. Restrict traffic between the edge and the inner Gateways with NetworkPolicies as well.
 4. **Stage and service headers at the edge:** For each stage that you want to expose, set `x-konfidence-stage` to the stage name. Set `x-konfidence-service` to the deployment result name. Use `set`, not `add`, so that client-supplied values are overwritten. Then forward the request to `konfidence-router`.
 5. **ReferenceGrant per landscape namespace:** Your edge routes live in another namespace. Allow them to reference the `konfidence-router` service.
 
@@ -64,6 +64,12 @@ Konfidence then creates a cluster-internal `konfidence-router` in the landscape 
 
 <!-- TODO(konfidence maintainers): verify the release that ships Gateway provisioning (kubernetes-landscape-orchestrator PR #87), and which Gateway API implementations honour routability: Cluster. -->
 
-## Envoy Gateway has a step-by-step guide
+## Three implementations have step-by-step guides
 
-To install this setup with Envoy Gateway, follow [Set up Envoy Gateway](../install/deployer/kubernetes/envoy-gateway.md).
+Each guide installs the same topology with one Gateway API implementation:
+
+- [Set up Envoy Gateway](../install/deployer/kubernetes/envoy-gateway.md) deploys one proxy per Gateway. An `EnvoyProxy` resource pins `konfidence-router` to `ClusterIP`.
+- [Set up Istio](../install/deployer/kubernetes/istio.md) deploys one proxy per Gateway. Annotations on the Gateway pin `konfidence-router` to `ClusterIP`.
+- [Set up Traefik](../install/deployer/kubernetes/traefik.md) needs one Helm release per Gateway. Each release manages exactly one Gateway.
+
+None of the three supports GEP-5093 yet. Provisioning through `gatewayClassName` does not work with them.

@@ -1,0 +1,27 @@
+# Keep structural checks separate from Vale's prose rules.
+config:
+  default: false
+  MD001:
+    severity: warning
+    # VitePress pages have an explicit H1 as well as a frontmatter title.
+    front_matter_title: ""
+  MD005: warning
+  MD040:
+    severity: warning
+    # Allow VitePress code-fence metadata, such as line highlighting.
+    language_only: false
+  MD045: warning
+  MD052: warning
+  MD056: warning
+
+globs:
+  - "src/**/*.md"
+  - "README.md"
+  - "CONTRIBUTING.md"
+
+# Match Vale's generated-reference exclusions; fix the upstream sources.
+ignores:
+  - "src/docs/reference/crd.md"
+  - "src/docs/reference/cli.md"
+  - "src/docs/reference/helm-values-konfidence.md"
+  - "src/docs/reference/helm-values-orchestrator.md"
