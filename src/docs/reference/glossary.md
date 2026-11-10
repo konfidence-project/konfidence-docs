@@ -16,7 +16,7 @@ The glossary defines the Konfidence terms used in this documentation. Each entry
 
 An artifact is a deployable part of your application, such as a microservice. Your CI pipeline packages it as an Open Component Model (OCM) component version.
 
-The artifact contains a manifest and a reference to the build result, such as a container image. It can also include binary resources directly. The manifest's `type` field names the [deployment class](#deployment-class) the artifact requires. The `allowReuse` field controls whether several vector deployments share one running instance.
+The artifact contains a manifest and a reference to the build result, such as a container image. It can also include binary resources directly. The manifest's `type` field declares the artifact's type, which is selected by a deployer. The `allowReuse` field controls whether several vector deployments share one running instance.
 
 Continuous integration (CI) pipelines publish artifacts to an OCM-compliant repository, such as an Open Container Initiative (OCI) registry.
 
@@ -61,9 +61,26 @@ An artifact alias is a mutable tag, such as `main`, that points to one version o
 
 :::
 
+### Artifact type
+
+An artifact type is a vendor-owned identifier for an artifact's packaging and deployment contract, such as `helm.konfidence.cloud`. The manifest of an artifact declares its type. Deployers declare which types they support, and `DeploymentTarget.spec.artifactType` configures a destination for a type in a landscape.
+
+::: details Pages that use this term
+
+- [Deployer specification](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md)
+- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
+- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
+- [Create a stage](../deploy-operate/manage-delivery/stages.md)
+- [Deployment model](../core-concepts/deployment-model.md)
+- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
+- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
+- [Types of artifacts](../develop-integrate/artifact-types/index.md)
+
+:::
+
 ### Delivery flow
 
-The delivery flow is the path from published artifacts to the vector each stage selects. It has four phases: build, assemble, assign, and promote. The assign phase is unrelated to the [`VectorAssignment`](#vectorassignment) resource. Deployment in a landscape starts after the delivery flow ends.
+The delivery flow is the path from published artifacts to the vector each stage selects. It has four phases: build, assemble, assign, and promote. Deployment in a landscape starts after the delivery flow ends.
 
 ::: details Pages that use this term
 
@@ -78,7 +95,7 @@ The delivery flow is the path from published artifacts to the vector each stage 
 
 ### Deployer
 
-A deployer is a platform-specific controller that deploys artifacts of the deployment classes it provides. It reconciles [ArtifactDeployment](#artifactdeployment) resources and turns their deployable content into running workloads.
+A deployer is a platform-specific controller that deploys artifacts of the artifact types it supports. It reconciles matching [ArtifactDeployment](#artifactdeployment) (and other) resources and turns their deployable content into running workloads.
 
 The current release provides one deployer for Kubernetes, installed with the [landscape orchestrator](#landscape-orchestrator). It deploys artifacts through Flux.
 
@@ -101,24 +118,6 @@ The current release provides one deployer for Kubernetes, installed with the [la
 
 :::
 
-### Deployment class
-
-A deployment class is a named capability for deploying one kind of artifact, such as Helm or Kustomize. Each class is represented by a cluster-scoped `DeploymentClass` resource that names the controller responsible for it. The deployer's Helm chart installs these resources.
-
-By convention, the class name follows the pattern `<class-name>.<vendor-domain>`, for example `helm.konfidence.cloud`. The `type` field of the artifact manifest names the class the artifact requires.
-
-::: details Pages that use this term
-
-- [Choose a deployer](../deploy-operate/install/deployer/overview.md)
-- [Configure deployment targets for a landscape](../deploy-operate/manage-delivery/deployment-targets.md)
-- [Create a stage](../deploy-operate/manage-delivery/stages.md)
-- [Deployment model](../core-concepts/deployment-model.md)
-- [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
-- [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
-- [Types of artifacts](../develop-integrate/artifact-types/index.md)
-
-:::
-
 ### Deployment result
 
 A deployment result is a value that a deployer produces while it deploys an artifact, such as a service endpoint. The Kubernetes deployer reports Services annotated with `konfidence.cloud/deployment-result`. Konfidence passes deployment results to the landscape as part of [vector data](#vector-data).
@@ -130,6 +129,7 @@ A deployment result is a value that a deployer produces while it deploys an arti
 - [Install the Kubernetes deployer](../deploy-operate/install/deployer/kubernetes.md)
 - [Prepare your application](../develop-integrate/prepare-your-application.md)
 - [Quickstart](../getting-started/quickstart.md)
+- [Gateway routing](../deploy-operate/plan/gateway-routing.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
 - [Vector data overview](../develop-integrate/vector-data/overview.md)
 
@@ -137,7 +137,7 @@ A deployment result is a value that a deployer produces while it deploys an arti
 
 ### Deployment target
 
-A deployment target makes one deployment class available in one landscape. It provides the connection that the responsible deployer uses: either the local cluster or a `Secret` with a kubeconfig. A landscape has one deployment target per deployment class. The `DeploymentTarget` resource lives in the landscape namespace.
+A deployment target configures a destination for one artifact type in a landscape. Its `spec.artifactType` identifies the type and its `spec.parameters` provides deployer-specific connection details. A landscape has at most one target per artifact type. The `DeploymentTarget` resource lives in the landscape namespace, and its responsible deployer reports whether it accepts the target through the `Ready` condition.
 
 ::: details Pages that use this term
 
@@ -172,7 +172,7 @@ A feature flag is a named value in the [vector configuration](#vector-configurat
 
 A landscape is an operational boundary within a project. It groups stages, deployment targets, credentials, and deployment resources that share ownership, security, compliance, or reliability requirements.
 
-Konfidence creates a dedicated Kubernetes namespace for each landscape, `kden-l-<landscape-name>-<hash>` by default. Deployment targets connect the landscape to the infrastructure where deployments run.
+Konfidence creates or adopts a dedicated Kubernetes namespace for each landscape, `kden-l-<landscape-name>-<hash>` by default. Deployment targets connect the landscape to the infrastructure where deployments run.
 
 ::: details Pages that use this term
 
@@ -192,6 +192,8 @@ Konfidence creates a dedicated Kubernetes namespace for each landscape, `kden-l-
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
 - [Prepare your application](../develop-integrate/prepare-your-application.md)
 - [Read feature flags in your application](../develop-integrate/advanced-features/feature-flags.md)
+- [Gateway routing](../deploy-operate/plan/gateway-routing.md)
+- [Set up Envoy Gateway](../deploy-operate/install/deployer/kubernetes/envoy-gateway.md)
 - [System architecture](../deploy-operate/plan/system-architecture.md)
 - [Types of artifacts](../develop-integrate/artifact-types/index.md)
 - [Use deployment results](../develop-integrate/vector-data/deployment-results.md)
@@ -216,7 +218,7 @@ The landscape orchestrator executes deployments in a landscape. It runs in the s
 
 ### Project
 
-A project provides the organizational boundary for Konfidence resources. The API server grants the subjects in its role bindings access to the project. Each project owns a dedicated namespace, `kden-p-<project-name>` by default. That namespace holds the project's landscapes, vector templates, and promotion configurations.
+A project provides the organizational boundary for Konfidence resources. The API server grants the subjects in its role bindings access to the project. Each project manages a dedicated namespace, `kden-p-<project-name>` by default. That namespace holds the project's landscapes, vector templates, and promotion configurations.
 
 ::: details Pages that use this term
 
@@ -264,6 +266,8 @@ Each stage belongs to a landscape and uses the deployment targets configured the
 - [Grant teams access to a project](../deploy-operate/control-access/access-control.md)
 - [Landscapes and stages](../core-concepts/landscapes-and-stages.md)
 - [Observe & Deliver](../develop-integrate/observe-improve/index.md)
+- [Gateway routing](../deploy-operate/plan/gateway-routing.md)
+- [Set up Envoy Gateway](../deploy-operate/install/deployer/kubernetes/envoy-gateway.md)
 - [Set up and run promotion flows](../deploy-operate/manage-delivery/promote-vectors.md)
 - [System architecture](../deploy-operate/plan/system-architecture.md)
 - [Vectors and Artifacts](../core-concepts/vectors-and-artifacts.md)
@@ -362,7 +366,7 @@ Konfidence represents its concepts as Kubernetes custom resources in the API gro
 
 ### ArtifactDeployment
 
-An `ArtifactDeployment` is a custom resource that describes the deployment of one artifact in a landscape. A deployer reconciles it according to the deployment class in the artifact manifest. Vector deployments in one landscape share an `ArtifactDeployment` if the artifact sets `allowReuse` and their artifact versions match.
+An `ArtifactDeployment` is a custom resource that describes the deployment of one artifact in a landscape. Its `spec.artifactType` selects the responsible deployer. Vector deployments in one landscape share an `ArtifactDeployment` if the artifact sets `allowReuse` and their artifact versions match.
 
 ::: details Pages that use this term
 
@@ -405,18 +409,6 @@ A `VectorActivation` is a custom resource that starts the activation of a vector
 
 :::
 
-### VectorAssignment
-
-A `VectorAssignment` is a custom resource that binds one `ArtifactDeployment` to one `VectorDeployment`. One artifact deployment can serve several vectors, so vectors and artifact deployments form a many-to-many relationship. Each `VectorAssignment` represents one binding in that relationship.
-
-The vector deployment controller manages `VectorAssignment` resources. Deployers reconcile them and report readiness.
-
-::: details Pages that use this term
-
-- [Delivery Flow](../core-concepts/delivery-flow.md)
-
-:::
-
 ### VectorDeployment
 
 A `VectorDeployment` is a custom resource that deploys all artifacts of one vector in a landscape. It references the vector as an OCM component version in an OCI registry. A change to the vector creates a new `VectorDeployment` instead of updating the existing one.
@@ -435,7 +427,7 @@ A `VectorDeployment` is a custom resource that deploys all artifacts of one vect
 
 ### VectorPromotion
 
-A `VectorPromotion` is a custom resource that runs a promotion flow once. It pins the concrete vector when it is created and records the status of the promotion. By default, Konfidence keeps the last 10 completed promotions for each `VectorPromotionConfig`.
+A `VectorPromotion` is a custom resource that runs a promotion flow once. It pins the concrete vector when it is created and records the status of the promotion. By default, Konfidence keeps the last 10 completed promotions and allows up to `10` `waiting` promotions to wait for each `VectorPromotionConfig`.
 
 ::: details Pages that use this term
 

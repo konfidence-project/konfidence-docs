@@ -135,7 +135,7 @@ The bundle is available as `registry.example.com/my-org/my-service-manifests:1.0
        provider:
          name: my-org
        resources:
-         - name: my-service-manifest
+         - name: konfidence-manifest
            type: cloud.konfidence.artifact.manifest
            version: 1.0.0
            relation: local
@@ -202,5 +202,5 @@ Use the following guides to publish your artifact and expose its service endpoin
 - [Add deployment results to an artifact](../vector-data/deployment-results.md) to expose the Service to other services in the vector.
 - [Install the Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) for supported manifest types and deployment-result behavior.
 
-Before deploying the artifact, confirm that the landscape has a ready `kustomize.konfidence.cloud` target.
+Before deploying the artifact, confirm that the landscape has a ready `DeploymentTarget` with `spec.artifactType` set to `kustomize.konfidence.cloud`.
 See [Configure deployment targets for a landscape](../../deploy-operate/manage-delivery/deployment-targets.md).

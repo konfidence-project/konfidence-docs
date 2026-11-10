@@ -18,9 +18,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^26.6.4",
-    "vitepress": "2.0.0-alpha.20",
-    "vitepress-openapi": "^0.2.5"
+    "@types/node": "^26.6.6",
+    "vitepress": "2.0.0-alpha.21",
+    "vitepress-openapi": "^0.2.8"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0"

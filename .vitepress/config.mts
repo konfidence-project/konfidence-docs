@@ -102,7 +102,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "Vectors and Artifacts",
+              text: "Artifacts and vectors",
               link: "/docs/core-concepts/vectors-and-artifacts",
             },
             {
@@ -114,7 +114,7 @@ export default defineConfig({
               link: "/docs/core-concepts/deployment-model",
             },
             {
-              text: "Promotions and Delivery Flow",
+              text: "Promotions and delivery flow",
               link: "/docs/core-concepts/delivery-flow",
             },
           ],
@@ -206,6 +206,10 @@ export default defineConfig({
                   text: "Plan for high availability",
                   link: "/docs/deploy-operate/plan/high-availability",
                 },
+                {
+                  text: "Gateway routing",
+                  link: "/docs/deploy-operate/plan/gateway-routing",
+                },
               ],
             },
             {
@@ -230,6 +234,16 @@ export default defineConfig({
                     {
                       text: "Install the Kubernetes deployer",
                       link: "/docs/deploy-operate/install/deployer/kubernetes",
+                    },
+                    {
+                      text: "Supported Gateways",
+                      collapsed: true,
+                      items: [
+                        {
+                          text: "Envoy Gateway",
+                          link: "/docs/deploy-operate/install/deployer/kubernetes/envoy-gateway",
+                        },
+                      ],
                     },
                   ],
                 },
@@ -331,6 +345,10 @@ export default defineConfig({
             { text: "CRDs", link: "/docs/reference/crd" },
             { text: "CLI", link: "/docs/reference/cli" },
             { text: "API", link: "/docs/reference/api" },
+            {
+              text: "Deployer specification",
+              link: "https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md",
+            },
             { text: "Helm values: konfidence", link: "/docs/reference/helm-values-konfidence" },
             { text: "Helm values: orchestrator", link: "/docs/reference/helm-values-orchestrator" },
           ],

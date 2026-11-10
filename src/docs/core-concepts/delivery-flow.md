@@ -88,7 +88,7 @@ From there, the runtime lifecycle turns the stage into running workloads:
 1. Konfidence tracks the `Stage` and pulls the vector it selects.
 2. It creates a [StageVersion](../reference/glossary.md#stageversion) that records this rollout. Stage versions capture stage changes over time and let a new version start while the active version keeps running.
 3. [Deployers](../reference/glossary.md#deployer) translate the artifacts in the vector into workloads in the landscape. The Kubernetes deployer, provided by the [kubernetes-landscape-orchestrator](https://github.com/konfidence-project/kubernetes-landscape-orchestrator), is the deployer available in the current release.
-4. [VectorAssignments](../reference/glossary.md#vectorassignment) link the deployed artifacts to the vector. An artifact shared by two vectors is deployed once.
+4. Konfidence aggregates deployment results into `VectorData`, and the landscape orchestrator materializes that data for the vector.
 5. Tasks prepare data for the new version.
 6. Activation switches traffic to the new version once every step has completed.
 

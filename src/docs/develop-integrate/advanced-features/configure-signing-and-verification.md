@@ -28,11 +28,11 @@ Before you begin, make sure you have:
 - Published application artifacts in an Open Container Initiative (OCI) registry. Follow [Publish artifacts](../artifact-types/publish-artifacts.md) to create and publish their Open Component Model (OCM) component versions.
 - The registry address and credentials for accessing your artifacts and uploading the vector.
 - An RSA key pair for artifact signing and a separate RSA key pair for vector signing.
-- An existing Konfidence [project](../../reference/glossary.md#project) and its namespace for the credential Secrets and `VectorTemplate`. See [Create a project](../../deploy-operate/control-access/projects.md).
+- An existing Konfidence [project](../../reference/glossary.md#project) and its namespace for the credential secrets and `VectorTemplate`. See [Create a project](../../deploy-operate/control-access/projects.md).
 
 Coordinate credential setup with your administrator before you begin.
-Reuse existing CLI credentials and assembly Secrets when available, and skip their setup instructions below.
-Use the corresponding signature names and Secret references throughout the examples.
+Reuse existing CLI credentials and assembly secrets when available, and skip their setup instructions below.
+Use the corresponding signature names and secret references throughout the examples.
 
 The examples sign `payment-hub:1.0.0`, point the `edge` alias to that version, and reference `payment-hub:edge` during assembly.
 Adapt the examples to your own artifacts and replace the registry addresses, key paths, key material, and namespace placeholders before using them.
@@ -69,7 +69,7 @@ configurations:
 ```
 
 The CLI uses `Credentials/v1` with `properties` for RSA key material.
-The Kubernetes Secrets used later in this guide use `RSACredentials/v1` directly.
+The Kubernetes secrets used later in this guide use `RSACredentials/v1` directly.
 For background, see [OCM credential resolution](https://ocm.software/docs/tutorials/understand-credential-resolution/).
 
 ## Sign the published artifact
@@ -112,16 +112,16 @@ kden artifact alias registry.example.com//konfidence.io/payment-hub:1.0.0 edge
 The assembly example below uses this alias.
 If you skip this step, use the signed component version `registry.example.com//konfidence.io/payment-hub:1.0.0` in the `VectorTemplate` instead.
 
-## Create credential Secrets for assembly
+## Create credential secrets for assembly
 
-If the required Secrets already exist, skip the creation commands and reference those Secrets in your `VectorTemplate`.
+If the required secrets already exist, skip the creation commands and reference those secrets in your `VectorTemplate`.
 Otherwise, coordinate their creation with your administrator using one of the following examples.
-The Secrets store key material and registry credentials.
-Choose either one combined Secret or separate Secrets, then reference them through `spec.credentials.ocm.refs` in your `VectorTemplate`.
-Konfidence merges the listed Secrets into a single credential graph.
+The secrets store key material and registry credentials.
+Choose either one combined secret or separate secrets, then reference them through `spec.credentials.ocm.refs` in your `VectorTemplate`.
+Konfidence merges the listed secrets into a single credential graph.
 
-Secrets must be in the same namespace as the custom resource that references them.
-Use your project namespace for both the Secrets and the `VectorTemplate`.
+secrets must be in the same namespace as the custom resource that references them.
+Use your project namespace for both the secrets and the `VectorTemplate`.
 To identify your project, list the available projects:
 
 ```bash
@@ -140,9 +140,9 @@ For details about project namespaces, see [Create a project](../../deploy-operat
 Signing requires a private key and fails immediately if it is missing.
 If verification credentials contain no RSA key material, verification falls back to the system root trust store: CA-issued signatures pass, while self-signed or internal keys fail.
 
-### Option A: Use one Secret
+### Option A: Use one secret
 
-1. Create a Secret containing both signing key pairs and the registry credentials:
+1. Create a secret containing both signing key pairs and the registry credentials:
 
    ```bash
    kubectl apply -n <project-namespace> -f - <<'EOF'
@@ -196,7 +196,7 @@ If verification credentials contain no RSA key material, verification falls back
    EOF
    ```
 
-2. Reference the Secret under `spec` in your `VectorTemplate`. This snippet shows only the credential configuration:
+2. Reference the secret under `spec` in your `VectorTemplate`. This snippet shows only the credential configuration:
 
    ```yaml
    credentials:
@@ -205,9 +205,9 @@ If verification credentials contain no RSA key material, verification falls back
          - name: my-creds
    ```
 
-### Option B: Use separate Secrets
+### Option B: Use separate secrets
 
-1. Create one Secret for signing keys and another for registry credentials:
+1. Create one secret for signing keys and another for registry credentials:
 
    ```bash
    # Signing keys
@@ -274,7 +274,7 @@ If verification credentials contain no RSA key material, verification falls back
    EOF
    ```
 
-2. Reference both Secrets under `spec` in your `VectorTemplate`. This snippet shows only the credential configuration:
+2. Reference both secrets under `spec` in your `VectorTemplate`. This snippet shows only the credential configuration:
 
    ```yaml
    credentials:
@@ -294,9 +294,9 @@ If you omit `verifyArtifacts`, `verifyVector`, or `signVector`, the correspondin
 
 1. Set `verifyArtifacts.signatures` to the artifact signature name to check during assembly.
 2. Set `signVector.signatures` to the signature name to use for the assembled vector.
-3. Reference the Secrets from the previous section and apply the `VectorTemplate`.
+3. Reference the secrets from the previous section and apply the `VectorTemplate`.
 
-The following assembly example uses the separate Secrets from Option B.
+The following assembly example uses the separate secrets from Option B.
 If you chose Option A, use its credential reference instead.
 The example references the `edge` alias of the `payment-hub` artifact signed earlier.
 
@@ -380,8 +380,8 @@ Use the following checks for known assembly and signature-configuration problems
 
 | Symptom | Likely cause | Resolution or diagnostic check |
 | --- | --- | --- |
-| `VectorTemplate` `Ready=Unknown`, reason `DriftDetectionFailed` | Credential Secret missing, wrong key name, or not in the same namespace | Check Events with `kubectl describe vectortemplate my-vector -n <project-namespace>`, then correct the Secret configuration with your administrator. |
-| `algorithm` pin rejection | Signed with `RSASSA-PKCS1-V1_5` but the CRD pins `RSASSA-PSS` | Align `algorithm` in the Secret consumer identity and CRD `Signature` entry. |
+| `VectorTemplate` `Ready=Unknown`, reason `DriftDetectionFailed` | Credential secret missing, wrong key name, or not in the same namespace | Check Events with `kubectl describe vectortemplate my-vector -n <project-namespace>`, then correct the secret configuration with your administrator. |
+| `algorithm` pin rejection | Signed with `RSASSA-PKCS1-V1_5` but the CRD pins `RSASSA-PSS` | Align `algorithm` in the secret consumer identity and CRD `Signature` entry. |
 
 After you correct the credential configuration, Konfidence retries assembly automatically on the next reconciliation.
 You do not need to trigger a retry manually.
@@ -488,7 +488,7 @@ kubectl set env deployment/<operator-deployment> --list -n <operator-namespace> 
 
 | Symptom | Likely cause | Where to look |
 |---|---|---|
-| VectorDeployment `VectorDownloaded` never `True` | Env vars not set or credential Secret not found | `kubectl logs deployment/<operator-deployment> -n <operator-namespace>` |
+| VectorDeployment `VectorDownloaded` never `True` | Env vars not set or credential secret not found | `kubectl logs deployment/<operator-deployment> -n <operator-namespace>` |
 -->
 
 <!--
@@ -499,8 +499,8 @@ Retained for reuse: the default-behavior table is reference material; its task-r
 | Omitted field | Effect |
 |---|---|
 | `verifyArtifacts`, `verifyVector`, or `signVector` block | That check is skipped entirely; the pipeline proceeds without it |
-| RSA key material missing from credential Secret — verify | Falls back to system root trust store; CA-issued signatures pass, self-signed or internal keys fail |
-| RSA key material missing from credential Secret — sign | Fails immediately; a private key is always required |
+| RSA key material missing from credential secret — verify | Falls back to system root trust store; CA-issued signatures pass, self-signed or internal keys fail |
+| RSA key material missing from credential secret — sign | Fails immediately; a private key is always required |
 -->
 
 <!--

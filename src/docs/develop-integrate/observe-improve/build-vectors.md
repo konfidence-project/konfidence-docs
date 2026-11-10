@@ -30,7 +30,7 @@ This guide covers the automated path. You define a [`VectorTemplate`](../../refe
 tell Konfidence how to assemble and store that vector.
 
 For background on artifacts, aliases, and vectors, see
-[Vectors and artifacts](../../core-concepts/vectors-and-artifacts.md).
+[Artifacts and vectors](../../core-concepts/vectors-and-artifacts.md).
 
 ## Prerequisites
 
@@ -40,7 +40,7 @@ Before you begin, make sure you meet these requirements:
   [Publish artifacts](../artifact-types/publish-artifacts.md).
 - You have `kubectl` configured with access to a
   [Konfidence project namespace](../../deploy-operate/control-access/projects.md).
-- If your registry is private, its credentials are stored in Kubernetes Secrets
+- If your registry is private, its credentials are stored in Kubernetes secrets
   in the same namespace.
 
 ## How assembly works
@@ -52,7 +52,7 @@ updated.
 
 During each reconciliation, the controller:
 
-1. Resolves credentials from the referenced Secrets.
+1. Resolves credentials from the referenced secrets.
 2. Fetches the current artifact version for each entry in `components`.
 3. Merges the base vector artifacts (if `base` is set) with the component
    artifacts.
@@ -90,7 +90,7 @@ spec:
 ```
 
 Replace the resource names, namespace, component references, upload target, and
-Secret name with values for your environment.
+secret name with values for your environment.
 
 Apply the resource:
 
@@ -137,11 +137,11 @@ components:
   - name: registry.example.com/my-project//example.com/product-service:stable
 ```
 
-**`credentials`**: Optional. References Secrets in the same namespace that
+**`credentials`**: Optional. References secrets in the same namespace that
 contain OCM configuration or Docker credentials (`.ocmconfig` or
 `.dockerconfigjson`). Registry credentials are required for private registries.
 If all registries are public and you do not configure signing or verification,
-omit this field. The same Secret references are used for artifact access,
+omit this field. The same secret references are used for artifact access,
 signing, and verification.
 
 ```yaml
@@ -258,7 +258,7 @@ kubectl describe vectortemplate shopping-app -n my-project
 The following illustrative manifest combines all fields described on this page.
 Use it only when you need the optional settings. Before you apply it, replace
 the sample values and make sure that the referenced `platform-base`
-`VectorTemplate`, registry credential Secret, and signing key Secret exist in
+`VectorTemplate`, registry credential secret, and signing key secret exist in
 the same namespace.
 
 ```yaml

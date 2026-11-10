@@ -26,7 +26,7 @@ The platform consists of Konfidence and the deployers you install to provide dep
 | Konfidence API server | Provides the API, dashboard, login, and project authorization | The same `konfidence` Helm chart |
 | Kubernetes deployer | Deploys Helm and Kustomize artifacts through Flux | The separate `kubernetes-landscape-orchestrator` Helm chart |
 
-[Choose a deployer](../install/deployer/overview.md) explains how deployment classes connect artifact types to a target platform. Installing a deployer provides its classes centrally. A [deployment target](../manage-delivery/deployment-targets.md) makes one class available in a particular landscape.
+[Choose a deployer](../install/deployer/overview.md) explains how deployers support artifact types for a target platform. A [deployment target](../manage-delivery/deployment-targets.md) configures a destination for one artifact type in a particular landscape.
 
 ## Delivery management
 
@@ -58,7 +58,9 @@ Konfidence and the Kubernetes landscape orchestrator run in one Kubernetes clust
 - The `kubernetes-landscape-orchestrator` Helm chart installs the deployer for the Kubernetes target runtime.
 - Each project and each landscape owns a namespace in that cluster.
 
-Use the Kubernetes deployer's `local` connection for workloads in this cluster. Its remote `kubeconfig` connection is work in progress and does not yet create every resource on the remote cluster. See [Connection types](../install/deployer/kubernetes.md#connection-types) for the current limitations. Running Konfidence itself across several clusters is not available in the current release.
+It is planned for the Kubernetes deployer to be able to deploy to remote Kubernetes clusters via [Target parameters](../install/deployer/kubernetes.md#target-parameters). 
+This feature is work in progress and does not yet create every resource on the remote cluster.
+Omit the `spec.parameters` so that the deployer applies the resources to the control plane cluster directly. 
 
 ## Next steps
 

@@ -1,8 +1,9 @@
 ---
 id: ADR-0023
 title: "Monorepo with separate binaries"
-status: proposed
+status: accepted
 date_proposed: 2026-04-29
+category: Architecture Pattern
 dependencies: []
 pageClass: adr
 outline: deep

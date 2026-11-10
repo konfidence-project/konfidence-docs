@@ -1,6 +1,6 @@
 # Contributing to an SAP Open Source Project
 
-## General Remarks
+## General remarks
 
 You are welcome to contribute content (code, documentation etc.) to this open source project.
 
@@ -82,9 +82,50 @@ docs: explain vector configuration
 docs(getting-started): add first deployment tutorial
 ```
 
-## How to Contribute
+### Architecture decision records
 
-1. Make sure the change is welcome (see [General Remarks](#general-remarks)).
+Write an architecture decision record (ADR) when a change spans several components or is expensive to reverse. Write one too when it sets a pattern other contributors must follow. ADRs live in the [`konfidence-docs`](https://github.com/konfidence-project/konfidence-docs/tree/main/src/docs/extend-customize/decisions) repository. The workflow is the same as for any documentation contribution, with the additions below.
+
+1. Take the next free number after the highest ADR in the
+   [decision log](/docs/extend-customize/decisions/).
+2. Create `adr-<NNNN>-<slug>.md` in `src/docs/extend-customize/decisions/`.
+3. Start the file with this frontmatter, the heading, and the
+   `<AdrHeader />` component:
+
+   ```markdown
+   ---
+   id: ADR-<NNNN>
+   title: "<Short title>"
+   description: "<One sentence: what the record decides>"
+   status: proposed
+   date_proposed: <YYYY-MM-DD>
+   authors: [<github-handle>]
+   category: <Architecture Pattern | Technology Stack | Security | Deployment>
+   impact: <High | Medium | Low>
+   dependencies: [<ADR-NNNN>]
+   pageClass: adr
+   outline: deep
+   ---
+
+   # ADR-<NNNN>: <Short title>
+
+   <AdrHeader />
+   ```
+
+   List authors by GitHub handle only. Records never name people, internal systems, or private repositories.
+
+4. Write the sections **Context**, **Considered options**, **Decision**,
+   and **Consequences**.
+5. Put diagrams into `assets/` and reference them as `./assets/<file>`.
+6. Open the pull request with `status: proposed`.
+
+The maintainers review the record in the pull request. They set `status: accepted` and `date_approved` on merge, or set `status: rejected` and close the pull request with a comment explaining the reasoning. 
+
+The sidebar and the decision log pick up the new file automatically.
+
+## How to contribute
+
+1. Make sure the change is welcome (see [General remarks](#general-remarks)).
 2. Create a branch by forking the repository and apply your change.
 3. Commit and push your change on that branch.
 4. Create a pull request in the repository using this branch.

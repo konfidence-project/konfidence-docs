@@ -1,6 +1,6 @@
 ---
 title: Configure deployment targets for a landscape
-description: Create one deployment target per deployment class in a landscape and verify that its deployer accepts it.
+description: Configure one deployment target per artifact type in a landscape and verify that its deployer accepts it.
 outline: [2, 3]
 editLink: true
 lastUpdated: true
@@ -8,18 +8,20 @@ lastUpdated: true
 
 # Configure deployment targets for a landscape {#manage-deployment-targets}
 
-Create a [deployment target](../../reference/glossary.md#deployment-target) to make a [deployment class](../../reference/glossary.md#deployment-class) available in a [landscape](../../reference/glossary.md#landscape). A target names the class and carries a `connection` block that tells the class's [deployer](../../reference/glossary.md#deployer) where to deploy. The deployer defines what the block contains and reports whether it accepts the target.
+Create a [deployment target](../../reference/glossary.md#deployment-target) to configure a destination for an artifact type in a [landscape](../../reference/glossary.md#landscape). 
+The target's `spec.artifactType` selects its [deployer](../../reference/glossary.md#deployer).
+`spec.parameters` contains the connection information defined by that deployer. 
+The deployer validates the parameters and reports whether it accepts the target.
 
-The deployer is installed centrally. This task configures a landscape to use one of its classes; repeat it for each class the landscape's applications need.
-
-For the relationship between artifacts, deployment classes, deployers, targets, and landscapes, see the [Deployment model](../../core-concepts/deployment-model.md).
+The deployer is installed once per Konfidence installation and is shared across all projects and landscapes. 
+For the relationship between artifacts, artifact types, deployers, targets, and landscapes, see the [Deployment model](../../core-concepts/deployment-model.md).
 
 ## Prerequisites
 
 - A [ready landscape](./landscapes.md).
-- A deployer that provides the class you need. Check: `kubectl get deploymentclasses` lists it. See [Choose a deployer](../install/deployer/overview.md).
-- The connection block for that deployer, from its page. For the Kubernetes deployer, see [Connection types](../install/deployer/kubernetes.md#connection-types).
-- `kubectl` access with permission to read `DeploymentClass` and `Landscape` resources, and to create and read `DeploymentTarget` resources in the landscape namespace.
+- A deployer that supports the artifact type you need. See [Choose a deployer](../install/deployer/overview.md).
+- The parameter format for that deployer. For the Kubernetes deployer, see [Target parameters](../install/deployer/kubernetes.md#target-parameters).
+- `kubectl` access to read the Landscape and create and read `DeploymentTarget` resources in the landscape namespace.
 
 Set the names used below:
 
@@ -30,19 +32,17 @@ export LANDSCAPE_NAMESPACE=$(kubectl get landscape dev \
   --output=jsonpath='{.status.namespace}')
 ```
 
-## Choose the deployment class
+## Choose the artifact type
 
-Each [artifact](../../reference/glossary.md#artifact) names the deployment class it requires. A landscape needs one ready target for every class its [stages](../../reference/glossary.md#stage) deploy. List the classes installed deployers advertise:
-
-```bash
-kubectl get deploymentclasses
-```
-
-Use the exact value from the `NAME` column as `spec.deploymentClassName`. A landscape can hold only one target per class. The class name is immutable after creation, because changing it would hand the target to another deployer.
+Each [artifact](../../reference/glossary.md#artifact) declares its artifact type. 
+A landscape needs one ready target for every type its [stages](../../reference/glossary.md#stage) deploy. 
+Use the exact type supported by the artifact's deployer.
+For example, the Kubernetes deployer supports `helm.konfidence.cloud` and `kustomize.konfidence.cloud`.
 
 ## Create the target
 
-Save the following manifest as `deployment-target.yaml`. The `connection` block is the Kubernetes deployer's `local` connection, which deploys into the cluster the deployer runs in:
+Save the following manifest as `deployment-target.yaml`. 
+Empty parameters select the Kubernetes deployer's local cluster:
 
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
@@ -51,9 +51,7 @@ metadata:
   name: helm-local
   namespace: kden-l-dev
 spec:
-  deploymentClassName: helm.konfidence.cloud
-  connection:
-    type: local
+  artifactType: helm.konfidence.cloud
 ```
 
 Replace `kden-l-dev` with the value of `LANDSCAPE_NAMESPACE`, then apply the manifest:
@@ -64,7 +62,7 @@ kubectl apply -f deployment-target.yaml
 
 ## Verify the target
 
-The deployer that owns the class validates the target and sets its `Ready` condition:
+The deployer that supports the artifact type validates the target and sets its `Ready` condition:
 
 ```bash
 kubectl wait deploymenttarget/helm-local \
@@ -73,7 +71,11 @@ kubectl wait deploymenttarget/helm-local \
   --timeout=60s
 ```
 
-The command returns `condition met`. What `Ready` checks is up to the deployer. It can include configuration validation, credential checks, or a connectivity check. List all targets of the landscape:
+The command returns `condition met` when the deployer accepts the target parameters. 
+`Ready=True` indicates acceptance of the parameters by the deployer. 
+It does not guarantee that a future artifact deployment will succeed. 
+
+List all targets of the landscape:
 
 ```bash
 kubectl get deploymenttargets --namespace="$LANDSCAPE_NAMESPACE"
@@ -81,14 +83,13 @@ kubectl get deploymenttargets --namespace="$LANDSCAPE_NAMESPACE"
 
 ## Troubleshooting
 
-- `Ready` stays `False` with reason `UnsupportedType`: no deployer owns the class. Check the class name against `kubectl get deploymentclasses`.
-- `Ready` stays `False` with another reason: the connection block is wrong for the deployer. The reason and message come from the deployer. For the Kubernetes deployer, see [Connection types](../install/deployer/kubernetes.md#connection-types).
-- The target never gets a condition: the deployer that owns the class is not running. See [Install the Kubernetes deployer](../install/deployer/kubernetes.md#install-the-deployer).
+- `Ready` stays `False`: inspect the condition reason and message for invalid parameters. For the Kubernetes deployer, see [Target parameters](../install/deployer/kubernetes.md#target-parameters).
+- The target has no condition: confirm that a running deployer supports the exact `spec.artifactType` value.
 
 ## Next steps
 
 - [Connect artifact registries](../install/connect-registries.md#give-the-deployer-credentials) supplies credentials for private artifacts in this landscape.
 - [Choose landscape services](../install/runtime-components/overview.md) identifies the runtime services your applications need.
 - [Create a stage](./stages.md) selects a vector to deploy through the prepared landscape's targets.
-- [Types of artifacts](../../develop-integrate/artifact-types/index.md) explains how developers select a class for an artifact.
+- [Types of artifacts](../../develop-integrate/artifact-types/index.md) explains artifact types and supported formats.
 - [DeploymentTarget CRD reference](../../reference/crd.md#deploymenttarget) lists all fields.

@@ -2,7 +2,7 @@
 id: ADR-0012
 title: "Activation controller"
 description: "Activation Controller"
-status: proposed
+status: accepted
 authors: [niklasschoenberger, AnsgarH1, BernardEpp]
 category: Deployment
 impact: High

@@ -2,7 +2,7 @@
 id: ADR-0006
 title: "OCM integration"
 description: "Integration of Open Component Model (OCM) for artifact and component management"
-status: draft
+status: accepted
 authors: [dtomasi, clang-sap]
 category: Technology Stack
 impact: High

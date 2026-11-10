@@ -2,7 +2,7 @@
 id: ADR-0038
 title: "Select deployers by artifact type instead of DeploymentClass"
 description: "Remove DeploymentClass registration and select platform-wide deployers directly by vendor-owned artifact types."
-status: approved
+status: accepted
 date_proposed: 2026-10-07
 date_approved: 2026-10-08
 authors: [karstenkoehler]
@@ -40,12 +40,11 @@ This ADR supersedes ADR-0027's `DeploymentClass` registration and controller sel
 It does not supersede ADR-0027's landscape and project model.
 
 Use a stable, vendor-owned artifact type such as `helm.konfidence.cloud`.
-Artifacts declare that type in their manifest (currently `ArtifactDeployment.spec.manifest.type`), while targets configure a destination for the same type.
-Deployers select resources by their configured type identifiers.
-The exact syntax and behavior will be defined by the separate deployer specification.
+Artifacts declare that type in their manifest and `ArtifactDeployment.spec.artifactType`; targets configure a destination for the same type in `DeploymentTarget.spec.artifactType`.
+Deployers declare and reconcile their supported types according to the deployer specification.
 
-A `DeploymentTarget` selects the same type through a proposed `spec.artifactType` field.
-At most one target for a given artifact type is expected in a landscape namespace.
+A `DeploymentTarget` selects the same type through `spec.artifactType`.
+At most one target for a given artifact type is allowed in a landscape namespace.
 Two types may still use the same underlying destination or credential reference, as Helm and Kustomize do today.
 
 ## Consequences
@@ -54,5 +53,4 @@ Two types may still use the same underlying destination or credential reference,
 - **Weaker discovery and enforcement:** The API no longer enumerates installed deployer classes. Misconfigured controllers could race on status and runtime objects. This is mitigated by including the vendor domain into the artifact type. Cluster administrators are responsible to ensure compatibility when using multiple deployers. 
 - **Deployer Health/Availability still open:** A deployer that crashes after writing `Ready=True` can leave status stale. This is true for all kubernetes controllers. 
 
-The [deployer specification](https://github.com/konfidence-project/konfidence/blob/main/deployer-specification/index.md) will define field validation, status ownership, and deletion behavior in detail.
-This ADR records the architectural choice; its proposed fields and conditions do not describe the current CRDs.
+The [deployer specification](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md) defines artifact packaging, target ownership and validation, and artifact reconciliation behavior.
