@@ -10,11 +10,11 @@ lastUpdated: true
 
 Konfidence is a software delivery framework for microservice-based software-as-a-service applications. It helps teams deliver complex applications consistently across multiple environments by using immutable, versioned application [vectors](../reference/glossary.md#vector) and a structured release model.
 
-Before you install Konfidence, it helps to know what this setup is for: teams promote the same verified application version across environments instead of rebuilding or reconfiguring it for each deployment.
+With Konfidence, you promote the same verified application version across environments without rebuilding it for each deployment.
 
 ## Cluster setup
 
-Use the Quickstart script to create a local Kubernetes cluster with Konfidence installed. By the end of this setup, you’ll have a running instance and access to its dashboard.
+Create a local Kubernetes cluster with Konfidence installed. By the end of this guide, you’ll have a running instance and access to its dashboard.
 
 Before you begin, install the following tools:
 
@@ -23,7 +23,7 @@ Before you begin, install the following tools:
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) — lets you interact with the cluster.
 - [Helm](https://helm.sh/docs/intro/install/) — installs the Konfidence components.
 
-Run the installation:
+Run the [Quickstart script](https://github.com/konfidence-project/konfidence/blob/main/hack/quickstart/quickstart.sh) to create the cluster and install Konfidence and its dependencies:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/konfidence-project/konfidence/main/hack/quickstart/quickstart.sh | sh
@@ -39,7 +39,7 @@ The [Vector Data Service](../reference/glossary.md#vector-data-service) runs in 
 
 The script waits for the Flux deployments and Helm releases to become ready. Running it again reuses the cluster and updates the existing installation.
 
-If you’d like to explore how the installation works or try the steps manually, take a look at the [Quickstart script](https://github.com/konfidence-project/konfidence/blob/main/hack/quickstart/quickstart.sh). Its comments explain each step and the components being installed.
+To understand how the installation works or run the steps manually, read the script’s comments. They explain each step and the components being installed.
 
 Once the installation completes, check the Konfidence deployments:
 

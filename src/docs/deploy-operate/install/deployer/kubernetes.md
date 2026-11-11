@@ -14,7 +14,7 @@ See the [deployer specification](https://github.com/konfidence-project/konfidenc
 
 After installation, use the target parameters on this page to configure targets in your landscapes. 
 The later sections describe supported artifact types and Service [deployment results](../../../reference/glossary.md#deployment-result). 
-For packaging and naming requirements, see [Author a Helm artifact](../../../develop-integrate/artifact-types/helm.md) or [Author a Kustomize artifact](../../../develop-integrate/artifact-types/kustomize.md).
+The artifact guides list the packaging and naming requirements. See [Author a Helm artifact](../../../develop-integrate/artifact-types/helm.md) and [Author a Kustomize artifact](../../../develop-integrate/artifact-types/kustomize.md).
 
 ## Prerequisites
 
@@ -59,7 +59,7 @@ For a remote cluster, `spec.parameters` references a secret in the landscape nam
 
 ::: warning Remote targets are work in progress
 Use targets with empty parameters to deploy into the local cluster. 
-Remote targets can validate a kubeconfig and become `Ready`, but deployment of all resources to the remote cluster is not yet complete.
+Remote targets can validate a kubeconfig and become `Ready`. Deployment of all resources to the remote cluster is not yet complete.
 :::
 
 An in-cluster target needs no parameters:
@@ -132,7 +132,7 @@ spec:
 
 ### Why the annotation is required
 
-The deployer applies a per-vector `nameSuffix` (Kustomize) or `releaseName` (Helm), so the Service's deployed name is not known ahead of time and a caller cannot hard-code it. The annotation makes the Service discoverable and supplies the **stable name** (its value) that consumers look up. Services without the annotation do not produce deployment results.
+The deployer applies a per-vector `nameSuffix` (Kustomize) or `releaseName` (Helm). The Service's deployed name is therefore unknown ahead of time, and a caller cannot hard-code it. The annotation makes the Service discoverable and supplies the **stable name** (its value) that consumers look up. Services without the annotation do not produce deployment results.
 
 ### How the deployer processes the annotation
 
@@ -177,7 +177,8 @@ Configure destinations for the supported types:
 - [Create a landscape](../../manage-delivery/landscapes.md) if you do not have one yet.
 - [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) using the parameters on this page.
 - [Connect artifact registries](../connect-registries.md#give-the-deployer-credentials) supplies deployer credentials in each landscape that needs them.
-- Read [Gateway routing](../../plan/gateway-routing.md), then [set up Envoy Gateway](./kubernetes/envoy-gateway.md) to route external traffic to stages.
+- Read [Gateway routing](../../plan/gateway-routing.md) for the routing contract.
+- Route external traffic to stages with [Envoy Gateway](./kubernetes/envoy-gateway.md), [Istio](./kubernetes/istio.md), or [Traefik](./kubernetes/traefik.md).
 
 For artifact authoring and the deployment model, see:
 

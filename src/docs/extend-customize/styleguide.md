@@ -34,10 +34,15 @@ Use this page as a reference while writing and reviewing documentation. You do n
 
 Use short sentences, common words, and concrete verbs. Avoid idioms, cultural references, and unnecessary words that can make the text difficult for non-native English speakers or translation tools.
 
+<!-- The Avoid column intentionally demonstrates wording that Vale flags. -->
+<!-- vale Konfidence.PlainLanguage = NO -->
+
 | Use | Avoid |
 | --- | --- |
 | use, delete, get | utilize, dispose of, obtain |
 | to, because, except | in order to, due to the fact, with the exception of |
+
+<!-- vale Konfidence.PlainLanguage = YES -->
 
 ### Address the user directly
 
@@ -55,7 +60,10 @@ Use active voice and address the reader as *you*. Start instructions with an imp
 - Describe what an action accomplishes before explaining how to perform it.
 - State limitations, risks, and destructive effects before the relevant action.
 - Prefer positive instructions when they are clearer. Use *do not* when a prohibition protects the user from an error or risk.
-- Do not use *easy*, *simple*, or *just*. These words do not help the reader complete the task and can dismiss real difficulty.
+- <!-- This instruction names the words it prohibits. -->
+  <!-- vale Konfidence.DiscouragedWords = NO -->
+  Do not use *easy*, *simple*, or *just*. These words do not help the reader complete the task and can dismiss real difficulty.
+  <!-- vale Konfidence.DiscouragedWords = YES -->
 
 ### Use inclusive language
 

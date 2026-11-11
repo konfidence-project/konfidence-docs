@@ -10,6 +10,14 @@
   "packageManager": "pnpm@10.25.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:markdown": "markdownlint-cli2",
+    "test:markdown": "node --test tests/markdownlint.test.mjs",
+    "test:reports": "node --test tests/maintenance-reports.test.mjs",
+    "lint:links": "node scripts/check-links.mjs internal",
+    "lint:links:external": "node scripts/check-links.mjs external",
+    "test:links": "node --test tests/lychee.test.mjs",
+    "lint:prose": "vale --no-global --config=.vale.ini src README.md CONTRIBUTING.md",
+    "test:prose": "vale --no-global --config=.vale.ini test --coverage .vale",
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview"
@@ -19,6 +27,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^26.6.6",
+    "markdownlint-cli2": "0.24.0",
+    "markdownlint-cli2-formatter-sarif": "0.0.5",
     "vitepress": "2.0.0-alpha.21",
     "vitepress-openapi": "^0.2.8"
   },

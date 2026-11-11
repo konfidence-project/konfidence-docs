@@ -69,11 +69,17 @@ To update, **re-run the installer** — the same command you used to install:
 curl -fsSL https://konfidence.cloud/install.sh | sh
 ```
 
-Check what you're running with:
+Check your installed version:
 
 ```bash
-kden version                 # JSON by default
-kden version --output pretty # human-readable
+kden version
+```
+
+Use `--output json` for JSON or `--output pretty` for a readable table:
+
+```bash
+kden version --output json
+kden version --output pretty
 ```
 
 ## Windows

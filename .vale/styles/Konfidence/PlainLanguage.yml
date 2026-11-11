@@ -1,0 +1,14 @@
+extends: substitution
+message: "Use '%s' instead of '%s'."
+link: https://konfidence.cloud/docs/extend-customize/styleguide.html#use-plain-english
+level: warning
+scope: text
+ignorecase: true
+capitalize: true
+swap:
+  utilize: use
+  dispose of: delete
+  obtain: get
+  in order to: to
+  due to the fact that: because
+  with the exception of: except
