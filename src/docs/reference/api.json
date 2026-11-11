@@ -83,6 +83,18 @@
         }
       }
     },
+    "requestBodies": {
+      "PromotionOverrideRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PromotionOverrideRequestBody"
+            }
+          }
+        },
+        "required": true
+      }
+    },
     "responses": {
       "BadRequest": {
         "content": {
@@ -509,6 +521,53 @@
         ],
         "type": "object"
       },
+      "PromotionOverride": {
+        "description": "Operator decision that overrides the gate flow, with its provenance. `Reject` terminally rejects the promotion; `BypassGates` lets it proceed regardless of its gates, whose states are left as their writers reported them.\n",
+        "properties": {
+          "reason": {
+            "description": "Justification given for the decision",
+            "type": "string"
+          },
+          "setAt": {
+            "description": "Time the decision was made",
+            "format": "date-time",
+            "type": "string"
+          },
+          "setBy": {
+            "description": "Authenticated subject that made the decision",
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "Reject",
+              "BypassGates"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "setBy",
+          "setAt",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "PromotionOverrideRequestBody": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "description": "Justification for the decision, recorded with the acting identity",
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "type": "object"
+      },
       "PromotionSourceReference": {
         "properties": {
           "kind": {
@@ -847,6 +906,9 @@
           "id": {
             "$ref": "#/components/schemas/VectorPromotionId"
           },
+          "override": {
+            "$ref": "#/components/schemas/PromotionOverride"
+          },
           "sequence": {
             "format": "int64",
             "type": "integer"
@@ -861,7 +923,8 @@
               "InProgress",
               "Blocked",
               "Succeeded",
-              "Superseded"
+              "Superseded",
+              "Rejected"
             ],
             "type": "string"
           },
@@ -1758,7 +1821,7 @@
     },
     "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/approve": {
       "post": {
-        "description": "Satisfies the `explicit-approval.konfidence.cloud` gate of a vectorPromotion, recording the authenticated caller as the approver. Approving an already-approved promotion is idempotent and returns 204. Returns 409 when the promotion is superseded, finished, already executing, or does not declare the explicit-approval gate.\n",
+        "description": "Satisfies the `explicit-approval.konfidence.cloud` gate of a vectorPromotion, recording the authenticated caller as the approver. Approving an already-approved promotion is idempotent and returns 204. Returns 409 when the promotion is superseded, finished, already executing, rejected, has its gates bypassed, or does not declare the explicit-approval gate.\n",
         "operationId": "approveVectorPromotionV1",
         "parameters": [
           {
@@ -1789,6 +1852,94 @@
           }
         },
         "summary": "Approves the given vectorPromotion for the specified project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/bypassGates": {
+      "post": {
+        "description": "Lets a vectorPromotion that is still waiting on its gates proceed as if all of them were satisfied. The authenticated caller and the given reason are recorded in the promotion's override; its gates are left exactly as their writers reported them. Bypassing the gates of a promotion whose gates were already bypassed is idempotent and returns 204. Returns 409 when the promotion is finished, its gates are already satisfied, or it was rejected.\n",
+        "operationId": "bypassVectorPromotionGatesV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/VectorPromotionPathId"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PromotionOverrideRequest"
+        },
+        "responses": {
+          "204": {
+            "description": "VectorPromotion gates successfully bypassed."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Bypasses the gates of the given vectorPromotion for the specified project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/reject": {
+      "post": {
+        "description": "Terminally rejects a vectorPromotion that is still waiting on its gates, regardless of their state. The authenticated caller and the given reason are recorded in the promotion's override; its gates are left untouched. Rejecting an already-rejected promotion is idempotent and returns 204. Returns 409 when the promotion is finished, its gates are already satisfied, or its gates were bypassed.\n",
+        "operationId": "rejectVectorPromotionV1",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectPathId"
+          },
+          {
+            "$ref": "#/components/parameters/VectorPromotionPathId"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PromotionOverrideRequest"
+        },
+        "responses": {
+          "204": {
+            "description": "VectorPromotion successfully rejected."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "summary": "Rejects the given vectorPromotion for the specified project",
         "tags": [
           "projects"
         ]
