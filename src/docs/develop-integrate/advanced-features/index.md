@@ -24,7 +24,7 @@ Konfidence includes configuration in each vector and provides it at runtime thro
 
 ## Opt in to stage ingress
 
-[Expose a Service through stage ingress](./expose-service.md) selects one named Service port for external requests. Other deployment results do not get stage ingress rules.
+Follow [Expose a Service through stage ingress](./expose-service.md) to select one named Service port for external requests. Deployment results without a selected port do not get stage ingress rules.
 
 ## Sign artifacts and verify them before deployment
 

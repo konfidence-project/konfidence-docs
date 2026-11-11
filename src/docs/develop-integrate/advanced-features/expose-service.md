@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Expose a Service through stage ingress
 
-Opt one named TCP port of your Kubernetes Service into the Konfidence-managed stage route. Publishing a [deployment result](../vector-data/deployment-results.md) alone does not add an ingress rule.
+Select one named TCP port of your Kubernetes Service for the Konfidence-managed stage route. Publishing a [deployment result](../vector-data/deployment-results.md) alone does not add an ingress rule.
 
 ## Prerequisites
 
@@ -52,7 +52,7 @@ Deliver the manifest change through your artifacts, rather than patching a deplo
 
 1. [Publish a new artifact version](../artifact-types/publish-artifacts.md) and [build a vector](../observe-improve/build-vectors.md) that references it.
 2. Deliver that vector to the intended stage through your [promotion flow](../../deploy-operate/manage-delivery/promote-vectors.md).
-3. Ask your administrator to configure the edge route with `x-konfidence-service: candidates` and the target stage's `x-konfidence-stage` value. The annotation opts the Service into stage routing; it does not create an external hostname or edge route.
+3. Ask your administrator to configure the edge route with `x-konfidence-service` set to your deployment result name (`candidates` in this example) and `x-konfidence-stage` set to the target stage name. The annotation enables stage routing for the Service. It does not create an external hostname or edge route.
 
 ## Verify the result
 

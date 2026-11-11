@@ -157,7 +157,9 @@ The Kubernetes deployer reads the following annotations from each Service it dep
 | `konfidence.cloud/deployment-result` | A nonempty stable result name. | Publishes an `http-k8s-service` deployment result for in-cluster discovery. Required for stage ingress selection. |
 | `konfidence.cloud/exposed-port-name` | The exact name of one TCP port in `spec.ports`. | Adds `IngressExposedPortName` to the deployment-result spec. The gateway-route activation creates a rule for that selected port. |
 
-An absent or empty `exposed-port-name` produces no ingress rule, even for a Service with one port. A Service without a deployment-result name is ignored, including its exposure annotation. The value selects a Service port by `name`, not by its position, port number, or `targetPort`. Only one port per Service can be selected; all Service ports remain in the deployment result for in-cluster callers.
+An absent or empty `konfidence.cloud/exposed-port-name` annotation produces no ingress rule, even for a Service with one port. If a Service has no deployment result name, the deployer ignores it and its exposure annotation.
+
+The exposure annotation selects a Service port by `name`, not by its position, port number, or `targetPort`. You can select only one port per Service. All Service ports remain in the deployment result for in-cluster callers.
 
 An invalid selection sets `DeploymentResultCreated=False`, `Ready=False`, and `Stalled=True` on the `ArtifactDeployment`. Its conditions report one of these reasons:
 
@@ -166,7 +168,7 @@ An invalid selection sets `DeploymentResultCreated=False`, `Ready=False`, and `S
 | `ExposePortNotFound` | No Service port has the exact annotated name. |
 | `ExposePortUnsupportedProtocol` | The selected port does not use TCP. |
 
-If no result selects a port, the gateway-route activation removes any existing stage `HTTPRoute` and succeeds. Services and workloads remain deployed. For the application developer procedure, see [Expose a Service through stage ingress](../../../develop-integrate/advanced-features/expose-service.md).
+If no result selects a port, the gateway-route activation removes any existing stage `HTTPRoute` and succeeds. Services and workloads remain deployed. For step-by-step instructions, see [Expose a Service through stage ingress](../../../develop-integrate/advanced-features/expose-service.md).
 
 ## Next steps {#related}
 
