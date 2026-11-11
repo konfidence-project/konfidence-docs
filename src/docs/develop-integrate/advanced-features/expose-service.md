@@ -16,7 +16,7 @@ Before you begin, make sure you have:
 
 - A Service manifest in a [Helm](../artifact-types/helm.md) or [Kustomize](../artifact-types/kustomize.md) artifact.
 - A landscape with [Gateway routing](../../deploy-operate/plan/gateway-routing.md) configured by your administrator, including a `gateway-route.konfidence.cloud` activation task registration.
-- `kubectl` access to read `VectorDeployment` and `HTTPRoute` resources in the landscape namespace.
+- `kubectl` access to read `Stage`, `VectorDeployment`, and `HTTPRoute` resources in the landscape namespace.
 
 ## Select the exposed port
 
@@ -56,7 +56,16 @@ Deliver the manifest change through your artifacts, rather than patching a deplo
 
 ## Verify the result
 
-Replace the placeholders with the active vector deployment, stage, and landscape namespace:
+After the target vector is active, read the stage's active `StageVersion` name. Replace the stage and namespace placeholders with your target values:
+
+```bash
+kubectl get stage <stage-name> -n <landscape-namespace> \
+  -o jsonpath='{.status.activeStageVersion.name}{"\n"}'
+```
+
+The active `StageVersion` and its `VectorDeployment` share the same name and namespace. Use the returned name as `<vector-deployment-name>` below.
+
+If the output is empty, the stage has no active version yet. Wait for activation before continuing.
 
 ```bash
 kubectl get vectordeployment <vector-deployment-name> -n <landscape-namespace> -o yaml
