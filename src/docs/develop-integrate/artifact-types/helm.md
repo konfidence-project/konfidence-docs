@@ -118,6 +118,8 @@ Create the following files inside `my-service/`. Run the packaging commands from
 
 The chart renders one Deployment and one Service, both named after the release.
 
+Keep `.Release.Name` in the Deployment selector, Pod labels, and Service selector. Resource names do not participate in Service selection: a selector containing only stable application labels can match Pods from another release in the same namespace. Use release identity alongside any component labels that distinguish workloads.
+
 ## Package and push the chart
 
 1. Package the chart directory:
@@ -230,14 +232,17 @@ The release name is deterministic per component, version, `allowReuse` setting, 
 
 ## Verify the result
 
-Render the chart twice with different release names and compare the resource names. This is the check the deployer relies on.
+Render the chart twice with different release names and compare both resource names and selectors. Each Service must select only its release's Pods.
 
 ```bash
-helm template vector-a ./my-service | grep '^  name:'
-helm template vector-b ./my-service | grep '^  name:'
+helm template vector-a ./my-service > vector-a.yaml
+helm template vector-b ./my-service > vector-b.yaml
+grep '^  name:' vector-a.yaml vector-b.yaml
 ```
 
-Every name in the first output starts with `vector-a`, and every name in the second output starts with `vector-b`. A name that appears unchanged in both outputs is hard-coded and must derive from the release name.
+Every resource name in `vector-a.yaml` starts with `vector-a`, and every name in `vector-b.yaml` starts with `vector-b`. A name that appears unchanged in both files is hard-coded and must derive from the release name.
+
+In each file, check `Deployment.spec.selector.matchLabels`, `Deployment.spec.template.metadata.labels`, and `Service.spec.selector`. All three must include `app.kubernetes.io/instance` with that file's release name. A hard-coded instance value shared by both releases would let their Services select each other's Pods.
 
 ## Next steps
 

@@ -55,6 +55,8 @@ Create a directory `manifests/` with a `kustomization.yaml` at its root and the 
    resources:
      - deployment.yaml
      - service.yaml
+   configurations:
+     - kustomizeconfig.yaml
    ```
 
 2. Create `manifests/deployment.yaml`:
@@ -69,10 +71,12 @@ Create a directory `manifests/` with a `kustomization.yaml` at its root and the 
      selector:
        matchLabels:
          app: my-service
+         app.kubernetes.io/instance: my-service
      template:
        metadata:
          labels:
            app: my-service
+           app.kubernetes.io/instance: my-service
        spec:
          containers:
            - name: my-service
@@ -91,14 +95,30 @@ Create a directory `manifests/` with a `kustomization.yaml` at its root and the 
    spec:
      selector:
        app: my-service
+       app.kubernetes.io/instance: my-service
      ports:
        - port: 80
          targetPort: 8080
    ```
 
-The bundle renders one Deployment and one Service.
+4. Create `manifests/kustomizeconfig.yaml` so the instance label follows the rendered Deployment name:
 
-<!-- TODO(fkasper): verify how Service selectors stay unique per instance. The deployer suffixes names, not labels, so two instances in one namespace share the selector `app: my-service`. -->
+   ```yaml
+   nameReference:
+     - kind: Deployment
+       group: apps
+       fieldSpecs:
+         - kind: Deployment
+           path: spec/selector/matchLabels/app.kubernetes.io\/instance
+         - kind: Deployment
+           path: spec/template/metadata/labels/app.kubernetes.io\/instance
+         - kind: Service
+           path: spec/selector/app.kubernetes.io\/instance
+   ```
+
+The bundle renders one Deployment and one Service. Their selectors and Pod labels share the same instance value, including the suffix the deployer applies.
+
+Service selectors match Pod labels, not resource names. `app: my-service` alone matches every instance with that label in the namespace. Keep the additional instance selector so a Service cannot select another instance's Pods.
 
 ## Package and push the bundle
 
@@ -193,6 +213,26 @@ grep -E 'nameSuffix|namespace' ./manifests/kustomization.yaml
 ```
 
 The first command prints the Deployment and the Service. The second command prints nothing.
+
+Also render two instances to verify that their selectors stay separate. Use temporary overlays, not a `nameSuffix` in the published bundle:
+
+```bash
+verify_dir=$(mktemp -d)
+cp -R ./manifests "$verify_dir/base"
+for instance in a b; do
+  mkdir "$verify_dir/$instance"
+  cat > "$verify_dir/$instance/kustomization.yaml" <<EOF
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
+nameSuffix: -$instance
+EOF
+  kubectl kustomize "$verify_dir/$instance" > "$verify_dir/$instance.yaml"
+done
+```
+
+Inspect the two rendered files. In `a.yaml`, the Deployment name, Deployment selector, Pod instance label, and Service instance selector must all use `my-service-a`; `b.yaml` must use `my-service-b`. The stable `app: my-service` label stays unchanged, but neither Service selector may match the other instance's Pods.
 
 ## Next steps
 
