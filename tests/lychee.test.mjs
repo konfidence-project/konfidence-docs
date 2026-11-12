@@ -48,6 +48,25 @@ async function check(root, mode = "internal", extra = [], options = {}) {
   return { ...result, report: JSON.parse(result.stdout) };
 }
 
+test("verified 403 exceptions exclude only the exact URLs, not their hosts", async t => {
+  const excluded = [
+    "https://www.sap.com/about/legal/impressum-se.html",
+    "https://www.merriam-webster.com/",
+    "https://ryandeangraham.medium.com/istio-gateway-api-nodeport-c598a21c4c95"
+  ];
+  const checked = [
+    "https://www.sap.com/about/legal/missing.html",
+    "https://www.merriam-webster.com/dictionary/missing",
+    "https://ryandeangraham.medium.com/a-missing-article"
+  ];
+  const root = await fixture(t, [...excluded, ...checked].map(url => `<a href="${url}">Link</a>`).join("\n"));
+  const args = linkArguments("external", root, { readme: path.join(root, "README.md"), cache: false });
+  args.splice(args.indexOf("--"), 0, "--dump");
+  const result = await command("lychee", args, root);
+  assert.equal(result.code, 0, result.stderr);
+  assert.deepEqual(result.stdout.trim().split(/\r?\n/).sort(), checked.sort());
+});
+
 test("VitePress links resolve against the build, including custom anchors and static images", async (t) => {
   const root = await fixture(t, [
     '<h1 id="start">Home</h1>',

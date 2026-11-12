@@ -54,7 +54,7 @@ This example shows how to model a vector with two referenced artifacts as OCM co
 1. A local OCI registry is available on port `5100`(e.g., [Docker registry](https://hub.docker.com/_/registry)).  
  >**Note**: OCM requires HTTPS for registry access.
 
-2. Install the [OCM CLI](https://ocm.software/docs/getting-started/installation/) 
+2. Install the [OCM CLI](https://ocm.software/legacy/docs/getting-started/install-the-ocm-cli/) used in this example.
 
 
 ### Component descriptor files

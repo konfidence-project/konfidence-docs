@@ -32,7 +32,7 @@ It defines the control-plane resources deployers act on, how they interpret and 
 Normative requirements use BCP 14 (RFC 2119 and RFC 8174) terminology and will have stable identifiers so they can be referenced by tests.
 The specification will define how optional capabilities are declared and how unsupported behavior is reported.
 
-The canonical text lives in the [`konfidence` repository's `deployer-specification/` directory](https://github.com/konfidence-project/konfidence/tree/main/deployer-specification), alongside the API types it specifies.
+The canonical text lives in the [`konfidence` repository's `conformance/specs/deployer.md` file](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md), alongside the API types it specifies.
 The public `konfidence-docs` site links to or publishes that source.
 
 ### Go bindings

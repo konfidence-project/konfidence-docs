@@ -207,6 +207,8 @@ Reports identify the built HTML page or README and the affected URL. They are no
 
 Keep shared options and narrowly justified URL exclusions in `lychee.toml`. The small `scripts/check-links.mjs` helper supplies the build paths and the same arguments for local checks and the official GitHub action. Avoid blanket exclusions for a host merely because one check fails. Maintainers and the technical writer review exceptions and link findings.
 
+Three verified pages reject automated requests with HTTP 403: SAP's legal disclosure, the Merriam-Webster homepage, and the linked Medium article about Istio NodePort gateways. Only these exact URLs are excluded in `lychee.toml`; other URLs on those hosts remain checked. Review these pages manually and remove an exclusion when automated checks work again. Links to private planning tickets do not belong in public ADRs; keep their reader-facing scope descriptions without the private links.
+
 When changing options or updating lychee, run `pnpm test:links`, rebuild, and run both link checks. Also run `pnpm test:markdown`, `pnpm test:prose`, `pnpm lint:markdown`, and `pnpm lint:prose`. Keep the workflow version and the version documented here and in the README together. Add regression examples to `tests/lychee.test.mjs`; the network tests use a local test server instead of depending on external websites.
 
 The checks cover static output. JavaScript-generated anchors and assets loaded only in the browser, such as interactive diagrams, still need preview and manual review. They also do not establish technical accuracy, useful image descriptions, or correct commands.
