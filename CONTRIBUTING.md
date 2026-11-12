@@ -77,7 +77,7 @@ Confirm that:
 
 For pull requests from a branch in this repository, the tools maintain one **Documentation checks** comment in the PR conversation. It updates as each check finishes and shows the checked commit, source locations, findings, and links to the full reports. Open the linked file, review the finding, and push any correction; the next run updates the same comment.
 
-Vale and Markdownlint show reported findings on changed PR lines. Lychee covers the complete website and README, including unchanged pages, and prioritizes changed files in the preview. Repeated links from a shared component appear once with an occurrence count. Link findings include guidance for missing targets, access restrictions, and network failures. For generated references, correct the upstream source.
+Vale and Markdownlint show reported findings on changed PR lines. Lychee's PR comment shows findings from changed source files and links to local targets that the PR changes, renames, or deletes. An unchanged page can therefore appear when its linked page, heading, or asset is affected. Changes to the VitePress site configuration also include internal findings because routing and page exclusions can affect the whole site. Repeated links from an affected shared component appear once. For generated references, correct the upstream source.
 
 The comment previews up to ten findings per tool. GitHub also limits annotations, so use the local checks for a complete prose or Markdown report. A green check means the configured check completed; advisory findings can still need review. An incomplete check is shown separately from a check with no findings.
 
@@ -203,7 +203,9 @@ The `Documentation links` workflow builds the site and checks both internal and 
 
 Findings appear in the terminal locally, in the GitHub Actions run summary, and in the shared PR comment described above. During rollout, link findings produce a workflow warning; installation, configuration, build, and test failures still fail the job. Locally, lychee returns exit code 2 for link findings. The workflow does not change branch protection or open issues.
 
-Reports identify the built HTML page or README and the affected URL. They are not filtered to changed source lines: VitePress can combine many source lines into one HTML line, and broken incoming links may be on unchanged pages. Use the corresponding Markdown source to correct authored content, or update the upstream source of a generated reference.
+The run summaries and local checks cover the complete website and README. The PR comment filters those results using every changed file in the PR, compared with its merge base. Filtering happens before the ten-finding preview limit. Existing findings outside that scope remain in the full report without appearing in the PR comment. Scheduled and manual checks continue to cover unchanged pages.
+
+The PR filter uses files and affected local targets, not changed source lines: VitePress can combine many source lines into one HTML line, and broken incoming links may be on unchanged pages. Relative Markdown includes are followed, including the contribution guide embedded in the website. Source locations are shown where they can be mapped; findings without a mapped source or affected local target remain in the full report. Use the corresponding Markdown source to correct authored content, or update the upstream source of a generated reference.
 
 Keep shared options and narrowly justified URL exclusions in `lychee.toml`. The small `scripts/check-links.mjs` helper supplies the build paths and the same arguments for local checks and the official GitHub action. Avoid blanket exclusions for a host merely because one check fails. Maintainers and the technical writer review exceptions and link findings.
 
