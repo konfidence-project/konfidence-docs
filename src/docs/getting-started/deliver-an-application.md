@@ -8,7 +8,7 @@ lastUpdated: true
 
 # Deliver an application
 
-Use the prepared Example App to follow a delivery from development to production. You’ll create the required Konfidence resources, deploy one [vector](../reference/glossary.md#vector) to development, and approve its promotion to production.
+In this guide, you deliver an application from development to production. You’ll create the required Konfidence resources, deploy one [vector](../reference/glossary.md#vector) to development, and approve its promotion to production using the *Example App*, a prepared demo project.
 
 The application artifacts and images are public, so you do not need registry credentials. By the end of the guide, the same vector will be running in development and production without being rebuilt.
 
@@ -60,35 +60,15 @@ Konfidence ships no gateway. In this guide, you act as the cluster admin and ins
 
 ## Prepare the demo environment
 
-### Create the project
-
-Create the Example App project, then wait until Konfidence has created its namespace:
+Apply the whole demo environment:
 
 ```bash
-kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/project?ref=main'
-kubectl wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
-  project/example-app --timeout=60s
+kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart?ref=main'
 ```
 
-### Create the landscapes
+This creates a Konfidence project named *Example App*, the `dev` and `prod` landscapes, and their stages `dev-eu12` and `prod-eu12`, plus additional resources required to deploy and promote the *Example App*.
 
-Next, create the `dev` and `prod` landscapes. Each landscape receives its own namespace:
-
-```bash
-kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/landscapes?ref=main'
-kubectl -n kden-p-example-app wait --for=jsonpath='{.status.conditions[?(@.type=="NamespaceReady")].status}'=True \
-  landscape/dev landscape/prod --timeout=60s
-```
-
-### Create the delivery environment
-
-Apply the prepared delivery environment. It creates the `dev-eu12` stage in the `dev` landscape and `prod-eu12` in `prod`, along with the resources needed to deploy the Example App and promote it between them.
-
-```bash
-kubectl apply -k 'https://github.com/konfidence-project/example-app/hack/quickstart/environment?ref=main'
-```
-
-The Example App reads its vector data from a Vector Data Service in each landscape namespace. Install it in `kden-l-dev` and `kden-l-prod`:
+The *Example App* reads its vector data from a vector data service in each landscape namespace. Install it in `kden-l-dev` and `kden-l-prod`:
 
 ```bash
 for ns in kden-l-dev kden-l-prod; do
@@ -111,7 +91,7 @@ done
 
 ### Wait for the development deployment
 
-The environment assigns the published Example App vector to `dev-eu12`, which starts the development deployment. Watch the `ACTIVE-VERSION` column:
+The environment assigns the published *Example App* vector to `dev-eu12`, which starts the development deployment. Watch the `ACTIVE-VERSION` column:
 
 ```bash
 kubectl -n kden-l-dev get stage dev-eu12 -w
@@ -136,10 +116,10 @@ For further checks, see [Stage troubleshooting](../deploy-operate/manage-deliver
 
 Open the [local dashboard](http://localhost:8090), sign in as **Local Admin** if prompted, and select **Example App**. The **Landscapes** view shows the result of the setup:
 
-- `dev-eu12` is live with the Example App.
+- `dev-eu12` is live with the *Example App*.
 - `prod-eu12` has no target version.
 
-![Konfidence dashboard with a live dev-eu12 stage and an empty prod-eu12 stage.](./screenshot_dashboard_dev.png)
+[![Konfidence dashboard with a live dev-eu12 stage and an empty prod-eu12 stage.](./screenshot_dashboard_dev.png)](./screenshot_dashboard_dev.png)
 
 ## Promote to production
 
@@ -157,7 +137,7 @@ Complete the **Local Admin** sign-in in your browser. The CLI connects to `http:
 
 ### Inspect the waiting promotion
 
-List the promotions for the Example App. The output should contain one promotion in the `Waiting` state:
+List the promotions for the *Example App*. The output should contain one promotion in the `Waiting` state:
 
 ```console
 $ kden vector-promotion list -p example-app --output pretty
