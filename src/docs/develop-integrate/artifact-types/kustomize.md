@@ -214,26 +214,6 @@ grep -E 'nameSuffix|namespace' ./manifests/kustomization.yaml
 
 The first command prints the Deployment and the Service. The second command prints nothing.
 
-Also render two instances to verify that their selectors stay separate. Use temporary overlays, not a `nameSuffix` in the published bundle:
-
-```bash
-verify_dir=$(mktemp -d)
-cp -R ./manifests "$verify_dir/base"
-for instance in a b; do
-  mkdir "$verify_dir/$instance"
-  cat > "$verify_dir/$instance/kustomization.yaml" <<EOF
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - ../base
-nameSuffix: -$instance
-EOF
-  kubectl kustomize "$verify_dir/$instance" > "$verify_dir/$instance.yaml"
-done
-```
-
-Inspect the two rendered files. In `a.yaml`, the Deployment name, Deployment selector, Pod instance label, and Service instance selector must all use `my-service-a`; `b.yaml` must use `my-service-b`. The stable `app: my-service` label stays unchanged, but neither Service selector may match the other instance's Pods.
-
 ## Next steps
 
 Use the following guides to publish your artifact and expose its service endpoint:
