@@ -132,7 +132,7 @@ spec:
 
 ### Why the annotation is required
 
-The deployer applies a per-vector `nameSuffix` (Kustomize) or `releaseName` (Helm). The Service's deployed name is therefore unknown ahead of time, and a caller cannot hard-code it. The annotation makes the Service discoverable and supplies the **stable name** (its value) that consumers look up. Services without the annotation are never exposed.
+The deployer applies a per-vector `nameSuffix` (Kustomize) or `releaseName` (Helm). The Service's deployed name is therefore unknown ahead of time, and a caller cannot hard-code it. The annotation makes the Service discoverable and supplies the **stable name** (its value) that consumers look up. Services without the annotation do not produce deployment results.
 
 ### How the deployer processes the annotation
 
@@ -147,6 +147,28 @@ Konfidence aggregates these into the vector's [`VectorData`](../../../reference/
 ### Scope
 
 Only Kubernetes `Service` objects can be exposed this way today (deployment-result type `http-k8s-service`). Other resource kinds are not yet supported.
+
+### Service ingress opt-in
+
+The Kubernetes deployer reads the following annotations from each Service it deployed:
+
+| Annotation | Value | Effect |
+| --- | --- | --- |
+| `konfidence.cloud/deployment-result` | A nonempty stable result name. | Publishes an `http-k8s-service` deployment result for in-cluster discovery. Required for stage ingress selection. |
+| `konfidence.cloud/exposed-port-name` | The exact name of one TCP port in `spec.ports`. | Adds `IngressExposedPortName` to the deployment-result spec. The gateway-route activation creates a rule for that selected port. |
+
+An absent or empty `konfidence.cloud/exposed-port-name` annotation produces no ingress rule, even for a Service with one port. If a Service has no deployment result name, the deployer ignores it and its exposure annotation.
+
+The exposure annotation selects a Service port by `name`, not by its position, port number, or `targetPort`. You can select only one port per Service. All Service ports remain in the deployment result for in-cluster callers.
+
+An invalid selection sets `DeploymentResultCreated=False`, `Ready=False`, and `Stalled=True` on the `ArtifactDeployment`. Its conditions report one of these reasons:
+
+| Reason | Meaning |
+| --- | --- |
+| `ExposePortNotFound` | No Service port has the exact annotated name. |
+| `ExposePortUnsupportedProtocol` | The selected port does not use TCP. |
+
+If no result selects a port, the gateway-route activation removes any existing stage `HTTPRoute` and succeeds. Services and workloads remain deployed. For step-by-step instructions, see [Expose a Service through stage ingress](../../../develop-integrate/advanced-features/expose-service.md).
 
 ## Next steps {#related}
 

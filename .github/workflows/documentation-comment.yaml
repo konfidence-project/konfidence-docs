@@ -89,12 +89,10 @@ jobs:
             let complete = true;
             if (tool === 'Lychee') {
               const report = JSON.parse(process.env.LINK_REPORT || '{}');
-              complete = report.complete === true;
-              findings = Array.isArray(report.findings) ? report.findings : [];
-              total = Number(report.total) || 0;
-              const files = await github.paginate(github.rest.pulls.listFiles, { ...repo, pull_number: pr.number, per_page: 100 });
-              const changed = new Set(files.map(file => file.filename));
-              findings.sort((a, b) => Number(changed.has(b.path)) - Number(changed.has(a.path)));
+              const scoped = report.scope === 'pull_request';
+              complete = report.complete === true && scoped;
+              findings = scoped && Array.isArray(report.findings) ? report.findings : [];
+              total = scoped ? Number(report.total) || 0 : 0;
             } else {
               const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, { ...repo, run_id: context.runId, filter: 'latest', per_page: 100 });
               const job = jobs.find(item => item.name === tool);
@@ -114,9 +112,9 @@ jobs:
               const reason = process.env.CHECK_RESULT === 'success' ? 'report unavailable' : process.env.CHECK_RESULT;
               section += '**Check incomplete (' + escape(reason) + ').** Open the run to review setup, configuration, or test failures.\n\n';
             } else if (total === 0) {
-              section += tool === 'Lychee' ? 'No link findings.\n\n' : 'No reported findings on changed PR lines.\n\n';
+              section += tool === 'Lychee' ? 'No link findings relevant to this PR.\n\n' : 'No reported findings on changed PR lines.\n\n';
             } else {
-              section += '**' + total + (tool === 'Lychee' ? ' link findings across the website and README' : ' reported findings on changed PR lines') + '.**\n\n';
+              section += '**' + total + (tool === 'Lychee' ? ' link finding' + (total === 1 ? '' : 's') + ' relevant to this PR' : ' reported findings on changed PR lines') + '.**\n\n';
             }
             if (findings.length) {
               section += '| Location | What to review |\n| --- | --- |\n';
@@ -131,7 +129,9 @@ jobs:
               }
               if (shown < total) section += '\nShowing ' + shown + ' of ' + total + '; open the full report for the rest.\n';
             }
-            section += '\n[Open ' + tool + ' run and full report](' + runUrl + ')';
+            section += tool === 'Lychee'
+              ? '\n[Open full website and README link report](' + runUrl + ')'
+              : '\n[Open ' + tool + ' run and full report](' + runUrl + ')';
             state.reports[tool] = { runId: context.runId, attempt, body: section };
             const sections = tools.map(name => state.reports[name]?.body || '### ' + name + '\n\nWaiting for this check on the current commit.');
             const body = [

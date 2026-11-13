@@ -11,6 +11,15 @@ no_progress = true
 # Local dashboards and private addresses in examples are not public targets.
 exclude_all_private = true
 
+# These exact pages are available to readers but return HTTP 403 in CI.
+# Verified on 2026-11-12. Recheck them manually when reviewing link exceptions.
+# Keep other pages on these hosts checked; do not accept HTTP 403 globally.
+exclude = [
+  '^https://www\.sap\.com/about/legal/impressum-se\.html$',
+  '^https://www\.merriam-webster\.com/$',
+  '^https://ryandeangraham\.medium\.com/istio-gateway-api-nodeport-c598a21c4c95$',
+]
+
 # Be considerate of external sites; keep failures visible for review.
 max_concurrency = 8
 host_concurrency = 2

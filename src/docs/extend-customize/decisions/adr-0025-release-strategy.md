@@ -95,8 +95,8 @@ We adopt **release on demand on scope achievement**.
    support.
 
 A release script (`./hack/release.sh major|minor|patch`) and a tag-triggered
-pipeline implement this decision. The end-to-end
-process is documented in the [Release Process](https://github.com/konfidence-project/.github/blob/main/semantic-release/README.md).
+pipeline implement this decision. For current release instructions, see the
+[Release Process](https://github.com/konfidence-project/konfidence/blob/main/.github/release-please/README.md).
 
 ## Consequences
 

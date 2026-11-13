@@ -25,6 +25,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # The report compares the full PR against its merge base.
+          fetch-depth: 0
       - uses: pnpm/action-setup@v6
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -63,7 +66,9 @@ jobs:
           fail: false
           token: ""
       - name: Test link-checking behavior
-        run: pnpm test:links
+        run: |
+          pnpm test:links
+          pnpm test:reports
       - name: Report the internal check outcome
         env:
           EXIT_CODE: ${{ steps.internal.outputs.exit_code }}
@@ -127,6 +132,9 @@ jobs:
       - name: Summarize link findings for the PR
         id: summary
         if: always() && github.event_name == 'pull_request'
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: node scripts/summarize-links.mjs
 
   report:

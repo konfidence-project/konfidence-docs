@@ -14,7 +14,7 @@ As the cluster administrator, you provide the gateways that external requests en
 
 ## How the two-gateway architecture works
 
-Konfidence keeps one HTTPRoute per stage. On each activation, it re-points that route at the newly active vector's deployment result services. Clients keep the same address while the vector behind it changes.
+For each stage with selected ingress ports, Konfidence keeps one `HTTPRoute`. On each activation, it updates that route to use the newly active vector's selected deployment result Services. Clients keep the same address while the vector behind it changes.
 
 Konfidence attaches these routes to Gateways that you create. Whether a Gateway is reachable from outside or only inside the cluster depends on the Gateway API implementation. Konfidence leaves the Gateways to you so that it never exposes an internal Gateway by accident.
 
@@ -36,7 +36,11 @@ Konfidence works with any Gateway API implementation. Whichever you use, the fiv
 4. **Stage and service headers at the edge:** For each stage that you want to expose, set `x-konfidence-stage` to the stage name. Set `x-konfidence-service` to the deployment result name. Use `set`, not `add`, so that client-supplied values are overwritten. Then forward the request to `konfidence-router`.
 5. **ReferenceGrant per landscape namespace:** Your edge routes live in another namespace. Allow them to reference the `konfidence-router` service.
 
-Konfidence creates one HTTPRoute per stage, named `konfidence-stage-<stage>`. It has one rule per [deployment result](../../reference/glossary.md#deployment-result) of type `http-k8s-service`. A rule matches `x-konfidence-stage: <stage>` and `x-konfidence-service: <deployment-result-name>`. It removes both headers before it forwards the request.
+Konfidence creates one `HTTPRoute` per stage, named `konfidence-stage-<stage>`. It has one rule per [deployment result](../../reference/glossary.md#deployment-result) of type `http-k8s-service` with an `IngressExposedPortName`. The application developer selects that port with the `konfidence.cloud/exposed-port-name` Service annotation. See [Expose a Service through stage ingress](../../develop-integrate/advanced-features/expose-service.md).
+
+A rule matches `x-konfidence-stage: <stage>` and `x-konfidence-service: <deployment-result-name>`. It removes both headers before it forwards the request.
+
+If the active vector has no selected ports, the gateway-route activation succeeds and removes any existing stage `HTTPRoute`. It leaves Services, workloads, and your Gateways and edge routes unchanged.
 
 To attach the routes to a different Gateway, set `gatewayName` and `gatewayNamespace` in the `spec.spec` of the registration. They default to `konfidence-router` and the landscape namespace.
 
