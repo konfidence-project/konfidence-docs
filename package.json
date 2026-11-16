@@ -30,7 +30,7 @@
     "markdownlint-cli2": "0.24.0",
     "markdownlint-cli2-formatter-sarif": "0.0.5",
     "vitepress": "2.0.0-alpha.21",
-    "vitepress-openapi": "^0.2.8"
+    "vitepress-openapi": "^0.2.13"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0"

@@ -25,8 +25,8 @@ importers:
         specifier: 2.0.0-alpha.21
         version: 2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32)
       vitepress-openapi:
-        specifier: ^0.2.8
-        version: 0.2.8(vitepress@2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32))(vue@3.5.44)
+        specifier: ^0.2.13
+        version: 0.2.13(vitepress@2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32))(vue@3.5.44)
 
 packages:
 
@@ -85,8 +85,8 @@ packages:
   '@jridgewell/sourcemap-codec@1.6.0':
     resolution: {integrity: sha512-T7jf+5zgsZHwNJ4lvQ7/aezbyk0nNX+zJVWpmHA7VYsEx7a7qr5Rg5IbtJFqkgze5Y2sruq1RUY8Q837Od7iFw==}
 
-  '@lucide/vue@1.67.0':
-    resolution: {integrity: sha512-f4MC7czjbnFWOGyN3Ul0uJ6SLjj2cDIBpJpxc5NHyj9E3gE7mBqhHsJcFDno3vLuAyXbE9CTEqIqO3Qdk1tNvw==}
+  '@lucide/vue@1.71.0':
+    resolution: {integrity: sha512-R64tQ5dJMvLjAOEIhF+vOunHm/wUI3VP6NhJEaigwpLVaAEL3O2251byH2IBEeBofLunvOiTGh4lkzDfIpgKcQ==}
     peerDependencies:
       vue: '>=3.0.1'
 
@@ -243,14 +243,14 @@ packages:
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
-  '@swc/helpers@0.5.23':
-    resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
+  '@swc/helpers@0.5.24':
+    resolution: {integrity: sha512-6tcXo4kA8HgGO7AVmawB57RYi/piBPYVHVcO6dXjX+SZw8GoHmi262sp4v2Ha2kNP9Cx84qei27yT+fjS1lxgg==}
 
-  '@tanstack/virtual-core@3.19.10':
-    resolution: {integrity: sha512-/ltpH0qUCs5XQYE7fIhgA+aqgC5NzSfLTDQkC+N1wOOdvIYx1FH/kz2LGfSeanNbekqy3WBu6mNIbqXhxE/pew==}
+  '@tanstack/virtual-core@3.19.11':
+    resolution: {integrity: sha512-/5iHb0RHBvj8Di59FDs4ESNm45jls33aZAi4zccVXZjc/6ZvwQP6nzEYeT6weXjTf9E6/vrp2JhYWRyO+ZP13A==}
 
-  '@tanstack/vue-virtual@3.13.51':
-    resolution: {integrity: sha512-0Q57TrTPrNBhQsURZzbDQ4HVC+ukhX/7Ma2h1UXNECyRAHFFRrrEiETtH6TyUHm6E1fmei4HHhu4yAYiTkuviQ==}
+  '@tanstack/vue-virtual@3.13.52':
+    resolution: {integrity: sha512-qTwG7HNr5o+FPd/u+T05N73A8howtkB9FgQI71VcBzx6J2KsYzlVugRz/0ji17kl26D8SAdKux1Wmk3yhTI1Kw==}
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
 
@@ -1006,8 +1006,8 @@ packages:
       yaml:
         optional: true
 
-  vitepress-openapi@0.2.8:
-    resolution: {integrity: sha512-9el46owjPDjUOkyR5Ic4ODFLIfJADxVYVthMFdp+YB+dgwTA1w1svQf7nDyOLg6q5js3y9xnl3gr3xLAXtFPrw==}
+  vitepress-openapi@0.2.13:
+    resolution: {integrity: sha512-5AU+2LNW37DTfszlLODpdb4BTuGchL7ItT5Ac7RFjpm/oKYB4Su6We2QQP79IsX0mla/M1UbSmBQN95FxpM0Ug==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24.0.0}
     peerDependencies:
       vitepress: '>=1.0.0'
@@ -1082,15 +1082,15 @@ snapshots:
 
   '@internationalized/date@3.12.4':
     dependencies:
-      '@swc/helpers': 0.5.23
+      '@swc/helpers': 0.5.24
 
   '@internationalized/number@3.6.9':
     dependencies:
-      '@swc/helpers': 0.5.23
+      '@swc/helpers': 0.5.24
 
   '@jridgewell/sourcemap-codec@1.6.0': {}
 
-  '@lucide/vue@1.67.0(vue@3.5.44)':
+  '@lucide/vue@1.71.0(vue@3.5.44)':
     dependencies:
       vue: 3.5.44
 
@@ -1202,15 +1202,13 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@swc/helpers@0.5.23':
-    dependencies:
-      tslib: 2.9.1
+  '@swc/helpers@0.5.24': {}
 
-  '@tanstack/virtual-core@3.19.10': {}
+  '@tanstack/virtual-core@3.19.11': {}
 
-  '@tanstack/vue-virtual@3.13.51(vue@3.5.44)':
+  '@tanstack/vue-virtual@3.13.52(vue@3.5.44)':
     dependencies:
-      '@tanstack/virtual-core': 3.19.10
+      '@tanstack/virtual-core': 3.19.11
       vue: 3.5.44
 
   '@types/debug@4.1.13':
@@ -1892,7 +1890,7 @@ snapshots:
       '@floating-ui/vue': 2.0.1(vue@3.5.44)
       '@internationalized/date': 3.12.4
       '@internationalized/number': 3.6.9
-      '@tanstack/vue-virtual': 3.13.51(vue@3.5.44)
+      '@tanstack/vue-virtual': 3.13.52(vue@3.5.44)
       '@vueuse/core': 14.4.0(vue@3.5.44)
       '@vueuse/shared': 14.4.0(vue@3.5.44)
       aria-hidden: 1.2.6
@@ -2025,9 +2023,9 @@ snapshots:
       '@types/node': 26.6.6
       fsevents: 2.3.3
 
-  vitepress-openapi@0.2.8(vitepress@2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32))(vue@3.5.44):
+  vitepress-openapi@0.2.13(vitepress@2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32))(vue@3.5.44):
     dependencies:
-      '@lucide/vue': 1.67.0(vue@3.5.44)
+      '@lucide/vue': 1.71.0(vue@3.5.44)
       '@vueuse/core': 14.4.0(vue@3.5.44)
       class-variance-authority: 0.7.1
       clsx: 2.1.1
