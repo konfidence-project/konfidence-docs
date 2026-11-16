@@ -36,9 +36,9 @@ The team needs to resolve the following questions:
 
 ### Release scope and readiness
 
-- What defines the final release contents, and when do we confirm them? 
+- What defines the final release contents, and when do we confirm them?
 
-- Who checks that the documentation covers those contents and excludes later changes? 
+- Who checks that the documentation covers those contents and excludes later changes?
 
 - How do we handle missing documentation at release time?
 
@@ -48,9 +48,28 @@ Projects use different labels for release and development documentation. Which n
 
 One suggestion is to keep the name **main** with a **Development (unreleased)** label and show each stable release number with a **Stable** label. Which label should we use for published pre-release versions?
 
+### Publishing and navigation
+
+How should readers access different documentation versions?
+
+- **Separate subdomains:** Each version has its own site, for example `v0-1.docs.konfidence.cloud` and `main.docs.konfidence.cloud`.
+- **Versioned paths:** Versions share one site, for example `docs.konfidence.cloud/0.1/` and `docs.konfidence.cloud/main/`.
+
+These URLs illustrate the options; the domain and version names remain open.
+
+Both approaches can provide a version selector. Should switching versions retain the current page when it exists in the target version?
+
+The choice has implications for hosting and maintenance:
+
+- **Subdomains:** Established VitePress sites such as [Vite](https://v7.vite.dev/) and [Vitest](https://v3.vitest.dev/) publish older versions on separate subdomains, linked through their navigation. This allows each version to be built and deployed independently. Our current single-repository GitHub Pages setup cannot host separate sites per version because [GitHub Pages allows only one site per repository](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages). Adopting this approach would require separate publishing repositories, an additional routing layer, or a different host, along with domain and deployment configuration for each version.
+- **Versioned paths:** These fit the current GitHub Pages hosting model. We could build each version separately with its own base path and combine the outputs into one deployment. We would maintain the build assembly and version navigation ourselves, including preserving older versions when publishing updates. A versioning plugin is not required for this approach.
+- **Plugin dependency:** The previously considered [vitepress-versioning-plugin](https://github.com/IMB11/vitepress-versioning-plugin) is archived. The alternative [@viteplus/versions](https://github.com/viteplus/versions) is active, but we have not established broad production adoption. Relying on it would introduce a maintenance risk: compatibility problems with future VitePress releases could require us to maintain a fork or replace the plugin. A selector that links separate builds avoids that dependency, but we would own its behavior and upkeep.
+
+Should we retain GitHub Pages and maintain the build and navigation logic for versioned paths, or change the hosting setup to support independently deployed subdomains?
+
 ### Support window
 
-How many documentation versions should we maintain, and which releases count as separate versions? 
+How many documentation versions should we maintain, and which releases count as separate versions?
 
 Should documentation maintenance follow the software support window?
 
