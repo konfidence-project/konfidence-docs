@@ -1,6 +1,6 @@
 ---
 id: ADR-0047
-title: "OCM Content Layer Update: Caching strategy revision and per-project credential resolution"
+title: "OCM content layer update: caching strategy revision and per-project credential resolution"
 description: "Revises the ADR-0045 caching strategy from a two-phase controller+API approach to a single API server in-process cache, and replaces the global startup-time credential model with per-request and per-reconcile credential resolution scoped to the project namespace."
 status: accepted
 date_proposed: 2026-11-11
@@ -13,7 +13,7 @@ pageClass: adr
 outline: deep
 ---
 
-# ADR-0047: OCM Content Layer Update - Caching strategy revision and per-project credential resolution
+# ADR-0047: OCM content layer update - caching strategy revision and per-project credential resolution
 
 <AdrHeader />
 
@@ -29,7 +29,7 @@ ADR-0045 originally proposed Options 2+3 (controller-side LRU cache + `VectorCac
 
 **CLI - artifact and vector data inspection.** The CLI commands for these endpoints are not yet implemented but follow naturally from the API surface. The intended commands are:
 
-```
+```bash
 # inspect the component list and config of a vector
 kden vector content <ocmRef> --project <projectId>
 
@@ -54,13 +54,13 @@ ADR-0045 Option 4 stated: "Registry credentials are resolved from a single globa
 
 The `VectorTemplateReconciler` already solved this: it calls `ResolverFromCredentials` (`pkg/ocm/credentials`) on every reconcile, building a fresh resolver from `VectorTemplate.Spec.Credentials` in the project namespace. The API server now owning its own OCM client (from the Option 4 decision) makes the same per-request model straightforward for the content layer - no shared state is needed.
 
-Both the API server and the `VectorDeployment` controller had four startup-time env vars each - two for the credential secret location and two for comma-separated signature spec names. All eight are removed. Additionally, `setup.go` fetched the `konfidence-system/registry-credentials` Secret at startup and combined it with the env-var-selected secret into a single global resolver shared across all reconciles. That lookup is also removed.
+Both the API server and the `VectorDeployment` controller had four startup-time environment variables each - two for the credential secret location and two for comma-separated signature spec names. All eight are removed. Additionally, `setup.go` fetched the `konfidence-system/registry-credentials` Secret at startup and combined it with the environment-variable-selected secret into a single global resolver shared across all reconciles. That lookup is also removed.
 
 ## Considered options
 
 ### Option 1 - Helm chart values wiring the global secrets
 
-Expose the existing env vars as Helm chart values. The startup-time resolution model stays in place.
+Expose the existing environment variables as Helm chart values. The startup-time resolution model stays in place.
 
 **Assessment.** Not adopted. Does not fix the restart requirement or the per-project isolation gap. Introduces Helm values that would immediately be superseded by per-request resolution, adding unnecessary churn.
 
@@ -121,7 +121,7 @@ Each content request resolves the project namespace via `resolveProjectNamespace
 
 **API immutability guards on VectorPromotion.** API immutability guards on VectorPromotion. The three fields on `VectorPromotionSpec` are enforced as write-once by spec-level CEL validation rules in the CRD. Because the fields are optional pointer types (serialised with `omitempty`), a field-level self == oldSelf rule is insufficient, because it only fires when the field is present in the old object, silently allowing a nil → non-nil transition. The correct pattern guards both directions at the struct level:
 
-```
+```go
 (!has(self.X) && !has(oldSelf.X)) || (has(self.X) && has(oldSelf.X) && self.X == oldSelf.X)
 ```
 
@@ -135,7 +135,7 @@ This evaluates to true only when both sides are absent (creation without credent
 
 **Credential rotation.** Rotated credentials are picked up on the next request or reconcile with no restart required.
 
-**Signature verification.** Signature specs follow the same per-operation model: read from `VectorDeployment.Spec.VerifyVector` and `VectorDeployment.Spec.VerifyArtifacts` for the controller, and from `VectorTemplate.Spec` for the API server. The global signature env vars are removed.
+**Signature verification.** Signature specs follow the same per-operation model: read from `VectorDeployment.Spec.VerifyVector` and `VectorDeployment.Spec.VerifyArtifacts` for the controller, and from `VectorTemplate.Spec` for the API server. The global signature environment variables are removed.
 
 **RBAC.** The API server's `ClusterRole` already has `get/list/watch` on `secrets`, so no RBAC changes are required.
 
