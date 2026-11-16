@@ -118,7 +118,7 @@ Create the following files inside `my-service/`. Run the packaging commands from
 
 The chart renders one Deployment and one Service, both named after the release.
 
-Keep `.Release.Name` in the Deployment selector, Pod labels, and Service selector. Resource names do not participate in Service selection: a selector containing only stable application labels can match Pods from another release in the same namespace. Use release identity alongside any component labels that distinguish workloads.
+Keep `.Release.Name` in the Deployment selector, Pod labels, and Service selector. A selector containing only stable application labels can match Pods from another release in the same namespace. Use release identity alongside any component labels that distinguish workloads.
 
 ## Package and push the chart
 
