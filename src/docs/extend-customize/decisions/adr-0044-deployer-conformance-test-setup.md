@@ -4,6 +4,7 @@ title: "Execute conformance tests for a deployer implementation"
 description: "Define how extension developers prepare and execute the Konfidence conformance suite for their own deployer."
 status: accepted
 date_proposed: 2026-10-21
+date_approved: 2026-11-04
 authors: [selisa-dev]
 category: Architecture Pattern
 impact: Medium
