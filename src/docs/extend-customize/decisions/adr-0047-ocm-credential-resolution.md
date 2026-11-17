@@ -119,7 +119,7 @@ Each content request resolves the project namespace via `resolveProjectNamespace
 
 **Controller-managed fields.** The `credentials`, `verifyVector`, and `verifyArtifacts` fields on `Stage.Spec`, `StageVersion.Spec`, and `VectorPromotion.Spec` are internal pipeline state and operators could set them once on `VectorTemplate.Spec` and the controllers carry them forward automatically. The same applies to `Stage.Spec.vector`, which has always been written by the promotion execution controller rather than by users.
 
-**API immutability guards on VectorPromotion.** API immutability guards on VectorPromotion. The three fields on `VectorPromotionSpec` are enforced as write-once by spec-level CEL validation rules in the CRD. Because the fields are optional pointer types (serialised with `omitempty`), a field-level self == oldSelf rule is insufficient, because it only fires when the field is present in the old object, silently allowing a nil → non-nil transition. The correct pattern guards both directions at the struct level:
+**API immutability guards on VectorPromotion.** API immutability guards on VectorPromotion. The three fields on `VectorPromotionSpec` are enforced as write-once by spec-level CEL validation rules in the CRD. Because the fields are optional pointer types (serialised with `omitempty`), a field-level `self == oldSelf` rule is insufficient, because it only fires when the field is present in the old object, silently allowing a nil → non-nil transition. The correct pattern guards both directions at the struct level:
 
 ```go
 (!has(self.X) && !has(oldSelf.X)) || (has(self.X) && has(oldSelf.X) && self.X == oldSelf.X)
