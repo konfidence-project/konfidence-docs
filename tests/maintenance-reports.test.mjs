@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 import parseYaml from "markdownlint-cli2/parsers/yaml";
-import { summarizeLinks } from "../scripts/summarize-links.mjs";
+import { pullRequestFiles, summarizeLinks } from "../scripts/summarize-links.mjs";
 
 const workflow = parseYaml(readFileSync(new URL("../.github/workflows/documentation-comment.yaml", import.meta.url), "utf8"));
 const script = workflow.jobs.comment.steps[0].with.script;
@@ -18,11 +18,11 @@ function annotation(tool, message, file = "README.md", line = 9) {
 }
 
 function githubFixture() {
-  const fixture = { comments: [], writes: [], annotations: {}, head: "a".repeat(40), state: "open", reads: [], changedFiles: ["README.md"] };
-  const endpoints = { comments: () => {}, jobs: () => {}, annotations: () => {}, files: () => {} };
+  const fixture = { comments: [], writes: [], annotations: {}, head: "a".repeat(40), state: "open", reads: [] };
+  const endpoints = { comments: () => {}, jobs: () => {}, annotations: () => {} };
   const github = {
     rest: {
-      pulls: { get: async () => ({ data: { state: fixture.state, head: { sha: fixture.head } } }), listFiles: endpoints.files },
+      pulls: { get: async () => ({ data: { state: fixture.state, head: { sha: fixture.head } } }) },
       actions: { listJobsForWorkflowRun: endpoints.jobs },
       checks: { listAnnotations: endpoints.annotations },
       issues: {
@@ -45,7 +45,6 @@ function githubFixture() {
         name, check_run_url: "https://api.github.com/repos/konfidence-project/konfidence-docs/check-runs/" + (index + 1)
       }));
       if (endpoint === endpoints.annotations) return fixture.annotations[args.check_run_id] || [];
-      if (endpoint === endpoints.files) return fixture.changedFiles.map(filename => ({ filename }));
       throw new Error("Unexpected API endpoint.");
     }
   };
@@ -62,7 +61,7 @@ function githubFixture() {
   }, { notice() {} }, { env: {
     TOOL: tool, CHECK_RESULT: options.result || "success",
     GITHUB_RUN_ATTEMPT: String(options.attempt || 1),
-    LINK_REPORT: JSON.stringify(options.links || { complete: true, total: 0, findings: [] })
+    LINK_REPORT: JSON.stringify(options.links || { complete: true, scope: "pull_request", total: 0, findings: [] })
   } });
   return fixture;
 }
@@ -168,13 +167,22 @@ test("fork and Dependabot runs do not attempt comment writes", async () => {
   assert.deepEqual(fixture.reads, []);
 });
 
-test("changed-file link findings appear before the older link backlog", async () => {
+test("the comment reports only the scoped count and links to the full website report", async () => {
   const fixture = githubFixture();
-  const findings = Array.from({ length: 12 }, (_, index) => ({ path: "src/old" + index + ".md", line: 1, message: "Old link" }));
-  findings.push({ path: "README.md", line: 5, target: "https://vitpress.de/", message: "Check the address" });
-  await fixture.run("Lychee", { links: { complete: true, total: findings.length, findings } });
+  const findings = [{ path: "README.md", line: 5, target: "https://vitpress.de/", message: "Check the address" }];
+  await fixture.run("Lychee", { links: { complete: true, scope: "pull_request", total: 1, findings } });
   assert.match(visible(fixture.comments[0]), /README\.md:5/);
-  assert.ok(visible(fixture.comments[0]).indexOf("README.md:5") < visible(fixture.comments[0]).indexOf("src/old0.md"));
+  assert.match(visible(fixture.comments[0]), /1 link finding relevant to this PR/);
+  assert.match(visible(fixture.comments[0]), /Open full website and README link report/);
+  assert.doesNotMatch(visible(fixture.comments[0]), /findings across the website/);
+});
+
+test("an unfiltered link report cannot publish the backlog or claim a clean PR", async () => {
+  const fixture = githubFixture();
+  await fixture.run("Lychee", { links: { complete: true, scope: "all", total: 1,
+    findings: [{ path: "src/old.md", message: "Unrelated finding" }] } });
+  assert.match(visible(fixture.comments[0]), /Check incomplete/);
+  assert.doesNotMatch(visible(fixture.comments[0]), /Unrelated finding|No link findings/);
 });
 
 test("the reporting workflow serializes updates and does not execute checked-out code", () => {
@@ -208,12 +216,12 @@ function linkFixture(t) {
   const errors = (mode, rows) => write("reports/lychee-" + mode + ".md",
     "| 🔍 Total | 3 |\n| 🚫 Errors | " + rows.length + " |\n\n## Errors per input\n\n" + rows.join("\n\n"));
   const row = (file, target, status = "404", line = 25) => "### Errors in " + path.join(root, file) + "\n\n* [" + status + "] <" + target + "> (at " + line + ":1) | Check failed";
-  return { root, reports, write, errors, row, summary: () => summarizeLinks(reports, root) };
+  return { root, reports, write, errors, row, summary: changedFiles => summarizeLinks(reports, root, { changedFiles }) };
 }
 
 test("successful link reports remain distinct from missing or malformed reports", t => {
   const fixture = linkFixture(t);
-  assert.deepEqual(fixture.summary(), { complete: true, total: 0, occurrences: 0, findings: [] });
+  assert.deepEqual(fixture.summary(), { complete: true, scope: "all", total: 0, occurrences: 0, findings: [] });
   fixture.write("reports/lychee-external.md", "[Full Github Actions output](https://github.com/example)");
   assert.equal(fixture.summary().complete, false);
   rmSync(path.join(fixture.reports, "lychee-external.md"));
@@ -252,7 +260,7 @@ test("repeated footer failures point once to the shared component", t => {
 
 test("an HTML line is never presented as a source line without a matching URL", t => {
   const fixture = linkFixture(t);
-  fixture.write("src/docs/guide.md", "# Guide\n\n[Relative link](./missing)");
+  fixture.write("src/docs/guide.md", "# Guide\n\nA component generates the link.");
   fixture.errors("internal", [fixture.row(".vitepress/dist/docs/guide.html", "file://" + fixture.root + "/.vitepress/dist/docs/missing.html", "ERROR", 250)]);
   const finding = fixture.summary().findings[0];
   assert.equal(finding.path, "src/docs/guide.md");
@@ -290,4 +298,153 @@ test("inputs outside the workspace do not become source links", t => {
   const fixture = linkFixture(t);
   fixture.errors("external", ["### Errors in /etc/passwd\n\n* [404] <https://missing.example> | Not found"]);
   assert.equal(fixture.summary().findings[0].path, undefined);
+});
+
+test("PR reports keep changed pages and README findings and omit unrelated pages", t => {
+  const fixture = linkFixture(t);
+  fixture.write("README.md", "[Link](https://missing.example/readme)");
+  fixture.write("src/docs/guide.md", "[Link](https://missing.example/guide)");
+  fixture.write("src/docs/old.md", "[Link](https://missing.example/old)");
+  fixture.errors("external", [
+    fixture.row("README.md", "https://missing.example/readme", "404", 1),
+    fixture.row(".vitepress/dist/docs/guide.html", "https://missing.example/guide"),
+    fixture.row(".vitepress/dist/docs/old.html", "https://missing.example/old")
+  ]);
+  const summary = fixture.summary(["README.md", "src/docs/guide.md"]);
+  assert.equal(summary.scope, "pull_request");
+  assert.deepEqual(summary.findings.map(item => item.path), ["README.md", "src/docs/guide.md"]);
+  assert.equal(summary.total, 2);
+  assert.equal(fixture.summary().total, 3, "full local reports must retain the backlog");
+  assert.equal(fixture.summary([]).total, 0, "an empty PR diff must not mean the whole website");
+});
+
+test("shared footer findings are relevant only when the component or target changes", t => {
+  const fixture = linkFixture(t);
+  fixture.write("src/docs/guide.md", "# Guide");
+  fixture.write(".vitepress/theme/Footer.vue", '<a href="https://missing.example/legal">Legal</a>');
+  fixture.errors("external", [
+    fixture.row(".vitepress/dist/docs/guide.html", "https://missing.example/legal", "403"),
+    fixture.row(".vitepress/dist/docs/other.html", "https://missing.example/legal", "403")
+  ]);
+  assert.equal(fixture.summary(["src/docs/guide.md"]).total, 0);
+  const summary = fixture.summary([".vitepress/theme/Footer.vue"]);
+  assert.equal(summary.total, 1);
+  assert.equal(summary.findings[0].occurrences, 2);
+});
+
+for (const [name, target, changed, markdown] of [
+  ["changed heading", "docs/target.html#removed", ["src/docs/target.md"], "./target.md#removed"],
+  ["renamed page", "docs/old-name.html", ["src/docs/old-name.md", "src/docs/new-name.md"], "./old-name.md"],
+  ["deleted asset", "assets/missing.png", ["public/assets/missing.png"], "/assets/missing.png"],
+  ["directory index", "docs/section/index.html#removed", ["src/docs/section/index.md"], "./section/index.md#removed"],
+  ["extensionless page", "docs/target#removed", ["src/docs/target.md"], "./target#removed"],
+  ["encoded filename", "docs/target%20with%20spaces.html#removed", ["src/docs/target with spaces.md"], "./target%20with%20spaces.md#removed"]
+]) {
+  test("an unchanged page stays relevant for a " + name, t => {
+    const fixture = linkFixture(t);
+    fixture.write("src/docs/guide.md", "# Guide\n\n[Target](" + markdown + ")");
+    fixture.errors("internal", [fixture.row(".vitepress/dist/docs/guide.html",
+      "file://" + fixture.root + "/.vitepress/dist/" + target, "ERROR")]);
+    const summary = fixture.summary(changed);
+    assert.equal(summary.total, 1);
+    assert.equal(summary.findings[0].path, "src/docs/guide.md");
+    assert.equal(summary.findings[0].line, 3);
+    assert.match(summary.findings[0].message, /target changed in this PR/);
+    assert.equal(fixture.summary(["src/docs/unrelated.md"]).total, 0);
+  });
+}
+
+test("relative links and same-page fragments map to Markdown lines, not HTML lines", t => {
+  const fixture = linkFixture(t);
+  fixture.write("src/docs/guide.md", "# Guide\n\n[Target](./missing.md#section)\n[Heading](#removed)");
+  fixture.errors("internal", [
+    fixture.row(".vitepress/dist/docs/guide.html", "file://" + fixture.root + "/.vitepress/dist/docs/missing.html#section", "ERROR", 250),
+    fixture.row(".vitepress/dist/docs/guide.html", "file://" + fixture.root + "/.vitepress/dist/docs/guide.html#removed", "ERROR", 250)
+  ]);
+  assert.deepEqual(fixture.summary(["src/docs/guide.md"]).findings.map(item => item.line), [3, 4]);
+});
+
+test("README links to changed repository files remain relevant", t => {
+  const fixture = linkFixture(t);
+  fixture.write("README.md", "# Docs\n\n[Guide](CONTRIBUTING.md#removed)");
+  fixture.errors("readme", [fixture.row("README.md", "file://" + fixture.root + "/CONTRIBUTING.md#removed", "ERROR", 3)]);
+  const summary = fixture.summary(["CONTRIBUTING.md"]);
+  assert.equal(summary.total, 1);
+  assert.equal(summary.findings[0].line, 3);
+});
+
+test("README directory links remain relevant when the last file in the directory is deleted", t => {
+  const fixture = linkFixture(t);
+  fixture.write("README.md", "[Licenses](LICENSES/)");
+  fixture.errors("readme", [fixture.row("README.md", "file://" + fixture.root + "/LICENSES/", "ERROR", 1)]);
+  assert.equal(fixture.summary(["LICENSES/Apache-2.0.txt"]).total, 1);
+  assert.equal(fixture.summary(["src/docs/unrelated.md"]).total, 0);
+});
+
+test("links in included Markdown point to the changed include file", t => {
+  const fixture = linkFixture(t);
+  fixture.write("src/docs/extend-customize/code-of-conduct.md", "# Policy\n<!--@include: ../../../CONTRIBUTING.md-->");
+  fixture.write("CONTRIBUTING.md", "# Contributing\n[Link](https://missing.example/contributing)");
+  fixture.errors("external", [fixture.row(".vitepress/dist/docs/extend-customize/code-of-conduct.html", "https://missing.example/contributing")]);
+  const summary = fixture.summary(["CONTRIBUTING.md"]);
+  assert.equal(summary.total, 1);
+  assert.equal(summary.findings[0].path, "CONTRIBUTING.md");
+  assert.equal(summary.findings[0].line, 2);
+});
+
+test("a changed included heading keeps incoming links from unchanged pages in scope", t => {
+  const fixture = linkFixture(t);
+  fixture.write("src/docs/extend-customize/code-of-conduct.md", "# Policy\n<!--@include: ../../../CONTRIBUTING.md-->");
+  fixture.write("CONTRIBUTING.md", "# New heading\n<!--@include: CONTRIBUTING.md-->");
+  fixture.write("src/index.md", "[Policy](./docs/extend-customize/code-of-conduct.md#old-heading)");
+  fixture.errors("internal", [fixture.row(".vitepress/dist/index.html",
+    "file://" + fixture.root + "/.vitepress/dist/docs/extend-customize/code-of-conduct.html#old-heading", "ERROR")]);
+  const summary = fixture.summary(["CONTRIBUTING.md"]);
+  assert.equal(summary.total, 1);
+  assert.equal(summary.findings[0].path, "src/index.md");
+  assert.match(summary.findings[0].message, /target changed in this PR/);
+});
+
+test("site configuration changes include internal routing failures, not unrelated external links", t => {
+  const fixture = linkFixture(t);
+  fixture.write("src/docs/guide.md", "[Target](./excluded.md)\n[External](https://missing.example/unrelated)");
+  fixture.errors("internal", [fixture.row(".vitepress/dist/docs/guide.html",
+    "file://" + fixture.root + "/.vitepress/dist/docs/excluded.html", "ERROR")]);
+  fixture.errors("external", [fixture.row(".vitepress/dist/docs/guide.html", "https://missing.example/unrelated")]);
+  const summary = fixture.summary([".vitepress/config.mts"]);
+  assert.equal(summary.total, 1);
+  assert.match(summary.findings[0].message, /site configuration changed/);
+});
+
+test("filtering precedes preview limits even behind a large unrelated backlog", t => {
+  const fixture = linkFixture(t);
+  const rows = [];
+  for (let index = 0; index < 120; index++) {
+    fixture.write("src/docs/old" + index + ".md", "[Link](https://missing.example/old" + index + ")");
+    rows.push(fixture.row(".vitepress/dist/docs/old" + index + ".html", "https://missing.example/old" + index));
+  }
+  const changed = [];
+  for (let index = 0; index < 12; index++) {
+    const file = "src/docs/new" + index + ".md";
+    fixture.write(file, "[Link](https://missing.example/new" + index + ")");
+    changed.push(file);
+    rows.push(fixture.row(".vitepress/dist/docs/new" + index + ".html", "https://missing.example/new" + index));
+  }
+  fixture.errors("external", rows);
+  const summary = fixture.summary(changed);
+  assert.equal(summary.total, 12);
+  assert.equal(summary.occurrences, 12);
+  assert.equal(summary.findings.length, 10);
+  assert.ok(summary.findings.every(item => item.path.startsWith("src/docs/new")));
+});
+
+test("missing or invalid PR commit IDs cannot silently turn into a full-site report", () => {
+  for (const values of [[undefined, undefined], ["main", "a".repeat(40)], ["a".repeat(40), "--help"]]) {
+    assert.throws(() => pullRequestFiles(process.cwd(), ...values), /commit IDs are required/);
+  }
+  const caller = parseYaml(readFileSync(new URL("../.github/workflows/lychee.yaml", import.meta.url), "utf8"));
+  assert.equal(caller.jobs.links.steps.find(step => step.name === "Checkout").with["fetch-depth"], 0);
+  const step = caller.jobs.links.steps.find(step => step.id === "summary");
+  assert.equal(step.env.PR_BASE_SHA, "${{ github.event.pull_request.base.sha }}");
+  assert.equal(step.env.PR_HEAD_SHA, "${{ github.event.pull_request.head.sha }}");
 });

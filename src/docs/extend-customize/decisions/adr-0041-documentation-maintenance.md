@@ -148,12 +148,12 @@ passing checks does not replace technical and editorial review.
 
 ## Out of scope
 
-The following work is tracked separately and contributes to the broader
+The following work is outside this decision and contributes to the broader
 improvement of documentation quality:
 
-- **[Documentation versioning (#343)](https://github.com/konfidence-project/konfidence-project/issues/343):**
+- **Documentation versioning:**
   provide documentation that matches the Konfidence version a reader uses.
-- **[Documentation feedback (#344)](https://github.com/konfidence-project/konfidence-project/issues/344):**
+- **Documentation feedback:**
   give readers an accessible way to report problems and provide feedback on the documentation.
-- **[Documentation analytics (#345)](https://github.com/konfidence-project/konfidence-project/issues/345):**
+- **Documentation analytics:**
   define useful usage metrics and select an analytics solution to guide improvements.

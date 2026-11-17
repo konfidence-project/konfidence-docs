@@ -51,7 +51,7 @@ The routing is controlled using a specific HTTP header.
 
 
 - Istio is installed with ambient mode inside the cluster (see [Istio Getting Started](https://istio.io/latest/docs/ambient/getting-started/))
-- Make sure the Gateway API CRDs are installed inside the cluster (see [Gateway API CRDs](https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/))
+- Make sure the Gateway API CRDs are installed inside the cluster (see [Gateway API v1.3.0 release assets](https://github.com/kubernetes-sigs/gateway-api/releases/tag/v1.3.0))
 
 
 ### Example Gateway API Configuration

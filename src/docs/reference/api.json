@@ -155,6 +155,16 @@
           }
         },
         "description": "Authentication required or session expired."
+      },
+      "UnprocessableEntity": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "The request cannot be applied to the current state of the resource."
       }
     },
     "schemas": {
@@ -1821,7 +1831,7 @@
     },
     "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/approve": {
       "post": {
-        "description": "Satisfies the `explicit-approval.konfidence.cloud` gate of a vectorPromotion, recording the authenticated caller as the approver. Approving an already-approved promotion is idempotent and returns 204. Returns 409 when the promotion is superseded, finished, already executing, rejected, has its gates bypassed, or does not declare the explicit-approval gate.\n",
+        "description": "Satisfies the `explicit-approval.konfidence.cloud` gate of a vectorPromotion, recording the authenticated caller as the approver. Approving an already-approved promotion is idempotent and returns 204. Returns 422 when the promotion is superseded, finished, already executing, rejected, has its gates bypassed, or does not declare the explicit-approval gate. Returns 409 for a concurrent modification; the caller can retry the action.\n",
         "operationId": "approveVectorPromotionV1",
         "parameters": [
           {
@@ -1847,6 +1857,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
@@ -1859,7 +1872,7 @@
     },
     "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/bypassGates": {
       "post": {
-        "description": "Lets a vectorPromotion that is still waiting on its gates proceed as if all of them were satisfied. The authenticated caller and the given reason are recorded in the promotion's override; its gates are left exactly as their writers reported them. Bypassing the gates of a promotion whose gates were already bypassed is idempotent and returns 204. Returns 409 when the promotion is finished, its gates are already satisfied, or it was rejected.\n",
+        "description": "Lets a vectorPromotion that is still waiting on its gates proceed as if all of them were satisfied. The authenticated caller and the given reason are recorded in the promotion's override; its gates are left exactly as their writers reported them. Bypassing the gates of a promotion whose gates were already bypassed is idempotent and returns 204. Returns 422 when the promotion is finished, its gates are already satisfied, or it was rejected. Returns 409 for a concurrent modification; the caller can retry the action.\n",
         "operationId": "bypassVectorPromotionGatesV1",
         "parameters": [
           {
@@ -1891,6 +1904,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
@@ -1903,7 +1919,7 @@
     },
     "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/reject": {
       "post": {
-        "description": "Terminally rejects a vectorPromotion that is still waiting on its gates, regardless of their state. The authenticated caller and the given reason are recorded in the promotion's override; its gates are left untouched. Rejecting an already-rejected promotion is idempotent and returns 204. Returns 409 when the promotion is finished, its gates are already satisfied, or its gates were bypassed.\n",
+        "description": "Terminally rejects a vectorPromotion that is still waiting on its gates, regardless of their state. The authenticated caller and the given reason are recorded in the promotion's override; its gates are left untouched. Rejecting an already-rejected promotion is idempotent and returns 204. Returns 422 when the promotion is finished, its gates are already satisfied, or its gates were bypassed. Returns 409 for a concurrent modification; the caller can retry the action.\n",
         "operationId": "rejectVectorPromotionV1",
         "parameters": [
           {
@@ -1935,6 +1951,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
@@ -1947,7 +1966,7 @@
     },
     "/v1/projects/{projectId}/vectorPromotions/{vectorPromotionId}/revoke-approval": {
       "post": {
-        "description": "Sets the `explicit-approval.konfidence.cloud` gate of a waiting vectorPromotion back to Pending, recording the authenticated caller as the revoker. Revoking an already revoked approval (Pending with reason ApprovalRevokedByUser) is idempotent and returns 204 without changing the revocation record. Other approvals that are not Satisfied return 409 because there is nothing to revoke. Also returns 409 when the promotion is superseded, finished, already executing, or does not declare the explicit-approval gate.\n",
+        "description": "Sets the `explicit-approval.konfidence.cloud` gate of a waiting vectorPromotion back to Pending, recording the authenticated caller as the revoker. Revoking an already revoked approval (Pending with reason ApprovalRevokedByUser) is idempotent and returns 204 without changing the revocation record. Other approvals that are not Satisfied return 422 because there is nothing to revoke. Also returns 422 when the promotion is superseded, finished, already executing, or does not declare the explicit-approval gate. Returns 409 for a concurrent modification; the caller can retry the action.\n",
         "operationId": "revokeApprovalVectorPromotionV1",
         "parameters": [
           {
@@ -1972,6 +1991,9 @@
           },
           "409": {
             "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
           },
           "500": {
             "$ref": "#/components/responses/InternalError"

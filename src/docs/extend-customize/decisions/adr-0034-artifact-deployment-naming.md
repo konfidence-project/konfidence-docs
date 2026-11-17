@@ -71,7 +71,7 @@ The `ArtifactDeployment` name distinguishes *deployments*; the following makes t
 
 ## Implications for users
 
-Authors of artifacts consumed by the Kubernetes Deployer must follow a few rules (see the [Kubernetes Deployer reference docs](https://github.com/konfidence-project/konfidence-docs/blob/main/src/docs/develop-integrate/deployers/kubernetes.md)):
+Authors of artifacts consumed by the Kubernetes Deployer must follow a few rules (see the [Kubernetes Deployer reference docs](../../deploy-operate/install/deployer/kubernetes.md)):
 
 - **Kustomize bundles** must not set `nameSuffix` or `namespace` in their `kustomization.yaml` — the deployer overwrites both, and any author-set value is discarded.
 - **Helm charts** should derive every `metadata.name` from <code v-pre>{{ .Release.Name }}</code>. Hard-coded resource names collide when the same chart is deployed at two versions, or by two `VectorDeployment`s with `allowReuse: false`.
