@@ -66,9 +66,9 @@ Expose the existing environment variables as Helm chart values. The startup-time
 
 ### Option 2 - Per-request and per-reconcile credential resolution from the project namespace
 
-On each API request, list `VectorTemplates` for the project namespace and call `ResolverFromCredentials` with `VectorTemplate.Spec.Credentials`. On each `VectorDeployment` reconcile, call `ResolverFromCredentials` with `VectorDeployment.Spec.Credentials`. Pass the resulting resolver into the OCM client call for that operation only.
+On each API request, list `VectorTemplates` for the project namespace and call `ResolverFromCredentials` with `VectorTemplate.Spec.Credentials`. On each `VectorDeployment` reconcile, read the `konfidence.cloud/project` label from the landscape namespace, fetch the `Project` CR, and call `ResolverFromCredentials` with `Project.Spec.Credentials`. Pass the resulting resolver into the OCM client call for that operation only.
 
-**Assessment.** Adopted. `ResolverFromCredentials` in `pkg/ocm/credentials` is already the shared abstraction used by `VectorTemplateReconciler`. The resolver is built from live Kubernetes secrets on each request or reconcile, so credential rotations and new projects propagate immediately without a restart.
+**Assessment.** Adopted. `ResolverFromCredentials` in `pkg/ocm/credentials` is already the shared abstraction used by `VectorTemplateReconciler`. The resolver is built from live Kubernetes secrets on each request or reconcile, so credential rotations and new projects propagate immediately without a restart. Credentials stay in the project namespace and are never carried through the promotion pipeline.
 
 ## Decision
 
@@ -113,36 +113,24 @@ Each content request resolves the project namespace via `resolveProjectNamespace
 
 #### VectorDeployment controller
 
-`VectorDeployment.Spec` gains three optional fields - `credentials`, `verifyVector`, and `verifyArtifacts` that match the fields already present on `VectorTemplateSpec`. An `AdapterFactory` function is wired in `setup.go` and called on every reconcile. The factory calls `ResolverFromCredentials` with `vd.Spec.Credentials` and builds a fresh OCM client and adapter scoped to that reconcile.
+`Project.Spec` gains three optional fields - `credentials`, `verifyVector`, and `verifyArtifacts`. An `AdapterFactory` function is wired in `setup.go` and called on every reconcile. The factory resolves the owning project by reading the `konfidence.cloud/project` label from the landscape namespace where the `VectorDeployment` lives, fetches the `Project` CR, and calls `ResolverFromCredentials` with `project.Spec.Credentials` using secrets from the project namespace. A fresh OCM client and adapter are built and scoped to that reconcile only.
 
-**Credential propagation chain.** Credentials reach `VectorDeployment.Spec` through the promotion pipeline. The config reconciler fetches the source `VectorTemplate` at drift-detection time and snapshots `Credentials`, `VerifyVector`, and `VerifyArtifacts` onto `VectorPromotion.Spec`. This satisfies ADR-0032's requirement that the execution controller is self-contained: it reads the promotion object only, never the source template. The execution controller then writes those values onto `Stage.Spec` at promotion execution time. The Stage controller copies them to `StageVersion.Spec` at StageVersion construction, and the StageVersion controller copies them to `VectorDeployment.Spec`.
+**Credential ownership.** Credentials reference secrets in the project namespace. A credential configured for one project cannot be selected or used for another, due to namespace isolation enforcing this at the Kubernetes level.
 
-**Controller-managed fields.** The `credentials`, `verifyVector`, and `verifyArtifacts` fields on `Stage.Spec`, `StageVersion.Spec`, and `VectorPromotion.Spec` are internal pipeline state and operators could set them once on `VectorTemplate.Spec` and the controllers carry them forward automatically. The same applies to `Stage.Spec.vector`, which has always been written by the promotion execution controller rather than by users.
-
-**API immutability guards on VectorPromotion.** API immutability guards on VectorPromotion. The three fields on `VectorPromotionSpec` are enforced as write-once by spec-level CEL validation rules in the CRD. Because the fields are optional pointer types (serialised with `omitempty`), a field-level `self == oldSelf` rule is insufficient, because it only fires when the field is present in the old object, silently allowing a nil → non-nil transition. The correct pattern guards both directions at the struct level:
-
-```go
-(!has(self.X) && !has(oldSelf.X)) || (has(self.X) && has(oldSelf.X) && self.X == oldSelf.X)
-```
-
-This evaluates to true only when both sides are absent (creation without credentials) or both sides are present and equal (no change). Any other transition - nil → set, set → nil, set → different is rejected. The same rule is applied independently to each of the three fields.
-
-**Credential ownership.** Each `VectorTemplate` and `VectorDeployment` carries its own credential references pointing to secrets in the same namespace. A credential configured for one project cannot be used for another - namespace isolation enforces this.
-
-**Credential lookup scope.** `VectorTemplate.Spec.Credentials` is the authority for API content reads. `VectorDeployment.Spec.Credentials` is the authority for controller-side deployment pulls.
+**Credential lookup scope.** `VectorTemplate.Spec.Credentials` is the authority for API content reads. `Project.Spec.Credentials` is the authority for controller-side deployment pulls.
 
 **Anonymous access.** If `Credentials` is nil or empty, `ResolverFromCredentials` returns an unauthenticated resolver. Public registries work without any secrets.
 
 **Credential rotation.** Rotated credentials are picked up on the next request or reconcile with no restart required.
 
-**Signature verification.** Signature specs follow the same per-operation model: read from `VectorDeployment.Spec.VerifyVector` and `VectorDeployment.Spec.VerifyArtifacts` for the controller, and from `VectorTemplate.Spec` for the API server. The global signature environment variables are removed.
+**Signature verification.** Signature specs follow the same per-operation model: read from `Project.Spec.VerifyVector` and `Project.Spec.VerifyArtifacts` for the controller, and from `VectorTemplate.Spec` for the API server. The global signature environment variables are removed.
 
-**RBAC.** The API server's `ClusterRole` already has `get/list/watch` on `secrets`, so no RBAC changes are required.
+**RBAC.** The `VectorDeployment` controller's `ClusterRole` gains `get` on `namespaces` and `get` on `projects` to support the namespace-to-project lookup. The API server's `ClusterRole` already has `get/list/watch` on `secrets`, so no further changes are required there.
 
 ## Consequences
 
-- `VectorDeploymentSpec` gains three optional fields (`credentials`, `verifyVector`, `verifyArtifacts`). These fields are covered by the existing `x-kubernetes-validations: self == oldSelf` rule on the whole spec, which is intentional: a `VectorDeployment` is a deployment snapshot and its credential and verification configuration should be fixed at creation time, consistent with the immutability rationale from ADR-0009 and ADR-0032. Changing credentials or verification policy means updating the `VectorTemplate`, which flows through the promotion cycle and produces a new `VectorDeployment`. `VectorPromotionSpec` carries the same three fields with per-field write-once CEL rules (see "API immutability guards on VectorPromotion" above) rather than a whole-spec rule, because the promotion spec allows other fields to be updated (e.g. `status.override`) via the status subresource path.
+- `Project.Spec` gains three optional fields (`credentials`, `verifyVector`, `verifyArtifacts`). Operators set these once on the Project and they apply to all `VectorDeployment` reconciles for that project automatically.
 - Each content request makes one additional Kubernetes API call to list `VectorTemplates` in the project namespace. This is consistent with how every other handler in the API server operates and does not affect the data-plane latency that the LRU cache addresses.
-- Credential management is unified: the same `VectorTemplate.Spec.Credentials` that controls assembly also controls API content reads for that project. `VectorDeployment.Spec.Credentials` controls controller-side registry access independently.
+- Credential management is unified at the project boundary: `Project.Spec.Credentials` controls all controller-side registry access for that project; `VectorTemplate.Spec.Credentials` controls API content reads. No credential data is carried through the promotion pipeline.
 - The OCI registry is a failure mode for the three content endpoints. Prior to this change, registry unavailability only affected the controller write path (artifact downloads, promotions). All other API endpoints serve Kubernetes CR state only and are unaffected by registry unavailability. Operators must be informed through release notes and Helm chart documentation.
 - Cache entries are in-memory only and lost on API server restart. The first request after restart for any given ref pays the registry round-trip cost. This is acceptable as the cache is a latency optimisation and not a reliability mechanism.
