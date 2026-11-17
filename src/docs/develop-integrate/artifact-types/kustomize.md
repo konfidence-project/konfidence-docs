@@ -55,6 +55,8 @@ Create a directory `manifests/` with a `kustomization.yaml` at its root and the 
    resources:
      - deployment.yaml
      - service.yaml
+   configurations:
+     - kustomizeconfig.yaml
    ```
 
 2. Create `manifests/deployment.yaml`:
@@ -69,10 +71,12 @@ Create a directory `manifests/` with a `kustomization.yaml` at its root and the 
      selector:
        matchLabels:
          app: my-service
+         app.kubernetes.io/instance: my-service
      template:
        metadata:
          labels:
            app: my-service
+           app.kubernetes.io/instance: my-service
        spec:
          containers:
            - name: my-service
@@ -91,14 +95,30 @@ Create a directory `manifests/` with a `kustomization.yaml` at its root and the 
    spec:
      selector:
        app: my-service
+       app.kubernetes.io/instance: my-service
      ports:
        - port: 80
          targetPort: 8080
    ```
 
-The bundle renders one Deployment and one Service.
+4. Create `manifests/kustomizeconfig.yaml` so the `app.kubernetes.io/instance` label follows the rendered Deployment name:
 
-<!-- TODO(fkasper): verify how Service selectors stay unique per instance. The deployer suffixes names, not labels, so two instances in one namespace share the selector `app: my-service`. -->
+   ```yaml
+   nameReference:
+     - kind: Deployment
+       group: apps
+       fieldSpecs:
+         - kind: Deployment
+           path: spec/selector/matchLabels/app.kubernetes.io\/instance
+         - kind: Deployment
+           path: spec/template/metadata/labels/app.kubernetes.io\/instance
+         - kind: Service
+           path: spec/selector/app.kubernetes.io\/instance
+   ```
+
+The bundle renders one Deployment and one Service. Their selectors and Pod labels share the same `app.kubernetes.io/instance` value, including the suffix the deployer applies.
+
+Service selectors match Pod labels, not resource names. `app: my-service` alone matches every instance with that label in the namespace. Keep the additional `app.kubernetes.io/instance` selector so a Service cannot select another instance's Pods.
 
 ## Package and push the bundle
 
@@ -169,7 +189,7 @@ Do not set `nameSuffix` or `namespace` in your `kustomization.yaml`. The deploye
 
 The deployer owns the rendered instance: its name suffix, its namespace, and its labels. Everything in the bundle is duplicated per instance. Deliver resources that must exist once per cluster, such as a `CustomResourceDefinition`, through a separate delivery path.
 
-::: details Fields the deployer sets on the Kustomization
+::: details Fields the deployer sets on the `Kustomization`
 
 The deployer creates one Flux `Kustomization` per artifact instance and sets these fields. Your bundle cannot override them.
 
