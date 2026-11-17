@@ -40,6 +40,8 @@ jobs:
         uses: actions/configure-pages@v6
       - name: Install dependencies
         run: pnpm install
+      - name: Test Mermaid rendering
+        run: pnpm test:mermaid
       - name: Build with VitePress
         run: pnpm build
       - name: Upload artifact

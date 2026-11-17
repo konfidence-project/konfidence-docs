@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { defineConfig } from "vitepress";
+import { withMermaid } from "vitepress-plugin-mermaid";
 
 // ADR pages are numbered by id; the sidebar lists them from their
 // frontmatter so adding a record never needs a config change
@@ -22,8 +23,11 @@ const adrItems = readdirSync(adrDir)
 const prerelease = process.env.KONFIDENCE_PRERELEASE !== "false";
 
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+export default defineConfig(withMermaid({
   srcDir: "./src",
+  mermaid: {
+    securityLevel: "strict",
+  },
   // The quickstart links to the port-forwarded dashboard; localhost URLs are
   // reachable only while the reader runs the guide, so skip them in the check.
   ignoreDeadLinks: [/^https?:\/\/localhost(:\d+)?/],
@@ -383,4 +387,4 @@ export default defineConfig({
       provider: "local",
     },
   },
-});
+}));
