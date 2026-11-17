@@ -115,6 +115,30 @@
   absent:
     - "Vale.Spelling:"
 
+- name: Caching and Kubernetes terms are valid prose
+  input: |
+    The singleflight layer checks the status subresource.
+    Singleflight collapses concurrent requests.
+  want: ""
+
+- name: Misspelled technical terms still produce spelling findings
+  input: "The singlefligth layer checks the subresorce."
+  contains:
+    - "Vale.Spelling:Did you really mean 'singlefligth'?"
+    - "Vale.Spelling:Did you really mean 'subresorce'?"
+
+- name: Resource names and CEL expressions are accepted as inline code
+  input: |
+    The `Stage` controller copies `Stage.Spec` into `StageVersion.Spec`.
+    Validate the fields with `self == oldSelf`.
+  want: ""
+
+- name: Resource names and CEL variables still need code formatting
+  input: "The Stage controller applies self == oldSelf."
+  contains:
+    - "Konfidence.ConceptCasing:Use lowercase for the concept 'Stage'"
+    - "Vale.Spelling:'oldSelf' looks like code; format it as code."
+
 - name: Built-in word repetition
   input: "Use the the configuration."
   contains:
