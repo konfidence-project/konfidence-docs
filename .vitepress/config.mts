@@ -29,6 +29,9 @@ export default defineConfig({
   ignoreDeadLinks: [/^https?:\/\/localhost(:\d+)?/],
   vite: {
     publicDir: "../public",
+    ssr: {
+      noExternal: ["vitepress-openapi"],
+    },
     define: {
       __PRERELEASE__: JSON.stringify(prerelease),
     },
