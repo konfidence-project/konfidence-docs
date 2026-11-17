@@ -118,7 +118,7 @@ Create the following files inside `my-service/`. Run the packaging commands from
 
 The chart renders one Deployment and one Service, both named after the release.
 
-Keep `.Release.Name` in the Deployment selector, Pod labels, and Service selector. A selector containing only stable application labels can match Pods from another release in the same namespace. Use release identity alongside any component labels that distinguish workloads.
+Use `.Release.Name` as the value of `app.kubernetes.io/instance` in the Deployment selector, Pod labels, and Service selector. Keep any component labels that distinguish workloads. A selector containing only labels shared by releases can match Pods from another release in the same namespace.
 
 ## Package and push the chart
 
@@ -178,7 +178,7 @@ The chart is available as `registry.example.com/my-org/charts/my-service:1.0.0`.
 
 ## Derive every resource name from the release name
 
-Several vectors deploy the same chart into one landscape namespace. The [deployer](../../reference/glossary.md#deployer) gives each deployment its own release name. Every resource in the chart must derive `metadata.name` from that release name, either directly or through the chart's fullname helper. A hard-coded name collides when a second vector deploys the chart.
+Several vectors deploy the same chart into one landscape namespace. The [deployer](../../reference/glossary.md#deployer) gives each deployment its own release name. Every resource in the chart must derive `metadata.name` from that release name, either directly or through the chart's `fullname` helper. A hard-coded name collides when a second vector deploys the chart.
 
 <div v-pre>
 
@@ -191,7 +191,7 @@ metadata:
 
 </div>
 
-The fullname helper that `helm create` generates works as well:
+The `fullname` helper that `helm create` generates works as well:
 
 <div v-pre>
 
@@ -213,7 +213,7 @@ Do not set `metadata.namespace` in templates. The deployer installs every releas
 
 The deployer owns the release itself: its name, its namespace, and its labels. Everything in the chart is duplicated per instance. Deliver resources that must exist once per cluster, such as a `CustomResourceDefinition`, through a separate delivery path.
 
-::: details Fields the deployer sets on the HelmRelease
+::: details Fields the deployer sets on the `HelmRelease`
 
 The deployer creates one Flux `HelmRelease` per artifact instance and sets these fields. Your chart cannot override them.
 
@@ -242,7 +242,13 @@ grep '^  name:' vector-a.yaml vector-b.yaml
 
 Every resource name in `vector-a.yaml` starts with `vector-a`, and every name in `vector-b.yaml` starts with `vector-b`. A name that appears unchanged in both files is hard-coded and must derive from the release name.
 
-In each file, check `Deployment.spec.selector.matchLabels`, `Deployment.spec.template.metadata.labels`, and `Service.spec.selector`. All three must include `app.kubernetes.io/instance` with that file's release name. A hard-coded instance value shared by both releases would let their Services select each other's Pods.
+In each file, check these fields:
+
+- `Deployment.spec.selector.matchLabels`
+- `Deployment.spec.template.metadata.labels`
+- `Service.spec.selector`
+
+All three must include `app.kubernetes.io/instance` with the value `vector-a` in `vector-a.yaml` and `vector-b` in `vector-b.yaml`. A hard-coded instance value shared by both releases would let their Services select each other's Pods.
 
 ## Next steps
 
