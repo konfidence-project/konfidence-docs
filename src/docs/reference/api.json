@@ -941,9 +941,6 @@
           "target": {
             "$ref": "#/components/schemas/PromotionTargetReference"
           },
-          "ttlAfterFinished": {
-            "type": "string"
-          },
           "vector": {
             "type": "string"
           }
@@ -982,9 +979,6 @@
           },
           "target": {
             "$ref": "#/components/schemas/PromotionTargetReference"
-          },
-          "ttlAfterFinished": {
-            "type": "string"
           }
         },
         "required": [
