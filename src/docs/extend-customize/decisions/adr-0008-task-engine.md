@@ -314,7 +314,7 @@ Instead, the task definitions could be fetched directly from the OCI repository 
 However, this approach has several drawbacks and we do not recommend it:
 
 - It does not provide a clear separation of concerns between task definition and task execution, which can lead to confusion and complexity in the system.
-- It does not allow for easy tracking of task execution history or status, as there is no central record of registered tasks.
+- It does not track task execution history or status, as there is no central record of registered tasks.
 - It does not provide a clear way to handle task dependencies or execution order, which can lead to issues with task execution and orchestration.
 
 ##### Option 4 - Combined Thick Task Registration (preferred)

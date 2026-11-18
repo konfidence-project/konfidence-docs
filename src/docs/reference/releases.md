@@ -9,7 +9,7 @@ lastUpdated: true
 # Releases
 
 - track Konfidence releases, version information, and upgrade compatibility
-- link to github releases/changelog for detailed information on each release
+- link to GitHub releases/changelog for detailed information on each release
 
 <!--
   Content type (Diátaxis): Reference — accurate, structured version history. One section per release, consistent format.

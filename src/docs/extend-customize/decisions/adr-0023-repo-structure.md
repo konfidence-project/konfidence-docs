@@ -77,7 +77,7 @@ Key choices:
 4. **Platform/Deployment specific landscape orchestrator stays separate.** It will live in its own repo. The repo name will be `kubernetes-landscape-orchestrator`. This makes konfidence extensible to other platform/deployment orchestrators in the future (e.g. CloudFoundry or other platform-specific deployers), and keeps the scope of the monorepo focused on the core functionality.
    The controllers will be split up as follows:
 
-   ```
+   ```text
    konfidence-project/konfidence
    ├── Galaxy
    │   ├── gcp-vector-assembly-controller

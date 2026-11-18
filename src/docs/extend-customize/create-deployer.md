@@ -15,5 +15,5 @@ description: "Learn how to create a custom Deployer to extend Konfidence's deplo
   Ticket: DOCS — How to Create your own Deployer: Provide Deployer interface spec and k8s reference implementation walkthrough
 -->
 
-- link to the Deployer interface specification
+- link to the deployer interface specification
 - explain our k8s reference implementation

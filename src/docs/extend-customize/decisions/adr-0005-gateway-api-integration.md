@@ -24,8 +24,8 @@ Konfidence needs a routing component that routes incoming traffic to specific se
 
 The first solution we tried was using Istio with the standard sidecar mode. The routing configuration worked in principle but this solution has several disadvantages. First each pod needs a sidecar container with an envoy proxy.
 This has implications for the utilization of resources (cpu and memory) and increases the latency compared to ambient mode. Second, the routing configuration uses Istio specific components (e.g. virtual service in combination with destination rules) that are not re-usable across different mesh implementations.  
-As an alternative we looked into the [Gateway API](https://gateway-api.sigs.k8s.io). The Gateway API is an official kubernetes project focused on L4 and L7 routing in Kubernetes
-that provides advanced routing capabilities for both Ingress and Mesh. The API is supported in several existing [gateway controller or service mesh solutions](https://gateway-api.sigs.k8s.io/implementations/) like [Istio](https://istio.io/), [cillium](https://cilium.io) or [Contour](https://projectcontour.io/).
+As an alternative we looked into the [Gateway API](https://gateway-api.sigs.k8s.io). The Gateway API is an official Kubernetes project focused on L4 and L7 routing in Kubernetes
+that provides advanced routing capabilities for both Ingress and Mesh. The API is supported in several existing [gateway controller or service mesh solutions](https://gateway-api.sigs.k8s.io/implementations/) like [Istio](https://istio.io/), [Cilium](https://cilium.io) or [Contour](https://projectcontour.io/).
 
 For our proof of concept we used Istio in ambient mode which implements the service mesh Gateway API.
 

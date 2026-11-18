@@ -23,7 +23,7 @@ It is a lowercase identifier consisting of a type name and a vendor-owned DNS do
 An artifact is packaged as an OCM component version.
 Its manifest declares the artifact type, while its other resources carry the deployable content required by that type.
 The provider of the type defines which resources and payloads are valid.
-For example, artifacts of type `helm.konfidence.cloud` contain one helm chart resource.
+For example, artifacts of type `helm.konfidence.cloud` contain one Helm chart resource.
 
 The artifact type appears in different places throughout the platform:
 

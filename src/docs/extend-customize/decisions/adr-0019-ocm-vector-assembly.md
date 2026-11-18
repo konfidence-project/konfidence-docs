@@ -126,7 +126,7 @@ This approach provides a clear and explicit mechanism for manual promotions, and
 
 ### Option 2: Custom annotation on `VectorPromotion`
 
-We can use a custom annotation on the `VectorPromotion` resource to trigger a promotion when the annotation is added or updated (similar to flux CLI: `flux reconcile <xyz>`).
+We can use a custom annotation on the `VectorPromotion` resource to trigger a promotion when the annotation is added or updated (similar to the `flux` CLI: `flux reconcile <xyz>`).
 For example, adding an annotation like `konfidence.cloud/promote: "true"` could signal the controller to execute the promotion.
 While this approach avoids the need for an additional CRD, it can be less intuitive and may lead to confusion about the purpose of the annotation and how to use it correctly.
 It also makes it harder to track promotion attempts and their outcomes, since the trigger is not a first-class resource.
@@ -138,7 +138,7 @@ The controller records the invocation and result in the `VectorPromotion` status
 This approach keeps the trigger close to the primary resource and provides a clear, explicit API action without introducing an additional CRD.
 
 However, recording execution history in the resource status does not scale well because status fields are intended to stay small and are not designed for unbound execution history.
-Additionally, executions cannot be observed or queried independently (e.g. kubectl get promotionjobs), making it difficult to list, label, or filter individual runs.
+Additionally, executions cannot be observed or queried independently (e.g. `kubectl get promotionjobs`), making it difficult to list, label, or filter individual runs.
 
 ## Examples CRDs
 

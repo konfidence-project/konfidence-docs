@@ -74,7 +74,7 @@ The CLI authentication flow works as follows:
 9. API maps user groups to roles based on Project configuration. It creates a session, stores it in
    the datastore, creates a session cookie that contains the session id and deletes the OAuth state cookie.
 10. API redirects browser to the local web server with a temporary exchange code
-11. The local web server extracts the exchange code and sends it with the original PKCE verifier to the API to get the session cookie. The server securely stores the session cookie from the request (e.g. key chain) and tries to autoclose the browser
+11. The local web server extracts the exchange code and sends it with the original PKCE verifier to the API to get the session cookie. The server securely stores the session cookie from the request (e.g. key chain) and tries to close the browser automatically
     window using a javascript snippet or (if this does not work) shows a success page after successful authentication.
     CLI then stops the local web server and can now use the session cookie to send requests to the API.
 

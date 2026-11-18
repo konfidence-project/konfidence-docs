@@ -52,8 +52,8 @@ The Authorization mapping is described in [ADR-0028](./adr-0028-project-crd-mult
 
 ### Installation routine
 
-The Konfidence API will be part of Konfidence core installation routine (konfidence HELM chart).
-The Konfidence core HELM chart will contain all required components of the API with a minimal set of pre-configurations.
+The Konfidence API will be part of Konfidence core installation routine (`konfidence` Helm chart).
+The Konfidence core Helm chart will contain all required components of the API with a minimal set of pre-configurations.
 
 ## Related ADRs
 

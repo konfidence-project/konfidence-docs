@@ -50,7 +50,7 @@ The communication between global and landscape plane is based on a pull pattern 
   - Provides core functionality to assemble a vector (includes artifact management, vector assembly and qualification)
   - Provides the (deployment) configuration specific for each landscape control plane (for example: apply vector `xyz` to landscape `dev-eu`)
   - The pluggable architecture allows to implement extensions (via eventing)
-  - API first approach, i.e. the control plane is managable via API, but Konfidence brings dashboard as well
+  - API first approach, i.e. the control plane is manageable via API, but Konfidence brings dashboard as well
 
 - Konfidence data plane aka landscape control plane:
   - Pull desired state from global control plane, coordinates deployment, creates routing resources
@@ -86,7 +86,7 @@ Based on the outlined architecture, the main design decisions of Konfidence are 
    - It is not necessary to have a global control plane at all; a landscape control plane can also deploy vectors from a 3rd-party source.
 1. The communication between global and landscape control plane is based on a **pull pattern** and implements a reconciliation loop (i.e. operator pattern).
    - The global control plane must not even know about the existence of a specific landscape control plane.
-   - No credentials neccessary to access the landscape control plane; this is esspecially important for restricted data centers like sovereign clouds.
+   - No credentials necessary to access the landscape control plane; this is especially important for restricted data centers like sovereign clouds.
    - The reconciliation loop ensures that the desired state is always maintained, reducing the need for manual intervention.
 1. Providing **extension points** to allow for customizations and extensions of the core functionality.
    - Keeps the core clean.

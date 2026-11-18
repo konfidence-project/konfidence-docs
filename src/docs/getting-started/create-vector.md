@@ -11,12 +11,12 @@ lastUpdated: true
 requirements:
 
 - an OCI registry to store [artifacts](../reference/glossary.md#artifact)
-- a running k8s cluster with konfidence installed (see quickstart guide)
-- clone sample-app/quickstart repo: github.com/konfidence-project/example-app
+- a running k8s cluster with Konfidence installed (see quickstart guide)
+- clone sample-app/quickstart repo: `github.com/konfidence-project/example-app`
 
 # Example application
 
-- based on istio examples, pure k8s deployments
+- based on Istio examples, pure k8s deployments
 - product-page / reviews / details
 - ratings not included in quickstart because of external database dependency
 
@@ -24,7 +24,7 @@ requirements:
 
 steps:
 
-- publish app artifacts with kden CLI: `kden artifact push -f component-constructor.yaml`
+- publish app artifacts with `kden` CLI: `kden artifact push -f component-constructor.yaml`
 - check [`VectorTemplate`](../reference/glossary.md#vectortemplate) status: `kubectl get vectortemplate vector-dev`
 - first [vector](../reference/glossary.md#vector) should be created now (might take few minutes for reconciliation)
 - in OCI registry, you should see a new artifact created for the vector

@@ -282,7 +282,7 @@ The lifecycle is tracked as `metav1.Condition`s rather than a written state mach
 - `Succeeded=False` with reason `PromotionSuperseded`: `Superseded`.
 - `Succeeded=False` with any other reason (e.g. `PromotionTimedOut`, `PromotionFailed`): `Failed`.
 
-Note that `WaitingForApproval` remains the _reason_ on the `Approved=False` condition, but the derived display _state_ is `Waiting`. The status also records `promotedStageRef` (the Stage a successful promotion actually wrote to) so the object stays self-describing after the config changes or is deleted.
+Note that `WaitingForApproval` remains the _reason_ on the `Approved=False` condition, but the derived display _state_ is `Waiting`. The status also records `promotedStageRef` (the stage a successful promotion actually wrote to) so the object stays self-describing after the config changes or is deleted.
 
 If the source stage receives multiple new vector versions before a promotion is approved, the controller creates a new `VectorPromotion` object for each version. This gives the user visibility into all available candidates and the choice of which version to promote.
 
@@ -347,7 +347,7 @@ We choose Option C because it eliminates the race condition present in Options A
 
 - Drift detection in the `VectorPromotionConfig` is immediate: the config reconciler watches `VectorTemplate`, `Stage`, and `Landscape` resources and maps changes back to the affected configs through indexed reverse lookups (configs indexed by source template, source stage, and target stage; landscapes indexed by their managed namespace to hop from a stage event back to the project namespace). No polling interval and no `StageVersion` watch are involved.
 
-## Open Questions
+## Open questions
 
 - Is there a use case for creating new vectors during a promotion (e.g. changing a feature toggle or adding a service)? The current design does not allow this — the intended best practice is to always create a vector from scratch and start a new promotion chain from it. If this turns out to be insufficient and there are actual use cases for creating a new vector based on the one deployed to a particular stage, a `Stage` could be allowed as a base of the `VectorTemplate`. It would then be possible to define a `VectorTemplate` that creates a new vector based on the one deployed to a certain stage with custom changes, and configure a `VectorPromotionConfig` that points to that `VectorTemplate` as source.
 - At what point should a promotion from a stage be possible? As soon as the new vector is set on the stage? Or should deployment have started or finished successfully first?
