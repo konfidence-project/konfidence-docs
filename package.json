@@ -19,7 +19,12 @@
     "preview": "vitepress preview",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
-    "test:unit": "vitest run --exclude scripts/check-links.test.mjs"
+    "test:unit": "vitest run --exclude scripts/check-links.test.mjs",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "check": "vue-tsc --noEmit -p tsconfig.json",
+    "verify": "pnpm fmt:check && pnpm lint && pnpm check && pnpm lint:markdown",
+    "all": "pnpm verify && pnpm test"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0"
@@ -30,10 +35,14 @@
     "markdownlint-cli2-formatter-sarif": "0.0.5",
     "mermaid": "^11.17.2",
     "oxfmt": "^0.77.0",
+    "oxlint": "^1.94.0",
+    "typescript": "^6.0.3",
     "vitepress": "2.0.0-alpha.21",
     "vitepress-openapi": "^0.2.13",
     "vitepress-plugin-mermaid": "2.0.17",
-    "vitest": "^5.1.1"
+    "vitest": "^5.1.1",
+    "vue": "^3.5.44",
+    "vue-tsc": "^3.3.14"
   },
   "engines": {
     "node": ">=24.0.0",

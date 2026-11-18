@@ -39,6 +39,8 @@ jobs:
         uses: actions/configure-pages@v6
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Check formatting, lint, and types
+        run: pnpm fmt:check && pnpm lint && pnpm check
       # every test except the link tests, which need lychee and run in lychee.yaml
       - name: Test the tooling
         run: pnpm test:unit

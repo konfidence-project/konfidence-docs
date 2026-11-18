@@ -219,7 +219,7 @@ The checks cover static output. JavaScript-generated anchors and assets loaded o
 
 The scripts and check configurations have tests that run with [Vitest](https://vitest.dev/). A test sits next to the file it covers and carries its name: `scripts/check-links.test.mjs` covers `scripts/check-links.mjs`, and `.markdownlint-cli2.test.mjs` covers `.markdownlint-cli2.yaml`. The Mermaid test sits beside the VitePress configuration in `.vitepress/`.
 
-`pnpm test` runs all of them. The link tests need lychee installed. To run one file, use its script, such as `pnpm test:links`, or `pnpm exec vitest run <file>`.
+`pnpm test` runs all of them. The link tests need lychee installed. `pnpm verify` checks formatting with `oxfmt`, lints the scripts and theme with `oxlint`, type-checks the theme with `vue-tsc`, and runs markdownlint; `pnpm all` runs `verify` and the tests. The commit hook expects `oxfmt` formatting, so run `pnpm fmt` before committing. To run one file, use its script, such as `pnpm test:links`, or `pnpm exec vitest run <file>`.
 
 ### Pull request titles
 

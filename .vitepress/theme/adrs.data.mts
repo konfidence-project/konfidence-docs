@@ -41,6 +41,6 @@ export default createContentLoader("docs/extend-customize/decisions/adr-*.md", {
         dependencies: fm.dependencies ?? [],
         superseded_by: fm.superseded_by,
       }))
-      .sort((a, b) => a.id.localeCompare(b.id));
+      .toSorted((a, b) => a.id.localeCompare(b.id));
   },
 });

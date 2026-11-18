@@ -7,7 +7,7 @@ import { withMermaid } from "vitepress-plugin-mermaid";
 const adrDir = "src/docs/extend-customize/decisions";
 const adrItems = readdirSync(adrDir)
   .filter((f) => /^adr-\d{4}-.*\.md$/.test(f))
-  .sort()
+  .toSorted()
   .map((f) => {
     const src = readFileSync(`${adrDir}/${f}`, "utf8");
     const id = src.match(/^id:\s*ADR-(\d{4})/m)?.[1] ?? f.slice(4, 8);

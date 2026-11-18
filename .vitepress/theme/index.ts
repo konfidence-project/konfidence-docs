@@ -1,3 +1,4 @@
+import type { Theme } from "vitepress";
 import DefaultTheme from "vitepress/theme";
 import Layout from "./Layout.vue";
 import DocsCards from "./components/DocsCards.vue";
@@ -13,7 +14,8 @@ import "./custom.css";
 export default {
   extends: DefaultTheme,
   Layout,
-  enhanceApp({ app }) {
+  enhanceApp(ctx) {
+    const { app } = ctx;
     app.component("DocsCards", DocsCards);
     app.component("DrawioDiagram", DrawioDiagram);
     app.component("FeatureOverview", FeatureOverview);
@@ -41,6 +43,6 @@ export default {
         },
       },
     });
-    openapiTheme.enhanceApp({ app });
+    openapiTheme.enhanceApp(ctx);
   },
-};
+} satisfies Theme;

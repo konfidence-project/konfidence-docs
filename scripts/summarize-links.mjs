@@ -61,8 +61,8 @@ function localTarget(target, root) {
   if (page.endsWith(".html")) files.push("src/" + page.replace(/\.html$/, ".md"));
   else if (!path.posix.extname(page))
     files.push("src/" + page + ".md", "src/" + page.replace(/\/$/, "") + "/index.md");
-  for (const source of files.filter((file) => file.endsWith(".md"))) {
-    files.push(...includedSources(path.join(root, source), root).map((file) => within(root, file)));
+  for (const source of files.filter((name) => name.endsWith(".md"))) {
+    files.push(...includedSources(path.join(root, source), root).map((name) => within(root, name)));
   }
   const suffix = url.search + url.hash;
   const aliases = ["/" + page + suffix, "/" + page.replace(/\.html$/, "") + suffix];
@@ -130,7 +130,7 @@ function location(input, target, reportedLine, root, sharedSources, local) {
 
 function advice(status, mode, detail, target) {
   if (mode !== "external") return "Check the target file or heading. " + detail;
-  if (status === "404" && /^https:\/\/github\.com\//.test(target))
+  if (status === "404" && target.startsWith("https://github.com/"))
     return "Check the address and repository access; GitHub can return HTTP 404 for a private target.";
   if (["404", "410"].includes(status))
     return "Check the address and update the link if its target moved (HTTP " + status + ").";
