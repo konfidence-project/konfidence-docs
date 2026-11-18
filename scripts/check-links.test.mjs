@@ -5,16 +5,16 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { test } from "node:test";
+import { test } from "vitest";
 import { promisify } from "node:util";
-import { linkArguments, shellArguments } from "../scripts/check-links.mjs";
+import { linkArguments, shellArguments } from "./check-links.mjs";
 
 const execute = promisify(execFile);
 
 async function fixture(t, html) {
   // Exercise both URL encoding and the quoting used by the official GitHub action.
   const root = await mkdtemp(path.join(tmpdir(), "konfidence lychee's "));
-  t.after(() => rm(root, { recursive: true, force: true }));
+  t.onTestFinished(() => rm(root, { recursive: true, force: true }));
   await mkdir(path.join(root, "section"));
   await mkdir(path.join(root, "empty"));
   await mkdir(path.join(root, "assets"));
@@ -190,7 +190,7 @@ async function server(t, handler) {
   const http = createServer(handler);
   http.listen(0, "127.0.0.1");
   await once(http, "listening");
-  t.after(
+  t.onTestFinished(
     () =>
       new Promise((resolve) => {
         http.closeAllConnections();

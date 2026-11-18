@@ -3,12 +3,12 @@ import { spawnSync } from "node:child_process";
 import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { test } from "node:test";
+import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { lint } from "markdownlint-cli2/markdownlint/promise";
 import parseYaml from "markdownlint-cli2/parsers/yaml";
 
-const root = fileURLToPath(new URL("../", import.meta.url));
+const root = fileURLToPath(new URL("./", import.meta.url));
 const configuration = await readFile(path.join(root, ".markdownlint-cli2.yaml"), "utf8");
 const { config } = parseYaml(configuration);
 const cli = fileURLToPath(
@@ -126,7 +126,7 @@ test("a scoped exception does not hide the next unrelated finding", async () => 
 
 async function workspace(t) {
   const directory = await mkdtemp(path.join(tmpdir(), "konfidence-markdownlint-"));
-  t.after(() => rm(directory, { recursive: true, force: true }));
+  t.onTestFinished(() => rm(directory, { recursive: true, force: true }));
   await writeFile(path.join(directory, ".markdownlint-cli2.yaml"), configuration);
   return directory;
 }

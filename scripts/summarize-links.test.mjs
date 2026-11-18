@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { test } from "node:test";
+import { test } from "vitest";
 import parseYaml from "markdownlint-cli2/parsers/yaml";
-import { pullRequestFiles, summarizeLinks } from "../scripts/summarize-links.mjs";
+import { pullRequestFiles, summarizeLinks } from "./summarize-links.mjs";
 
 const workflow = parseYaml(
   readFileSync(new URL("../.github/workflows/documentation-comment.yaml", import.meta.url), "utf8"),
@@ -282,7 +282,7 @@ function linkFixture(t) {
   const root = mkdtempSync(path.join(tmpdir(), "maintenance reports "));
   const reports = path.join(root, "reports");
   mkdirSync(reports);
-  t.after(() => rmSync(root, { recursive: true, force: true }));
+  t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
   const write = (file, content) => {
     const destination = path.join(root, file);
     mkdirSync(path.dirname(destination), { recursive: true });

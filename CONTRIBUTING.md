@@ -167,7 +167,7 @@ The `.github/markdownlint-cli2.ci.mjs` file adds the official output formatter f
 
 For an intentional exception, use a [markdownlint configuration comment](https://github.com/DavidAnson/markdownlint#configuration) such as `<!-- markdownlint-disable-next-line MD040 -->` and explain why the exception is needed. Limit it to the relevant rule and example. Update generated content at its source.
 
-When changing rules or updating the tool, update the examples in `tests/markdownlint.test.mjs` and run `pnpm test:markdown`, `pnpm lint:markdown`, `pnpm test:prose`, `pnpm lint:prose`, and `pnpm build`. Review changes in findings before merging. Keep dependency updates in `package.json` and `pnpm-lock.yaml` together; CI uses `pnpm install --frozen-lockfile`.
+When changing rules or updating the tool, update the examples in `.markdownlint-cli2.test.mjs` and run `pnpm test:markdown`, `pnpm lint:markdown`, `pnpm test:prose`, `pnpm lint:prose`, and `pnpm build`. Review changes in findings before merging. Keep dependency updates in `package.json` and `pnpm-lock.yaml` together; CI uses `pnpm install --frozen-lockfile`.
 
 ### Link checks with lychee
 
@@ -211,9 +211,15 @@ Keep shared options and narrowly justified URL exclusions in `lychee.toml`. The 
 
 Three verified pages reject automated requests with HTTP 403: SAP's legal disclosure, the Merriam-Webster homepage, and the linked Medium article about Istio NodePort gateways. Only these exact URLs are excluded in `lychee.toml`; other URLs on those hosts remain checked. Review these pages manually and remove an exclusion when automated checks work again. Links to private planning tickets do not belong in public ADRs; keep their reader-facing scope descriptions without the private links.
 
-When changing options or updating lychee, run `pnpm test:links`, rebuild, and run both link checks. Also run `pnpm test:markdown`, `pnpm test:prose`, `pnpm lint:markdown`, and `pnpm lint:prose`. Keep the workflow version and the version documented here and in the README together. Add regression examples to `tests/lychee.test.mjs`; the network tests use a local test server instead of depending on external websites.
+When changing options or updating lychee, run `pnpm test:links`, rebuild, and run both link checks. Also run `pnpm test:markdown`, `pnpm test:prose`, `pnpm lint:markdown`, and `pnpm lint:prose`. Keep the workflow version and the version documented here and in the README together. Add regression examples to `scripts/check-links.test.mjs`; the network tests use a local test server instead of depending on external websites.
 
 The checks cover static output. JavaScript-generated anchors and assets loaded only in the browser, such as interactive diagrams, still need preview and manual review. They also do not establish technical accuracy, useful image descriptions, or correct commands.
+
+### Tests for the tooling
+
+The scripts and check configurations have tests that run with [Vitest](https://vitest.dev/). A test sits next to the file it covers and carries its name: `scripts/check-links.test.mjs` covers `scripts/check-links.mjs`, and `.markdownlint-cli2.test.mjs` covers `.markdownlint-cli2.yaml`. The Mermaid test sits beside the VitePress configuration in `.vitepress/`.
+
+`pnpm test` runs all of them. The link tests need lychee installed. To run one file, use its script, such as `pnpm test:links`, or `pnpm exec vitest run <file>`.
 
 ### Pull request titles
 

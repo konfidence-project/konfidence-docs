@@ -1,27 +1,25 @@
 {
   "name": "konfidence-docs",
-  "version": "1.0.0",
-  "description": "",
-  "keywords": [],
-  "license": "ISC",
-  "author": "",
-  "main": "index.js",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
     "lint:markdown": "markdownlint-cli2",
-    "test:markdown": "node --test tests/markdownlint.test.mjs",
-    "test:mermaid": "node --test tests/mermaid.test.mjs",
-    "test:reports": "node --test tests/maintenance-reports.test.mjs",
+    "test:markdown": "vitest run .markdownlint-cli2.test.mjs",
+    "test:mermaid": "vitest run .vitepress/mermaid.test.mjs",
+    "test:reports": "vitest run scripts/summarize-links.test.mjs",
     "lint:links": "node scripts/check-links.mjs internal",
     "lint:links:external": "node scripts/check-links.mjs external",
-    "test:links": "node --test tests/lychee.test.mjs",
+    "test:links": "vitest run scripts/check-links.test.mjs",
     "lint:prose": "vale --no-global --config=.vale.ini src README.md CONTRIBUTING.md",
     "test:prose": "vale --no-global --config=.vale.ini test --coverage .vale",
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview",
     "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
+    "fmt:check": "oxfmt --check",
+    "test:unit": "vitest run --exclude scripts/check-links.test.mjs"
   },
   "dependencies": {
     "lucide-vue-next": "^1.0.0"
@@ -34,7 +32,8 @@
     "oxfmt": "^0.77.0",
     "vitepress": "2.0.0-alpha.21",
     "vitepress-openapi": "^0.2.13",
-    "vitepress-plugin-mermaid": "2.0.17"
+    "vitepress-plugin-mermaid": "2.0.17",
+    "vitest": "^5.1.1"
   },
   "engines": {
     "node": ">=24.0.0",
