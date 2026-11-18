@@ -66,9 +66,7 @@ jobs:
           fail: false
           token: ""
       - name: Test link-checking behavior
-        run: |
-          pnpm test:links
-          pnpm test:reports
+        run: pnpm test:links
       - name: Report the internal check outcome
         env:
           EXIT_CODE: ${{ steps.internal.outputs.exit_code }}

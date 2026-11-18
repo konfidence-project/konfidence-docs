@@ -38,9 +38,10 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: actions/configure-pages@v6
       - name: Install dependencies
-        run: pnpm install
-      - name: Test Mermaid rendering
-        run: pnpm test:mermaid
+        run: pnpm install --frozen-lockfile
+      # every test except the link tests, which need lychee and run in lychee.yaml
+      - name: Test the tooling
+        run: pnpm test:unit
       - name: Build with VitePress
         run: pnpm build
       - name: Upload artifact
