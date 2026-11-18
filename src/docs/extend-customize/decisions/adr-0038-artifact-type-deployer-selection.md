@@ -50,7 +50,7 @@ Two types may still use the same underlying destination or credential reference,
 ## Consequences
 
 - **Simpler reconciliation:** Deployers match their own types directly instead of installing and watching redundant classes or looking up class ownership for every artifact and target.
-- **Weaker discovery and enforcement:** The API no longer enumerates installed deployer classes. Misconfigured controllers could race on status and runtime objects. This is mitigated by including the vendor domain into the artifact type. Cluster administrators are responsible to ensure compatibility when using multiple deployers. 
-- **Deployer Health/Availability still open:** A deployer that crashes after writing `Ready=True` can leave status stale. This is true for all kubernetes controllers. 
+- **Weaker discovery and enforcement:** The API no longer enumerates installed deployer classes. Misconfigured controllers could race on status and runtime objects. This is mitigated by including the vendor domain into the artifact type. Cluster administrators are responsible to ensure compatibility when using multiple deployers.
+- **Deployer Health/Availability still open:** A deployer that crashes after writing `Ready=True` can leave status stale. This is true for all kubernetes controllers.
 
 The [deployer specification](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md) defines artifact packaging, target ownership and validation, and artifact reconciliation behavior.

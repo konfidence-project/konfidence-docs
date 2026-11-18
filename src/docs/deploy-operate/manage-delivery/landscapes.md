@@ -117,10 +117,10 @@ kubectl patch landscape prod-eu \
 
 `spec.deletionPolicy` controls what happens to the managed namespace when you delete a landscape:
 
-| Policy | Behavior |
-|--------|----------|
+| Policy             | Behavior                                                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------------------------ |
 | `Orphan` (default) | Konfidence keeps the namespace and its contents and removes only the `konfidence.cloud/*` management labels. |
-| `Delete` | Konfidence deletes the namespace and everything in it, including stages and deployed artifacts. |
+| `Delete`           | Konfidence deletes the namespace and everything in it, including stages and deployed artifacts.              |
 
 Confirm that the landscape is no longer needed, then delete it:
 

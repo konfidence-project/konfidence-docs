@@ -11,6 +11,7 @@ dependencies: [ADR-0005, ADR-0012, ADR-0015, ADR-0027]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0037: Ingress routing and activation
 
 <AdrHeader />
@@ -18,6 +19,7 @@ outline: deep
 ::: info Scope
 This ADR proposes a new, working solution for activation/ingress that improves on the current mechanism. Gateway API is the first analyzed option; further options (e.g. shipping our own proxy) will be added and compared. Konfidence's ingress approach may evolve in the future — this ADR captures the solution chosen now, not a claim that it is the final architecture.
 :::
+
 ## Context
 
 External traffic must reach the **currently active vector of a stage**. The runtime mapping is:
@@ -128,7 +130,7 @@ Konfidence ships and manages the lifecycle of its own data plane (most likely by
 - A Konfidence admin may not want the shipped proxy (licensing, feature set, bugs) and — unlike Gateway API — cannot swap in their preferred implementation.
 - Significantly more effort than Option 2.
 
-*Not yet analyzed in detail; to be expanded in a follow-up revision of this ADR.*
+_Not yet analyzed in detail; to be expanded in a follow-up revision of this ADR._
 
 ## Decision
 

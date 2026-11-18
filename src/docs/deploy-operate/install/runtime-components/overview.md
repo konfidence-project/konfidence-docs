@@ -22,8 +22,8 @@ An administrator installs landscape services manually. Before installing one, [c
 
 The current documentation covers the following service:
 
-| Service | Purpose | When to install |
-| --- | --- | --- |
+| Service                                         | Purpose                                                                                                                                                      | When to install                                                                                  |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
 | [Vector Data Service](./vector-data-service.md) | Provides runtime access to [vector data](../../../develop-integrate/vector-data/overview.md), including feature flags, configuration, and deployment results | Recommended in every Kubernetes landscape; applications use it to resolve vector data at runtime |
 
 ## Next steps

@@ -11,6 +11,7 @@ dependencies: []
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0005: Gateway API integration
 
 <AdrHeader />
@@ -23,9 +24,9 @@ Konfidence needs a routing component that routes incoming traffic to specific se
 
 The first solution we tried was using Istio with the standard sidecar mode. The routing configuration worked in principle but this solution has several disadvantages. First each pod needs a sidecar container with an envoy proxy.
 This has implications for the utilization of resources (cpu and memory) and increases the latency compared to ambient mode. Second, the routing configuration uses Istio specific components (e.g. virtual service in combination with destination rules) that are not re-usable across different mesh implementations.  
-As an alternative we looked into the [Gateway API](https://gateway-api.sigs.k8s.io). The Gateway API is an official kubernetes project focused on L4 and L7 routing in Kubernetes 
-that provides advanced routing capabilities for both Ingress and Mesh. The API is supported in several existing [gateway controller or service mesh solutions](https://gateway-api.sigs.k8s.io/implementations/) like [Istio](https://istio.io/), [cillium](https://cilium.io) or [Contour](https://projectcontour.io/).  
-  
+As an alternative we looked into the [Gateway API](https://gateway-api.sigs.k8s.io). The Gateway API is an official kubernetes project focused on L4 and L7 routing in Kubernetes
+that provides advanced routing capabilities for both Ingress and Mesh. The API is supported in several existing [gateway controller or service mesh solutions](https://gateway-api.sigs.k8s.io/implementations/) like [Istio](https://istio.io/), [cillium](https://cilium.io) or [Contour](https://projectcontour.io/).
+
 For our proof of concept we used Istio in ambient mode which implements the service mesh Gateway API.
 
 ## Decision
@@ -41,7 +42,6 @@ The Gateway API offers several benefits:
 - Same configuration can be used for north/south and east/west traffic routing
 - Allows routing by matching HTTP path or HTTP headers
 
-
 ## Example Gateway API integration with Istio service mesh
 
 This is a simple example using the Istio service mesh illustrating how to route traffic (north/south and east/west) to specific services using the Gateway API classes.
@@ -49,10 +49,8 @@ The routing is controlled using a specific HTTP header.
 
 ### Prerequisites
 
-
 - Istio is installed with ambient mode inside the cluster (see [Istio Getting Started](https://istio.io/latest/docs/ambient/getting-started/))
 - Make sure the Gateway API CRDs are installed inside the cluster (see [Gateway API v1.3.0 release assets](https://github.com/kubernetes-sigs/gateway-api/releases/tag/v1.3.0))
-
 
 ### Example Gateway API Configuration
 
@@ -100,7 +98,7 @@ spec:
 ```
 
 ```yaml
-# Service for the first Nginx deployment    
+# Service for the first Nginx deployment
 apiVersion: v1
 kind: Service
 metadata:
@@ -114,8 +112,6 @@ spec:
     - name: http
       port: 80
 ```
-
-
 
 ```yaml
 #  Nginx deployment
@@ -159,7 +155,6 @@ spec:
       port: 80
 ```
 
-
 ```yaml
 # Service which will be used to route traffic through the gateway
 apiVersion: v1
@@ -196,7 +191,7 @@ spec:
 ```
 
 ```yaml
-# Gateway for external ingress traffic  
+# Gateway for external ingress traffic
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -214,15 +209,16 @@ spec:
         namespaces:
           from: All
 ```
+
 > Gateways will automatically create a service for the Gateway. For Istio this will be a LoadBalancer service,
-> which will be configured by the cloud provider. In our case we override this with a NodePort, 
+> which will be configured by the cloud provider. In our case we override this with a NodePort,
 > [which has its own implications](https://ryandeangraham.medium.com/istio-gateway-api-nodeport-c598a21c4c95).
 >
 > see [Istio > Ingress > Gateway API](https://istio.io/latest/docs/tasks/traffic-management/ingress/gateway-api/)
 
 #### HTTP Route
 
-This routing configuration will route traffic based on the HTTP header `X-Vector-ID`. 
+This routing configuration will route traffic based on the HTTP header `X-Vector-ID`.
 When defined, it will route to the specific backend service based on the value of the header, otherwise
 it will take the second backend service as a default.
 
@@ -257,6 +253,3 @@ spec:
         - name: nginxdemo-hello-v2
           port: 80
 ```
-
-
-

@@ -7,7 +7,20 @@
       <a href="/docs/develop-integrate/" class="docs-card docs-card--blue">
         <div class="card-header">
           <div class="card-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m16 18 6-6-6-6" />
+              <path d="m8 6-6 6 6 6" />
+            </svg>
           </div>
           <h2>Develop & Integrate</h2>
           <div class="role-tags">
@@ -16,18 +29,46 @@
             <span class="role-tag">Quality Engineer</span>
           </div>
         </div>
-        <p class="card-description">Integrate Konfidence into your dev workflow. Publish artifacts, build vectors, and define promotions.</p>
+        <p class="card-description">
+          Integrate Konfidence into your dev workflow. Publish artifacts, build vectors, and define
+          promotions.
+        </p>
         <ul class="card-links">
-          <li><a href="/docs/develop-integrate/publish-artifacts/" @click.stop>Publish Artifacts</a></li>
-          <li><a href="/docs/develop-integrate/observe-improve/build-vectors/" @click.stop>Build Vectors</a></li>
-          <li><a href="/docs/develop-integrate/observe-improve/define-promotions/" @click.stop>Define Promotions</a></li>
+          <li>
+            <a href="/docs/develop-integrate/publish-artifacts/" @click.stop>Publish Artifacts</a>
+          </li>
+          <li>
+            <a href="/docs/develop-integrate/observe-improve/build-vectors/" @click.stop
+              >Build Vectors</a
+            >
+          </li>
+          <li>
+            <a href="/docs/develop-integrate/observe-improve/define-promotions/" @click.stop
+              >Define Promotions</a
+            >
+          </li>
         </ul>
       </a>
 
       <a href="/docs/deploy-operate/" class="docs-card docs-card--teal">
         <div class="card-header">
           <div class="card-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+              <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+              <line x1="6" x2="6.01" y1="6" y2="6" />
+              <line x1="6" x2="6.01" y1="18" y2="18" />
+            </svg>
           </div>
           <h2>Deploy & Operate</h2>
           <div class="role-tags">
@@ -36,9 +77,15 @@
             <span class="role-tag">Infra Engineer</span>
           </div>
         </div>
-        <p class="card-description">Install, configure, and run Konfidence. Manage installations and promotion flows.</p>
+        <p class="card-description">
+          Install, configure, and run Konfidence. Manage installations and promotion flows.
+        </p>
         <ul class="card-links">
-          <li><a href="/docs/deploy-operate/installation-variants" @click.stop>Installation Variants</a></li>
+          <li>
+            <a href="/docs/deploy-operate/installation-variants" @click.stop
+              >Installation Variants</a
+            >
+          </li>
         </ul>
       </a>
 
@@ -67,7 +114,21 @@
       <a href="/docs/extend-customize/" class="docs-card docs-card--orange">
         <div class="card-header">
           <div class="card-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/></svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"
+              />
+            </svg>
           </div>
           <h2>Extend & Customize</h2>
           <div class="role-tags">
@@ -75,7 +136,10 @@
             <span class="role-tag">OSS Contributor</span>
           </div>
         </div>
-        <p class="card-description">Extend Konfidence or contribute to the project. Add runtimes, customize vector assembly, and shape the open-source ecosystem.</p>
+        <p class="card-description">
+          Extend Konfidence or contribute to the project. Add runtimes, customize vector assembly,
+          and shape the open-source ecosystem.
+        </p>
         <ul class="card-links">
           <li><a href="/docs/extend-customize/code-of-conduct" @click.stop>Contributing</a></li>
           <li><a href="/docs/extend-customize/styleguide" @click.stop>Styleguide</a></li>

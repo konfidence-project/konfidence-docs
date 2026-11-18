@@ -23,8 +23,8 @@ Your service can also use the vector ID to retrieve vector-specific configuratio
 
 Konfidence targets distributed applications. Use it if your application meets these requirements:
 
-* Your application uses a microservice architecture.
-* You package each service as its own [artifact](../reference/glossary.md#artifact).
+- Your application uses a microservice architecture.
+- You package each service as its own [artifact](../reference/glossary.md#artifact).
 
 Packaging and integration add overhead for your engineering team. Evaluate carefully whether Konfidence fits your use case.
 

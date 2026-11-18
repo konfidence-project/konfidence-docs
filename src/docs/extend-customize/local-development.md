@@ -102,19 +102,19 @@ make dev-ui
 
 Open <https://ui.localhost> and sign in with one of these local users:
 
-| Username | Password | Groups |
-| --- | --- | --- |
-| `alice` | `password` | `admins`, `developers` |
-| `devin` | `password` | `developers` |
-| `primo` | `password` | `productmanagers` |
+| Username | Password   | Groups                 |
+| -------- | ---------- | ---------------------- |
+| `alice`  | `password` | `admins`, `developers` |
+| `devin`  | `password` | `developers`           |
+| `primo`  | `password` | `productmanagers`      |
 
 The main local addresses are:
 
-| Service | Address |
-| --- | --- |
-| Dashboard | `https://ui.localhost` |
-| API | `https://api.localhost` |
-| Sign-in | `https://auth.localhost` |
+| Service   | Address                  |
+| --------- | ------------------------ |
+| Dashboard | `https://ui.localhost`   |
+| API       | `https://api.localhost`  |
+| Sign-in   | `https://auth.localhost` |
 
 ## Customize your local settings
 

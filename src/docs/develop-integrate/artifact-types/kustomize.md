@@ -193,13 +193,13 @@ The deployer owns the rendered instance: its name suffix, its namespace, and its
 
 The deployer creates one Flux `Kustomization` per artifact instance and sets these fields. Your bundle cannot override them.
 
-| Field | Value |
-| --- | --- |
-| `metadata.name` | The [`ArtifactDeployment`](../../reference/glossary.md#artifactdeployment) name |
-| `spec.sourceRef` | The `OCIRepository` with the same name |
-| `spec.targetNamespace` | The landscape namespace |
-| `spec.nameSuffix` | `-<sanitized-artifact-version>-<hash>`, derived from the artifact version and hash |
-| `spec.commonMetadata.labels` | `konfidence.cloud/artifact-deployment=<artifact-deployment-name>` |
+| Field                        | Value                                                                              |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
+| `metadata.name`              | The [`ArtifactDeployment`](../../reference/glossary.md#artifactdeployment) name    |
+| `spec.sourceRef`             | The `OCIRepository` with the same name                                             |
+| `spec.targetNamespace`       | The landscape namespace                                                            |
+| `spec.nameSuffix`            | `-<sanitized-artifact-version>-<hash>`, derived from the artifact version and hash |
+| `spec.commonMetadata.labels` | `konfidence.cloud/artifact-deployment=<artifact-deployment-name>`                  |
 
 :::
 

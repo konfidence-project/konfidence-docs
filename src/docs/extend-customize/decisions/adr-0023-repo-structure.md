@@ -8,6 +8,7 @@ dependencies: []
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0023: Monorepo with separate binaries
 
 <AdrHeader />
@@ -53,7 +54,7 @@ konfidence-project/konfidence/
 │   │   ├── vectorpromotion/
 │   │   └── ...
 │   └── star/
-│       ├── stage/ 
+│       ├── stage/
 │       ├── activation/
 │       └── ...
 ├── pkg/
@@ -66,34 +67,34 @@ Key choices:
 1. **One repo, multiple binaries.** Galaxy and Star are built from the same module. CRDs, OCM helpers, and shared utilities live in one place and are referenced directly — no cross-repo version pinning. The multi binary approach is necessary because this keeps the star binary small and auditable, for example for FIPS-validated builds
 2. **Controller selection via flag.** Each binary registers all controllers it could run, then enables a subset at startup using a `--controllers` glob flag:
 
-    - `--controllers=*` — run everything
-    - `--controllers=VectorAssembly` — run only that one
-    - `--controllers=!VectorAssembly,*` — run everything except that one
+   - `--controllers=*` — run everything
+   - `--controllers=VectorAssembly` — run only that one
+   - `--controllers=!VectorAssembly,*` — run everything except that one
 
-    This lets us split workloads across pods (one controller per leader-election lease) without rebuilding binaries.
+   This lets us split workloads across pods (one controller per leader-election lease) without rebuilding binaries.
 
 3. **Tests live next to code.** Per-domain `controller_test.go`, `integration_test.go`, and `suite_test.go` sit beside `controller.go`. Cross-cutting tests live in `tests/`.
 4. **Platform/Deployment specific landscape orchestrator stays separate.** It will live in its own repo. The repo name will be `kubernetes-landscape-orchestrator`. This makes konfidence extensible to other platform/deployment orchestrators in the future (e.g. CloudFoundry or other platform-specific deployers), and keeps the scope of the monorepo focused on the core functionality.
-The controllers will be split up as follows:
+   The controllers will be split up as follows:
 
-    ```
-    konfidence-project/konfidence
-    ├── Galaxy
-    │   ├── gcp-vector-assembly-controller
-    │   ├── gcp-stage-configuration-controller
-    │   └── gcp-vector-promotion-controller
-    └── Star
-        ├── landscape-gcp-sync-controller
-        ├── landscape-stage-controller
-        ├── landscape-vector-activation-controller
-        ├── landscape-task-orchestration-controller
-        └── landscape-vector-deployment-controller
+   ```
+   konfidence-project/konfidence
+   ├── Galaxy
+   │   ├── gcp-vector-assembly-controller
+   │   ├── gcp-stage-configuration-controller
+   │   └── gcp-vector-promotion-controller
+   └── Star
+       ├── landscape-gcp-sync-controller
+       ├── landscape-stage-controller
+       ├── landscape-vector-activation-controller
+       ├── landscape-task-orchestration-controller
+       └── landscape-vector-deployment-controller
 
-    konfidence-project/kubernetes-landscape-orchestrator
-    ├── landscape-kubernetes-task-execution-controller
-    ├── landscape-kubernetes-activation-execution-controller
-    └── landscape-flux-deployer
-    ```
+   konfidence-project/kubernetes-landscape-orchestrator
+   ├── landscape-kubernetes-task-execution-controller
+   ├── landscape-kubernetes-activation-execution-controller
+   └── landscape-flux-deployer
+   ```
 
 ## Consequences
 

@@ -10,6 +10,7 @@ dependencies: []
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0007: Multi-landscape support and namespace separation
 
 <AdrHeader />
@@ -23,7 +24,6 @@ Furthermore, Konfidence should impose no restriction on the number of landscapes
 To enable these use cases in efficient way, a single installation of the LCP should be able to manage multiple landscapes, whether their workloads are deployed to the same cluster, other clusters or completely different deployment targets.
 
 ## Considered Solutions
-
 
 - Separating landscapes by using different K8s namespaces
 - Separating landscapes by using labels
@@ -49,7 +49,5 @@ The deployment target configurations and additional landscape-specific configura
 
 ## Consequences
 
-
 - The landscape operator must reconcile resources from multiple namespaces and detect relevant namespaces based on the presence of a Stage resource
 - Managing multiple landscape namespaces with one LCP installation leads to a higher number of custom resources in a single K8S API server. This needs to be considered in other design decisions and should be documented in the documentation and best practices
-

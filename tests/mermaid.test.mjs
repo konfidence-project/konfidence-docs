@@ -18,7 +18,7 @@ test("Mermaid flowcharts and sequence diagrams render as components, not code bl
 });
 
 test("diagram source cannot escape the component attribute", () => {
-  const source = 'flowchart LR\n  A["<script>alert(\'x\')</script>"]\n';
+  const source = "flowchart LR\n  A[\"<script>alert('x')</script>\"]\n";
   const html = md.render(`\`\`\`mermaid\n${source}\`\`\`\n`);
   assert.doesNotMatch(html, /<script>/i);
   assert.match(html, /%22/);
@@ -32,7 +32,13 @@ test("ordinary code fences keep the VitePress renderer", () => {
 });
 
 test("ADR-0044 renders both diagrams", async () => {
-  const source = await readFile(new URL("../src/docs/extend-customize/decisions/adr-0044-deployer-conformance-test-setup.md", import.meta.url), "utf8");
+  const source = await readFile(
+    new URL(
+      "../src/docs/extend-customize/decisions/adr-0044-deployer-conformance-test-setup.md",
+      import.meta.url,
+    ),
+    "utf8",
+  );
   const html = md.render(source);
   assert.equal((html.match(/<Mermaid /g) ?? []).length, 2);
   assert.doesNotMatch(html, /language-mermaid/);

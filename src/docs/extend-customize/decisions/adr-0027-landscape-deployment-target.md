@@ -9,6 +9,7 @@ dependencies: []
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0027: Landscape and deployment target concept
 
 <AdrHeader />
@@ -19,8 +20,8 @@ This ADR's deployment-class registration and selection design was replaced by [A
 
 ## Context
 
-Konfidence needs infrastructure-agnostic definitions for organizing deployments across different landscapes and target platforms. 
-The core concepts must work across any target platform where software artifacts can deployed as part of an application (e.g. Kubernetes clusters, CloudFoundry spaces, FaaS providers, CDN services, etc). 
+Konfidence needs infrastructure-agnostic definitions for organizing deployments across different landscapes and target platforms.
+The core concepts must work across any target platform where software artifacts can deployed as part of an application (e.g. Kubernetes clusters, CloudFoundry spaces, FaaS providers, CDN services, etc).
 The goal is that a developer can group all runtimes that belong to the same logical target (landscape) and see which vectors and stages exist within this group.
 
 Two fundamental concepts have emerged but lack formal definition:
@@ -102,6 +103,7 @@ A new `Project` CRD will be introduced as a **cluster-scoped** resource that cre
 `Project` CRs are created manually in the Konfidence cluster and reconciliation will create a corresponding project namespace with standard labels, annotations, etc.
 
 **Example**:
+
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
 kind: Project
@@ -109,10 +111,9 @@ metadata:
   name: my-project
 ```
 
-_Note: 
-For now, the `Project` CRD is purely defined by its name and does not contain any additional spec fields. 
+_Note:
+For now, the `Project` CRD is purely defined by its name and does not contain any additional spec fields.
 This will be extended in the future to include fields for authorization policies and other project-level configurations._
-
 
 ### Landscape Creation and Representation
 
@@ -122,6 +123,7 @@ A new `Landscape` CRD will be introduced as **namespace-scoped** resource that c
 `Landscape` CRs are created manually in a project namespace and reconciliation will create a corresponding landscape namespace with standard labels, annotations, owner refs, etc.
 
 **Example**:
+
 ```yaml
 apiVersion: konfidence.cloud/v1alpha1
 kind: Landscape
@@ -132,7 +134,7 @@ spec:
     landscapeName: production
 status:
   namespace: landscape-production  # name of the namespace created for this landscape
-  deploymentTargets: 
+  deploymentTargets:
       # list of deployment targets available in this landscape, schema to be refined during implementation
     - class: konfidence.cloud/helm
       status: Configured
@@ -148,11 +150,12 @@ status:
 #### DeploymentClass CRD
 
 Each deployer (e.g. kubernetes-landscape-orchestrator) installs cluster-scoped `DeploymentClass` resources that declare its capabilities.
-The deployer's controllers run on Konfidence control-plane level (*not* per-landscape).
+The deployer's controllers run on Konfidence control-plane level (_not_ per-landscape).
 
 A single deployer can provide multiple deployment classes. For example, the kubernetes-landscape-orchestrator provides both `helm` and `kustomize` deployment classes.
 
 **Example**:
+
 ```yaml
 # kubernetes-landscape-orchestrator provides Helm deployment capability
 apiVersion: konfidence.cloud/v1alpha1
@@ -193,11 +196,11 @@ The `DeploymentTarget` contains the connection details and configuration for a s
 For Kubernetes-based deployment classes (`helm`, `kustomize`, `raw-manifests`), multiple deployment classes can share the same underlying Kubernetes cluster by referencing the same kubeconfig secret.
 This allows deployers to use different deployment mechanisms (Helm vs Kustomize) while targeting the same cluster.
 
-Deployment variables are configuration values that are injected into or required for deployments to this target. 
+Deployment variables are configuration values that are injected into or required for deployments to this target.
 They are shared across all deployments to this deployment target (e.g., resource limits, ingress domains, cloud provider-specific settings).
 
-
 **Kubernetes Examples (Helm and Kustomize sharing the same cluster):**
+
 ```yaml
 # Helm deployment target for production Kubernetes cluster
 apiVersion: konfidence.cloud/v1alpha1
@@ -207,13 +210,13 @@ metadata:
   namespace: landscape-production
 spec:
   type: konfidence.cloud/helm  # References the helm DeploymentClass
-  
+
   connection:
     type: kubeconfig  # hint for how the parse the ref
     ref:
       kind: Secret
       name: prod-cluster-kubeconfig  # Shared kubeconfig for the cluster
-  
+
   deploymentVariables:
     defaultNamespace: "production-apps"
     helmTimeout: "10m"
@@ -227,13 +230,13 @@ metadata:
   namespace: landscape-production
 spec:
   type: konfidence.cloud/kustomize  # References the kustomize DeploymentClass
-  
+
   connection:
     type: kubeconfig
     ref:
       kind: Secret
       name: prod-cluster-kubeconfig  # Same kubeconfig as Helm target
-  
+
   deploymentVariables:
     defaultNamespace: "production-apps"
     enablePrune: "true"
@@ -253,6 +256,7 @@ stringData:
 ```
 
 **CloudFoundry Example:**
+
 ```yaml
 # CloudFoundry deployment target
 apiVersion: konfidence.cloud/v1alpha1
@@ -262,13 +266,13 @@ metadata:
   namespace: landscape-production
 spec:
   type: konfidence.cloud/cloudfoundry
-  
+
   connection:
     type: credentials
     ref:
       kind: Secret
       name: cf-prod-credentials
-  
+
   deploymentVariables:
     defaultMemory: "512M"
     defaultInstances: "2"
@@ -288,6 +292,7 @@ stringData:
 ```
 
 **AWS Lambda Example:**
+
 ```yaml
 # AWS Lambda deployment target
 apiVersion: konfidence.cloud/v1alpha1
@@ -297,13 +302,13 @@ metadata:
   namespace: landscape-production
 spec:
   type: konfidence.cloud/lambda
-  
+
   connection:
     type: aws-credentials
     ref:
       kind: Secret
       name: aws-lambda-credentials
-  
+
   deploymentVariables:
     region: "us-east-1"
     defaultTimeout: "30"

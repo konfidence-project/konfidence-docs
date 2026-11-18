@@ -9,6 +9,7 @@ dependencies: []
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0022: Star and galaxy terminology for control planes
 
 <AdrHeader />
@@ -37,6 +38,7 @@ This ADR documents the final decision, which was decided by the maintainers.
 A star represents an active, energetic node. A galaxy is the large‑scale structure composed of many stars. This pair reflects a direct structural relationship.
 
 **Pros:**
+
 - A galaxy is made of stars. Stars are the fundamental building block of a galaxy's structure.
 - Stars are active, energetic nodes.
 - The metaphor is easy to visualize.
@@ -47,10 +49,12 @@ A star represents an active, energetic node. A galaxy is the large‑scale struc
 A planet is a self‑contained world. A galaxy is the larger cosmic structure containing many planetary systems.
 
 **Pros:**
+
 - Planets are intuitive “local worlds.”
 - Simple, memorable, globally recognizable words.
 
 **Cons:**
+
 - Planets are passive bodies. They do not drive or coordinate activity.
 
 ## Decision
@@ -60,14 +64,17 @@ The names **star** and **galaxy** form a clear, intuitive, metaphorically cohere
 ## Consequences
 
 ### Positive Consequences
+
 - Consistent, intuitive terminology across code, documentation, and communication.
 - Strong alignment with the established space theme.
 
 ### Negative Consequences
+
 - Updates across code, documentation, and diagrams will be required.
 - Potential initial confusion during the transition period.
 
 ### Neutral Consequences
+
 - Architectural concepts remain unchanged. Only terminology is updated.
 
 ## Implementation Note

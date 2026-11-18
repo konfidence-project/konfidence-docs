@@ -36,11 +36,11 @@ Documentation is part of the product. Update it when a change affects how users 
 
 Use the following table to identify common documentation impacts.
 
-| Change | Documentation impact |
-| --- | --- |
-| New user-facing feature or workflow | Add or update a tutorial, how-to guide, or concept guide as needed. |
-| Changed behavior or user workflow | Update every affected task and explanation. |
-| Changed CLI option, API field, or CRD | Update the technical source of truth and any guide that uses it. |
+| Change                                    | Documentation impact                                                           |
+| ----------------------------------------- | ------------------------------------------------------------------------------ |
+| New user-facing feature or workflow       | Add or update a tutorial, how-to guide, or concept guide as needed.            |
+| Changed behavior or user workflow         | Update every affected task and explanation.                                    |
+| Changed CLI option, API field, or CRD     | Update the technical source of truth and any guide that uses it.               |
 | Deprecated, removed, or breaking behavior | Update affected pages and explain the supported replacement or migration path. |
 
 For substantial new content or a new documentation area, [open an issue](https://github.com/konfidence-project/konfidence-docs/issues) before writing. Maintainers can help confirm the scope and placement.
@@ -144,14 +144,14 @@ pnpm exec markdownlint-cli2 --no-globs src/docs/getting-started/quickstart.md
 
 The root `.markdownlint-cli2.yaml` checks authored Markdown in `src/`, `README.md`, and `CONTRIBUTING.md`. It excludes the same four generated reference files as Vale. The configuration enables only these structural rules:
 
-| Rule | Finding |
-| --- | --- |
-| MD001 | A heading skips a level. Frontmatter titles are not treated as extra headings. |
-| MD005 | List items at the same level use inconsistent indentation. |
+| Rule  | Finding                                                                              |
+| ----- | ------------------------------------------------------------------------------------ |
+| MD001 | A heading skips a level. Frontmatter titles are not treated as extra headings.       |
+| MD005 | List items at the same level use inconsistent indentation.                           |
 | MD040 | A fenced code block has no language label. VitePress code block metadata is allowed. |
-| MD045 | A Markdown or HTML image lacks alternative text. |
-| MD052 | A full or collapsed reference link or image uses an undefined label. |
-| MD056 | A table row has a different number of cells from its header. |
+| MD045 | A Markdown or HTML image lacks alternative text.                                     |
+| MD052 | A full or collapsed reference link or image uses an undefined label.                 |
+| MD056 | A table row has a different number of cells from its header.                         |
 
 Vale continues to check spelling, terminology, and wording. VitePress checks missing internal pages during the build. The separate lychee check covers link destinations, heading fragments, and static image targets. Markdown structure checks do not judge whether alternative text is useful or whether commands work.
 
@@ -263,7 +263,7 @@ Write an architecture decision record (ADR) when a change spans several componen
 5. Put diagrams into `assets/` and reference them as `./assets/<file>`.
 6. Open the pull request with `status: proposed`.
 
-The maintainers review the record in the pull request. They set `status: accepted` and `date_approved` on merge, or set `status: rejected` and close the pull request with a comment explaining the reasoning. 
+The maintainers review the record in the pull request. They set `status: accepted` and `date_approved` on merge, or set `status: rejected` and close the pull request with a comment explaining the reasoning.
 
 The sidebar and the decision log pick up the new file automatically.
 
@@ -275,6 +275,6 @@ The sidebar and the decision log pick up the new file automatically.
 4. Create a pull request in the repository using this branch.
 5. Follow the link posted by the CLA assistant to your pull request and accept it, as described above.
 6. Wait for our code review and approval, possibly enhancing your change on request.
-    - Note that the maintainers have many duties. So, depending on the required effort for reviewing, testing, and clarification, this may take a while.
+   - Note that the maintainers have many duties. So, depending on the required effort for reviewing, testing, and clarification, this may take a while.
 7. Once the change has been approved and merged, we will inform you in a comment.
 8. Celebrate!

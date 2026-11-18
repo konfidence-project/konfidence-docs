@@ -11,6 +11,7 @@ dependencies: [ADR-0035]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0036: Dashboard UI component and CSS library
 
 <AdrHeader />

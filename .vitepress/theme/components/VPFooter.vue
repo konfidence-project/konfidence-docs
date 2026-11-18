@@ -28,7 +28,6 @@ Copied and adapted from: https://github.com/ironcore-dev/ironcore-dev.github.io/
 
 <script setup lang="ts">
 import {withBase} from "vitepress";
-
 </script>
 
 <template>
@@ -36,28 +35,30 @@ import {withBase} from "vitepress";
     <div class="container">
       <div class="funding-notice">
         <div class="funding-image">
-          <img :src="withBase('/assets/BMWK-EU.png')" alt="EU and German government funding logos">
+          <img
+            :src="withBase('/assets/BMWK-EU.png')"
+            alt="EU and German government funding logos"
+          />
         </div>
         <div class="funding-text">
           <p>
             <strong>Funded by the European Union – NextGenerationEU.</strong>
           </p>
           <p>
-            The views and opinions expressed are solely those of the author(s) and do not necessarily reflect the views of the European Union or the European Commission. Neither the European Union nor the European Commission can be held responsible for them.
+            The views and opinions expressed are solely those of the author(s) and do not
+            necessarily reflect the views of the European Union or the European Commission. Neither
+            the European Union nor the European Commission can be held responsible for them.
           </p>
           <div class="copyright">
             <p>
               <strong>
-                Copyright 2025 SAP SE or an SAP affiliate company and Konfidence contributors. 
+                Copyright 2025 SAP SE or an SAP affiliate company and Konfidence contributors.
               </strong>
             </p>
             <a href="https://www.sap.com/about/legal/impressum-se.html">Legal Disclosure</a>
-          
           </div>
         </div>
-
       </div>
-
     </div>
   </footer>
 </template>

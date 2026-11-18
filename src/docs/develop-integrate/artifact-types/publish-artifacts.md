@@ -205,6 +205,7 @@ kden artifact alias \
 If the command completes without an error, it has created or updated the `main` alias.
 
 The alias must follow these rules:
+
 - It must not be in semantic version format.
 - It must be a valid OCI tag: starts with a letter or digit, contains only letters,
   digits, `.`, `_`, or `-`, and is at most 128 characters long.
@@ -218,14 +219,14 @@ registry.example.com//github.com/my-org/my-service:main
 
 ## Troubleshooting
 
-| Symptom | Likely cause | Resolution |
-| --- | --- | --- |
-| Push fails with `required flag(s) "file", "registry" not set` | `--file` or `--registry` was omitted | Pass both flags. See [Publish the artifact](#publish-the-artifact) |
-| Push fails with `already exists in target repository` | A component with the same name and version was already pushed | Increment the `version` field in the constructor and push again |
-| Push or validation fails with `failed to unmarshall constructor` | The constructor file is not valid YAML | Fix the YAML syntax in `component-constructor.yaml` |
-| Validation fails with `failed to read file` | The file at `input.path` was not found | Run the command from the same directory as the constructor, or use an absolute path in `input.path` |
-| Push fails with a 401 or 403 error | Credentials are missing or do not have write access | Check the `hostname` and credentials in your `.ocmconfig` |
-| Push fails with `failed to parse repository` | The `--registry` value is malformed, for example it contains uppercase letters | Use a valid, lowercase `--registry` value |
+| Symptom                                                          | Likely cause                                                                   | Resolution                                                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| Push fails with `required flag(s) "file", "registry" not set`    | `--file` or `--registry` was omitted                                           | Pass both flags. See [Publish the artifact](#publish-the-artifact)                                  |
+| Push fails with `already exists in target repository`            | A component with the same name and version was already pushed                  | Increment the `version` field in the constructor and push again                                     |
+| Push or validation fails with `failed to unmarshall constructor` | The constructor file is not valid YAML                                         | Fix the YAML syntax in `component-constructor.yaml`                                                 |
+| Validation fails with `failed to read file`                      | The file at `input.path` was not found                                         | Run the command from the same directory as the constructor, or use an absolute path in `input.path` |
+| Push fails with a 401 or 403 error                               | Credentials are missing or do not have write access                            | Check the `hostname` and credentials in your `.ocmconfig`                                           |
+| Push fails with `failed to parse repository`                     | The `--registry` value is malformed, for example it contains uppercase letters | Use a valid, lowercase `--registry` value                                                           |
 
 Add `--log-level=debug` to any failing command for more detailed output.
 

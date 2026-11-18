@@ -15,12 +15,12 @@ Before you copy a template, identify the primary audience, describe what they ne
 
 Choose the person who must use the documentation successfully. This might not be the person who developed the feature.
 
-| Audience | Description |
-| --- | --- |
-| **Application Developer** | Builds applications on top of Konfidence and interacts with its public interfaces without managing the underlying Konfidence infrastructure. |
-| **Product Manager** | Plans releases, tracks feature and quality status, and makes release or demonstration decisions. |
-| **Administrator or Operator** | Installs and operates Konfidence, manages landscapes and access, and investigates operational problems. |
-| **Contributor or Extension Developer** | Contributes to Konfidence, develops extensions, or adapts Konfidence to additional technical workflows. |
+| Audience                               | Description                                                                                                                                  |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Application Developer**              | Builds applications on top of Konfidence and interacts with its public interfaces without managing the underlying Konfidence infrastructure. |
+| **Product Manager**                    | Plans releases, tracks feature and quality status, and makes release or demonstration decisions.                                             |
+| **Administrator or Operator**          | Installs and operates Konfidence, manages landscapes and access, and investigates operational problems.                                      |
+| **Contributor or Extension Developer** | Contributes to Konfidence, develops extensions, or adapts Konfidence to additional technical workflows.                                      |
 
 If a page seems to address multiple audiences, choose the audience with the primary user job. Include another perspective only when it supports the same job. Otherwise, create separate pages and connect them with descriptive links.
 
@@ -38,12 +38,12 @@ Use your answer as a planning aid. It helps you choose a content type, decide wh
 
 Choose the type based on why the reader opens the page, not on the feature or tool being documented.
 
-| Reader's need | Content type | Use it to |
-| --- | --- | --- |
-| "Teach me by guiding me through a working example." | [**Tutorial**](#tutorial-template) | Help a new user gain knowledge and confidence by doing. |
-| "Help me complete this specific task." | [**How-to guide**](#how-to-guide-template) | Guide a capable user towards a practical result. |
-| "Help me understand how or why this works." | [**Concept guide**](#concept-guide-template) | Explain context, relationships, reasons, or trade-offs. |
-| "Give me the exact field, option, or value." | **Reference** | Provide accurate information that a user looks up while working. |
+| Reader's need                                       | Content type                                 | Use it to                                                        |
+| --------------------------------------------------- | -------------------------------------------- | ---------------------------------------------------------------- |
+| "Teach me by guiding me through a working example." | [**Tutorial**](#tutorial-template)           | Help a new user gain knowledge and confidence by doing.          |
+| "Help me complete this specific task."              | [**How-to guide**](#how-to-guide-template)   | Guide a capable user towards a practical result.                 |
+| "Help me understand how or why this works."         | [**Concept guide**](#concept-guide-template) | Explain context, relationships, reasons, or trade-offs.          |
+| "Give me the exact field, option, or value."        | **Reference**                                | Provide accurate information that a user looks up while working. |
 
 Keep one primary user job and content type per page:
 
@@ -216,9 +216,9 @@ You have:
 
 ## Concept guide template
 
-Use a concept guide when the reader needs to understand a Konfidence idea, relationship, design choice, or trade-off. In Diátaxis, this content type is called *explanation*.
+Use a concept guide when the reader needs to understand a Konfidence idea, relationship, design choice, or trade-off. In Diátaxis, this content type is called _explanation_.
 
-````md
+```md
 ---
 title: "[Concept name]"
 description: "[What the page explains and why that understanding matters]"
@@ -261,4 +261,4 @@ lastUpdated: true
 
 - [Descriptive link to an applicable how-to guide](../path/to/page.md)
 - [Descriptive link to reference information](../path/to/page.md)
-````
+```

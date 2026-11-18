@@ -18,18 +18,18 @@ Bind a project role to the OpenID Connect (OIDC) identity of a CI workflow. The 
 - `kden` installed on the runner for the API calls below. The GitHub Actions token request also uses `curl` and `jq`; the SPIRE example uses a local SPIRE agent.
 - The identity the provider gives the workflow:
 
-| Provider | Identity | Discovery endpoint |
-|----------|----------|--------------------|
-| GitHub Actions | Repository and branch, for example `my-org/my-repo` on `main` | `https://token.actions.githubusercontent.com/.well-known/openid-configuration` |
-| GitLab.com | Project path and branch, for example `my-group/my-project` on `main` | `https://gitlab.com/.well-known/openid-configuration` |
-| SPIRE | The SPIFFE ID SPIRE assigns to the workload, for example `spiffe://example.org/ci/release-runner` | The URL of your SPIRE OIDC Discovery Provider, for example `https://oidc.spire.example.com/.well-known/openid-configuration` |
+| Provider       | Identity                                                                                          | Discovery endpoint                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| GitHub Actions | Repository and branch, for example `my-org/my-repo` on `main`                                     | `https://token.actions.githubusercontent.com/.well-known/openid-configuration`                                               |
+| GitLab.com     | Project path and branch, for example `my-group/my-project` on `main`                              | `https://gitlab.com/.well-known/openid-configuration`                                                                        |
+| SPIRE          | The SPIFFE ID SPIRE assigns to the workload, for example `spiffe://example.org/ci/release-runner` | The URL of your SPIRE OIDC Discovery Provider, for example `https://oidc.spire.example.com/.well-known/openid-configuration` |
 
 ## Choose the role
 
-| Pipeline task | Role |
-|---------------|------|
+| Pipeline task                                       | Role  |
+| --------------------------------------------------- | ----- |
 | Read deployment status, list vectors and promotions | `dev` |
-| Approve promotions, change stage configuration | `pm` |
+| Approve promotions, change stage configuration      | `pm`  |
 
 `admin` grants control over role bindings. Do not bind it to a pipeline. [Grant teams access to a project](./access-control.md) explains the project roles. The role you bind authorizes pipeline calls to the Konfidence API, not direct Kubernetes access.
 

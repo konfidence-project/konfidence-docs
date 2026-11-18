@@ -26,8 +26,8 @@ The [vector data service](../../reference/glossary.md#vector-data-service) reads
 
 Vector data contains three data types:
 
-| Data type | Purpose |
-| --- | --- |
-| Feature flags | Toggle behavior for features or code paths in the application. Multiple services in the same vector can read the same flag values and behave consistently. |
-| Authored config | Pass arbitrary configuration values to the application. |
-| Deployment results | Pass deployment-generated information into the landscape, such as service endpoints, generated URLs, identities, and allocated resources. |
+| Data type          | Purpose                                                                                                                                                    |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Feature flags      | Toggle behavior for features or code paths in the application. Multiple services in the same vector can read the same flag values and behave consistently. |
+| Authored config    | Pass arbitrary configuration values to the application.                                                                                                    |
+| Deployment results | Pass deployment-generated information into the landscape, such as service endpoints, generated URLs, identities, and allocated resources.                  |

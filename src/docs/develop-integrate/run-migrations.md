@@ -10,9 +10,8 @@ lastUpdated: true
 
 ## Define migrations
 
-* Konfidence task-manifest in component constructor
-* assumptions that we make around migrations:
-  * they are idempotent
-  * they can be run multiple times without side effects
-  * they are safe to run in parallel (if needed)
-
+- Konfidence task-manifest in component constructor
+- assumptions that we make around migrations:
+  - they are idempotent
+  - they can be run multiple times without side effects
+  - they are safe to run in parallel (if needed)

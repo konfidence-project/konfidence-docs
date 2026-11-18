@@ -11,6 +11,7 @@ dependencies: [ADR-0039, ADR-0032]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0040: Promotion rejection and force execution
 
 <AdrHeader />

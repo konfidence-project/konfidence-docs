@@ -37,11 +37,11 @@ In both cases, pass the vector ID as the `targetingKey` in the evaluation contex
 
 Use one of the following evaluation modes through an OFREP provider or by calling the REST endpoints directly:
 
-| Mode | Request | Result |
-| --- | --- | --- |
-| Single flag | `POST /ofrep/v1/evaluate/flags/{key}` with the flag name | Returns one value. |
+| Mode         | Request                                                                  | Result                                                                                                                                                                                                                        |
+| ------------ | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Single flag  | `POST /ofrep/v1/evaluate/flags/{key}` with the flag name                 | Returns one value.                                                                                                                                                                                                            |
 | Whole bundle | `POST /ofrep/v1/evaluate/flags/{key}` with the vector ID as the flag key | Returns the entire [vector configuration](../../reference/glossary.md#vector-configuration) object, including features, authored config, and deployment results. This is useful at application startup to prime a local view. |
-| Bulk | `POST /ofrep/v1/evaluate/flags` | Returns all features at once and supports ETag-based revalidation with `If-None-Match`. |
+| Bulk         | `POST /ofrep/v1/evaluate/flags`                                          | Returns all features at once and supports ETag-based revalidation with `If-None-Match`.                                                                                                                                       |
 
 ## Use vector data from any workload protocol
 

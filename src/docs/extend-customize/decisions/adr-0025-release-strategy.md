@@ -10,6 +10,7 @@ dependencies: [ADR-0011, ADR-0023]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0025: Release on demand via manual tags
 
 <AdrHeader />
@@ -22,7 +23,7 @@ release automatically. After consolidating into a monorepo (ADR-0023) and adding
 user-facing artifacts, this model no longer fits:
 
 - Half-baked features merged to `main` ship straight to users as versions.
-- Maintainers have no control over *when* a release happens or what it contains.
+- Maintainers have no control over _when_ a release happens or what it contains.
 - Frequent, often irrelevant version bumps flood downstream dependency-update
   systems and obscure the changelog.
 - Release quality depends entirely on commit-message hygiene.
@@ -38,10 +39,12 @@ building deployable artifacts for integration environments.
 `semantic-release` auto-tags and releases per ADR-0011.
 
 **Pros:**
+
 - Zero release ceremony; fast cycles for integration environments.
 - Already implemented.
 
 **Cons:**
+
 - All the problems listed in Context: no control, supply-chain noise, leaking
   unfinished work, changelog churn.
 
@@ -50,9 +53,11 @@ building deployable artifacts for integration environments.
 Release on a schedule (e.g. every two weeks).
 
 **Pros:**
+
 - Predictable; room to coordinate docs and announcements.
 
 **Cons:**
+
 - Too rigid for the current project scope and team size.
 - Either ships incomplete scope to hit the date, or skips empty cycles.
 
@@ -62,12 +67,14 @@ A maintainer pushes a SemVer tag when a meaningful scope is done; a tag-triggere
 pipeline produces the release. `main` keeps building artifacts on every push.
 
 **Pros:**
+
 - Maintainer controls timing and contents; only intentional releases reach
   users.
 - Decouples continuous deployability (every `main` commit) from user releases.
 - Backports to supported minors are straightforward.
 
 **Cons:**
+
 - Manual step; relies on maintainers to tag.
 - Requires a release script and a tag-triggered pipeline to be built.
 

@@ -11,6 +11,7 @@ dependencies: [ADR-0019]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0032: Vector promotions
 
 <AdrHeader />
@@ -31,7 +32,6 @@ This design has led to several problems in practice:
 - **Drift detection overhead:** To detect drift between source and target tags, both tags need to be resolved and compared in a regular interval, adding further delay. The entire vector needs to be downloaded to compute a per-component diff.
 - **Visualization complexity:** Vector alias tags do not map one-to-one to stages. A single promotion can affect multiple stages or none at all, requiring a complex UI that also represents the alias tags themselves.
 - **Combinatorial complexity:** The objects can be composed in non-obvious ways. For example, multiple promotions can be chained without ever deploying to a stage. While this provides flexibility, it makes the system harder to understand and visualize.
-
 
 ## Direct stage reference design
 
@@ -148,7 +148,6 @@ However, there are disadvantages:
 - There is no longer an option to base one `VectorTemplate` on another.
 - If the same vector should be deployed to multiple stages, the entire components list must be duplicated. With Option 1, a single `VectorTemplate` can be referenced by multiple `VectorPromotionConfig` objects.
 
-
 ## VectorPromotion Trigger
 
 Regardless of which resource design is chosen above, the question remains how a promotion is actually triggered. The following section assumes Option 1 (separate `VectorPromotionConfig`) for illustration, but the trigger mechanism applies equally to Option 2.
@@ -236,7 +235,7 @@ In this approach, the `VectorPromotionConfig` controller always creates a `Vecto
 - **Source is a `VectorTemplate`:** The `VectorPromotion` is created with `spec.requireApproval: false`. Its gates are cleared from the first reconcile, so it derives the state `Ready` directly (skipping `Waiting`). It then transitions to `InProgress` if no other `VectorPromotion` for the same `VectorPromotionConfig` is currently in progress.
 - **Source is a `Stage`:** The `VectorPromotion` is created with `spec.requireApproval: true`. Until it is approved it derives the state `Waiting`. The Konfidence API grants approval through a single entry point that sets the `Approved` condition and records the grant in `status.approval` (a single `approvedBy` / `approvedAt` record; a promotion is approved at most once); the API's own authorization model is the enforcement boundary for who may approve. Once approved the promotion becomes `Ready`, and the controller transitions it to `InProgress` if no other `VectorPromotion` for the same `VectorPromotionConfig` is currently in progress.
 
-`requireApproval` is stored on the `VectorPromotion` and is independent of the source kind: the config controller only *defaults* it to `true` for `Stage` sources and `false` for `VectorTemplate` sources, but any combination is valid. The state is derived purely from the `Approved` and `Succeeded` conditions, not from the source kind.
+`requireApproval` is stored on the `VectorPromotion` and is independent of the source kind: the config controller only _defaults_ it to `true` for `Stage` sources and `false` for `VectorTemplate` sources, but any combination is valid. The state is derived purely from the `Approved` and `Succeeded` conditions, not from the source kind.
 
 The promotion is fully self-contained: alongside the vector, the source and target references are snapshotted from the config at creation time, and all of these fields are immutable. Execution reads only the promotion — never the config — so approving a promotion approves exactly the snapshotted vector for exactly the snapshotted destination, immune to later config edits. Each promotion also carries a controller owner reference to its config, so deleting a config garbage-collects its promotions.
 
@@ -283,7 +282,7 @@ The lifecycle is tracked as `metav1.Condition`s rather than a written state mach
 - `Succeeded=False` with reason `PromotionSuperseded`: `Superseded`.
 - `Succeeded=False` with any other reason (e.g. `PromotionTimedOut`, `PromotionFailed`): `Failed`.
 
-Note that `WaitingForApproval` remains the *reason* on the `Approved=False` condition, but the derived display *state* is `Waiting`. The status also records `promotedStageRef` (the Stage a successful promotion actually wrote to) so the object stays self-describing after the config changes or is deleted.
+Note that `WaitingForApproval` remains the _reason_ on the `Approved=False` condition, but the derived display _state_ is `Waiting`. The status also records `promotedStageRef` (the Stage a successful promotion actually wrote to) so the object stays self-describing after the config changes or is deleted.
 
 If the source stage receives multiple new vector versions before a promotion is approved, the controller creates a new `VectorPromotion` object for each version. This gives the user visibility into all available candidates and the choice of which version to promote.
 
@@ -348,7 +347,7 @@ We choose Option C because it eliminates the race condition present in Options A
 
 - Drift detection in the `VectorPromotionConfig` is immediate: the config reconciler watches `VectorTemplate`, `Stage`, and `Landscape` resources and maps changes back to the affected configs through indexed reverse lookups (configs indexed by source template, source stage, and target stage; landscapes indexed by their managed namespace to hop from a stage event back to the project namespace). No polling interval and no `StageVersion` watch are involved.
 
-## Open Questions 
+## Open Questions
 
 - Is there a use case for creating new vectors during a promotion (e.g. changing a feature toggle or adding a service)? The current design does not allow this — the intended best practice is to always create a vector from scratch and start a new promotion chain from it. If this turns out to be insufficient and there are actual use cases for creating a new vector based on the one deployed to a particular stage, a `Stage` could be allowed as a base of the `VectorTemplate`. It would then be possible to define a `VectorTemplate` that creates a new vector based on the one deployed to a certain stage with custom changes, and configure a `VectorPromotionConfig` that points to that `VectorTemplate` as source.
 - At what point should a promotion from a stage be possible? As soon as the new vector is set on the stage? Or should deployment have started or finished successfully first?

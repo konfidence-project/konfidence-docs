@@ -52,7 +52,7 @@ The conformance tests supply required control-plane resources directly and subst
 
 ### Versioning
 
-The deployer specification, Go bindings, and conformance tests follow Konfidence core versioning. 
+The deployer specification, Go bindings, and conformance tests follow Konfidence core versioning.
 They are versioned and released together with all other components in the `konfidence` core monorepo.
 
 ## Consequences

@@ -11,6 +11,7 @@ dependencies: [ADR-0015, ADR-0027]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0034: ArtifactDeployment and Flux resource naming
 
 <AdrHeader />
@@ -43,8 +44,8 @@ The construction context is recorded on the `ArtifactDeployment` as `konfidence.
 
 When the computed name is already taken by an existing `ArtifactDeployment`, the controller decides whether that is intended reuse or a genuine clash by comparing the existing object's `konfidence.cloud/artifact-component` and `konfidence.cloud/artifact-version` annotations against what it expects:
 
-- **Annotations match** → it is the *same* artifact. Sharing one `ArtifactDeployment` is exactly what reuse is meant to do — the controller simply adopts and updates it. This is designed behaviour, not a fault.
-- **Annotations differ** → two *different* artifacts hashed to the same short name. That is a real collision.
+- **Annotations match** → it is the _same_ artifact. Sharing one `ArtifactDeployment` is exactly what reuse is meant to do — the controller simply adopts and updates it. This is designed behaviour, not a fault.
+- **Annotations differ** → two _different_ artifacts hashed to the same short name. That is a real collision.
 
 On a real collision Konfidence **detects and recovers**, mirroring how Kubernetes handles `Deployment` → `ReplicaSet` hash clashes:
 
@@ -64,7 +65,7 @@ The fluxdeployer names every Flux resource **exactly `ArtifactDeployment.Name`**
 
 ### How per-instance uniqueness reaches the workloads
 
-The `ArtifactDeployment` name distinguishes *deployments*; the following makes the *rendered workloads* unique:
+The `ArtifactDeployment` name distinguishes _deployments_; the following makes the _rendered workloads_ unique:
 
 - **Kustomize** — the deployer sets Flux `Kustomization.spec.nameSuffix` to `-<version>-<hash>` (falling back to `-<hash>` when length-constrained). This is a native Flux field applied at render time and is **owned by the deployer**: any `nameSuffix` the author sets in their own `kustomization.yaml` is overwritten and discarded (see implications).
 - **Helm** — the deployer sets `HelmRelease.spec.releaseName` to the deployment name. Charts that derive names from `.Release.Name` inherit uniqueness automatically.

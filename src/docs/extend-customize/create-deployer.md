@@ -5,7 +5,7 @@ description: "Learn how to create a custom Deployer to extend Konfidence's deplo
 
 # Create your own Deployer
 
-<!-- 
+<!--
   Content type (Diátaxis): How-to guide — assumes reader knows what a Deployer is and why they need one; they want to build their own.
   TW will structure this as: Prerequisites → implement artifact type support → configure a DeploymentTarget → test locally.
 
@@ -15,5 +15,5 @@ description: "Learn how to create a custom Deployer to extend Konfidence's deplo
   Ticket: DOCS — How to Create your own Deployer: Provide Deployer interface spec and k8s reference implementation walkthrough
 -->
 
-* link to the Deployer interface specification
-* explain our k8s reference implementation
+- link to the Deployer interface specification
+- explain our k8s reference implementation
