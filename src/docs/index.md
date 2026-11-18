@@ -5,7 +5,7 @@ search: false
 head:
   - - meta
     - http-equiv: refresh
-      content: '0; url=/docs/getting-started/quickstart'
+      content: "0; url=getting-started/quickstart"
 ---
 
 <script setup>
@@ -13,7 +13,8 @@ import { onMounted } from 'vue'
 import { useRouter } from 'vitepress'
 
 const router = useRouter()
-onMounted(() => router.go('/docs/getting-started/quickstart'))
+// relative, so every version's copy of this page opens its own quickstart
+onMounted(() => router.go(new URL('getting-started/quickstart', location.href).pathname))
 </script>
 
-[Open the Quickstart](/docs/getting-started/quickstart).
+[Open the Quickstart](./getting-started/quickstart.md).

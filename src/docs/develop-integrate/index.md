@@ -12,5 +12,5 @@ Write, maintain, and enhance software applications with Konfidence. Prepare your
 
 ## Related
 
-- [Getting Started](/docs/getting-started/) - Quickstart guide
-- [Core Concepts](/docs/core-concepts/) - Fundamental concepts
+- [Getting Started](../getting-started/) - Quickstart guide
+- [Core Concepts](../core-concepts/) - Fundamental concepts

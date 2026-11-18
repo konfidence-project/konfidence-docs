@@ -7,6 +7,8 @@
     "test": "vitest run",
     "lint:markdown": "markdownlint-cli2",
     "test:markdown": "vitest run .markdownlint-cli2.test.mjs",
+    "test:version": "vitest run scripts/version-docs.test.mjs",
+    "docs:version": "node scripts/version-docs.mjs",
     "test:mermaid": "vitest run .vitepress/mermaid.test.mjs",
     "test:reports": "vitest run scripts/summarize-links.test.mjs",
     "lint:links": "node scripts/check-links.mjs internal",

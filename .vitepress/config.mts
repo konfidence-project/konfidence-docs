@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync } from "node:fs";
-import { defineConfig } from "vitepress";
+import { defineConfig, type DefaultTheme } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 
 // ADR pages are numbered by id; the sidebar lists them from their
@@ -17,6 +17,67 @@ const adrItems = readdirSync(adrDir)
       link: `/docs/extend-customize/decisions/${f.replace(/\.md$/, "")}`,
     };
   });
+
+// released versions, newest first; written by `pnpm docs:version`.
+// src/docs is the development version, src/<version>/docs the snapshots
+const versions: { version: string; konfidence: string; klo: string }[] = JSON.parse(
+  readFileSync("versions.json", "utf8"),
+);
+const docsBase = versions.length ? `/${versions[0].version}/docs` : "/docs";
+const quickstart = (base: string) => `${base}/getting-started/quickstart`;
+
+// the default theme's dropdown; it only appears once a version exists
+const versionMenu = versions.length
+  ? [
+      {
+        text: "Versions",
+        items: [
+          { text: "main (Development)", link: quickstart("/docs"), activeMatch: "^/docs/" },
+          ...versions.map(({ version }, index) => ({
+            text: index ? version : `${version} (Latest)`,
+            link: quickstart(`/${version}/docs`),
+            activeMatch: `^/${version}/docs/`,
+          })),
+        ],
+      },
+    ]
+  : [];
+
+// every version carries its own sidebar.json so old versions keep their
+// structure. "@adr-items" marks where the generated ADR list goes
+type SidebarFile = Omit<DefaultTheme.SidebarItem, "items"> & {
+  items?: SidebarFile[] | "@adr-items";
+};
+const fillAdrItems = (items: SidebarFile[] | "@adr-items"): DefaultTheme.SidebarItem[] =>
+  items === "@adr-items"
+    ? adrItems
+    : items.map((item) => ({ ...item, items: item.items && fillAdrItems(item.items) }));
+
+// ADRs stay unversioned, so their links keep pointing at /docs/
+const versionLinks = (
+  items: DefaultTheme.SidebarItem[],
+  version: string,
+): DefaultTheme.SidebarItem[] =>
+  items.map(({ link, items: children, ...item }) => ({
+    ...item,
+    ...(link && {
+      link: /^\/docs\/extend-customize\/decisions(\/|$)/.test(link)
+        ? link
+        : link.replace(/^\/docs\//, `/${version}/docs/`),
+    }),
+    ...(children && { items: versionLinks(children, version) }),
+  }));
+
+const readSidebar = (path: string) => fillAdrItems(JSON.parse(readFileSync(path, "utf8")));
+const sidebar: DefaultTheme.SidebarMulti = {
+  "/docs/": readSidebar("src/docs/sidebar.json"),
+};
+for (const { version } of versions) {
+  sidebar[`/${version}/docs/`] = versionLinks(
+    readSidebar(`src/${version}/docs/sidebar.json`),
+    version,
+  );
+}
 
 // pre-release mode: shows the banner and pre-alpha badge; build with
 // KONFIDENCE_PRERELEASE=false to hide them
@@ -75,304 +136,15 @@ export default defineConfig(
       siteTitle: false,
 
       // Navigation bar
-      nav: [{ text: "Docs", link: "/docs/getting-started/quickstart" }],
+      nav: [{ text: "Docs", link: quickstart(docsBase) }, ...versionMenu],
+
+      // the version banner reads the list from the theme
+      versions,
 
       socialLinks: [{ icon: "github", link: "https://github.com/konfidence-project" }],
 
-      // Sidebar navigation
-      sidebar: {
-        "/docs/": [
-          {
-            text: "Getting started",
-            collapsed: false,
-            items: [
-              {
-                text: "Quickstart",
-                link: "/docs/getting-started/quickstart",
-              },
-              {
-                text: "Deliver an application",
-                link: "/docs/getting-started/deliver-an-application",
-              },
-              {
-                text: "Install the kden CLI",
-                link: "/docs/getting-started/install-cli",
-              },
-            ],
-          },
-          {
-            text: "Core concepts",
-            collapsed: true,
-            items: [
-              {
-                text: "Artifacts and vectors",
-                link: "/docs/core-concepts/vectors-and-artifacts",
-              },
-              {
-                text: "Landscapes and stages",
-                link: "/docs/core-concepts/landscapes-and-stages",
-              },
-              {
-                text: "Deployment model",
-                link: "/docs/core-concepts/deployment-model",
-              },
-              {
-                text: "Promotions and delivery flow",
-                link: "/docs/core-concepts/delivery-flow",
-              },
-            ],
-          },
-          {
-            text: "Develop & Integrate",
-            collapsed: true,
-            items: [
-              {
-                text: "Your application in Konfidence",
-                link: "/docs/develop-integrate/prepare-your-application",
-              },
-              {
-                text: "Artifacts",
-                link: "/docs/develop-integrate/artifact-types/",
-                items: [
-                  {
-                    text: "Types of artifacts",
-                    link: "/docs/develop-integrate/artifact-types/",
-                  },
-                  {
-                    text: "Kustomize",
-                    link: "/docs/develop-integrate/artifact-types/kustomize",
-                  },
-                  {
-                    text: "Helm",
-                    link: "/docs/develop-integrate/artifact-types/helm",
-                  },
-                  {
-                    text: "Publish artifacts",
-                    link: "/docs/develop-integrate/artifact-types/publish-artifacts",
-                  },
-                ],
-              },
-              {
-                text: "Build vectors",
-                link: "/docs/develop-integrate/observe-improve/build-vectors",
-              },
-              {
-                text: "Advanced features",
-                link: "/docs/develop-integrate/advanced-features/",
-                items: [
-                  {
-                    text: "Read feature flags in your application",
-                    link: "/docs/develop-integrate/advanced-features/feature-flags",
-                  },
-                  {
-                    text: "Expose a Service through stage ingress",
-                    link: "/docs/develop-integrate/advanced-features/expose-service",
-                  },
-                  {
-                    text: "Configure signing and verification",
-                    link: "/docs/develop-integrate/advanced-features/configure-signing-and-verification",
-                  },
-                  {
-                    text: "Vector Data / Configuration",
-                    collapsed: true,
-                    items: [
-                      {
-                        text: "Overview",
-                        link: "/docs/develop-integrate/vector-data/overview",
-                      },
-                      {
-                        text: "Add configuration to a vector",
-                        link: "/docs/develop-integrate/vector-data/vector-configuration",
-                      },
-                      {
-                        text: "Add deployment results to an artifact",
-                        link: "/docs/develop-integrate/vector-data/deployment-results",
-                      },
-                      {
-                        text: "Access vector data in your application",
-                        link: "/docs/develop-integrate/vector-data/access-vector-data",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            text: "Deploy & Operate",
-            collapsed: true,
-            items: [
-              {
-                text: "Prepare",
-                items: [
-                  {
-                    text: "System architecture",
-                    link: "/docs/deploy-operate/plan/system-architecture",
-                  },
-                  {
-                    text: "Plan for high availability",
-                    link: "/docs/deploy-operate/plan/high-availability",
-                  },
-                  {
-                    text: "Gateway routing",
-                    link: "/docs/deploy-operate/plan/gateway-routing",
-                  },
-                ],
-              },
-              {
-                text: "Install the platform",
-                items: [
-                  {
-                    text: "Install Konfidence",
-                    link: "/docs/deploy-operate/install/konfidence-installation",
-                  },
-                  {
-                    text: "Give teams access to the dashboard and API",
-                    link: "/docs/deploy-operate/install/expose-api",
-                  },
-                  {
-                    text: "Choose and install deployers",
-                    collapsed: true,
-                    items: [
-                      {
-                        text: "Choose a deployer",
-                        link: "/docs/deploy-operate/install/deployer/overview",
-                      },
-                      {
-                        text: "Install the Kubernetes deployer",
-                        link: "/docs/deploy-operate/install/deployer/kubernetes",
-                      },
-                      {
-                        text: "Supported Gateways",
-                        collapsed: true,
-                        items: [
-                          {
-                            text: "Envoy Gateway",
-                            link: "/docs/deploy-operate/install/deployer/kubernetes/envoy-gateway",
-                          },
-                          {
-                            text: "Istio",
-                            link: "/docs/deploy-operate/install/deployer/kubernetes/istio",
-                          },
-                          {
-                            text: "Traefik",
-                            link: "/docs/deploy-operate/install/deployer/kubernetes/traefik",
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                  {
-                    text: "Connect artifact registries",
-                    link: "/docs/deploy-operate/install/connect-registries",
-                  },
-                ],
-              },
-              {
-                text: "Administer projects and access",
-                items: [
-                  {
-                    text: "Create a project",
-                    link: "/docs/deploy-operate/control-access/projects",
-                  },
-                  {
-                    text: "Grant teams access to a project",
-                    link: "/docs/deploy-operate/control-access/access-control",
-                  },
-                  {
-                    text: "Grant CI pipelines access",
-                    link: "/docs/deploy-operate/control-access/grant-ci-access",
-                  },
-                ],
-              },
-              {
-                text: "Prepare delivery environments",
-                items: [
-                  {
-                    text: "Create a landscape",
-                    link: "/docs/deploy-operate/manage-delivery/landscapes",
-                  },
-                  {
-                    text: "Configure deployment targets for a landscape",
-                    link: "/docs/deploy-operate/manage-delivery/deployment-targets",
-                  },
-                  {
-                    text: "Configure landscape services",
-                    collapsed: true,
-                    items: [
-                      {
-                        text: "Choose landscape services",
-                        link: "/docs/deploy-operate/install/runtime-components/overview",
-                      },
-                      {
-                        text: "Install the Vector Data Service",
-                        link: "/docs/deploy-operate/install/runtime-components/vector-data-service",
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                text: "Run delivery",
-                items: [
-                  {
-                    text: "Create a stage",
-                    link: "/docs/deploy-operate/manage-delivery/stages",
-                  },
-                  {
-                    text: "Set up and run promotion flows",
-                    link: "/docs/deploy-operate/manage-delivery/promote-vectors",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            text: "Extend & Customize",
-            collapsed: true,
-            items: [
-              {
-                text: "Contributing",
-                link: "/docs/extend-customize/code-of-conduct",
-              },
-              {
-                text: "Local development",
-                link: "/docs/extend-customize/local-development",
-              },
-              { text: "Style guide", link: "/docs/extend-customize/styleguide" },
-              {
-                text: "Guide templates",
-                link: "/docs/extend-customize/guide-templates",
-              },
-              {
-                text: "Architecture decisions",
-                link: "/docs/extend-customize/decisions/",
-                collapsed: true,
-                items: adrItems,
-              },
-            ],
-          },
-          {
-            text: "Reference",
-            collapsed: true,
-            items: [
-              { text: "Glossary", link: "/docs/reference/glossary" },
-              { text: "CRDs", link: "/docs/reference/crd" },
-              { text: "CLI", link: "/docs/reference/cli" },
-              { text: "API", link: "/docs/reference/api" },
-              {
-                text: "Deployer specification",
-                link: "https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md",
-              },
-              { text: "Helm values: konfidence", link: "/docs/reference/helm-values-konfidence" },
-              {
-                text: "Helm values: orchestrator",
-                link: "/docs/reference/helm-values-orchestrator",
-              },
-            ],
-          },
-        ],
-      },
+      // Sidebar navigation: one tree per version
+      sidebar,
 
       // Edit link configuration
       editLink: {
@@ -383,6 +155,19 @@ export default defineConfig(
       // search configuration
       search: {
         provider: "local",
+        options: {
+          miniSearch: {
+            searchOptions: {
+              // every version is indexed; keep hits within the reader's own one.
+              // serialized into the client, so it must not use config variables
+              filter: (result: { id: string }) => {
+                // oxlint-disable-next-line unicorn/consistent-function-scoping -- must stay inside the serialized function
+                const prefix = (path: string) => path.match(/^\/(\d+\.\d+)\//)?.[1] ?? "";
+                return prefix(result.id) === prefix(window.location.pathname);
+              },
+            },
+          },
+        },
       },
     },
   }),

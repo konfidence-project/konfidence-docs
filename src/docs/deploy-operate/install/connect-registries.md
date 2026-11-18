@@ -12,7 +12,7 @@ Give Konfidence credentials for the private OCI registries that hold artifacts a
 
 Configure the control plane credentials during installation. Return to [Give the deployer credentials](#give-the-deployer-credentials) after creating each landscape that uses a private registry.
 
-Vector assembly credentials belong to the project, not to the installation. A `VectorTemplate` names its own secrets in `spec.credentials.ocm.refs`. See [Configure signing and verification](/docs/develop-integrate/advanced-features/configure-signing-and-verification) and the [Credentials reference](/docs/reference/crd#credentials).
+Vector assembly credentials belong to the project, not to the installation. A `VectorTemplate` names its own secrets in `spec.credentials.ocm.refs`. See [Configure signing and verification](../../develop-integrate/advanced-features/configure-signing-and-verification.md) and the [Credentials reference](../../reference/crd.md#credentials).
 
 ## Prerequisites
 
@@ -89,7 +89,7 @@ The secret `registry-example` still lives in the landscape namespace and has the
 
 ## Use an OCM configuration instead of a Docker configuration
 
-The control plane secret accepts an Open Component Model (OCM) configuration under the `.ocmconfig` key instead of `.dockerconfigjson`. Use it when the same secret also carries signing or verification keys. [Configure signing and verification](/docs/develop-integrate/advanced-features/configure-signing-and-verification#configure-cli-credentials) shows the `credentials.config.ocm.software/v1` format.
+The control plane secret accepts an Open Component Model (OCM) configuration under the `.ocmconfig` key instead of `.dockerconfigjson`. Use it when the same secret also carries signing or verification keys. [Configure signing and verification](../../develop-integrate/advanced-features/configure-signing-and-verification.md#configure-cli-credentials) shows the `credentials.config.ocm.software/v1` format.
 
 The operator can load a second secret with another name or namespace. Set both environment variables through the chart's `env` value:
 

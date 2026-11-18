@@ -85,7 +85,7 @@ curl --header "Authorization: Bearer $TOKEN" https://konfidence.example.com/api/
 
 The response lists the project under `projectRoles` with the granted role.
 
-For the full field list, see the [Project CRD reference](/docs/reference/crd#project).
+For the full field list, see the [Project CRD reference](../../reference/crd.md#project).
 
 ## Next steps
 
