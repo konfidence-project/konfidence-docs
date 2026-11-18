@@ -148,14 +148,14 @@ The output equals the promotion's `spec.vector`. The promotion records the same 
 
 `status.state` summarizes the promotion's conditions for display. The conditions are the source of truth.
 
-| State | Meaning |
-|-------|---------|
-| `Waiting` | The promotion requires approval and has none yet. |
-| `Ready` | Every gate has passed. The promotion is queued for execution. |
-| `InProgress` | The promotion updates the target stage to reference the vector. |
-| `Blocked` | The target does not resolve. The config's `Ready` condition names the cause. |
-| `Succeeded` | The target stage references the vector. |
-| `Failed` | Execution ended without success. The conditions name the reason. |
+| State        | Meaning                                                                                                                     |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `Waiting`    | The promotion requires approval and has none yet.                                                                           |
+| `Ready`      | Every gate has passed. The promotion is queued for execution.                                                               |
+| `InProgress` | The promotion updates the target stage to reference the vector.                                                             |
+| `Blocked`    | The target does not resolve. The config's `Ready` condition names the cause.                                                |
+| `Succeeded`  | The target stage references the vector.                                                                                     |
+| `Failed`     | Execution ended without success. The conditions name the reason.                                                            |
 | `Superseded` | A newer promotion replaced this one, or the outstanding promotion limit was exceeded. It can never be approved or executed. |
 
 ## Troubleshooting

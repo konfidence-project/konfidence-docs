@@ -17,10 +17,10 @@ The [Kubernetes deployer](../../deploy-operate/install/deployer/kubernetes.md) c
 
 Choose the type that matches the deployment configuration you already maintain:
 
-| Deployment configuration | Artifact manifest `type` | Authoring guide |
-| --- | --- | --- |
-| Helm chart | `helm.konfidence.cloud` | [Author a Helm artifact](./helm.md) |
-| Kustomize bundle | `kustomize.konfidence.cloud` | [Author a Kustomize artifact](./kustomize.md) |
+| Deployment configuration | Artifact manifest `type`     | Authoring guide                               |
+| ------------------------ | ---------------------------- | --------------------------------------------- |
+| Helm chart               | `helm.konfidence.cloud`      | [Author a Helm artifact](./helm.md)           |
+| Kustomize bundle         | `kustomize.konfidence.cloud` | [Author a Kustomize artifact](./kustomize.md) |
 
 If both formats are available, follow your team's existing release workflow. You do not need to convert your deployment configuration for Konfidence.
 
@@ -40,10 +40,10 @@ Set it explicitly in `manifest.json` when authoring your artifact.
 Suppose vectors A and B both reference `my-service` version `1.0.0` in the same landscape.
 The setting determines whether Konfidence creates separate instances or shares one:
 
-| Setting | Result |
-| --- | --- |
+| Setting             | Result                                                |
+| ------------------- | ----------------------------------------------------- |
 | `allowReuse: false` | Two instances: one for vector A and one for vector B. |
-| `allowReuse: true` | One instance shared by vectors A and B. |
+| `allowReuse: true`  | One instance shared by vectors A and B.               |
 
 Here, an instance means a deployed copy of the artifact.
 Sharing is limited to the same artifact version in the same landscape.

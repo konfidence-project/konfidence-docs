@@ -305,14 +305,14 @@ A kind cluster that you created yourself has no such mapping. Add an `extraPortM
 
 ## Troubleshooting
 
-| Symptom | Likely cause | Resolution |
-| --- | --- | --- |
-| `helm install` fails with `Too long: may not be more than 1048576 bytes` | You installed the CRD chart with `helm install` | Render it with `helm template` and apply it server-side, as in the first step. |
-| Edge route shows `ResolvedRefs=False` with reason `RefNotPermitted` | The ReferenceGrant is missing in the landscape namespace | Create the ReferenceGrant from the `konfidence-router` step. |
-| Edge route shows `ResolvedRefs=False` with reason `BackendNotFound` | The `konfidence-router` service is in `envoy-gateway-system` | Install the controller with `deploy.type=GatewayNamespace`. Then recreate the Gateway. |
-| `kubectl get httproute -n "$LANDSCAPE_NAMESPACE"` lists no `konfidence-stage-<stage>` route after an activation | The activation task is not registered in the landscape namespace | Create the `ActivationTaskRegistration` from the registration step. Konfidence creates the route on the next activation of the stage. |
-| `curl` returns `404` although `konfidence-stage-<stage>` exists | The edge route does not set `x-konfidence-service`, or its value is not a deployment result name | Compare the edge route's `x-konfidence-service` value with the values in `konfidence-stage-<stage>`. |
-| `curl` returns `503` with `upstream connect error` | The backend Pod of the stage does not accept connections | Check the Pod with `kubectl get pods -n "$LANDSCAPE_NAMESPACE"`. |
+| Symptom                                                                                                         | Likely cause                                                                                     | Resolution                                                                                                                            |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `helm install` fails with `Too long: may not be more than 1048576 bytes`                                        | You installed the CRD chart with `helm install`                                                  | Render it with `helm template` and apply it server-side, as in the first step.                                                        |
+| Edge route shows `ResolvedRefs=False` with reason `RefNotPermitted`                                             | The ReferenceGrant is missing in the landscape namespace                                         | Create the ReferenceGrant from the `konfidence-router` step.                                                                          |
+| Edge route shows `ResolvedRefs=False` with reason `BackendNotFound`                                             | The `konfidence-router` service is in `envoy-gateway-system`                                     | Install the controller with `deploy.type=GatewayNamespace`. Then recreate the Gateway.                                                |
+| `kubectl get httproute -n "$LANDSCAPE_NAMESPACE"` lists no `konfidence-stage-<stage>` route after an activation | The activation task is not registered in the landscape namespace                                 | Create the `ActivationTaskRegistration` from the registration step. Konfidence creates the route on the next activation of the stage. |
+| `curl` returns `404` although `konfidence-stage-<stage>` exists                                                 | The edge route does not set `x-konfidence-service`, or its value is not a deployment result name | Compare the edge route's `x-konfidence-service` value with the values in `konfidence-stage-<stage>`.                                  |
+| `curl` returns `503` with `upstream connect error`                                                              | The backend Pod of the stage does not accept connections                                         | Check the Pod with `kubectl get pods -n "$LANDSCAPE_NAMESPACE"`.                                                                      |
 
 ## Next steps
 

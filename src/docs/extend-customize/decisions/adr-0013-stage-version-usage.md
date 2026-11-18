@@ -11,6 +11,7 @@ dependencies: []
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0013: StageVersionUsage during vector rollout
 
 <AdrHeader />
@@ -22,10 +23,10 @@ This is important to prevent deletion of a `StageVersion` as long as it is still
 
 Our initial approach was based on owner references to determine when a `StageVersion` could safely be undeployed:
 
-* each `StageVersion` holds owner references to all `StageVersionUsage` CRs that are using it
-* one `StageVersion` has an owner reference to the `Stage` resource itself, as long as this `StageVersion` represents the "latest" vector for the stage (i.e. `Stage` and `StageVersion` share the same `.spec.vector`).
+- each `StageVersion` holds owner references to all `StageVersionUsage` CRs that are using it
+- one `StageVersion` has an owner reference to the `Stage` resource itself, as long as this `StageVersion` represents the "latest" vector for the stage (i.e. `Stage` and `StageVersion` share the same `.spec.vector`).
 
-However, this approach overlooked an important requirement: there must always be *at least one* `StageVersion` available and ready for use.
+However, this approach overlooked an important requirement: there must always be _at least one_ `StageVersion` available and ready for use.
 Without this safeguard, the “latest” `StageVersion` might be deleted while its successor is still in the process of rolling out, potentially causing unwanted service interruptions.
 
 ![SVU Race Condition](./assets/0013_svu_race_condition.drawio.svg)
@@ -38,10 +39,11 @@ This behavior might or might not be desired, depending on the semantics of the `
 ![SV Owner Issues](./assets/0013_sv_owner_issues.drawio.svg)
 
 ## Considered Solutions
+
 This ADR focuses on two different aspects of the `StageVersionUsage` resource:
 
-* How to use it during the rollout of a vector to manage the lifecycle of a `StageVersion`
-* How to keep track of the `StageVersionUsage`s for a given `StageVersion` and determine when a `StageVersion` can be deleted
+- How to use it during the rollout of a vector to manage the lifecycle of a `StageVersion`
+- How to keep track of the `StageVersionUsage`s for a given `StageVersion` and determine when a `StageVersion` can be deleted
 
 ### StageVersion lifecycle
 
@@ -57,12 +59,14 @@ There are two new guiding principles:
 2. one `StageVersionUsage` represents the "active" vector, i.e. the actual state of the `Stage`
 
 #### `StageVersionUsage` with "target" vector
+
 There is always one `StageVersionUsage` for the `StageVersion` with the "target" vector.
 This represents the desired state of the `Stage` and makes sure the rollout of the desired vector is not interrupted.
 Thus, for each `Stage`, there should be one `StageVersionUsage` that points to the last `StageVersion` that has been created.
 This resource is managed by the stage controller.
 
 #### `StageVersionUsage` with "active" vector
+
 There is always one `StageVersionUsage` for the `StageVersion` that is "active" vector, which is currently serving traffic.
 This represents the actual state of the `Stage` and makes sure that there is always at least one `StageVersion` available to serve traffic.
 This resource is managed by the activation controller (or one of its tasks).
@@ -76,21 +80,23 @@ This resource is managed by the activation controller (or one of its tasks).
    Rollout steps which should not be interrupted (e.g. migrations) need to manage their own `StageVersionUsage`s.
 
 #### Implementation details
+
 It does not matter if we create new `StageVersionUsage` resources each time or reuse existing ones.
 If we decide to create new ones, we need to be very careful about the ordering of creation and deletion to avoid accidental deletion of a `StageVersion`.
 
 Both `StageVersionUsage`s should have an owner reference to the corresponding `Stage` resource.
 
 ### Special case: Deletion of a `Stage`/`StageVersion` resource
+
 [ADR 0009](./adr-0009-stage-version-crs.md) did not discuss a special case: What happens when a `Stage` resource is deleted while there are still active `StageVersionUsage`s for its `StageVersion`s?
 There are many possible approaches on how to handle this situation and the exact behavior will be discussed in a future ADR.
 
 What is still noteworthy at this point, is that we should keep a proper owner hierarchy to ensure that all dependent resources are deleted when their owner is deleted.
 We can define some general rules for this:
 
-* Each resource which is a direct result (including transitive resources) of a `Stage` should be part of the ownership hierarchy tree starting from the `Stage`.
-* The two special `StageVersionUsage`s for "target" and "active" vector should also have an owner reference to the `Stage`.
-* `StageVersionUsage`s which are created by other components (e.g. migrations, user sessions, etc) should have an owner reference to the resource which semantically "owns" them.
+- Each resource which is a direct result (including transitive resources) of a `Stage` should be part of the ownership hierarchy tree starting from the `Stage`.
+- The two special `StageVersionUsage`s for "target" and "active" vector should also have an owner reference to the `Stage`.
+- `StageVersionUsage`s which are created by other components (e.g. migrations, user sessions, etc) should have an owner reference to the resource which semantically "owns" them.
 
 By sticking to those rules, we can ensure that all resources belonging to a `Stage` are deleted when the `Stage` is deleted.
 The following illustration visualizes the proposed ownership hierarchy.
@@ -98,6 +104,7 @@ The following illustration visualizes the proposed ownership hierarchy.
 ![SV Owner New](./assets/0013_sv_owner_new.drawio.svg)
 
 ### Relationship between StageVersion and StageVersionUsage
+
 In general, owner references should not be used for managing the lifecycle of our custom resources, specifically not for `StageVersion` resources.
 Instead, we extend the `spec` of the `StageVersionUsage`:
 
@@ -119,9 +126,9 @@ It benefits from schema validation and documents the intent clearly.
 
 We want to support both ways of referencing a `StageVersion`:
 
-* `spec.stageVersionRef`: This is a direct reference to a specific `StageVersion` by name.
+- `spec.stageVersionRef`: This is a direct reference to a specific `StageVersion` by name.
   It provides a convenient reference when we know exactly which `StageVersion` we want to use.
-* `spec.stageVersionSelector`: This is a selector to reference a `StageVersion` by label.
+- `spec.stageVersionSelector`: This is a selector to reference a `StageVersion` by label.
   It provides flexibility when we want to reference a `StageVersion` based on its labels, e.g. the vector it represents.
   This is especially useful when the exact name of the `StageVersion` is not known when creating the usage.
 
@@ -167,13 +174,13 @@ This also means, the owner reference from `StageVersion` to `Stage` remains in p
 We need a new reconciliation loop in the stage controller for `StageVersionUsage` resources.
 This reconciliation ensures that:
 
-* the referenced `StageVersion` exists, otherwise it sets the `StageVersionNotFound` condition
-* the referenced `StageVersion` is rolled out and ready for traffic, otherwise it sets the `StageVersionReady` condition to `False`
+- the referenced `StageVersion` exists, otherwise it sets the `StageVersionNotFound` condition
+- the referenced `StageVersion` is rolled out and ready for traffic, otherwise it sets the `StageVersionReady` condition to `False`
 
 ## Consequences
 
-* **Fix shortcomings of the initial design:** The new approach ensures that there is always at least one `StageVersion` available at all times, preventing service interruptions during vector rollouts.
-* **Clear API contract and intent:** By introducing `spec.stageVersionRef`, the relationship between a `StageVersionUsage` and its `StageVersion` becomes explicit.
+- **Fix shortcomings of the initial design:** The new approach ensures that there is always at least one `StageVersion` available at all times, preventing service interruptions during vector rollouts.
+- **Clear API contract and intent:** By introducing `spec.stageVersionRef`, the relationship between a `StageVersionUsage` and its `StageVersion` becomes explicit.
   We also handle error conditions for `StageVersionUsage`s in a structured way using conditions, allowing developers to react to issues programmatically.
   Those changes improve readability of the API and reduce ambiguity for both developers and operators.
-* **Correct Ownership hierarchy:** We now set up ownership references correctly to support cascading deletion of our custom resources as described in [Garbage Collection](https://kubernetes.io/docs/concepts/architecture/garbage-collection).
+- **Correct Ownership hierarchy:** We now set up ownership references correctly to support cascading deletion of our custom resources as described in [Garbage Collection](https://kubernetes.io/docs/concepts/architecture/garbage-collection).

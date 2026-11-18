@@ -10,14 +10,21 @@ const logoUrl = withBase('/assets/logo/Icon_only/SVG/512_konfidence_icon_color.s
     <div class="hero-copy">
       <h1 id="hero-heading">Promote one application version from development to production.</h1>
       <p class="hero-lead">
-        Konfidence helps platform and delivery teams deploy the same tested application version across environments without rebuilding it.
+        Konfidence helps platform and delivery teams deploy the same tested application version
+        across environments without rebuilding it.
       </p>
 
       <div class="hero-actions">
-        <a :href="withBase('/docs/getting-started/quickstart')" class="hero-button hero-button--primary">
+        <a
+          :href="withBase('/docs/getting-started/quickstart')"
+          class="hero-button hero-button--primary"
+        >
           Get Konfidence running
         </a>
-        <a href="https://github.com/konfidence-project/konfidence" class="hero-button hero-button--secondary">
+        <a
+          href="https://github.com/konfidence-project/konfidence"
+          class="hero-button hero-button--secondary"
+        >
           <Github aria-hidden="true" />
           View on GitHub
         </a>

@@ -217,14 +217,14 @@ The deployer owns the release itself: its name, its namespace, and its labels. E
 
 The deployer creates one Flux `HelmRelease` per artifact instance and sets these fields. Your chart cannot override them.
 
-| Field | Value |
-| --- | --- |
-| `metadata.name` | The [`ArtifactDeployment`](../../reference/glossary.md#artifactdeployment) name |
-| `spec.releaseName` | The `ArtifactDeployment` name |
-| `spec.chart.spec.sourceRef` | The `HelmRepository` with the same name |
-| `spec.targetNamespace` | The landscape namespace |
-| `spec.storageNamespace` | The landscape namespace |
-| `spec.commonMetadata.labels` | `konfidence.cloud/artifact-deployment=<artifact-deployment-name>` |
+| Field                        | Value                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| `metadata.name`              | The [`ArtifactDeployment`](../../reference/glossary.md#artifactdeployment) name |
+| `spec.releaseName`           | The `ArtifactDeployment` name                                                   |
+| `spec.chart.spec.sourceRef`  | The `HelmRepository` with the same name                                         |
+| `spec.targetNamespace`       | The landscape namespace                                                         |
+| `spec.storageNamespace`      | The landscape namespace                                                         |
+| `spec.commonMetadata.labels` | `konfidence.cloud/artifact-deployment=<artifact-deployment-name>`               |
 
 The release name is deterministic per component, version, `allowReuse` setting, and [`VectorDeployment`](../../reference/glossary.md#vectordeployment).
 

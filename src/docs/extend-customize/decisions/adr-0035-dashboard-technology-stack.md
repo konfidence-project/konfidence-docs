@@ -11,6 +11,7 @@ dependencies: [ADR-0023, ADR-0029]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0035: Dashboard technology stack
 
 <AdrHeader />

@@ -11,6 +11,7 @@ dependencies: [ADR-0004, ADR-0026]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0028: Project CRD and multi-tenancy authorization
 
 <AdrHeader />
@@ -32,7 +33,7 @@ interactively and carry group memberships. Workloads — typically CI
 pipelines — authenticate with short-lived OIDC tokens whose claims (`sub`,
 `repository`, `ref`, `environment`, …) decide what the pipeline may do.
 
-One word of disambiguation: this is *platform* tenancy, isolating Konfidence's
+One word of disambiguation: this is _platform_ tenancy, isolating Konfidence's
 own operator-facing users and resources. It is not the application/end-customer
 tenancy of ADR-0004, which deliberately keeps
 application tenancy out of the core. The two are orthogonal; this ADR does not
@@ -111,11 +112,11 @@ nothing in future flexibility.
 The roles are described at the level of intent, on purpose — the concrete
 permission model is not settled yet:
 
-| Role | Intent |
-|------|--------|
-| **admin** | Full control of the project: manage its `roleBindings`, the project lifecycle, and everything in the project namespace. |
-| **pm** | Manage the delivery process: promotion flows and stage configuration, and approve promotions. Cannot change `roleBindings`. |
-| **dev** | Read-only / observability: deployment status, logs, artifact and vector details — anything a developer needs to look at. No mutating actions. |
+| Role      | Intent                                                                                                                                        |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **admin** | Full control of the project: manage its `roleBindings`, the project lifecycle, and everything in the project namespace.                       |
+| **pm**    | Manage the delivery process: promotion flows and stage configuration, and approve promotions. Cannot change `roleBindings`.                   |
+| **dev**   | Read-only / observability: deployment status, logs, artifact and vector details — anything a developer needs to look at. No mutating actions. |
 
 Because `roleBindings` is a map, adding or splitting roles later is
 non-breaking.
@@ -128,7 +129,7 @@ allowed on them; an endpoint the caller holds no granting role for is rejected
 outright. The API server does not project or redact individual fields — if a
 role may read a kind, it reads whole objects of that kind. A role's observability
 intent (a `dev` seeing status but not mutating configuration) is therefore
-expressed by *which* endpoints and kinds the role is granted, not by hiding
+expressed by _which_ endpoints and kinds the role is granted, not by hiding
 fields within a resource.
 
 Two finer-grained models are deliberately out of scope for now:

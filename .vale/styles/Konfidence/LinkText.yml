@@ -6,4 +6,4 @@ scope: link
 ignorecase: true
 nonword: true
 tokens:
-  - '^(?:click here|here|this|this guide)$'
+  - "^(?:click here|here|this|this guide)$"

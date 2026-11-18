@@ -245,13 +245,13 @@ Check the `Ready` condition to understand the current assembly state:
 kubectl describe vectortemplate shopping-app -n my-project
 ```
 
-| Status | Reason | Meaning |
-| --- | --- | --- |
-| `True` | `VectorCreated` | Drift was detected; a new vector version was assembled and uploaded. |
-| `True` | `NoDriftDetected` | No changes were detected; `status.latestVector` is still current. |
-| `False` | `WaitingForBase` | The base template has not assembled its first vector yet. |
-| `False` | `VectorCreationFailed` | Drift was detected, but the assembly failed. Possible causes include a component copy error, a signing failure, or a write error when publishing the vector descriptor. |
-| `Unknown` | `DriftDetectionFailed` | Assembly could not determine the desired state. Possible causes include an unreachable registry, missing credentials, or a reference that cannot be parsed. |
+| Status    | Reason                 | Meaning                                                                                                                                                                 |
+| --------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `True`    | `VectorCreated`        | Drift was detected; a new vector version was assembled and uploaded.                                                                                                    |
+| `True`    | `NoDriftDetected`      | No changes were detected; `status.latestVector` is still current.                                                                                                       |
+| `False`   | `WaitingForBase`       | The base template has not assembled its first vector yet.                                                                                                               |
+| `False`   | `VectorCreationFailed` | Drift was detected, but the assembly failed. Possible causes include a component copy error, a signing failure, or a write error when publishing the vector descriptor. |
+| `Unknown` | `DriftDetectionFailed` | Assembly could not determine the desired state. Possible causes include an unreachable registry, missing credentials, or a reference that cannot be parsed.             |
 
 ## Full example
 

@@ -11,6 +11,7 @@ dependencies: [ADR-0007, ADR-0020, ADR-0022, ADR-0023]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0026: Merge galaxy and star into a single cluster
 
 <AdrHeader />
@@ -33,7 +34,7 @@ This buys strong tenant and landscape isolation, but at a steep cost: two contro
 planes plus KCP, multi-cluster controllers, cross-cluster secret and resource
 sync, per-workspace CRD lifecycles, and three layers of auth/RBAC (galaxy, KCP,
 star). ADR-0020 itself acknowledged this and named a single-cluster install
-*without* KCP as the long-term goal for users who do not need tenancy or
+_without_ KCP as the long-term goal for users who do not need tenancy or
 isolation — but kept the KCP, multi-cluster, multi-tenant stack as the default.
 
 From a product standpoint, the gap between "what Konfidence is" and "what you
@@ -60,11 +61,13 @@ Galaxy on KCP with multi-tenant workspaces, multi-cluster controllers, and a syn
 agent replicating into star clusters.
 
 **Pros:**
+
 - Strong tenant and landscape isolation; physical separation of galaxy and star.
 - Central, multi-tenant global management of many landscapes from one place.
 - Already the agreed design; no rework.
 
 **Cons:**
+
 - High operational and conceptual complexity: KCP, workspaces, `APIExport`/
   `APIBinding`, multi-cluster runtime, sync agent, cross-cluster secret sync.
 - Two clusters + KCP to install, secure, monitor, and upgrade; three auth layers.
@@ -77,9 +80,11 @@ Run one cluster and merge the two API groups into a single flat model — drop t
 galaxy/star separation in code and docs as well.
 
 **Pros:**
+
 - Maximum simplicity in installation and surface area.
 
 **Cons:**
+
 - Loses the clean logical separation between process-level (galaxy) and
   runtime-level (star) concerns, which is genuinely useful for reasoning,
   authorization boundaries, and future re-splitting.
@@ -99,6 +104,7 @@ Ship as a single binary and a single Helm chart whose values can disable the
 galaxy components.
 
 **Pros:**
+
 - One cluster, one binary, one Helm chart, one CRD lifecycle — the quickstart
   collapses to ~5 steps.
 - Removes KCP, multi-cluster runtime, the sync controller, cross-cluster secret
@@ -108,7 +114,8 @@ galaxy components.
 - Caching, build, and release all simplify around a single artifact.
 
 **Cons:**
-- Drops native multi-tenant, multi-landscape *global* management from one place
+
+- Drops native multi-tenant, multi-landscape _global_ management from one place
   (the original galaxy value proposition); see Open Questions on project-level
   tenancy on the star.
 - Reverses the core of ADR-0020 and discards work behind ADR-0017/0018.
@@ -127,6 +134,7 @@ single API group and version. The galaxy = process / star = runtime distinction
 boundary.
 
 **Pros:**
+
 - Everything from Option 3: one cluster, one binary, one Helm chart, one CRD
   lifecycle, no KCP/multi-cluster runtime/sync controller.
 - One API group means one apiVersion, one client, one set of RBAC verbs, and no
@@ -136,6 +144,7 @@ boundary.
   what the deployment topology already is: a single cluster.
 
 **Cons:**
+
 - Loses the API-level separation between process-level and runtime-level
   resources; authorizing or versioning galaxy-only vs. star-only resources
   independently now requires a convention (e.g. by Kind or label) instead of a

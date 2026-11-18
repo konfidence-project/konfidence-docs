@@ -63,12 +63,12 @@ The complete Konfidence control plane and a Project, Landscape, Stage, or Vector
 
 The developer supplies these inputs to the suite:
 
-| Input | Purpose |
-| --- | --- |
-| Kubeconfig | Selects the test cluster. |
-| Application artifact | References an OCM component version stored as an OCI image. |
-| Deployment-target spec | Contains `artifactType` and optional deployer-specific `parameters`, without Kubernetes resource metadata. |
-| Target setup manifests (optional) | Provide namespaced resources, such as Secrets, referenced by the target parameters. |
+| Input                             | Purpose                                                                                                    |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Kubeconfig                        | Selects the test cluster.                                                                                  |
+| Application artifact              | References an OCM component version stored as an OCI image.                                                |
+| Deployment-target spec            | Contains `artifactType` and optional deployer-specific `parameters`, without Kubernetes resource metadata. |
+| Target setup manifests (optional) | Provide namespaced resources, such as Secrets, referenced by the target parameters.                        |
 
 The application artifact should be small, deterministic, and require no manual interaction. Its artifact type must match the type in the deployment-target spec. It must contain the `konfidence-manifest`, task manifests, and deployer-specific resources needed to construct an `ArtifactDeployment`.
 

@@ -21,7 +21,7 @@
   </DefaultTheme.Layout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import DefaultTheme from 'vitepress/theme'
 import VPFooter from './components/VPFooter.vue'
 import VPHeroInfo from './components/VPHeroInfo.vue'

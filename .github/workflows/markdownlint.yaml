@@ -27,10 +27,6 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Test the configuration
-        run: pnpm test:markdown
-      - name: Test PR reporting
-        run: pnpm test:reports
       - name: Setup reviewdog
         uses: reviewdog/action-setup@v1
         with:

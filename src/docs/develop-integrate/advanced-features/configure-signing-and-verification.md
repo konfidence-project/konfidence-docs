@@ -378,10 +378,10 @@ If assembly fails, check `kubectl describe vectortemplate my-vector -n <project-
 
 Use the following checks for known assembly and signature-configuration problems:
 
-| Symptom | Likely cause | Resolution or diagnostic check |
-| --- | --- | --- |
+| Symptom                                                         | Likely cause                                                            | Resolution or diagnostic check                                                                                                                       |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `VectorTemplate` `Ready=Unknown`, reason `DriftDetectionFailed` | Credential secret missing, wrong key name, or not in the same namespace | Check Events with `kubectl describe vectortemplate my-vector -n <project-namespace>`, then correct the secret configuration with your administrator. |
-| `algorithm` pin rejection | Signed with `RSASSA-PKCS1-V1_5` but the CRD pins `RSASSA-PSS` | Align `algorithm` in the secret consumer identity and CRD `Signature` entry. |
+| `algorithm` pin rejection                                       | Signed with `RSASSA-PKCS1-V1_5` but the CRD pins `RSASSA-PSS`           | Align `algorithm` in the secret consumer identity and CRD `Signature` entry.                                                                         |
 
 After you correct the credential configuration, Konfidence retries assembly automatically on the next reconciliation.
 You do not need to trigger a retry manually.
@@ -451,7 +451,7 @@ Retained for reuse: promotion behavior belongs with delivery-flow concepts rathe
 
 ## Promotions do not verify
 
-A promotion re-points a target stage at a vector version that already exists in the registry. It never rebuilds, re-signs, or transfers OCM content, so there is nothing to verify and no registry access to authenticate at promotion time. 
+A promotion re-points a target stage at a vector version that already exists in the registry. It never rebuilds, re-signs, or transfers OCM content, so there is nothing to verify and no registry access to authenticate at promotion time.
 
 Verification still guards both ends of every promotion chain:
 

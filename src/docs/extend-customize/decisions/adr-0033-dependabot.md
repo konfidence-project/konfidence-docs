@@ -10,6 +10,7 @@ dependencies: [ADR-0011]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0033: Dependabot for code dependency updates
 
 <AdrHeader />
@@ -47,10 +48,12 @@ Dependabot cannot do everything Renovate does. It has no support for
 ### Option 1: Keep Renovate for everything (status quo)
 
 **Pros:**
+
 - One updater covers all ecosystems, including hermit and Helm.
 - Flexible grouping and automerge rules, already configured.
 
 **Cons:**
+
 - Not connected to GitHub security alerts.
 - Third-party app and bot account in public repositories.
 - The coverage gap described above stays invisible.
@@ -58,15 +61,18 @@ Dependabot cannot do everything Renovate does. It has no support for
 ### Option 2: Dependabot for everything
 
 **Pros:**
+
 - Everything in one GitHub-native system.
 
 **Cons:**
+
 - hermit and Helm would get no update PRs at all. Toolchains and charts
   would drift unnoticed.
 
 ### Option 3: Dependabot for code, Renovate only for hermit and Helm (chosen)
 
 **Pros:**
+
 - All code dependencies (gomod, npm, pip/uv, bundler, gradle, docker,
   github-actions) move to the GitHub-native updater.
 - Nothing loses coverage: Renovate keeps the two sources Dependabot cannot
@@ -74,6 +80,7 @@ Dependabot cannot do everything Renovate does. It has no support for
 - Alerts and the PRs that fix them come from the same system.
 
 **Cons:**
+
 - Two updaters stay in use, though with strictly separate scopes.
 - Dependabot's grouping is less flexible than Renovate's. In particular,
   it cannot group updates across ecosystems.

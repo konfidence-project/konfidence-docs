@@ -16,9 +16,9 @@ For the relationship between deployers, artifact types, targets, and artifacts, 
 
 Following deployers are available in the current release:
 
-| Deployer | Target platform | Artifact formats | Supported artifact types |
-| --- | --- | --- | --- |
-| [Kubernetes deployer](./kubernetes.md) | Kubernetes through Flux | Helm, Kustomize | `helm.konfidence.cloud`, `kustomize.konfidence.cloud` |
+| Deployer                               | Target platform         | Artifact formats | Supported artifact types                              |
+| -------------------------------------- | ----------------------- | ---------------- | ----------------------------------------------------- |
+| [Kubernetes deployer](./kubernetes.md) | Kubernetes through Flux | Helm, Kustomize  | `helm.konfidence.cloud`, `kustomize.konfidence.cloud` |
 
 ## Prerequisites for inspecting installed capabilities
 
@@ -33,7 +33,7 @@ List the targets in the landscape namespace:
 kubectl get deploymenttargets --namespace=<landscape-namespace>
 ```
 
-The `spec.artifactType` field identifies the artifact type and `Ready=True` indicates that its deployer accepts the target. 
+The `spec.artifactType` field identifies the artifact type and `Ready=True` indicates that its deployer accepts the target.
 The landscape can deploy an artifact when it contains a ready target matching the artifact manifest type.
 
 Use [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) to add a missing capability or investigate a target that is not ready.

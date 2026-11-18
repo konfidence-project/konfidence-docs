@@ -10,6 +10,7 @@ dependencies: []
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0012: Activation controller
 
 <AdrHeader />
@@ -26,7 +27,6 @@ After a new vector has been successfully deployed and any associated migration t
 4.  The system must prevent the underlying `StageVersion` and its artifacts from being deleted or modified while an activation is in progress.
 5.  Dependencies between activation tasks must be manageable, allowing certain tasks to run only after others have completed successfully. This includes the ability to define tasks that must run before or after others, as it must be possible to define dependencies in both directions with predefined tasks that shipped with the platform.
 
-
 ## Considered Solutions
 
 ### Option 1: Generic task orchestration for both migration and activation (discarded)
@@ -39,7 +39,6 @@ The `Vector Activation Controller` creates a `TaskExecutionPlan` CR that contain
 The task list is compiled based on `ActivationTaskRegistration` CRs found in the landscape's namespace and the konfidence-system namespace.
 The `Task Orchestration Engine` controller reconciles the `TaskExecutionPlan` CR and creates the `TaskExecution` CRs with the correct type and in the correct order based on the dependency tree.
 For each task type, a corresponding `Task Execution Controller` watches for `TaskExecution` CRs of its type and performs the necessary actions to complete the task, e.g. updating Gateway API HTTPRoute resources.
-
 
 ActivationTaskRegistration CR example:
 
@@ -82,8 +81,6 @@ spec:
         - custom-k8s-activation
 ```
 
-
-
 #### Advantages
 
 - reuse of the task orchestration logic
@@ -95,12 +92,10 @@ spec:
 - the dependency management is spread across all ActivationTaskRegistration CRs, making it harder to understand and configure the full activation process with all dependencies
 - future diverging requirements for migration and activation tasks could lead to complexity in the shared orchestration engine
 
-
 ### Option 2: Dedicated activation task orchestration based on a ActivationExecutionPlan CR (preferred)
 
 1.  **Vector Activation Controller:** A high-level controller that manages the overall activation process, including locking and lifecycle tracking. It reads ActivationTaskRegistration CR(s) and optionally an ActivationExecutionPlan CR that define the execution order of the tasks, and creates ActivationExecution CRs in the correct order.
 2.  **Activation Execution Controllers (Executors):** Specialized controllers that handle the actual work of modifying routing resources for a specific technology, or other activation tasks.
-
 
 `ActivationTaskRegistration` CR example:
 
@@ -159,10 +154,10 @@ The `ActivationTaskRegistration` and `ActivationExecutionPlan` CRs are created i
 
 - no reuse of overlapping logic with migration task orchestration
 
-
 ### Concurrency Control Mechanism
 
 #### Kubernetes Lease Object
+
 The controller would leverage the built-in Kubernetes `Lease` resource (`coordination.k8s.io/v1`). Before starting an activation, the controller must acquire a named `Lease` for that `Stage`. This is the idiomatic, battle-tested Kubernetes way to handle leader election and distributed locks. It provides a robust guarantee of serialized execution.
 
 ## Decision
@@ -180,15 +175,13 @@ The process is as follows:
 7.  **Task Orchestration:** If an `ActivationExecutionPlan` was found, the controller creates `ActivationExecution` CRs based on the `ActivationExecutionPlan`. The steps defined in the `ActivationExecutionPlan` are processed in order, and the `ActivationExecution` CRs of a step are only created once all `ActivationExecution` CRs of the previous step have been completed successfully. If no `ActivationExecutionPlan` is found, the controller creates `ActivationExecution` CRs for all registered `ActivationTaskRegistration` CRs in an arbitrary order.
 8.  **Execution:** A specialized `ActivationExecution` controller (e.g., `GatewayAPIActivationExecutionController`) watches for CRs of its type. It performs the actual routing changes in the landscape cluster and updates the `ActivationExecution` status.
 9.  **Status & Usage Update:** The `Vector Activation Controller` monitors the status of its `ActivationExecution` children. Once all have succeeded, it updates the `StageVersionUsage` `active` to the just activated `StageVersion`, deletes the `StageVersionUsage` `activation` and updates the `VectorActivation` status to `Succeeded`
-10.  **Release Lock:** The `Vector Activation Controller` releases the `Lease`.
+10. **Release Lock:** The `Vector Activation Controller` releases the `Lease`.
 
 In the event of activation failures, the controller updates the `VectorActivation` status to `Failed` once all running ActivationExecutions have reached a final state (`Succeeded` or `Error`), release the lease, and allows for retries.
 
-### Architecture 
-
+### Architecture
 
 ![](./assets/0012_activation-controller.drawio.svg)
-
 
 ### Sequence Diagram
 
@@ -237,7 +230,7 @@ sequenceDiagram
 
     destroy SVU
     VAC ->> SVU: Delete StageVersionUsage "activation"
-    
+
     VAC ->> VA: Update VectorActivation Status: Succeeded
 
 
@@ -267,9 +260,8 @@ After the timeout has been exceeded, the `ActivationExecution` controller tries 
 The `ActivationExecution` and `StageVersionUsage` `activation` CRs are created with an owner reference to the `VectorActivation` CR.
 Thus, when the `VectorActivation` is deleted, Kubernetes garbage collection will automatically clean up these resources.
 
-
 ## Consequences
 
-*   **Safety and Reliability:** The use of a `Lease` for locking provides a strong guarantee against race conditions during the critical traffic-switching phase.
-*   **High Extensibility:** The platform can easily support new routing technologies in the future by adding new `ActivationExecution` controllers, with no changes required to the core orchestration logic.
-*   **Increased Resource Count:** The architecture introduces four new CRDs (`VectorActivation`, `ActivationExecution`, `ActivationTaskRegistration`, `ActivationExecutionPlan`) and one `Lease` object per stage.
+- **Safety and Reliability:** The use of a `Lease` for locking provides a strong guarantee against race conditions during the critical traffic-switching phase.
+- **High Extensibility:** The platform can easily support new routing technologies in the future by adding new `ActivationExecution` controllers, with no changes required to the core orchestration logic.
+- **Increased Resource Count:** The architecture introduces four new CRDs (`VectorActivation`, `ActivationExecution`, `ActivationTaskRegistration`, `ActivationExecutionPlan`) and one `Lease` object per stage.

@@ -37,21 +37,21 @@ Use short sentences, common words, and concrete verbs. Avoid idioms, cultural re
 <!-- The Avoid column intentionally demonstrates wording that Vale flags. -->
 <!-- vale Konfidence.PlainLanguage = NO -->
 
-| Use | Avoid |
-| --- | --- |
-| use, delete, get | utilize, dispose of, obtain |
+| Use                 | Avoid                                               |
+| ------------------- | --------------------------------------------------- |
+| use, delete, get    | utilize, dispose of, obtain                         |
 | to, because, except | in order to, due to the fact, with the exception of |
 
 <!-- vale Konfidence.PlainLanguage = YES -->
 
 ### Address the user directly
 
-Use active voice and address the reader as *you*. Start instructions with an imperative verb.
+Use active voice and address the reader as _you_. Start instructions with an imperative verb.
 
-| Use | Avoid |
-| --- | --- |
-| Upload the artifact. | The artifact can be uploaded by the user. |
-| Run the following command. | You should run the following command. |
+| Use                        | Avoid                                     |
+| -------------------------- | ----------------------------------------- |
+| Upload the artifact.       | The artifact can be uploaded by the user. |
+| Run the following command. | You should run the following command.     |
 
 ### Be clear and specific
 
@@ -59,17 +59,17 @@ Use active voice and address the reader as *you*. Start instructions with an imp
 - Keep paragraphs focused on one idea.
 - Describe what an action accomplishes before explaining how to perform it.
 - State limitations, risks, and destructive effects before the relevant action.
-- Prefer positive instructions when they are clearer. Use *do not* when a prohibition protects the user from an error or risk.
+- Prefer positive instructions when they are clearer. Use _do not_ when a prohibition protects the user from an error or risk.
 - <!-- This instruction names the words it prohibits. -->
   <!-- vale Konfidence.DiscouragedWords = NO -->
-  Do not use *easy*, *simple*, or *just*. These words do not help the reader complete the task and can dismiss real difficulty.
+  Do not use _easy_, _simple_, or _just_. These words do not help the reader complete the task and can dismiss real difficulty.
   <!-- vale Konfidence.DiscouragedWords = YES -->
 
 ### Use inclusive language
 
 - Use inclusive and bias-free terms. Consult the [Inclusive Naming word lists](https://inclusivenaming.org/word-lists/) when you are unsure.
 - Avoid assumptions about gender, culture, location, or physical ability.
-- Use *they* and *their* instead of gendered pronouns when referring to an unspecified person.
+- Use _they_ and _their_ instead of gendered pronouns when referring to an unspecified person.
 
 ## Structure and scannability
 
@@ -115,26 +115,26 @@ Generated reference content still needs human-authored context. Link to relevant
 
 ## Formatting
 
-| Element | Formatting | Example |
-| --- | --- | --- |
-| Headings and titles | Markdown heading, sentence case | `## Configure access control` |
-| Command-line tools | Inline code | `kubectl`, `git`, `docker` |
-| Inline code and commands | Inline code | Run `kubectl get projects`. |
-| Code and CLI blocks | Fenced code block with a language | `bash`, `yaml`, `json` |
-| Custom resources | UpperCamelCase and inline code | `VectorActivation` |
-| Files, directories, and paths | Inline code | `src/docs/`, `~/.kube/config` |
-| Keyboard shortcuts | Inline code, plus sign, no spaces | `Cmd`+`S` |
-| User interface elements | Bold | Choose **Create**. |
-| Text input | Inline code | Enter `example` in **Name**. |
-| Placeholders | Angle brackets and hyphens | `<workspace-name>` |
-| Emphasis | Bold, used sparingly | Complete the **required** fields. |
+| Element                       | Formatting                        | Example                           |
+| ----------------------------- | --------------------------------- | --------------------------------- |
+| Headings and titles           | Markdown heading, sentence case   | `## Configure access control`     |
+| Command-line tools            | Inline code                       | `kubectl`, `git`, `docker`        |
+| Inline code and commands      | Inline code                       | Run `kubectl get projects`.       |
+| Code and CLI blocks           | Fenced code block with a language | `bash`, `yaml`, `json`            |
+| Custom resources              | UpperCamelCase and inline code    | `VectorActivation`                |
+| Files, directories, and paths | Inline code                       | `src/docs/`, `~/.kube/config`     |
+| Keyboard shortcuts            | Inline code, plus sign, no spaces | `Cmd`+`S`                         |
+| User interface elements       | Bold                              | Choose **Create**.                |
+| Text input                    | Inline code                       | Enter `example` in **Name**.      |
+| Placeholders                  | Angle brackets and hyphens        | `<workspace-name>`                |
+| Emphasis                      | Bold, used sparingly              | Complete the **required** fields. |
 
 Do not use capitalization or bold text as decoration.
 
 ## Links and user journeys
 
 - Use the exact page title or a descriptive phrase as link text.
-- Do not use *here*, *this*, *this guide*, or a raw URL as link text.
+- Do not use _here_, _this_, _this guide_, or a raw URL as link text.
 - Link to the next information the reader needs to complete their journey. Avoid lists of loosely related pages.
 - Link to the source page instead of duplicating information that has a clear owner.
 - In Markdown files, use a relative link to the target source file and include the `.md` extension:

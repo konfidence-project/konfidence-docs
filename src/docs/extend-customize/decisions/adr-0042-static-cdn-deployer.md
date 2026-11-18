@@ -32,11 +32,11 @@ Both options use the same registration and execution contract. Users can adapt t
 
 ### Who owns each operation
 
-| Owner | Responsibility |
-| --- | --- |
-| Administrator | Provide storage and serving infrastructure, DNS, HTTPS, credentials, and public path assignments. Create and maintain the activation registration. |
-| Static deployer | Store artifact resources, publish deployment results, check cross-artifact route conflicts, and create and monitor activation Jobs through its own controllers. |
-| User-configured Job | Apply S3 and serving configuration and check that the changes succeeded. |
+| Owner               | Responsibility                                                                                                                                                  |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Administrator       | Provide storage and serving infrastructure, DNS, HTTPS, credentials, and public path assignments. Create and maintain the activation registration.              |
+| Static deployer     | Store artifact resources, publish deployment results, check cross-artifact route conflicts, and create and monitor activation Jobs through its own controllers. |
+| User-configured Job | Apply S3 and serving configuration and check that the changes succeeded.                                                                                        |
 
 ## Deploy static content to S3
 

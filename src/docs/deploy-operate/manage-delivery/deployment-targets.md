@@ -8,12 +8,12 @@ lastUpdated: true
 
 # Configure deployment targets for a landscape {#manage-deployment-targets}
 
-Create a [deployment target](../../reference/glossary.md#deployment-target) to configure a destination for an artifact type in a [landscape](../../reference/glossary.md#landscape). 
+Create a [deployment target](../../reference/glossary.md#deployment-target) to configure a destination for an artifact type in a [landscape](../../reference/glossary.md#landscape).
 The target's `spec.artifactType` selects its [deployer](../../reference/glossary.md#deployer).
-`spec.parameters` contains the connection information defined by that deployer. 
+`spec.parameters` contains the connection information defined by that deployer.
 The deployer validates the parameters and reports whether it accepts the target.
 
-The deployer is installed once per Konfidence installation and is shared across all projects and landscapes. 
+The deployer is installed once per Konfidence installation and is shared across all projects and landscapes.
 For the relationship between artifacts, artifact types, deployers, targets, and landscapes, see the [Deployment model](../../core-concepts/deployment-model.md).
 
 ## Prerequisites
@@ -34,14 +34,14 @@ export LANDSCAPE_NAMESPACE=$(kubectl get landscape dev \
 
 ## Choose the artifact type
 
-Each [artifact](../../reference/glossary.md#artifact) declares its artifact type. 
-A landscape needs one ready target for every type its [stages](../../reference/glossary.md#stage) deploy. 
+Each [artifact](../../reference/glossary.md#artifact) declares its artifact type.
+A landscape needs one ready target for every type its [stages](../../reference/glossary.md#stage) deploy.
 Use the exact type supported by the artifact's deployer.
 For example, the Kubernetes deployer supports `helm.konfidence.cloud` and `kustomize.konfidence.cloud`.
 
 ## Create the target
 
-Save the following manifest as `deployment-target.yaml`. 
+Save the following manifest as `deployment-target.yaml`.
 Empty parameters select the Kubernetes deployer's local cluster:
 
 ```yaml
@@ -71,9 +71,9 @@ kubectl wait deploymenttarget/helm-local \
   --timeout=60s
 ```
 
-The command returns `condition met` when the deployer accepts the target parameters. 
-`Ready=True` indicates acceptance of the parameters by the deployer. 
-It does not guarantee that a future artifact deployment will succeed. 
+The command returns `condition met` when the deployer accepts the target parameters.
+`Ready=True` indicates acceptance of the parameters by the deployer.
+It does not guarantee that a future artifact deployment will succeed.
 
 List all targets of the landscape:
 

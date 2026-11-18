@@ -33,12 +33,12 @@ That runtime lifecycle starts once the target stage state (`Stage` resources) ha
 
 Read the flow as a progression of state:
 
-| Phase | Result | Konfidence concept or resource |
-| --- | --- | --- |
-| Build | Build results are available as artifacts in an Open Component Model (OCM)-compliant repository. | Artifact |
-| Assemble | Selected artifacts are combined into one immutable vector. | Vector, [`VectorTemplate`](../reference/glossary.md#vectortemplate) custom resource |
-| Assign | A stage references the vector selected manually or by a promotion. | `Stage` custom resource |
-| Promote | A promotion updates the target stage to reference a concrete vector version. | [`VectorPromotionConfig`](../reference/glossary.md#vectorpromotionconfig), [`VectorPromotion`](../reference/glossary.md#vectorpromotion) custom resources |
+| Phase    | Result                                                                                          | Konfidence concept or resource                                                                                                                            |
+| -------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Build    | Build results are available as artifacts in an Open Component Model (OCM)-compliant repository. | Artifact                                                                                                                                                  |
+| Assemble | Selected artifacts are combined into one immutable vector.                                      | Vector, [`VectorTemplate`](../reference/glossary.md#vectortemplate) custom resource                                                                       |
+| Assign   | A stage references the vector selected manually or by a promotion.                              | `Stage` custom resource                                                                                                                                   |
+| Promote  | A promotion updates the target stage to reference a concrete vector version.                    | [`VectorPromotionConfig`](../reference/glossary.md#vectorpromotionconfig), [`VectorPromotion`](../reference/glossary.md#vectorpromotion) custom resources |
 
 Entries in code style are Kubernetes custom resources.
 Concepts such as artifact, vector, and stage describe the delivery model that those resources configure.

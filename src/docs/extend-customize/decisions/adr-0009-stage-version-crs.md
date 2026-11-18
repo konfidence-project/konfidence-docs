@@ -10,6 +10,7 @@ dependencies: []
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0009: StageVersion custom resources
 
 <AdrHeader />
@@ -26,7 +27,6 @@ Third, we identified that additional usages by other controllers would only ever
 
 ## Considered Solutions
 
-
 - Adapting the VectorDeployment and its Usage lifecycle
 - Introducing a StageVersion CRD to represent the immutable state of a Stage at a given point in time
 
@@ -38,9 +38,7 @@ We will add a new CR called **StageVersionUsage** to fulfil the role of the prev
 
 ## Consequences
 
-
 - The stage controller must be adapted to create and manage StageVersion resources.
 - The stage controller must be changed to reconcile the StageVersion to create the VectorDeployment, Migration and Activation objects.
 - The StageVersionUsage must be added to the model to represent the usage of a VectorDeployment in the context of a specific StageVersion.
 - The VectorDeploymentUsage must be removed from the model, as it is no longer needed.
-

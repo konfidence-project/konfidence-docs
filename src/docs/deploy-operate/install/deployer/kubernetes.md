@@ -8,12 +8,12 @@ lastUpdated: true
 
 # Install the Kubernetes deployer {#kubernetes-deployer}
 
-Install the Kubernetes [deployer](../../../reference/glossary.md#deployer) to deliver Helm and Kustomize artifacts to Kubernetes through Flux. 
+Install the Kubernetes [deployer](../../../reference/glossary.md#deployer) to deliver Helm and Kustomize artifacts to Kubernetes through Flux.
 It supports the artifact types `helm.konfidence.cloud` and `kustomize.konfidence.cloud` and is the reference implementation of Konfidence's deployer interface.
 See the [deployer specification](https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md) for the control plane contract.
 
-After installation, use the target parameters on this page to configure targets in your landscapes. 
-The later sections describe supported artifact types and Service [deployment results](../../../reference/glossary.md#deployment-result). 
+After installation, use the target parameters on this page to configure targets in your landscapes.
+The later sections describe supported artifact types and Service [deployment results](../../../reference/glossary.md#deployment-result).
 The artifact guides list the packaging and naming requirements. See [Author a Helm artifact](../../../develop-integrate/artifact-types/helm.md) and [Author a Kustomize artifact](../../../develop-integrate/artifact-types/kustomize.md).
 
 ## Prerequisites
@@ -46,19 +46,19 @@ Verify that the deployer is running:
 kubectl get deployment kubernetes-landscape-orchestrator -n "$KONFIDENCE_NAMESPACE"
 ```
 
-The deployment should show one available replica. 
-The supported types are `helm.konfidence.cloud` and `kustomize.konfidence.cloud`. 
-Every chart value is listed in the [Helm values reference](../../../reference/helm-values-orchestrator.md). 
+The deployment should show one available replica.
+The supported types are `helm.konfidence.cloud` and `kustomize.konfidence.cloud`.
+Every chart value is listed in the [Helm values reference](../../../reference/helm-values-orchestrator.md).
 [Configure deployment targets for a landscape](../../manage-delivery/deployment-targets.md) configures destinations for these types.
 
 ## Target parameters
 
-A [deployment target](../../manage-delivery/deployment-targets.md) sets `spec.artifactType` to one of the supported types. 
-Omitted `spec.parameters` configures deployment to the cluster where the deployer runs. 
+A [deployment target](../../manage-delivery/deployment-targets.md) sets `spec.artifactType` to one of the supported types.
+Omitted `spec.parameters` configures deployment to the cluster where the deployer runs.
 For a remote cluster, `spec.parameters` references a secret in the landscape namespace that contains a kubeconfig.
 
 ::: warning Remote targets are work in progress
-Use targets with empty parameters to deploy into the local cluster. 
+Use targets with empty parameters to deploy into the local cluster.
 Remote targets can validate a kubeconfig and become `Ready`. Deployment of all resources to the remote cluster is not yet complete.
 :::
 
@@ -70,7 +70,7 @@ spec:
   artifactType: helm.konfidence.cloud
 ```
 
-A remote target references a secret in the landscape namespace. 
+A remote target references a secret in the landscape namespace.
 The deployer reads the kubeconfig from the key `value` or `value.yaml`, the keys Flux uses:
 
 ```bash
@@ -91,23 +91,23 @@ spec:
 
 The deployer validates target parameters and reports the result in the `Ready` condition:
 
-| Reason | Meaning |
-| --- | --- |
-| `Accepted` | The target passed validation. |
-| `InvalidParameters` | Parameters do not identify a Kubernetes secret containing a kubeconfig. |
-| `ValidationError` | The deployer could not complete validation, for example because the referenced secret could not be read. |
+| Reason              | Meaning                                                                                                  |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| `Accepted`          | The target passed validation.                                                                            |
+| `InvalidParameters` | Parameters do not identify a Kubernetes secret containing a kubeconfig.                                  |
+| `ValidationError`   | The deployer could not complete validation, for example because the referenced secret could not be read. |
 
 Pulling artifacts from private registries needs a secret in the landscape namespace as well. See [Connect artifact registries](../connect-registries.md#give-the-deployer-credentials).
 
 ## Supported artifact types
 
-The `.spec.artifactType` on an [`ArtifactDeployment`](../../../reference/glossary.md#artifactdeployment) selects the deployer. 
+The `.spec.artifactType` on an [`ArtifactDeployment`](../../../reference/glossary.md#artifactdeployment) selects the deployer.
 The following table lists its supported types, their Open Component Model (OCM) resource types, and the Flux resources created:
 
-| Artifact type | OCM resource type | Flux resources created |
-| :--- | :--- | :--- |
-| `kustomize.konfidence.cloud` | `kustomize` | `OCIRepository` (source) and `Kustomization` (`kustomize.toolkit.fluxcd.io`) |
-| `helm.konfidence.cloud` | `helmChart` | `HelmRepository` (source) and `HelmRelease` (`helm.toolkit.fluxcd.io`) |
+| Artifact type                | OCM resource type | Flux resources created                                                       |
+| :--------------------------- | :---------------- | :--------------------------------------------------------------------------- |
+| `kustomize.konfidence.cloud` | `kustomize`       | `OCIRepository` (source) and `Kustomization` (`kustomize.toolkit.fluxcd.io`) |
+| `helm.konfidence.cloud`      | `helmChart`       | `HelmRepository` (source) and `HelmRelease` (`helm.toolkit.fluxcd.io`)       |
 
 An `ArtifactDeployment` whose `spec.artifactType` does not match either value is ignored by this deployer.
 
@@ -152,9 +152,9 @@ Only Kubernetes `Service` objects can be exposed this way today (deployment-resu
 
 The Kubernetes deployer reads the following annotations from each Service it deployed:
 
-| Annotation | Value | Effect |
-| --- | --- | --- |
-| `konfidence.cloud/deployment-result` | A nonempty stable result name. | Publishes an `http-k8s-service` deployment result for in-cluster discovery. Required for stage ingress selection. |
+| Annotation                           | Value                                           | Effect                                                                                                                           |
+| ------------------------------------ | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `konfidence.cloud/deployment-result` | A nonempty stable result name.                  | Publishes an `http-k8s-service` deployment result for in-cluster discovery. Required for stage ingress selection.                |
 | `konfidence.cloud/exposed-port-name` | The exact name of one TCP port in `spec.ports`. | Adds `IngressExposedPortName` to the deployment-result spec. The gateway-route activation creates a rule for that selected port. |
 
 An absent or empty `konfidence.cloud/exposed-port-name` annotation produces no ingress rule, even for a Service with one port. If a Service has no deployment result name, the deployer ignores it and its exposure annotation.
@@ -163,10 +163,10 @@ The exposure annotation selects a Service port by `name`, not by its position, p
 
 An invalid selection sets `DeploymentResultCreated=False`, `Ready=False`, and `Stalled=True` on the `ArtifactDeployment`. Its conditions report one of these reasons:
 
-| Reason | Meaning |
-| --- | --- |
-| `ExposePortNotFound` | No Service port has the exact annotated name. |
-| `ExposePortUnsupportedProtocol` | The selected port does not use TCP. |
+| Reason                          | Meaning                                       |
+| ------------------------------- | --------------------------------------------- |
+| `ExposePortNotFound`            | No Service port has the exact annotated name. |
+| `ExposePortUnsupportedProtocol` | The selected port does not use TCP.           |
 
 If no result selects a port, the gateway-route activation removes any existing stage `HTTPRoute` and succeeds. Services and workloads remain deployed. For step-by-step instructions, see [Expose a Service through stage ingress](../../../develop-integrate/advanced-features/expose-service.md).
 

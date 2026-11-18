@@ -16,11 +16,11 @@ The Konfidence API server enforces the role bindings, not Kubernetes RBAC. Anyon
 
 ## Three roles cover administration, delivery, and observation
 
-| Role | Permissions | Typical holders |
-|------|-------------|-----------------|
-| `admin` | Full control over project resources, including `roleBindings` and the project lifecycle | Platform team, DevOps engineers |
-| `pm` | Manage the delivery process: promotion flows, stage configuration, promotion approvals | Product managers, release managers |
-| `dev` | Read deployment status, logs, artifact and vector details | Developers, CI pipelines with read access |
+| Role    | Permissions                                                                             | Typical holders                           |
+| ------- | --------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `admin` | Full control over project resources, including `roleBindings` and the project lifecycle | Platform team, DevOps engineers           |
+| `pm`    | Manage the delivery process: promotion flows, stage configuration, promotion approvals  | Product managers, release managers        |
+| `dev`   | Read deployment status, logs, artifact and vector details                               | Developers, CI pipelines with read access |
 
 ## Prerequisites
 

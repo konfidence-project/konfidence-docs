@@ -11,6 +11,7 @@ dependencies: [ADR-0023, ADR-0026]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0029: API gateway conventions and design
 
 <AdrHeader />
@@ -28,9 +29,9 @@ API shape changes must be reviewable at contract level without Go knowledge — 
 ### HTTP Framework
 
 | Option       | `net/http` compatible                                                                      | Works with oapi-codegen | Stakeholder-reviewable contract |
-|--------------|--------------------------------------------------------------------------------------------|-------------------------|---------------------------------|
-| **Gin**      | no — custom `gin.Context`; requires adapter shims with `controller-runtime` and Prometheus | via adapter             | contract lives in Go code       | 
-| **Fiber**    | no — built on `fasthttp`; incompatible with `controller-runtime` webhooks and Prometheus   | via adapter             | contract lives in Go code       | 
+| ------------ | ------------------------------------------------------------------------------------------ | ----------------------- | ------------------------------- |
+| **Gin**      | no — custom `gin.Context`; requires adapter shims with `controller-runtime` and Prometheus | via adapter             | contract lives in Go code       |
+| **Fiber**    | no — built on `fasthttp`; incompatible with `controller-runtime` webhooks and Prometheus   | via adapter             | contract lives in Go code       |
 | **chi v5** ✓ | yes — pure stdlib; every handler is `http.HandlerFunc`; testable with `net/http/httptest`  | native                  | spec first                      |
 
 chi v5 is also the most widely adopted lightweight Go router (~18k GitHub stars), with a large ecosystem of compatible middleware and long-term community backing.
@@ -108,6 +109,7 @@ var _ openapi.StrictServerInterface = (*StageHandler)(nil)
 ```
 
 Workflow:
+
 1. Write `api/openapi.yaml` PR — everyone reviews, no Go required
 2. PR merged, team aligned on contract
 3. `make generate-api` — generates `StrictServerInterface`
@@ -212,7 +214,7 @@ Workflow: Write `.tsp` → `tsp compile` → OpenAPI YAML → `oapi-codegen` →
    - `code`: machine-readable, snake_case, stable. Standard values and their HTTP status codes:
 
      | `code`                  | HTTP status |
-     |-------------------------|-------------|
+     | ----------------------- | ----------- |
      | `bad_request`           | 400         |
      | `unauthorized`          | 401         |
      | `forbidden`             | 403         |
@@ -249,8 +251,8 @@ Workflow: Write `.tsp` → `tsp compile` → OpenAPI YAML → `oapi-codegen` →
    ```
 
 7. **Contract rules.**
-    - Handlers must never return CRD types directly. Always map to dedicated DTO structs.
-    - The spec diff is reviewed before merge. Any leaked field or unintended shape change must be fixed before merge.
+   - Handlers must never return CRD types directly. Always map to dedicated DTO structs.
+   - The spec diff is reviewed before merge. Any leaked field or unintended shape change must be fixed before merge.
 
 8. **Client generation.** `api/openapi.yaml` is the single source for all generated clients: `internal/kden/apiclient/` (Go) and the Star Dashboard (TypeScript-node) have to generate their clients.
 
@@ -261,6 +263,7 @@ Workflow: Write `.tsp` → `tsp compile` → OpenAPI YAML → `oapi-codegen` →
 ## Consequences
 
 **Positive:**
+
 - Single committed spec drives all consumers — no client drift
 - Domain handlers co-located with domain logic — changes are self-contained
 - Consistent error shape — clients handle one format
@@ -268,6 +271,7 @@ Workflow: Write `.tsp` → `tsp compile` → OpenAPI YAML → `oapi-codegen` →
 - Explicit `MountFunc` registration keeps the dependency graph visible
 
 **Negative:**
+
 - Every new endpoint requires a YAML change before implementation
 - Domain handler placement — `internal/<domain>/api/` not `internal/api/handler/`
 - New domain requires one explicit line in `cmd/api/cmd/root.go`

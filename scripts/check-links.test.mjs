@@ -5,16 +5,16 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { test } from "node:test";
+import { test } from "vitest";
 import { promisify } from "node:util";
-import { linkArguments, shellArguments } from "../scripts/check-links.mjs";
+import { linkArguments, shellArguments } from "./check-links.mjs";
 
 const execute = promisify(execFile);
 
 async function fixture(t, html) {
   // Exercise both URL encoding and the quoting used by the official GitHub action.
   const root = await mkdtemp(path.join(tmpdir(), "konfidence lychee's "));
-  t.after(() => rm(root, { recursive: true, force: true }));
+  t.onTestFinished(() => rm(root, { recursive: true, force: true }));
   await mkdir(path.join(root, "section"));
   await mkdir(path.join(root, "empty"));
   await mkdir(path.join(root, "assets"));
@@ -23,15 +23,20 @@ async function fixture(t, html) {
   await writeFile(path.join(root, "guide.md"), "# Guide\n\n## Details\n");
   await writeFile(path.join(root, "guide.html"), '<h1 id="custom-anchor">Guide</h1>');
   await writeFile(path.join(root, "section/index.html"), '<h1 id="nested">Section</h1>');
-  await writeFile(path.join(root, "assets/diagram with spaces.svg"), '<svg xmlns="http://www.w3.org/2000/svg" />');
+  await writeFile(
+    path.join(root, "assets/diagram with spaces.svg"),
+    '<svg xmlns="http://www.w3.org/2000/svg" />',
+  );
   return root;
 }
 
 async function command(binary, args, cwd) {
   try {
     const output = await execute(binary, args, {
-      cwd, encoding: "utf8", maxBuffer: 8 * 1024 * 1024,
-      env: { ...process.env, GITHUB_TOKEN: "" }
+      cwd,
+      encoding: "utf8",
+      maxBuffer: 8 * 1024 * 1024,
+      env: { ...process.env, GITHUB_TOKEN: "" },
     });
     return { ...output, code: 0 };
   } catch (error) {
@@ -48,19 +53,25 @@ async function check(root, mode = "internal", extra = [], options = {}) {
   return { ...result, report: JSON.parse(result.stdout) };
 }
 
-test("verified 403 exceptions exclude only the exact URLs, not their hosts", async t => {
+test("verified 403 exceptions exclude only the exact URLs, not their hosts", async (t) => {
   const excluded = [
     "https://www.sap.com/about/legal/impressum-se.html",
     "https://www.merriam-webster.com/",
-    "https://ryandeangraham.medium.com/istio-gateway-api-nodeport-c598a21c4c95"
+    "https://ryandeangraham.medium.com/istio-gateway-api-nodeport-c598a21c4c95",
   ];
   const checked = [
     "https://www.sap.com/about/legal/missing.html",
     "https://www.merriam-webster.com/dictionary/missing",
-    "https://ryandeangraham.medium.com/a-missing-article"
+    "https://ryandeangraham.medium.com/a-missing-article",
   ];
-  const root = await fixture(t, [...excluded, ...checked].map(url => `<a href="${url}">Link</a>`).join("\n"));
-  const args = linkArguments("external", root, { readme: path.join(root, "README.md"), cache: false });
+  const root = await fixture(
+    t,
+    [...excluded, ...checked].map((url) => `<a href="${url}">Link</a>`).join("\n"),
+  );
+  const args = linkArguments("external", root, {
+    readme: path.join(root, "README.md"),
+    cache: false,
+  });
   args.splice(args.indexOf("--"), 0, "--dump");
   const result = await command("lychee", args, root);
   assert.equal(result.code, 0, result.stderr);
@@ -68,17 +79,20 @@ test("verified 403 exceptions exclude only the exact URLs, not their hosts", asy
 });
 
 test("VitePress links resolve against the build, including custom anchors and static images", async (t) => {
-  const root = await fixture(t, [
-    '<h1 id="start">Home</h1>',
-    '<a href="#start">Same page</a>',
-    '<a href="guide.html#custom-anchor">Relative page</a>',
-    '<a href="/guide#custom-anchor">Root-relative page without extension</a>',
-    '<a href="/section/#nested">Directory index</a>',
-    '<a href="https://konfidence.cloud/guide.html#custom-anchor">Absolute own-site URL</a>',
-    '<a href="http://konfidence.cloud/?source=test#start">Own-site root and query</a>',
-    '<img src="/assets/diagram%20with%20spaces.svg" alt="Diagram" />',
-    '<pre><code><a href="missing-example.html">Example, not navigation</a></code></pre>'
-  ].join("\n"));
+  const root = await fixture(
+    t,
+    [
+      '<h1 id="start">Home</h1>',
+      '<a href="#start">Same page</a>',
+      '<a href="guide.html#custom-anchor">Relative page</a>',
+      '<a href="/guide#custom-anchor">Root-relative page without extension</a>',
+      '<a href="/section/#nested">Directory index</a>',
+      '<a href="https://konfidence.cloud/guide.html#custom-anchor">Absolute own-site URL</a>',
+      '<a href="http://konfidence.cloud/?source=test#start">Own-site root and query</a>',
+      '<img src="/assets/diagram%20with%20spaces.svg" alt="Diagram" />',
+      '<pre><code><a href="missing-example.html">Example, not navigation</a></code></pre>',
+    ].join("\n"),
+  );
   const result = await check(root);
   assert.equal(result.code, 0, result.stdout);
   assert.equal(result.report.errors, 0);
@@ -92,7 +106,10 @@ for (const [name, html] of [
   ["missing heading", '<a href="/guide.html#missing">Missing heading</a>'],
   ["missing heading in a directory index", '<a href="/section/#missing">Missing heading</a>'],
   ["directory without an index", '<a href="/empty/">Missing index</a>'],
-  ["absolute own-site link to a missing heading", '<a href="https://konfidence.cloud/guide.html#missing">Missing heading</a>']
+  [
+    "absolute own-site link to a missing heading",
+    '<a href="https://konfidence.cloud/guide.html#missing">Missing heading</a>',
+  ],
 ]) {
   test(`${name} produces a link finding`, async (t) => {
     const root = await fixture(t, html);
@@ -107,20 +124,27 @@ test("missing builds and invalid modes cannot silently pass", async (t) => {
   const root = await fixture(t, '<a href="guide.html">Guide</a>');
   assert.throws(() => linkArguments("internal", path.join(root, "missing")), /Run pnpm build/);
   assert.throws(() => linkArguments("typo", root), /internal, readme, or external/);
-  assert.throws(() => linkArguments("readme", root, { readme: path.join(root, "missing.md") }), /README is missing/);
+  assert.throws(
+    () => linkArguments("readme", root, { readme: path.join(root, "missing.md") }),
+    /README is missing/,
+  );
 });
 
 test("README links accept repository files, directories, Markdown anchors, and own-site URLs", async (t) => {
   const root = await fixture(t, "<h1>Home</h1>");
-  await writeFile(path.join(root, "README.md"), [
-    "# Project", "",
-    "[Same page](#project)",
-    "[Guide](guide.md#details)",
-    "[Directory](empty)",
-    "![Diagram](assets/diagram%20with%20spaces.svg)",
-    "[Website guide](https://konfidence.cloud/guide.html#custom-anchor)",
-    "[External example](https://example.com/)"
-  ].join("\n"));
+  await writeFile(
+    path.join(root, "README.md"),
+    [
+      "# Project",
+      "",
+      "[Same page](#project)",
+      "[Guide](guide.md#details)",
+      "[Directory](empty)",
+      "![Diagram](assets/diagram%20with%20spaces.svg)",
+      "[Website guide](https://konfidence.cloud/guide.html#custom-anchor)",
+      "[External example](https://example.com/)",
+    ].join("\n"),
+  );
   const result = await check(root, "readme");
   assert.equal(result.code, 0, result.stdout);
   assert.equal(result.report.successful, 5);
@@ -131,7 +155,7 @@ for (const [name, link] of [
   ["missing file", "[Guide](missing.md)"],
   ["missing directory", "[Directory](missing/)"],
   ["missing Markdown heading", "[Guide](guide.md#missing)"],
-  ["missing image", "![Diagram](assets/missing.svg)"]
+  ["missing image", "![Diagram](assets/missing.svg)"],
 ]) {
   test(`README ${name} produces a finding without weakening website checks`, async (t) => {
     const root = await fixture(t, "<h1>Home</h1>");
@@ -154,7 +178,11 @@ test("a malformed configuration fails separately from link findings", async (t) 
 
 test("the GitHub action argument string preserves paths containing spaces and apostrophes", async (t) => {
   const root = await fixture(t, '<a href="guide.html#custom-anchor">Guide</a>');
-  const result = await command("bash", ["-c", `lychee ${shellArguments(linkArguments("internal", root))}`], root);
+  const result = await command(
+    "bash",
+    ["-c", `lychee ${shellArguments(linkArguments("internal", root))}`],
+    root,
+  );
   assert.equal(result.code, 0, result.stderr);
 });
 
@@ -162,21 +190,32 @@ async function server(t, handler) {
   const http = createServer(handler);
   http.listen(0, "127.0.0.1");
   await once(http, "listening");
-  t.after(() => new Promise(resolve => {
-    http.closeAllConnections();
-    http.close(resolve);
-  }));
+  t.onTestFinished(
+    () =>
+      new Promise((resolve) => {
+        http.closeAllConnections();
+        http.close(resolve);
+      }),
+  );
   return `http://127.0.0.1:${http.address().port}`;
 }
 
 const networkOptions = [
-  "--exclude-all-private=false", "--max-retries", "0",
-  "--host-request-interval", "0", "--timeout", "1"
+  "--exclude-all-private=false",
+  "--max-retries",
+  "0",
+  "--host-request-interval",
+  "0",
+  "--timeout",
+  "1",
 ];
 
 test("offline checks never contact external targets, and normal external checks skip local dashboards", async (t) => {
   let requests = 0;
-  const url = await server(t, (_request, response) => { requests++; response.end("OK"); });
+  const url = await server(t, (_request, response) => {
+    requests++;
+    response.end("OK");
+  });
   const root = await fixture(t, `<a href="${url}/dashboard">Dashboard</a>`);
   const offline = await check(root, "internal", networkOptions);
   assert.equal(offline.code, 0);
@@ -233,11 +272,15 @@ test("missing pages, rate limits, and server errors stay visible with their HTTP
     response.writeHead(Number(request.url.slice(1)));
     response.end("Check this response");
   });
-  const root = await fixture(t, [404, 410, 429, 503].map(code => `<a href="${url}/${code}">${code}</a>`).join("\n"));
+  const root = await fixture(
+    t,
+    [404, 410, 429, 503].map((code) => `<a href="${url}/${code}">${code}</a>`).join("\n"),
+  );
   const result = await check(root, "external", networkOptions);
   assert.equal(result.code, 2);
   assert.equal(result.report.errors, 4);
-  for (const code of [404, 410, 429, 503]) assert.match(JSON.stringify(result.report.error_map), new RegExp(String(code)));
+  for (const code of [404, 410, 429, 503])
+    assert.match(JSON.stringify(result.report.error_map), new RegExp(String(code)));
 });
 
 test("timeouts have their own report category", async (t) => {

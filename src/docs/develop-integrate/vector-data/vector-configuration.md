@@ -21,9 +21,9 @@ Before you begin, make sure you meet these requirements:
 
 Both paths produce the same result: an Open Component Model (OCM) resource named `cloud-konfidence-vector-config` on the vector. Choose the path that matches how you build vectors.
 
-| You build vectors with | Path | Where the configuration lives |
-| --- | --- | --- |
-| A `VectorTemplate` and Konfidence assembly | [Add the configuration to a VectorTemplate](#add-the-configuration-to-a-vectortemplate) | `spec.vectorConfig` of the template |
+| You build vectors with                     | Path                                                                                                  | Where the configuration lives                                |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| A `VectorTemplate` and Konfidence assembly | [Add the configuration to a VectorTemplate](#add-the-configuration-to-a-vectortemplate)               | `spec.vectorConfig` of the template                          |
 | `kden vector push` from a constructor file | [Add the configuration to a manually built vector](#add-the-configuration-to-a-manually-built-vector) | A JSON file referenced as a resource in the constructor file |
 
 ## Add the configuration to a VectorTemplate

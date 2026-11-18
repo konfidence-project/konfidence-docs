@@ -12,6 +12,7 @@ dependencies: [ADR-0032, ADR-0012, ADR-0013]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0039: Promotion gates
 
 <AdrHeader />
@@ -31,7 +32,7 @@ Epic [#355](https://github.com/konfidence-project/konfidence/issues/355) wants P
 
 The signal for "activated successfully on a stage" already exists. The activation controller ([ADR-0012](./adr-0012-activation-controller.md)) updates the stage's "active" `StageVersionUsage` ([ADR-0013](./adr-0013-stage-version-usage.md)) only after every activation task has succeeded, and the stage controller mirrors it into `Stage.status.activeStageVersion`. Resolving that reference to its `StageVersion.spec.vector` gives the vector currently serving traffic on the stage.
 
-There is a gap today. The promotion trigger resolves a `Stage` source through `Stage.spec.vector`, the *desired* vector, which a previous promotion writes the instant it executes, before activation has run. A promotion to the next stage can therefore fire before the source stage has actually activated. A source-stage activation gate closes this gap by holding the promotion until `Stage.status.activeStageVersion` resolves to the promoted vector.
+There is a gap today. The promotion trigger resolves a `Stage` source through `Stage.spec.vector`, the _desired_ vector, which a previous promotion writes the instant it executes, before activation has run. A promotion to the next stage can therefore fire before the source stage has actually activated. A source-stage activation gate closes this gap by holding the promotion until `Stage.status.activeStageVersion` resolves to the promoted vector.
 
 ### Requirements
 
@@ -71,20 +72,20 @@ A gate takes no parameters in this design. If a gate later needs extra informati
 
 The gate list is snapshotted immutably into each `VectorPromotion` at creation, exactly as the vector and the source and target references already are. Approving or clearing a promotion therefore always refers to the gates that were in force when it was created, immune to later config edits.
 
-**The controller is agnostic to gate types.** The `VectorPromotion` controller never knows what a gate *means*. It only knows whether each declared gate is satisfied. This generalises today's single predicate:
+**The controller is agnostic to gate types.** The `VectorPromotion` controller never knows what a gate _means_. It only knows whether each declared gate is satisfied. This generalises today's single predicate:
 
 - Today: `cleared = isApproved || !requireApproval`.
 - Proposed: `cleared = every declared gate is satisfied`.
 
 A promotion stays `Waiting` until all its gates are satisfied, then derives `Ready` and proceeds through the unchanged serialization, superseding, and execution flow.
 
-**Gate state is written by external parties, never computed by the `VectorPromotion` controller.** This is the heart of requirement 2. It mirrors how approval already works, where the API grants it rather than the controller, and how `VectorData.Ready` already works, where a runtime-specific controller writes a condition the core waits on. For each declared gate type there is a *writer*, a controller or an API endpoint, that observes the real-world condition and reports the gate satisfied:
+**Gate state is written by external parties, never computed by the `VectorPromotion` controller.** This is the heart of requirement 2. It mirrors how approval already works, where the API grants it rather than the controller, and how `VectorData.Ready` already works, where a runtime-specific controller writes a condition the core waits on. For each declared gate type there is a _writer_, a controller or an API endpoint, that observes the real-world condition and reports the gate satisfied:
 
-| Gate `type` | Writer | Satisfied when |
-| --- | --- | --- |
-| `explicit-approval.konfidence.cloud` | Konfidence API (existing approval entry point) | A caller with approval rights approves the promotion. |
-| `activated-on-source-stage.konfidence.cloud` | A core-shipped gate controller | `Stage.status.activeStageVersion` on the source stage resolves to the promotion's snapshotted vector. |
-| `e2e-tests.example.com` | The contributor's own controller | Their test run reports success. |
+| Gate `type`                                  | Writer                                         | Satisfied when                                                                                        |
+| -------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `explicit-approval.konfidence.cloud`         | Konfidence API (existing approval entry point) | A caller with approval rights approves the promotion.                                                 |
+| `activated-on-source-stage.konfidence.cloud` | A core-shipped gate controller                 | `Stage.status.activeStageVersion` on the source stage resolves to the promotion's snapshotted vector. |
+| `e2e-tests.example.com`                      | The contributor's own controller               | Their test run reports success.                                                                       |
 
 The three rows share one mechanism. `explicit-approval.konfidence.cloud` and `activated-on-source-stage.konfidence.cloud` are shipped by core only in the sense that their writers live in the Konfidence binary. They are declared and evaluated identically to any third-party gate.
 
@@ -228,7 +229,6 @@ With one gate per type, each gate is one entry in `status.gates` keyed by its `t
 Option 2 stays documented as an alternative, but it is not chosen, because it buys a first-class gate lifecycle at the cost of a new CRD and a child object per gate, and that complexity is not warranted. Even if gates grow richer state such as history, events, or retries, a promotion carries many gates, or the future `spec` extension makes gates parameter-heavy, the gate state remains an inherent part of the promotion object rather than state shared across promotions. Splitting it into child objects is a normalization we do not do in Kubernetes.
 
 ## Consequences
-
 
 ## Discarded ideas
 

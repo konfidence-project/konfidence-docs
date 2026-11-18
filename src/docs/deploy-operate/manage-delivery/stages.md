@@ -117,12 +117,12 @@ After activation completes, the output matches the stage's desired vector.
 
 Use the following checks if stage creation or activation does not complete:
 
-| Symptom | Likely cause | Resolution |
-| --- | --- | --- |
-| The `Stage` is rejected at admission. | It was created outside a landscape namespace. | Use the namespace reported in `Landscape.status.namespace`. |
-| The desired vector does not deploy. | The landscape lacks a ready target for an [artifact](../../reference/glossary.md#artifact)'s type. | Inspect the vector's artifact types and [configure the missing target](./deployment-targets.md). |
-| The active version does not change. | Deployment, migration, or activation has not completed. | Inspect the related `StageVersion`, [`VectorDeployment`](../../reference/glossary.md#vectordeployment), `VectorMigration`, and [`VectorActivation`](../../reference/glossary.md#vectoractivation) resources. |
-| The selected vector cannot be resolved. | The reference is incorrect or the registry is inaccessible. | Verify the concrete OCM reference and registry credentials. |
+| Symptom                                 | Likely cause                                                                                       | Resolution                                                                                                                                                                                                   |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| The `Stage` is rejected at admission.   | It was created outside a landscape namespace.                                                      | Use the namespace reported in `Landscape.status.namespace`.                                                                                                                                                  |
+| The desired vector does not deploy.     | The landscape lacks a ready target for an [artifact](../../reference/glossary.md#artifact)'s type. | Inspect the vector's artifact types and [configure the missing target](./deployment-targets.md).                                                                                                             |
+| The active version does not change.     | Deployment, migration, or activation has not completed.                                            | Inspect the related `StageVersion`, [`VectorDeployment`](../../reference/glossary.md#vectordeployment), `VectorMigration`, and [`VectorActivation`](../../reference/glossary.md#vectoractivation) resources. |
+| The selected vector cannot be resolved. | The reference is incorrect or the registry is inaccessible.                                        | Verify the concrete OCM reference and registry credentials.                                                                                                                                                  |
 
 ## Next steps
 

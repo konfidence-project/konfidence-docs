@@ -69,13 +69,18 @@ const supersededBy = computed(() =>
     <div v-if="supersededBy" class="custom-block warning">
       <p>
         Superseded by
-        <a v-if="supersededBy.adr" :href="withBase(supersededBy.adr.url)">{{ supersededBy.id }}: {{ supersededBy.adr.title }}</a>
-        <template v-else>{{ supersededBy.id }}</template>.
-        This record is kept to explain how the current design came about.
+        <a v-if="supersededBy.adr" :href="withBase(supersededBy.adr.url)"
+          >{{ supersededBy.id }}: {{ supersededBy.adr.title }}</a
+        >
+        <template v-else>{{ supersededBy.id }}</template>. This record is kept to explain how the
+        current design came about.
       </p>
     </div>
     <div v-else-if="status === 'deprecated'" class="custom-block warning">
-      <p>This decision no longer describes how Konfidence works. It is kept to explain how the current design came about.</p>
+      <p>
+        This decision no longer describes how Konfidence works. It is kept to explain how the
+        current design came about.
+      </p>
     </div>
     <div v-else-if="status === 'draft' || status === 'proposed'" class="custom-block info">
       <p>This decision is still under discussion and may change before it is accepted.</p>

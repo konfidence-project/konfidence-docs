@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import {
   ArrowRight,
   ArrowUpRight,
@@ -21,7 +21,8 @@ import {
         <p class="section-eyebrow">The delivery problem</p>
         <h2 id="problem-heading">Every environment can become a different version of the truth.</h2>
         <p class="section-lead">
-          As services, teams, and release frequency grow, it becomes harder to answer three basic questions: What was tested? What is running? What can be promoted?
+          As services, teams, and release frequency grow, it becomes harder to answer three basic
+          questions: What was tested? What is running? What can be promoted?
         </p>
       </div>
 
@@ -31,7 +32,10 @@ import {
           <div>
             <span>Without a shared delivery model</span>
             <h3>Builds and configuration drift between environments.</h3>
-            <p>Teams reconstruct application state for every target and lose confidence in the delivery to production.</p>
+            <p>
+              Teams reconstruct application state for every target and lose confidence in the
+              delivery to production.
+            </p>
           </div>
         </article>
         <ArrowRight class="comparison-arrow" aria-hidden="true" />
@@ -40,7 +44,10 @@ import {
           <div>
             <span>With Konfidence</span>
             <h3>One exact application version follows a controlled path.</h3>
-            <p>The tested version stays immutable while promotions make the next desired deployment explicit.</p>
+            <p>
+              The tested version stays immutable while promotions make the next desired deployment
+              explicit.
+            </p>
           </div>
         </article>
       </div>
@@ -51,7 +58,8 @@ import {
         <p class="section-eyebrow">Why Konfidence</p>
         <h2 id="capabilities-heading">Keep application versions consistent and traceable.</h2>
         <p class="section-lead">
-          Konfidence separates the application version from its target environment. Teams can promote the same version and see what should run at every stage.
+          Konfidence separates the application version from its target environment. Teams can
+          promote the same version and see what should run at every stage.
         </p>
       </div>
 
@@ -60,39 +68,57 @@ import {
           <span class="feature-icon"><ShieldCheck aria-hidden="true" /></span>
           <span class="feature-label">Immutable application versions</span>
           <h3>Know exactly what will be deployed</h3>
-          <p>Every application version is recorded as a fixed set of artifacts, configuration, and metadata. What was tested cannot silently change later.</p>
+          <p>
+            Every application version is recorded as a fixed set of artifacts, configuration, and
+            metadata. What was tested cannot silently change later.
+          </p>
         </article>
 
         <article class="feature-tile">
           <span class="feature-icon"><ArrowUpRight aria-hidden="true" /></span>
           <span class="feature-label">Controlled promotions</span>
           <h3>Promote without rebuilding</h3>
-          <p>A promotion points the next delivery checkpoint to the same concrete application version. Nothing is copied, rebuilt, or modified along the way.</p>
+          <p>
+            A promotion points the next delivery checkpoint to the same concrete application
+            version. Nothing is copied, rebuilt, or modified along the way.
+          </p>
         </article>
 
         <article class="feature-tile">
           <span class="feature-icon"><Recycle aria-hidden="true" /></span>
           <span class="feature-label">Artifact reuse</span>
           <h3>Reuse unchanged service deployments</h3>
-          <p>Konfidence can reuse an unchanged service deployment for multiple application versions in the same environment. This avoids duplicate deployments and can reduce infrastructure costs.</p>
+          <p>
+            Konfidence can reuse an unchanged service deployment for multiple application versions
+            in the same environment. This avoids duplicate deployments and can reduce infrastructure
+            costs.
+          </p>
         </article>
 
         <article class="feature-tile">
           <span class="feature-icon"><Layers3 aria-hidden="true" /></span>
           <span class="feature-label">One delivery model</span>
           <h3>See the intended and running state</h3>
-          <p>Konfidence coordinates deployments across environments. For each stage, you can see which application version should run and which version is active.</p>
+          <p>
+            Konfidence coordinates deployments across environments. For each stage, you can see
+            which application version should run and which version is active.
+          </p>
         </article>
       </div>
     </section>
 
-    <section id="workflow" class="landing-section workflow-section" aria-labelledby="workflow-heading">
+    <section
+      id="workflow"
+      class="landing-section workflow-section"
+      aria-labelledby="workflow-heading"
+    >
       <div class="workflow-heading-row">
         <div class="section-intro">
           <p class="section-eyebrow">How it works</p>
           <h2 id="workflow-heading">From build output to production in four steps.</h2>
           <p class="section-lead">
-            Konfidence connects CI output with controlled deployment. A stage is a delivery checkpoint such as development, test, or production.
+            Konfidence connects CI output with controlled deployment. A stage is a delivery
+            checkpoint such as development, test, or production.
           </p>
         </div>
       </div>
@@ -111,7 +137,10 @@ import {
           <span class="workflow-icon"><Boxes aria-hidden="true" /></span>
           <div>
             <h3>Assemble</h3>
-            <p>Konfidence combines the selected artifacts and configuration into one immutable application version.</p>
+            <p>
+              Konfidence combines the selected artifacts and configuration into one immutable
+              application version.
+            </p>
           </div>
         </li>
         <li>
@@ -127,7 +156,10 @@ import {
           <span class="workflow-icon"><ArrowUpRight aria-hidden="true" /></span>
           <div>
             <h3>Promote</h3>
-            <p>The next stage is updated to reference that same version, which triggers deployment there. The application version itself remains unchanged.</p>
+            <p>
+              The next stage is updated to reference that same version, which triggers deployment
+              there. The application version itself remains unchanged.
+            </p>
           </div>
         </li>
       </ol>
@@ -138,7 +170,8 @@ import {
         <p class="section-eyebrow">Who it is for</p>
         <h2 id="audience-heading">For teams that own reliable software delivery.</h2>
         <p class="section-lead">
-          Konfidence is designed for organizations that operate complex SaaS products across multiple environments.
+          Konfidence is designed for organizations that operate complex SaaS products across
+          multiple environments.
         </p>
       </div>
 
@@ -149,11 +182,16 @@ import {
         </div>
         <div>
           <Check aria-hidden="true" />
-          <span><strong>Release and delivery teams</strong> coordinating safe production changes.</span>
+          <span
+            ><strong>Release and delivery teams</strong> coordinating safe production changes.</span
+          >
         </div>
         <div>
           <Layers3 aria-hidden="true" />
-          <span><strong>Engineering leaders</strong> who need to track application versions across environments.</span>
+          <span
+            ><strong>Engineering leaders</strong> who need to track application versions across
+            environments.</span
+          >
         </div>
       </div>
     </section>

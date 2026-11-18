@@ -16,7 +16,6 @@ outline: deep
 
 <AdrHeader />
 
-
 ## Proposal
 
 To improve documentation quality and reduce manual checks for writing conventions,
@@ -49,11 +48,11 @@ our writing rules, Markdown conventions, or the remaining link problems below.
 
 Each proposed tool covers a different part of the review:
 
-| Tool | Additional checks | Work it takes off authors and reviewers |
-| --- | --- | --- |
-| [Vale](https://vale.sh/) | Terminology, sentence case, spelling, and configured writing rules. | Repeated corrections to wording and capitalization across pages. |
-| [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) | Heading levels, lists, tables, code fence labels, missing image alternative text, and undefined link references. | Manual inspection of Markdown structure and code block markup. |
-| [lychee](https://github.com/lycheeverse/lychee) | Links, heading fragments, and static image references in the built site, plus external URL checks. | Manually following links and checking assets, including on unchanged pages. |
+| Tool                                                                 | Additional checks                                                                                                | Work it takes off authors and reviewers                                     |
+| -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| [Vale](https://vale.sh/)                                             | Terminology, sentence case, spelling, and configured writing rules.                                              | Repeated corrections to wording and capitalization across pages.            |
+| [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) | Heading levels, lists, tables, code fence labels, missing image alternative text, and undefined link references. | Manual inspection of Markdown structure and code block markup.              |
+| [lychee](https://github.com/lycheeverse/lychee)                      | Links, heading fragments, and static image references in the built site, plus external URL checks.               | Manually following links and checking assets, including on unchanged pages. |
 
 ## Practical benefits for the Konfidence docs
 
@@ -67,11 +66,11 @@ these illustrative inconsistencies:
 <!-- vale Konfidence.ConceptCasing = NO -->
 <!-- vale Vale.Terms = NO -->
 
-| Text to flag | Preferred text | Rule |
-| --- | --- | --- |
-| Build Vectors With Konfidence | Build vectors with Konfidence | Sentence case in headings. |
+| Text to flag                  | Preferred text                | Rule                                       |
+| ----------------------------- | ----------------------------- | ------------------------------------------ |
+| Build Vectors With Konfidence | Build vectors with Konfidence | Sentence case in headings.                 |
 | Deploy Artifacts in a Vector. | Deploy artifacts in a vector. | Lowercase concept names within a sentence. |
-| Configure konfidence | Configure Konfidence | Consistent product name. |
+| Configure konfidence          | Configure Konfidence          | Consistent product name.                   |
 
 <!-- vale Vale.Terms = YES -->
 <!-- vale Konfidence.ConceptCasing = YES -->

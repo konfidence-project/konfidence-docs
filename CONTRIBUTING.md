@@ -36,11 +36,11 @@ Documentation is part of the product. Update it when a change affects how users 
 
 Use the following table to identify common documentation impacts.
 
-| Change | Documentation impact |
-| --- | --- |
-| New user-facing feature or workflow | Add or update a tutorial, how-to guide, or concept guide as needed. |
-| Changed behavior or user workflow | Update every affected task and explanation. |
-| Changed CLI option, API field, or CRD | Update the technical source of truth and any guide that uses it. |
+| Change                                    | Documentation impact                                                           |
+| ----------------------------------------- | ------------------------------------------------------------------------------ |
+| New user-facing feature or workflow       | Add or update a tutorial, how-to guide, or concept guide as needed.            |
+| Changed behavior or user workflow         | Update every affected task and explanation.                                    |
+| Changed CLI option, API field, or CRD     | Update the technical source of truth and any guide that uses it.               |
 | Deprecated, removed, or breaking behavior | Update affected pages and explain the supported replacement or migration path. |
 
 For substantial new content or a new documentation area, [open an issue](https://github.com/konfidence-project/konfidence-docs/issues) before writing. Maintainers can help confirm the scope and placement.
@@ -144,14 +144,14 @@ pnpm exec markdownlint-cli2 --no-globs src/docs/getting-started/quickstart.md
 
 The root `.markdownlint-cli2.yaml` checks authored Markdown in `src/`, `README.md`, and `CONTRIBUTING.md`. It excludes the same four generated reference files as Vale. The configuration enables only these structural rules:
 
-| Rule | Finding |
-| --- | --- |
-| MD001 | A heading skips a level. Frontmatter titles are not treated as extra headings. |
-| MD005 | List items at the same level use inconsistent indentation. |
+| Rule  | Finding                                                                              |
+| ----- | ------------------------------------------------------------------------------------ |
+| MD001 | A heading skips a level. Frontmatter titles are not treated as extra headings.       |
+| MD005 | List items at the same level use inconsistent indentation.                           |
 | MD040 | A fenced code block has no language label. VitePress code block metadata is allowed. |
-| MD045 | A Markdown or HTML image lacks alternative text. |
-| MD052 | A full or collapsed reference link or image uses an undefined label. |
-| MD056 | A table row has a different number of cells from its header. |
+| MD045 | A Markdown or HTML image lacks alternative text.                                     |
+| MD052 | A full or collapsed reference link or image uses an undefined label.                 |
+| MD056 | A table row has a different number of cells from its header.                         |
 
 Vale continues to check spelling, terminology, and wording. VitePress checks missing internal pages during the build. The separate lychee check covers link destinations, heading fragments, and static image targets. Markdown structure checks do not judge whether alternative text is useful or whether commands work.
 
@@ -167,7 +167,7 @@ The `.github/markdownlint-cli2.ci.mjs` file adds the official output formatter f
 
 For an intentional exception, use a [markdownlint configuration comment](https://github.com/DavidAnson/markdownlint#configuration) such as `<!-- markdownlint-disable-next-line MD040 -->` and explain why the exception is needed. Limit it to the relevant rule and example. Update generated content at its source.
 
-When changing rules or updating the tool, update the examples in `tests/markdownlint.test.mjs` and run `pnpm test:markdown`, `pnpm lint:markdown`, `pnpm test:prose`, `pnpm lint:prose`, and `pnpm build`. Review changes in findings before merging. Keep dependency updates in `package.json` and `pnpm-lock.yaml` together; CI uses `pnpm install --frozen-lockfile`.
+When changing rules or updating the tool, update the examples in `.markdownlint-cli2.test.mjs` and run `pnpm test:markdown`, `pnpm lint:markdown`, `pnpm test:prose`, `pnpm lint:prose`, and `pnpm build`. Review changes in findings before merging. Keep dependency updates in `package.json` and `pnpm-lock.yaml` together; CI uses `pnpm install --frozen-lockfile`.
 
 ### Link checks with lychee
 
@@ -211,9 +211,15 @@ Keep shared options and narrowly justified URL exclusions in `lychee.toml`. The 
 
 Three verified pages reject automated requests with HTTP 403: SAP's legal disclosure, the Merriam-Webster homepage, and the linked Medium article about Istio NodePort gateways. Only these exact URLs are excluded in `lychee.toml`; other URLs on those hosts remain checked. Review these pages manually and remove an exclusion when automated checks work again. Links to private planning tickets do not belong in public ADRs; keep their reader-facing scope descriptions without the private links.
 
-When changing options or updating lychee, run `pnpm test:links`, rebuild, and run both link checks. Also run `pnpm test:markdown`, `pnpm test:prose`, `pnpm lint:markdown`, and `pnpm lint:prose`. Keep the workflow version and the version documented here and in the README together. Add regression examples to `tests/lychee.test.mjs`; the network tests use a local test server instead of depending on external websites.
+When changing options or updating lychee, run `pnpm test:links`, rebuild, and run both link checks. Also run `pnpm test:markdown`, `pnpm test:prose`, `pnpm lint:markdown`, and `pnpm lint:prose`. Keep the workflow version and the version documented here and in the README together. Add regression examples to `scripts/check-links.test.mjs`; the network tests use a local test server instead of depending on external websites.
 
 The checks cover static output. JavaScript-generated anchors and assets loaded only in the browser, such as interactive diagrams, still need preview and manual review. They also do not establish technical accuracy, useful image descriptions, or correct commands.
+
+### Tests for the tooling
+
+The scripts and check configurations have tests that run with [Vitest](https://vitest.dev/). A test sits next to the file it covers and carries its name: `scripts/check-links.test.mjs` covers `scripts/check-links.mjs`, and `.markdownlint-cli2.test.mjs` covers `.markdownlint-cli2.yaml`. The Mermaid test sits beside the VitePress configuration in `.vitepress/`.
+
+`pnpm test` runs all of them. The link tests need lychee installed. `pnpm verify` checks formatting with `oxfmt`, lints the scripts and theme with `oxlint`, type-checks the theme with `vue-tsc`, and runs markdownlint; `pnpm all` runs `verify` and the tests. The commit hook expects `oxfmt` formatting, so run `pnpm fmt` before committing. To run one file, use its script, such as `pnpm test:links`, or `pnpm exec vitest run <file>`.
 
 ### Pull request titles
 
@@ -263,7 +269,7 @@ Write an architecture decision record (ADR) when a change spans several componen
 5. Put diagrams into `assets/` and reference them as `./assets/<file>`.
 6. Open the pull request with `status: proposed`.
 
-The maintainers review the record in the pull request. They set `status: accepted` and `date_approved` on merge, or set `status: rejected` and close the pull request with a comment explaining the reasoning. 
+The maintainers review the record in the pull request. They set `status: accepted` and `date_approved` on merge, or set `status: rejected` and close the pull request with a comment explaining the reasoning.
 
 The sidebar and the decision log pick up the new file automatically.
 
@@ -275,6 +281,6 @@ The sidebar and the decision log pick up the new file automatically.
 4. Create a pull request in the repository using this branch.
 5. Follow the link posted by the CLA assistant to your pull request and accept it, as described above.
 6. Wait for our code review and approval, possibly enhancing your change on request.
-    - Note that the maintainers have many duties. So, depending on the required effort for reviewing, testing, and clarification, this may take a while.
+   - Note that the maintainers have many duties. So, depending on the required effort for reviewing, testing, and clarification, this may take a while.
 7. Once the change has been approved and merged, we will inform you in a comment.
 8. Celebrate!

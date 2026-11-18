@@ -14,12 +14,12 @@ Each record covers one decision: its context, the options the maintainers compar
 
 ## Every record has a status
 
-| Status | Meaning |
-| --- | --- |
-| <Badge type="info" text="draft" /> | The author is still writing the record. |
-| <Badge type="info" text="proposed" /> | The record is ready for review by the maintainers. |
-| <Badge type="tip" text="accepted" /> | The maintainers approved the decision. The code follows it. |
-| <Badge type="danger" text="rejected" /> | The maintainers considered the decision and did not adopt it. |
+| Status                                     | Meaning                                                                                            |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| <Badge type="info" text="draft" />         | The author is still writing the record.                                                            |
+| <Badge type="info" text="proposed" />      | The record is ready for review by the maintainers.                                                 |
+| <Badge type="tip" text="accepted" />       | The maintainers approved the decision. The code follows it.                                        |
+| <Badge type="danger" text="rejected" />    | The maintainers considered the decision and did not adopt it.                                      |
 | <Badge type="warning" text="deprecated" /> | A later decision replaced this one. The record stays to explain how the current design came about. |
 
 ADR numbers never change and never get reused.

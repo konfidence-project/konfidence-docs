@@ -1,41 +1,52 @@
 {
   "name": "konfidence-docs",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "engines": {
-    "node": ">=24.0.0",
-    "pnpm": ">=10.2.0"
-  },
-  "packageManager": "pnpm@10.25.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
     "lint:markdown": "markdownlint-cli2",
-    "test:markdown": "node --test tests/markdownlint.test.mjs",
-    "test:mermaid": "node --test tests/mermaid.test.mjs",
-    "test:reports": "node --test tests/maintenance-reports.test.mjs",
+    "test:markdown": "vitest run .markdownlint-cli2.test.mjs",
+    "test:mermaid": "vitest run .vitepress/mermaid.test.mjs",
+    "test:reports": "vitest run scripts/summarize-links.test.mjs",
     "lint:links": "node scripts/check-links.mjs internal",
     "lint:links:external": "node scripts/check-links.mjs external",
-    "test:links": "node --test tests/lychee.test.mjs",
+    "test:links": "vitest run scripts/check-links.test.mjs",
     "lint:prose": "vale --no-global --config=.vale.ini src README.md CONTRIBUTING.md",
     "test:prose": "vale --no-global --config=.vale.ini test --coverage .vale",
     "dev": "vitepress dev",
     "build": "vitepress build",
-    "preview": "vitepress preview"
+    "preview": "vitepress preview",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "test:unit": "vitest run --exclude scripts/check-links.test.mjs",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "check": "vue-tsc --noEmit -p tsconfig.json",
+    "verify": "pnpm fmt:check && pnpm lint && pnpm check && pnpm lint:markdown",
+    "all": "pnpm verify && pnpm test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "lucide-vue-next": "^1.0.0"
+  },
   "devDependencies": {
     "@types/node": "^26.6.6",
     "markdownlint-cli2": "0.24.0",
     "markdownlint-cli2-formatter-sarif": "0.0.5",
     "mermaid": "^11.17.2",
+    "oxfmt": "^0.77.0",
+    "oxlint": "^1.94.0",
+    "typescript": "^6.0.3",
     "vitepress": "2.0.0-alpha.21",
     "vitepress-openapi": "^0.2.13",
-    "vitepress-plugin-mermaid": "2.0.17"
+    "vitepress-plugin-mermaid": "2.0.17",
+    "vitest": "^5.1.1",
+    "vue": "^3.5.44",
+    "vue-tsc": "^3.3.14"
   },
-  "dependencies": {
-    "lucide-vue-next": "^1.0.0"
-  }
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=10.2.0"
+  },
+  "packageManager": "pnpm@10.25.0"
 }

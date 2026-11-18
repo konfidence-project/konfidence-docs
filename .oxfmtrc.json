@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "// embedded": "code blocks in pages are copied by readers; keep them as written",
+  "embeddedLanguageFormatting": "off",
+  "ignorePatterns": [
+    "pnpm-lock.yaml",
+    "src/docs/reference/api.json",
+    "src/docs/reference/cli.md",
+    "src/docs/reference/crd.md",
+    "src/docs/reference/helm-values-*.md"
+  ]
+}

@@ -9,6 +9,7 @@ dependencies: [ADR-0006, ADR-0015, ADR-0019]
 pageClass: adr
 outline: deep
 ---
+
 # ADR-0024: Vector-scoped data distribution
 
 <AdrHeader />
@@ -20,7 +21,7 @@ Applications deployed through Konfidence need access to vector-scoped data at ru
 Two sources of vector-scoped data are in scope:
 
 1. **Authored data** -- values declared as part of the vector (in the `VectorTemplate` / OCM artifact). The primary known example today is feature toggles; other generic key-value or structured configuration is also expected to fit here.
-2. **Deployment results** -- data that is *produced* by Konfidence as a side effect of deploying the vector and that the applications inside the vector then need to consume. The most concrete example today is service-discovery information (which services exist in the vector and how they are reachable, derived from the routing resources created during deployment), but the same pattern applies to any other deployment outcome that needs to be observable from inside the vector.
+2. **Deployment results** -- data that is _produced_ by Konfidence as a side effect of deploying the vector and that the applications inside the vector then need to consume. The most concrete example today is service-discovery information (which services exist in the vector and how they are reachable, derived from the routing resources created during deployment), but the same pattern applies to any other deployment outcome that needs to be observable from inside the vector.
 
 Both sources share the same lifecycle (scoped to a vector version, immutable for that version, distributed before the vector's migration tasks run so they are available during migration and after activation) and the same consumers (applications running inside the vector). They should therefore be distributed through the same mechanism rather than through parallel systems.
 
@@ -46,9 +47,9 @@ Properties:
 
 #### Opting a Service into the deployment results
 
-A Kubernetes Service opts into the deployment results by carrying the `konfidence.cloud/deployment-result` annotation. Its value is the *stable* result name consumers look up -- the deployed Service name is suffixed per vector (so artifacts shared between vectors do not collide) and therefore cannot be used directly. Konfidence records one deployment result per opted-in Service, carrying the Service's namespace, its actual (suffixed) Kubernetes name, and its ports verbatim -- so multi-port Services need no special handling.
+A Kubernetes Service opts into the deployment results by carrying the `konfidence.cloud/deployment-result` annotation. Its value is the _stable_ result name consumers look up -- the deployed Service name is suffixed per vector (so artifacts shared between vectors do not collide) and therefore cannot be used directly. Konfidence records one deployment result per opted-in Service, carrying the Service's namespace, its actual (suffixed) Kubernetes name, and its ports verbatim -- so multi-port Services need no special handling.
 
-Results are aggregated per artifact component; a single component may expose more than one Service, so each component maps to a *list* of results. Nothing routing-specific is created for east-west traffic: there is no synthesized Service and no HTTPRoute -- the peer address is read from the deployment results. This supersedes the gateway-based east-west assignment sketched in ADR-0015.
+Results are aggregated per artifact component; a single component may expose more than one Service, so each component maps to a _list_ of results. Nothing routing-specific is created for east-west traffic: there is no synthesized Service and no HTTPRoute -- the peer address is read from the deployment results. This supersedes the gateway-based east-west assignment sketched in ADR-0015.
 
 ### Scope
 
@@ -59,7 +60,7 @@ This ADR covers feature toggles, generic authored configuration, and deployment 
 1. **Distribution guarantee before migration** -- a vector's data must be distributed before its migration tasks run, so that service-to-service calls made during migration can resolve it. The `VectorMigration` is created only once the `VectorDeployment` is fully ready -- all artifacts deployed and the `VectorData` materialised -- which guarantees the data is in place before migration begins and, transitively, before activation. From that point there must be no window in which a request could arrive at an application without the correct data being available.
 2. **Runtime resolution by vector-id** -- applications must be able to retrieve the correct configuration for the vector associated with the current request, without restart or redeployment of the service.
 3. **Language-agnostic** -- no mandatory SDK or client library.
-4. **Platform-agnostic concepts, platform-specific distribution** -- the *concepts* (data lives in OCM, contains both authored and deployment-derived data, scoped per vector, etc.) are platform-agnostic. The *distribution mechanism* itself realistically cannot be -- it is the responsibility of the deployer / landscape orchestrator to provide a suitable implementation per platform.
+4. **Platform-agnostic concepts, platform-specific distribution** -- the _concepts_ (data lives in OCM, contains both authored and deployment-derived data, scoped per vector, etc.) are platform-agnostic. The _distribution mechanism_ itself realistically cannot be -- it is the responsibility of the deployer / landscape orchestrator to provide a suitable implementation per platform.
 5. **Minimally invasive** -- application code changes should be as small as possible.
 6. **Immutability** -- the data for a given vector version never changes; caching is safe for the lifetime of the vector.
 7. **Unified access pattern** -- authored data and deployment results are retrieved through the same mechanism, not via parallel APIs.
@@ -103,10 +104,10 @@ This runtime flow integrates with [OpenFeature](https://openfeature.dev/). OpenF
 **Cons:**
 
 - **Availability risk / single point of failure**: A landscape-wide outage of this service affects all applications in all vectors. If the service is unavailable and an application does not have the configuration cached (e.g., a fresh pod scaling up, or first request for a newly activated vector), the application cannot serve requests for that vector. Mitigation options are unsatisfying:
-    - *Reject requests*: Causes user-visible errors and potential cascading failures
-    - *Assume defaults*: Silently incorrect behavior, potentially worse than rejection
-    - *Push-based pre-warming*: Instead of relying solely on lazy fetch on first request, the configuration service could push new configuration to running applications proactively after a vector is deployed. This reduces the window in which a service outage would cause cache misses. However, even with pre-warming, scaling up new pods during an outage would still fail since there is no source to fetch from.
-  This requires high-availability deployment (replicas, health checks, persistent storage).
+  - _Reject requests_: Causes user-visible errors and potential cascading failures
+  - _Assume defaults_: Silently incorrect behavior, potentially worse than rejection
+  - _Push-based pre-warming_: Instead of relying solely on lazy fetch on first request, the configuration service could push new configuration to running applications proactively after a vector is deployed. This reduces the window in which a service outage would cause cache misses. However, even with pre-warming, scaling up new pods during an outage would still fail since there is no source to fetch from.
+    This requires high-availability deployment (replicas, health checks, persistent storage).
 - **Persistent storage required**: The service needs a durable storage layer (e.g., database, etcd) to survive restarts and retain configuration across all deployed vectors. An in-memory-only approach would lose all configuration on pod restart. However, if the controllers that manage vector deployments reconcile periodically (as they do with other artifacts), they would re-push configuration to the service after a restart. This would eliminate the need for persistent storage but introduces a recovery window during which cache misses cannot be served. Probably etcd can be used as a storage (write ConfigMaps with a ServiceAccount)
 - **Operational overhead**: The service must be developed, deployed, monitored, and lifecycled per landscape. The landscape operator is responsible for its availability.
 - **Development cost**: A new service must be built (or an existing system like [flagd](https://flagd.dev/) adapted). flagd is designed for feature flag evaluation and could potentially be extended, but its data model may not fit generic key-value configuration.
@@ -133,8 +134,10 @@ Note: This applies to the Kubernetes platform where Gateway API is available. Eq
 
 1. Vector deployment begins; the authored artifact is resolved and the deployment results (e.g., service discovery) are computed
 2. Routing is handled differently by traffic direction:
-  - **East-west traffic** does not use synthesized Services or service-to-service `HTTPRoute` resources. Applications resolve peer Services from deployment results exposed through `VectorData` and forward `X-Vector-ID`.
-  - **North-south traffic** is handled by the Activation Execution controller. It creates or updates the per-stage `HTTPRoute` from routable deployment results and injects `X-Vector-ID` for the active vector.
+
+- **East-west traffic** does not use synthesized Services or service-to-service `HTTPRoute` resources. Applications resolve peer Services from deployment results exposed through `VectorData` and forward `X-Vector-ID`.
+- **North-south traffic** is handled by the Activation Execution controller. It creates or updates the per-stage `HTTPRoute` from routable deployment results and injects `X-Vector-ID` for the active vector.
+
 3. The HTTPRoute updates are reconciled by the gateway implementation (e.g., Istio/Envoy)
 4. Vector activation proceeds -- the data is now injected into every matching request
 
@@ -163,7 +166,7 @@ Note: This applies to the Kubernetes platform where Gateway API is available. Eq
 
 - **Header size limits**: HTTP header sizes are constrained (~8KB total across all headers in many implementations; Envoy/Istio default up to 60KB). Sufficient for boolean feature toggles and simple key-value pairs, but may be exceeded by larger structured data or by deployment-result payloads in vectors with many services.
 - **Platform-specific implementation**: On Kubernetes, Gateway API HTTPRoutes provide a clean mechanism. On Cloud Foundry or other platforms, equivalent functionality does not exist natively -- different solutions (route services, custom buildpacks) would be needed.
-- **Only works for HTTP-based communication**: Other technologies like Kafka or gRPC streaming would not be covered. In particular, an application that needs the data to *initiate* an outbound call (without first receiving a triggering HTTP request) would not have access to it through this mechanism.
+- **Only works for HTTP-based communication**: Other technologies like Kafka or gRPC streaming would not be covered. In particular, an application that needs the data to _initiate_ an outbound call (without first receiving a triggering HTTP request) would not have access to it through this mechanism.
 
 ### Option C: ConfigMap/Volume Mount
 
@@ -276,11 +279,11 @@ The LCP controller publishes per-vector data into a Kubernetes API resource (Con
 
 - **Distribution guarantee is harder to prove**: The activation controller must be sure every relevant node's daemon has the new vector's data before activation. Without an explicit ACK protocol per daemon pod (or readiness gates on app pods that depend on the daemon), this is eventually consistent and re-introduces the activation-window problem from Option C.
 - **New-node race condition**: When the cluster autoscales, an app pod can be scheduled to a new node before the DaemonSet pod there is ready. Two mitigations:
-    - **Node taint** (the correct mechanism here -- this is precisely what taints exist for, and it is non-invasive): new nodes come up with a taint like `vector-data-not-ready=true:NoSchedule`; only the DaemonSet tolerates it; the daemon removes the taint once it has loaded its data, after which app pods can be scheduled. Cilium uses the same pattern (`node.cilium.io/agent-not-ready`) for CNI readiness.
-    - **App-side initContainer / readiness gate** that waits for the local daemon -- works but is invasive on the application, and is not really a separate option given that the node taint already solves the scheduling race cleanly.
+  - **Node taint** (the correct mechanism here -- this is precisely what taints exist for, and it is non-invasive): new nodes come up with a taint like `vector-data-not-ready=true:NoSchedule`; only the DaemonSet tolerates it; the daemon removes the taint once it has loaded its data, after which app pods can be scheduled. Cilium uses the same pattern (`node.cilium.io/agent-not-ready`) for CNI readiness.
+  - **App-side `initContainer` / readiness gate** that waits for the local daemon -- works but is invasive on the application, and is not really a separate option given that the node taint already solves the scheduling race cleanly.
 - **HostPath / hostPort security**: `hostPath` and `hostPort` are restricted by the Pod Security Standards "baseline"/"restricted" profiles and require explicit policy exceptions. Apps must mount the same `hostPath`, which is also restricted. Both restricted mechanisms can be avoided, however:
-    - For the **local-endpoint variant**, instead of `hostPort` use a regular `Service` with `internalTrafficPolicy: Local` (traffic stays on the node) backed by a regular, non-privileged container -- no host networking needed.
-    - For the **filesystem variant**, instead of `hostPath` use a **CSI node driver** (also deployed as a DaemonSet, exposing a filesystem to the container programmatically). This keeps the same node-local delivery while avoiding `hostPath`, and it has an additional benefit: because the app pod's volume comes from the CSI driver, the container will not start until the driver is available -- which cleanly handles restarts and scale-out races (the volume mount itself gates pod startup on driver readiness).
+  - For the **local-endpoint variant**, instead of `hostPort` use a regular `Service` with `internalTrafficPolicy: Local` (traffic stays on the node) backed by a regular, non-privileged container -- no host networking needed.
+  - For the **filesystem variant**, instead of `hostPath` use a **CSI node driver** (also deployed as a DaemonSet, exposing a filesystem to the container programmatically). This keeps the same node-local delivery while avoiding `hostPath`, and it has an additional benefit: because the app pod's volume comes from the CSI driver, the container will not start until the driver is available -- which cleanly handles restarts and scale-out races (the volume mount itself gates pod startup on driver readiness).
 - **Still depends on a K8s-side source**: The daemon doesn't magically know about new vectors -- something (a ConfigMap, a CR, the LCP controller) must publish them, so this option is layered on top of Option D rather than replacing it. The added value is the node-local cache, not a new distribution channel. This need not be purely pull/watch-based, though: an active component in the cluster can **accept the settings from the LCP and actively fan them out to the daemons via gRPC** to multiple targets (a headless `Service` or `EndpointSlice` is just a "give me all current targets" DNS/API lookup), pushing the data in addition to the Kubernetes API as a backing/recovery layer. Unlike the pure ConfigMap-watch model (Option C), an active push path like this does **not** rule out explicit delivery guarantees -- the fan-out can collect per-target ACKs before activation proceeds.
 - **Operational overhead**: DaemonSet image, RBAC, monitoring, rollouts, version compatibility with apps. The overhead is primarily in **monitoring** (a per-node component to observe) rather than in deployment complexity per se -- a DaemonSet is not inherently harder to deploy than the central service in Option A; it is just spread across every node instead of replicated for HA.
 - **Kubernetes-specific**: Same caveat as Options B/C/D/E -- non-K8s landscapes need a different mechanism.
@@ -293,8 +296,8 @@ The contract exposed to applications is a wire protocol -- no Konfidence-specifi
 
 - **Storage layer (Option A' under the hood).** The Star controller writes one ConfigMap per vector into the landscape cluster (e.g. `vector-data-<vectorId>`) at deployment time of the configuration artifact. ConfigMap creation against the kube-apiserver = durable, which makes gating trivial and avoids a separate persistent store for the service. The `VectorMigration` is gated on the `VectorDeployment` being fully ready (which includes the `VectorData` being materialised), so the ConfigMap exists before migration tasks run -- not only before activation.
 - **Service layer (Option A on the wire).** A small per-landscape service exposes two read APIs over the same per-vector data:
-    - **OFREP** for feature toggles, scoped per vector.
-    - **Plain REST `GET /vector-data/v1/{vectorId}`** returning the full immutable bundle (authored config + deployment results) for SDK-less consumers and non-toggle data.
+  - **OFREP** for feature toggles, scoped per vector.
+  - **Plain REST `GET /vector-data/v1/{vectorId}`** returning the full immutable bundle (authored config + deployment results) for SDK-less consumers and non-toggle data.
 - **Service ↔ ConfigMaps.** The service interacts with the kube-apiserver to obtain per-vector data, either via a labeled informer/watch populating an in-memory cache or lazy fetch on cache miss.
 - **Non-Kubernetes landscapes.** The service-on-the-wire contract is platform-neutral and can be reused. The storage layer is K8s-specific by design and would be replaced per platform without affecting clients.
 

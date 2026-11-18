@@ -25,38 +25,39 @@
   display: none !important;
 }
 
-
-
-
 /* =============================================
    Konfidence Brand Colors & Variables
    ============================================= */
 
 :root {
   /* Konfidence Brand Colors - Light Mode */
-  --konfidence-orange-light: #FFD600;
-  --konfidence-orange: #FFAA00;
-  --konfidence-blue-light: #80D2E0;
-  --konfidence-blue: #139CC7;
-  --konfidence-blue-dark: #0E7FA3;
+  --konfidence-orange-light: #ffd600;
+  --konfidence-orange: #ffaa00;
+  --konfidence-blue-light: #80d2e0;
+  --konfidence-blue: #139cc7;
+  --konfidence-blue-dark: #0e7fa3;
 
   /* Shared landing-page gradients */
-  --konfidence-gradient-action: linear-gradient(135deg, var(--konfidence-orange-light), var(--konfidence-orange));
+  --konfidence-gradient-action: linear-gradient(
+    135deg,
+    var(--konfidence-orange-light),
+    var(--konfidence-orange)
+  );
   --konfidence-gradient-surface:
-    linear-gradient(135deg, rgba(255, 170, 0, 0.10), rgba(19, 156, 199, 0.09)),
-    var(--vp-c-bg-soft);
+    linear-gradient(135deg, rgba(255, 170, 0, 0.1), rgba(19, 156, 199, 0.09)), var(--vp-c-bg-soft);
   --konfidence-gradient-card:
-    linear-gradient(135deg, rgba(255, 170, 0, 0.055), rgba(19, 156, 199, 0.055)),
-    var(--vp-c-bg);
-  --konfidence-surface-border: rgba(19, 156, 199, 0.20);
+    linear-gradient(135deg, rgba(255, 170, 0, 0.055), rgba(19, 156, 199, 0.055)), var(--vp-c-bg);
+  --konfidence-surface-border: rgba(19, 156, 199, 0.2);
 
   /* VitePress Brand Overrides */
-  --vp-c-brand-1: #139CC7;
-  --vp-c-brand-2: #80D2E0;
-  --vp-c-brand-3: #FFAA00;
+  --vp-c-brand-1: #139cc7;
+  --vp-c-brand-2: #80d2e0;
+  --vp-c-brand-3: #ffaa00;
 
   /* Font */
-  --vp-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --vp-font-family-base:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+    "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 
   /* Sidebar Layout - wider than default */
   --vp-sidebar-width: 360px;
@@ -64,24 +65,22 @@
 
 .dark {
   /* Konfidence Brand Colors - Dark Mode */
-  --konfidence-orange-light: #FFD600;
-  --konfidence-orange: #FFAA00;
-  --konfidence-blue-light: #B9E6EB;
-  --konfidence-blue: #1FACD0;
-  --konfidence-blue-dark: #0E9DBF;
+  --konfidence-orange-light: #ffd600;
+  --konfidence-orange: #ffaa00;
+  --konfidence-blue-light: #b9e6eb;
+  --konfidence-blue: #1facd0;
+  --konfidence-blue-dark: #0e9dbf;
 
   --konfidence-gradient-surface:
-    linear-gradient(135deg, rgba(255, 170, 0, 0.10), rgba(31, 172, 208, 0.11)),
-    var(--vp-c-bg-soft);
+    linear-gradient(135deg, rgba(255, 170, 0, 0.1), rgba(31, 172, 208, 0.11)), var(--vp-c-bg-soft);
   --konfidence-gradient-card:
-    linear-gradient(135deg, rgba(255, 170, 0, 0.055), rgba(31, 172, 208, 0.065)),
-    var(--vp-c-bg);
+    linear-gradient(135deg, rgba(255, 170, 0, 0.055), rgba(31, 172, 208, 0.065)), var(--vp-c-bg);
   --konfidence-surface-border: rgba(185, 230, 235, 0.18);
 
   /* VitePress Brand Overrides */
-  --vp-c-brand-1: #1FACD0;
-  --vp-c-brand-2: #B9E6EB;
-  --vp-c-brand-3: #FFAA00;
+  --vp-c-brand-1: #1facd0;
+  --vp-c-brand-2: #b9e6eb;
+  --vp-c-brand-3: #ffaa00;
 }
 
 /* =============================================
@@ -249,8 +248,7 @@ section.VPSidebarItem.level-1 + section.VPSidebarItem.level-1 {
   border-left: 4px solid var(--konfidence-orange);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(255, 170, 0, 0.10), rgba(128, 210, 224, 0.10)),
-    var(--vp-c-bg-soft);
+    linear-gradient(135deg, rgba(255, 170, 0, 0.1), rgba(128, 210, 224, 0.1)), var(--vp-c-bg-soft);
 }
 
 .VPDoc .vp-doc .custom-block.details summary {
@@ -261,8 +259,7 @@ section.VPSidebarItem.level-1 + section.VPSidebarItem.level-1 {
 .dark .VPDoc .vp-doc .custom-block.details {
   border-color: rgba(185, 230, 235, 0.24);
   background:
-    linear-gradient(135deg, rgba(255, 170, 0, 0.12), rgba(31, 172, 208, 0.12)),
-    var(--vp-c-bg-soft);
+    linear-gradient(135deg, rgba(255, 170, 0, 0.12), rgba(31, 172, 208, 0.12)), var(--vp-c-bg-soft);
 }
 
 .dark .VPDoc .vp-doc .custom-block.details summary {

@@ -6,14 +6,14 @@ const props = defineProps<{ status: string }>()
 // maps ADR lifecycle states onto the default theme's badge colours
 const type = computed(
   () =>
-    ({
+    (<Record<string, "tip" | "info" | "warning" | "danger">>{
       accepted: 'tip',
       proposed: 'info',
       draft: 'info',
       deprecated: 'warning',
       superseded: 'warning',
       rejected: 'danger',
-    })[props.status] ?? 'info',
+    })[props.status] ?? "info",
 )
 </script>
 
