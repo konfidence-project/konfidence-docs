@@ -47,10 +47,13 @@ test("decisions and excluded pages are skipped", () => {
 });
 
 test("the copy keeps assets and leaves out skipped files", async () => {
+  const spec =
+    "https://github.com/konfidence-project/konfidence/blob/main/conformance/specs/deployer.md";
+  const sidebar = `${JSON.stringify([{ text: "Spec", link: spec }])}\n`;
   const root = await fixture({
     "src/docs/index.md": "# Home\n",
     "src/docs/overview.md": "# Overview\n",
-    "src/docs/sidebar.json": "[]\n",
+    "src/docs/sidebar.json": sidebar,
     "src/docs/img/a.drawio.svg": "<svg/>",
     "src/docs/extend-customize/decisions/adr-0001-x.md": "# ADR\n",
     "versions.json": "[]\n",
@@ -59,11 +62,14 @@ test("the copy keeps assets and leaves out skipped files", async () => {
     const summary = versionDocs(options(root, { exclude: ["docs/overview.md"] }));
     const copy = (name) => path.join(root, "src/0.1/docs", name);
     assert.equal(await readFile(copy("img/a.drawio.svg"), "utf8"), "<svg/>");
-    assert.equal(await readFile(copy("sidebar.json"), "utf8"), "[]\n");
+    assert.equal(
+      await readFile(copy("sidebar.json"), "utf8"),
+      sidebar.replace("/blob/main/", "/blob/0.1.0-alpha.1/"),
+    );
     assert.ok(existsSync(copy("index.md")));
     assert.ok(!existsSync(copy("overview.md")));
     assert.ok(!existsSync(copy("extend-customize/decisions")));
-    assert.deepEqual([summary.files, summary.skipped], [3, 2]);
+    assert.deepEqual([summary.files, summary.skipped, summary.pins], [3, 2, 1]);
   } finally {
     await rm(root, { recursive: true });
   }

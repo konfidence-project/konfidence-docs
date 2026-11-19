@@ -190,6 +190,16 @@ export function versionDocs({
     const to = path.join(target, relative);
     mkdirSync(path.dirname(to), { recursive: true });
     summary.files++;
+    if (relative === "sidebar.json") {
+      // the sidebar also links to GitHub
+      const result = pinReferences(readFileSync(path.join(source, relative), "utf8"), {
+        konfidence,
+        klo,
+      });
+      writeFileSync(to, result.text);
+      summary.pins += result.count;
+      continue;
+    }
     if (!relative.endsWith(".md")) {
       cpSync(path.join(source, relative), to);
       continue;
