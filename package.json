@@ -20,7 +20,9 @@
     "lint:prose": "vale --no-global --config=.vale.ini src README.md CONTRIBUTING.md",
     "test:prose": "vale --no-global --config=.vale.ini test --coverage .vale",
     "dev": "vitepress dev",
+    "dev:navigation": "vitepress dev drafts/navigation --host 127.0.0.1",
     "build": "vitepress build",
+    "build:navigation": "vitepress build drafts/navigation",
     "preview": "vitepress preview"
   },
   "keywords": [],

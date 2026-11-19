@@ -1,0 +1,226 @@
+---
+title: "Author a Kustomize artifact"
+scope: "Kubernetes · KLO"
+editLink: false
+lastUpdated: false
+description: "Prepare a Kustomize bundle and an OCM component constructor for publication as a Konfidence artifact."
+outline: deep
+---
+# Author a Kustomize artifact
+
+Create a Kustomize bundle and an Open Component Model (OCM) component constructor for your service.
+These files are the inputs for [publishing a Konfidence artifact](../../core/publish-artifacts.md).
+
+The examples build a service named `my-service` and push everything to `registry.example.com/my-org`.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- A container build tool such as `docker` to build and push the container image.
+- The `flux` command-line tool to package and push the Kustomize bundle to an Open Container Initiative (OCI) registry.
+- The `kubectl` command-line tool to render the bundle locally for verification.
+- Push access to an OCI registry for the image, the bundle, and the artifact.
+- A service that reads and forwards `X-Vector-ID`. See [Prepare your application](./prepare-your-application.md).
+
+## Build and push the container image
+
+1. Create a `Dockerfile` in your service directory. The following example copies a prebuilt binary into a small base image. Replace the build with your own toolchain.
+
+   ```dockerfile
+   FROM alpine:3.20
+   COPY my-service /usr/local/bin/my-service
+   EXPOSE 8080
+   ENTRYPOINT ["my-service"]
+   ```
+
+2. Build and push the image with the version you plan to release:
+
+   ```bash
+   docker build -t registry.example.com/my-org/my-service:1.0.0 .
+   docker push registry.example.com/my-org/my-service:1.0.0
+   ```
+
+The registry lists `my-service:1.0.0` afterward.
+
+## Create a minimal bundle
+
+Create a directory `manifests/` with a `kustomization.yaml` at its root and the manifests it lists.
+
+1. Create `manifests/kustomization.yaml`:
+
+   ```yaml
+   apiVersion: kustomize.config.k8s.io/v1beta1
+   kind: Kustomization
+   resources:
+     - deployment.yaml
+     - service.yaml
+   configurations:
+     - kustomizeconfig.yaml
+   ```
+
+2. Create `manifests/deployment.yaml`:
+
+   ```yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: my-service
+   spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: my-service
+         app.kubernetes.io/instance: my-service
+     template:
+       metadata:
+         labels:
+           app: my-service
+           app.kubernetes.io/instance: my-service
+       spec:
+         containers:
+           - name: my-service
+             image: registry.example.com/my-org/my-service:1.0.0
+             ports:
+               - containerPort: 8080
+   ```
+
+3. Create `manifests/service.yaml`:
+
+   ```yaml
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: my-service
+   spec:
+     selector:
+       app: my-service
+       app.kubernetes.io/instance: my-service
+     ports:
+       - port: 80
+         targetPort: 8080
+   ```
+
+4. Create `manifests/kustomizeconfig.yaml` so the `app.kubernetes.io/instance` label follows the rendered Deployment name:
+
+   ```yaml
+   nameReference:
+     - kind: Deployment
+       group: apps
+       fieldSpecs:
+         - kind: Deployment
+           path: spec/selector/matchLabels/app.kubernetes.io\/instance
+         - kind: Deployment
+           path: spec/template/metadata/labels/app.kubernetes.io\/instance
+         - kind: Service
+           path: spec/selector/app.kubernetes.io\/instance
+   ```
+
+The bundle renders one Deployment and one Service. Their selectors and Pod labels share the same `app.kubernetes.io/instance` value, including the suffix the deployer applies.
+
+Service selectors match Pod labels, not resource names. `app: my-service` alone matches every instance with that label in the namespace. Keep the additional `app.kubernetes.io/instance` selector so a Service cannot select another instance's Pods.
+
+## Package and push the bundle
+
+Push the `manifests/` directory as a Flux-compatible OCI artifact:
+
+```bash
+flux push artifact oci://registry.example.com/my-org/my-service-manifests:1.0.0 \
+  --path=./manifests \
+  --source=https://github.com/my-org/my-service \
+  --revision=1.0.0
+```
+
+The bundle is available as `registry.example.com/my-org/my-service-manifests:1.0.0`.
+
+## Reference the bundle from the artifact component
+
+1. Create `manifest.json` with the Kustomize type:
+
+   ```json
+   {
+     "type": "kustomize.konfidence.cloud",
+     "allowReuse": false
+   }
+   ```
+
+   Set `allowReuse` to `true` only when your service meets the [requirements for sharing an instance](./artifact-reuse.md#what-reuse-demands-from-your-service).
+
+2. Create `component-constructor.yaml` with the manifest and the bundle as resources:
+
+   ```yaml
+   components:
+     - name: github.com/my-org/my-service
+       version: 1.0.0
+       provider:
+         name: my-org
+       resources:
+         - name: konfidence-manifest
+           type: cloud.konfidence.artifact.manifest
+           version: 1.0.0
+           relation: local
+           input:
+             type: file/v1
+             path: ./manifest.json
+         - name: my-service-manifests
+           type: kustomize
+           version: 1.0.0
+           relation: external
+           access:
+             type: ociArtifact
+             imageReference: registry.example.com/my-org/my-service-manifests:1.0.0
+   ```
+
+   The component carries exactly one resource of type `kustomize`.
+
+## Expect a suffix on every resource name
+
+Several vectors deploy the same bundle into one landscape namespace. The [deployer](../../reference/glossary.md#deployer) appends a suffix to every resource name so the instances coexist. The final name follows this pattern:
+
+```text
+<name-in-your-manifest>-<artifact-version>-<hash>
+```
+
+For the Service `my-service` in artifact version `v1.0.0` with hash `abc12345`, the applied Service is named `my-service-v1-0-0-abc12345`. Kustomize updates references between resources in the bundle, so a Deployment that mounts a ConfigMap by name keeps working.
+
+The suffix changes the DNS name of your Service. Do not hard-code the names of other Services in your code. Read them at runtime as described in [Add deployment results to an artifact](./deployment-results.md).
+
+Do not set `nameSuffix` or `namespace` in your `kustomization.yaml`. The deployer overwrites both before it renders the bundle and discards your values.
+
+The deployer owns the rendered instance: its name suffix, its namespace, and its labels. Everything in the bundle is duplicated per instance. Deliver resources that must exist once per cluster, such as a `CustomResourceDefinition`, through a separate delivery path.
+
+::: details Fields the deployer sets on the `Kustomization`
+
+The deployer creates one Flux `Kustomization` per artifact instance and sets these fields. Your bundle cannot override them.
+
+| Field | Value |
+| --- | --- |
+| `metadata.name` | The [`ArtifactDeployment`](../../reference/glossary.md#artifactdeployment) name |
+| `spec.sourceRef` | The `OCIRepository` with the same name |
+| `spec.targetNamespace` | The landscape namespace |
+| `spec.nameSuffix` | `-<sanitized-artifact-version>-<hash>`, derived from the artifact version and hash |
+| `spec.commonMetadata.labels` | `konfidence.cloud/artifact-deployment=<artifact-deployment-name>` |
+
+:::
+
+## Verify the result
+
+Render the bundle locally and confirm that it contains no field the deployer owns:
+
+```bash
+kubectl kustomize ./manifests
+grep -E 'nameSuffix|namespace' ./manifests/kustomization.yaml
+```
+
+The first command prints the Deployment and the Service. The second command prints nothing.
+
+## Next steps
+
+Use the following guides to publish your artifact and expose its service endpoint:
+
+- [Validate and publish the artifact](../../core/publish-artifacts.md#validate-the-artifact-files).
+- [Add deployment results to an artifact](./deployment-results.md) to expose the Service to other services in the vector.
+- [Install the Kubernetes deployer](./install.md) for supported manifest types and deployment-result behavior.
+
+Before deploying the artifact, confirm that the landscape has a ready `DeploymentTarget` with `spec.artifactType` set to `kustomize.konfidence.cloud`.
+See [Configure deployment targets for a landscape](../../core/deployment-targets.md).

@@ -1,0 +1,76 @@
+---
+title: "Use Kubernetes Service results"
+scope: "Kubernetes · KLO"
+editLink: false
+lastUpdated: false
+description: Learn how deployment results become vector data and how your application reads them at runtime.
+outline: [2, 3]
+---
+# Use Kubernetes Service results
+
+This guide explains how to use [deployment results](../../reference/glossary.md#deployment-result) in running application code. Deployment results are values that [deployers](../../reference/glossary.md#deployer) produce while deploying a [vector](../../reference/glossary.md#vector), such as service endpoints, generated URLs, identities, and allocated resources.
+
+You do not author deployment results in [vector configuration](../../reference/glossary.md#vector-configuration). Konfidence computes them as a side effect of deploying the vector and merges them into the same [vector data](../../reference/glossary.md#vector-data) bundle that applications read at runtime.
+
+## Prerequisites
+
+- A deployer produces deployment results for an [artifact](../../reference/glossary.md#artifact) in the vector.
+- The producing artifact has been deployed; results are available from that point (including during the migration phase), not only after the vector is activated.
+- Your application can access vector data through the [vector data service](../../reference/glossary.md#vector-data-service).
+
+## Materialize results for Kubernetes
+
+The Kubernetes landscape orchestrator reads `VectorData` and writes a ConfigMap. The vector data service exposes that data to workloads through OFREP.
+
+## Expose a Kubernetes Service
+
+To let other components in the vector discover a Service, add the `konfidence.cloud/deployment-result` annotation to it. The annotation value is the stable name consumers use to look it up:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: candidates
+  annotations:
+    konfidence.cloud/deployment-result: candidates
+```
+
+Only Kubernetes Services can be exposed this way today. For how the deployer turns the annotation into a deployment result, see [How deployment results work](./service-results.md#how-deployment-results-work).
+
+A deployment result is identified by the pair `(name, type)`, which must be unique within a component. Giving two Services in the same component the same annotation value is rejected at deploy time.
+
+This annotation does not opt the Service into stage ingress. To select a port for external requests, see [Expose a Service through stage ingress](./expose-service.md).
+
+## Read deployment results at runtime
+
+Deployment results are part of the vector configuration bundle. Request the whole bundle by passing the vector ID as the flag key (see [Access vector data in your application](./access-vector-data.md)).
+
+In the returned object, `deploymentResults` is keyed by **component name** (its last path segment), and each value is an **array** of the results that component published. Each result has a stable `name` (the annotation value), a `type`, and a `spec`. Select the result you need by its `name` — do not rely on array position.
+
+For an `http-k8s-service` result, `spec` carries the Service's `Namespace`, `K8sName`, and `ServicePorts`. Build the in-cluster address from those fields and a port taken from `ServicePorts`; do not hard-code the port:
+
+```json
+{
+  "deploymentResults": {
+    "candidates": [
+      {
+        "name": "candidates",
+        "type": "http-k8s-service",
+        "spec": {
+          "Namespace": "vector-42",
+          "K8sName": "candidates-7f3a",
+          "ServicePorts": [{ "name": "http", "port": 80 }]
+        }
+      }
+    ]
+  }
+}
+```
+
+Here a consumer looks up the result named `candidates` and resolves it to `candidates-7f3a.vector-42.svc.cluster.local:80`.
+
+The single-flag and bulk endpoints resolve [feature flags](../../reference/glossary.md#feature-flag) only. Deployment results and authored config are available through the whole-bundle response.
+
+## Next steps
+
+To read deployment results from application code, see [Access vector data in your application](./access-vector-data.md).

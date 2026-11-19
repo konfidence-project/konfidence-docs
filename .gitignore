@@ -29,6 +29,9 @@ package-lock.json
 # Vitepress
 .vitepress/cache
 .vitepress/dist
+/drafts/navigation/.generated/
+/drafts/navigation/.vitepress/cache/
+/drafts/navigation/.vitepress/dist/
 
 # Artifacts of prepare-publish.yml
 __all-authors.txt

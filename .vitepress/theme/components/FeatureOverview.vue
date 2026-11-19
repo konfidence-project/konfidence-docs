@@ -1,4 +1,5 @@
 <script setup>
+import { withBase } from 'vitepress'
 import {
   ArrowRight,
   ArrowUpRight,
@@ -12,6 +13,9 @@ import {
   ShieldCheck,
   Users,
 } from 'lucide-vue-next'
+defineProps({
+  quickstartLink: { type: String, default: '/docs/getting-started/quickstart' },
+})
 </script>
 
 <template>
@@ -165,7 +169,7 @@ import {
         <p>Run the quickstart or explore the documentation to understand the delivery model.</p>
       </div>
       <div class="cta-actions">
-        <a href="/docs/getting-started/quickstart" class="cta-button cta-button--primary">
+        <a :href="withBase(quickstartLink)" class="cta-button cta-button--primary">
           Explore Konfidence
           <ArrowRight aria-hidden="true" />
         </a>

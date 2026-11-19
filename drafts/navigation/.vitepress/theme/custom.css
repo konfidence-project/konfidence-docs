@@ -1,0 +1,119 @@
+@import "./layout-base.css";
+@import "../../../../.vitepress/theme/custom.css";
+
+:root { --vp-sidebar-width: 300px; --vp-layout-max-width: 1480px; }
+.VPSidebar { background: var(--vp-c-bg-alt) !important; }
+.VPSidebar .group + .group { padding-top: 5px !important; }
+.VPSidebarItem.level-0 > .item > .text,
+.VPSidebarItem.level-0 > .item > .link > .text { font-size: 14px !important; }
+.VPSidebarItem.level-1 > .item > .link > .text { font-size: 13px; }
+.VPSidebarItem.level-1 > .item { padding: 3px 0 3px 12px; }
+.VPSidebarItem.level-0 { padding-top: 4px; padding-bottom: 4px; }
+.VPSidebarItem .items { padding-bottom: 4px; }
+.sidebar-area { margin: 0 0 16px; padding: 0 0 12px; border-bottom: 2px solid var(--konfidence-orange); font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--vp-c-text-2); }
+.scope-dot { background: var(--konfidence-blue); }
+.VPNavBarMenuLink.active { color: var(--konfidence-blue-dark) !important; border-bottom: 3px solid var(--konfidence-orange); }
+.dark .VPNavBarMenuLink.active { color: var(--konfidence-blue-light) !important; }
+.release-label { border-radius: 999px; background: rgba(255,170,0,.18); border: 1px solid var(--konfidence-orange); color: #9a6700; font-weight: 700; }
+.dark .release-label { color: var(--konfidence-orange); }
+.task-cards .task-card { background: var(--konfidence-gradient-card); border-color: var(--konfidence-surface-border); border-radius: 12px; }
+.task-cards .task-card:hover { border-color: var(--konfidence-blue); background: var(--konfidence-gradient-surface); }
+.four-steps { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); align-items: stretch; gap: 0; border: 1px solid var(--konfidence-surface-border); border-radius: 12px; padding: 0; overflow: hidden; background: var(--konfidence-gradient-surface); margin-top: 24px; }
+.vp-doc .four-steps a { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 23px 18px 27px; text-decoration: none; color: var(--vp-c-text-1); }
+.four-steps a + a { border-left: 1px solid var(--konfidence-surface-border); }
+.four-steps a:hover { background: rgba(19,156,199,.07); }
+.four-steps .step-number { font-size: 12px; color: var(--konfidence-blue-dark); font-weight: 700; }
+.dark .four-steps .step-number { color: var(--konfidence-blue-light); }
+.four-steps strong { font-size: 18px; }
+.four-steps .step-description { font-size: 13px; color: var(--vp-c-text-2); line-height: 1.65; }
+.four-steps .step-arrow { color: var(--konfidence-blue); font-size: 20px; line-height: 1; margin-top: auto; padding-top: 4px; }
+.reference-context { font-size: 13px; padding: 12px 14px; margin-bottom: 22px; border-left: 3px solid var(--konfidence-orange); background: var(--vp-c-bg-soft); color: var(--vp-c-text-2); line-height: 1.6; }
+.platform-path {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  font-size: 0.83rem;
+  color: var(--vp-c-text-2);
+}
+.platform-path a { display: inline-flex; align-items: center; min-height: 1.75rem; }
+.platform-path a:hover { text-decoration: underline; }
+/* The mobile outline closes when the link receives the tap, including on its text. */
+.VPLocalNavOutlineDropdown .outline-link > bdi { pointer-events: none; }
+.VPNavScreenMenuLink.active { font-weight: 700; border-inline-start: 3px solid var(--konfidence-orange); padding-inline-start: 0.6rem; }
+.four-steps a:focus-visible { outline: 3px solid var(--konfidence-blue); outline-offset: -4px; }
+:is(.VPNavMenu a, .VPSidebar a, .platform-path a, .platform-guides a):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.platform-list {
+  --guide-link-color: color-mix(in srgb, var(--konfidence-blue-dark) 80%, var(--vp-c-text-1));
+  margin-block: 1.75rem 1.5rem;
+  padding-inline: clamp(1rem, 2vw, 1.5rem);
+  background: var(--konfidence-gradient-surface);
+  border: 1px solid var(--konfidence-surface-border);
+  border-top: 2px solid var(--konfidence-blue);
+  border-radius: 0.75rem;
+}
+.dark .platform-list { --guide-link-color: var(--konfidence-blue-light); }
+.platform-row {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) minmax(0, 2.65fr);
+  align-items: start;
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+  padding: 1.4rem 0;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+.platform-row:last-child { border-bottom: 0; }
+.deployer-directory .platform-label h2 {
+  margin: 0;
+  padding: 0;
+  border-top: 0 !important;
+  font-size: 1.35rem;
+  line-height: 1.4;
+}
+.deployer-directory .platform-label .platform-status {
+  margin: 0.25rem 0 0;
+  color: var(--vp-c-text-2);
+  font-size: 0.8rem;
+}
+.deployer-directory .platform-guides > p { margin: 0 0 0.35rem; }
+.deployer-directory .platform-guides ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.deployer-directory .platform-guides li { margin: 0; padding: 0; }
+.platform-guides li:only-child { grid-column: 1 / -1; }
+.deployer-directory .platform-guides a {
+  display: inline-block;
+  padding: 0.3rem 0;
+  font-size: 0.9rem;
+  font-weight: 550;
+  color: var(--guide-link-color);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.platform-guides a:hover { text-decoration-thickness: 2px; }
+@media (min-width: 80rem) {
+  .deployer-directory .VPDoc:not(.has-sidebar) .container { max-width: 72rem; }
+  .deployer-directory .VPDoc:not(.has-sidebar) .content { max-width: 54rem; }
+}
+@media (max-width: 42rem) {
+  .platform-row { grid-template-columns: 1fr; gap: 0.5rem; padding-block: 1.15rem; }
+  .platform-label { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.25rem 0.8rem; }
+  .deployer-directory .platform-label .platform-status { margin: 0; }
+  .deployer-directory .platform-guides ul { display: block; }
+  .deployer-directory .platform-guides a { min-height: 2.5rem; }
+}
+@media (max-width: 760px) {
+ .four-steps { grid-template-columns: repeat(2,minmax(0,1fr)); }
+ .four-steps a:nth-child(3) { border-left: 0; }
+ .four-steps a:nth-child(n+3) { border-top: 1px solid var(--konfidence-surface-border); }
+}
+@media (max-width: 380px) { .four-steps { grid-template-columns: 1fr; } .four-steps a + a { border-left: 0; border-top: 1px solid var(--konfidence-surface-border); } }

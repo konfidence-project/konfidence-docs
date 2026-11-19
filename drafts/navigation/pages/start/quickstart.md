@@ -1,0 +1,97 @@
+---
+title: "Quickstart"
+scope: "Konfidence + Kubernetes"
+editLink: false
+lastUpdated: false
+prev: false
+next:
+  text: Deliver an application
+  link: /start/deliver-an-application
+description: Install Konfidence locally and open the dashboard.
+outline: [2, 3]
+---
+# Quickstart
+
+Install Konfidence locally and open its dashboard. You will use Kubernetes with Flux and the Kubernetes landscape orchestrator.
+
+## Cluster setup
+
+Create a local Kubernetes cluster with Konfidence installed. By the end of this guide, you’ll have a running instance and access to its dashboard.
+
+Before you begin, install the following tools:
+
+- [Docker](https://docs.docker.com/get-started/get-docker/) — make sure the Docker engine is running.
+- [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) — creates the local Kubernetes cluster.
+- [kubectl](https://kubernetes.io/docs/tasks/tools/) — lets you interact with the cluster.
+- [Helm](https://helm.sh/docs/intro/install/) — installs the Konfidence components.
+
+Run the [Quickstart script](https://github.com/konfidence-project/konfidence/blob/main/hack/quickstart/quickstart.sh) to create the cluster and install Konfidence and its dependencies:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/konfidence-project/konfidence/main/hack/quickstart/quickstart.sh | sh
+```
+
+The script creates a kind cluster named `konfidence-quickstart` and selects it as your current kubeconfig context. The cluster maps `localhost:9090` to NodePort `30080` for the edge gateway that [Deliver an application](./deliver-an-application.md) installs. It then installs these components in order:
+
+1. **[Flux](https://fluxcd.io/)** — controllers that reconcile Helm and Kustomize deployments.
+2. **Konfidence** — the controller and API, which also serves the dashboard.
+3. **Kubernetes [Landscape Orchestrator](../reference/glossary.md#landscape-orchestrator)** — uses Flux to deploy Helm charts and Kustomize configurations for Konfidence.
+
+The [Vector Data Service](../reference/glossary.md#vector-data-service) runs in each landscape namespace. It lets applications read configuration and [deployment results](../reference/glossary.md#deployment-result) for a vector at runtime. Install it after creating the landscapes, as described in [Create the delivery environment](./deliver-an-application.md#create-the-delivery-environment).
+
+The script waits for the Flux deployments and Helm releases to become ready. Running it again reuses the cluster and updates the existing installation.
+
+To understand how the installation works or run the steps manually, read the script’s comments. They explain each step and the components being installed.
+
+Once the installation completes, check the Konfidence deployments:
+
+```bash
+kubectl get deployments -n konfidence-system
+```
+
+You should see output similar to this:
+
+```text
+NAME                                READY   UP-TO-DATE   AVAILABLE   AGE
+konfidence                          1/1     1            1           61s
+konfidence-api                      1/1     1            1           61s
+kubernetes-landscape-orchestrator   1/1     1            1           42s
+```
+
+The `READY` column should show that all replicas are ready.
+
+Check that the Flux controllers are also ready:
+
+```bash
+kubectl get deployments -n flux-system
+```
+
+For every Flux deployment, the `READY` column should show that all replicas are ready.
+
+## Open the dashboard
+
+The local Quickstart does not include an ingress setup for the dashboard. To access it from your computer, use port-forwarding to connect to the Konfidence API, which also serves the dashboard:
+
+```bash
+kubectl -n konfidence-system port-forward svc/konfidence-api 8090:8090
+```
+
+Keep this command running and open the [local dashboard](http://localhost:8090) in your browser. You should see the Konfidence sign-in page:
+
+![Konfidence sign-in page with the Continue with SSO button.](/_media/docs/getting-started/screenshot_dashboard_login.png)
+
+Select **Continue with SSO** to sign in as **Local Admin**. No external identity provider is required.
+
+Sessions are stored in memory, so you’ll need to sign in again if the API restarts.
+
+## Clean up
+
+Keep the cluster running if you’re continuing with [Deliver an application](./deliver-an-application.md). When you’re finished exploring Konfidence, stop the port-forward with `Ctrl`+`C` and remove the cluster. This deletes all workloads and data stored in it:
+
+```bash
+kind delete cluster --name konfidence-quickstart
+```
+
+## Next steps
+
+Your local Konfidence instance is ready. Continue with [Deliver an application](./deliver-an-application.md) to prepare the Example App in development and approve its [promotion](../reference/glossary.md#promotion) to production.
