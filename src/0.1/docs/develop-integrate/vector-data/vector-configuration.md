@@ -1,0 +1,159 @@
+---
+title: Add configuration to a vector
+description: Learn how to use vector-scoped configuration to manage settings that are specific to individual vectors.
+---
+
+# Add configuration to a vector
+
+Add vector-scoped configuration to a [vector](../../reference/glossary.md#vector). Use it for [feature flags](../../reference/glossary.md#feature-flag) and authored configuration values that Konfidence versions together with the vector.
+
+Konfidence includes the configuration in the vector, so the vector ID uniquely determines its configuration. You can add it in two ways: Konfidence assembles the vector from a [`VectorTemplate`](../../reference/glossary.md#vectortemplate), or you build the vector yourself with the `kden` command-line tool.
+
+## Prerequisites
+
+Before you begin, make sure you meet these requirements:
+
+- You know which path builds your vectors. See [Build vectors](../observe-improve/build-vectors.md).
+- For the template path: a `VectorTemplate` for the vector that receives the configuration.
+- For the manual path: the vector's component constructor file and the `kden` CLI.
+
+## Choose how the configuration enters the vector
+
+Both paths produce the same result: an Open Component Model (OCM) resource named `cloud-konfidence-vector-config` on the vector. Choose the path that matches how you build vectors.
+
+| You build vectors with | Path | Where the configuration lives |
+| --- | --- | --- |
+| A `VectorTemplate` and Konfidence assembly | [Add the configuration to a VectorTemplate](#add-the-configuration-to-a-vectortemplate) | `spec.vectorConfig` of the template |
+| `kden vector push` from a constructor file | [Add the configuration to a manually built vector](#add-the-configuration-to-a-manually-built-vector) | A JSON file referenced as a resource in the constructor file |
+
+## Add the configuration to a VectorTemplate
+
+1. Add `spec.vectorConfig` to your existing `VectorTemplate` manifest:
+
+   ```yaml
+   spec:
+     vectorConfig:
+       features:
+         enableBeta: true
+         maxUsers: 150
+         ratio: 4.6
+         title: "TestLabel"
+       authored:
+         log-level: info
+         database:
+           host: "mysql-service"
+           port: 3306
+   ```
+
+2. Apply the updated manifest:
+
+   ```bash
+   kubectl apply --namespace <namespace> --filename <vector-template-file>
+   ```
+
+3. Check the assembly status:
+
+   ```bash
+   kubectl get vectortemplate <vector-template-name> --namespace <namespace>
+   ```
+
+When the configuration changes, assembly creates a new vector. After assembly completes, `READY` is `True`, `REASON` is `VectorCreated`, and `LATEST-VECTOR` contains the new concrete vector reference. That vector contains the configuration as a local resource named `cloud-konfidence-vector-config`.
+
+## Add the configuration to a manually built vector
+
+Store the configuration in one JSON file next to your existing vector component constructor. The examples below assume that the constructor is named `component-constructor.yaml`.
+
+1. Write the configuration file next to the constructor file, for example `vector-config.json`:
+
+   ```json
+   {
+     "schemaVersion": "v1",
+     "features": {
+       "enableBeta": true,
+       "maxUsers": 150
+     },
+     "authored": {
+       "log-level": "info"
+     }
+   }
+   ```
+
+   `schemaVersion` must be `v1`. Both `features` and `authored` are optional.
+
+2. Add the file as a local resource named `cloud-konfidence-vector-config` to the `resources` list of the vector component in `component-constructor.yaml`:
+
+   ```yaml
+   components:
+     - name: github.com/example/shop/vector
+       version: v1.0.0
+       provider:
+         name: example
+       componentReferences:
+         - componentName: github.com/example/shop/checkout
+           name: checkout
+           version: v1.0.0
+       resources:
+         - name: cloud-konfidence-vector-config
+           type: json
+           version: 1.0.0
+           relation: local
+           input:
+             type: file/v1
+             path: ./vector-config.json
+             mediaType: application/json
+   ```
+
+   Konfidence matches the resource by its name, not by its type. A vector carries at most one resource with this name. A second one fails the deployment.
+
+3. Validate and push the vector:
+
+   ```bash
+   kden vector validate --files ./component-constructor.yaml
+   kden vector push --file ./component-constructor.yaml --registry <registry>/<subpath>
+   ```
+
+   `validate` checks the component constructor before `push` writes the vector component version to the registry. After the push succeeds, that component version contains the configuration from `vector-config.json` as a local resource named `cloud-konfidence-vector-config`. See [kden vector push](../../reference/cli.md#kden-vector-push) for all flags.
+
+## Feature flags
+
+Use the top-level `features` block for feature flags. The keys are flat, and values can use any JSON value type, such as Boolean, number, string, array, or object.
+
+```json
+{
+  "features": {
+    "new-checkout": true,
+    "max-users": 150,
+    "experimental-payment-providers": ["stripe", "adyen"]
+  }
+}
+```
+
+Konfidence does not add targeting, variants, or rules inside feature flags. The vector is the targeting unit. Changing a flag creates a new vector version, which keeps the change auditable, atomic with code, and reproducible.
+
+To read flags from your application, see [Read feature flags in your application](../advanced-features/feature-flags.md).
+
+## Authored config
+
+Use the top-level `authored` block for free-form JSON. Konfidence does not impose a schema on it. This block is a contract between you and your application.
+
+```json
+{
+  "authored": {
+    "ui": {
+      "theme": "dark",
+      "locale": "en-US"
+    },
+    "limits": {
+      "requestTimeoutMs": 5000
+    }
+  }
+}
+```
+
+Authored config is optional and immutable per vector version. Provide one `authored` block per vector, or none.
+
+Authored config is available through the whole-bundle response only. Query the vector ID as the flag key and read the `authored` subtree from the returned [vector configuration](../../reference/glossary.md#vector-configuration) object. The single-flag and bulk endpoints resolve feature flags only.
+
+## Next steps
+
+After you add configuration to a vector, [access vector data in your application](./access-vector-data.md).
