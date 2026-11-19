@@ -1,0 +1,45 @@
+<mxfile host="Electron" version="24.7.5">
+  <diagram name="request-path" id="request-path">
+    <mxGraphModel dx="0" dy="0" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0" adaptiveColors="auto">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="req" value="&lt;b&gt;Incoming request&lt;/b&gt;&lt;br&gt;HTTPS &amp;lt;svc&amp;gt;.&amp;lt;stage&amp;gt;.&amp;lt;domain&amp;gt;" style="rounded=1;html=1;whiteSpace=wrap;fontSize=13;fillColor=#FFFFFF;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="0" y="0" width="200" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="gw" value="&lt;b&gt;Gateway&lt;/b&gt;&lt;br&gt;resolves the vector id header" style="rounded=0;html=1;whiteSpace=wrap;fontSize=13;fillColor=#DAE8FC;strokeColor=#2F5597;" vertex="1" parent="1">
+          <mxGeometry x="0" y="80" width="200" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="landscape" value="&lt;b&gt;Landscape&lt;/b&gt;" style="rounded=0;html=1;whiteSpace=wrap;fontSize=13;fillColor=#F5F5F5;strokeColor=#BBBBBB;verticalAlign=top;align=right;spacingRight=10;spacingTop=4;container=1;" vertex="1" parent="1">
+          <mxGeometry x="0" y="160" width="680" height="370" as="geometry"/>
+        </mxCell>
+        <mxCell id="v42" value="&lt;b&gt;Vector &amp;lt;vectorId&amp;gt;&lt;/b&gt;" style="rounded=0;html=1;whiteSpace=wrap;fontSize=13;fillColor=#E8EEF7;strokeColor=#6C8EBF;verticalAlign=top;align=right;spacingRight=10;spacingTop=4;container=1;" vertex="1" parent="1">
+          <mxGeometry x="15" y="205" width="245" height="310" as="geometry"/>
+        </mxCell>
+        <mxCell id="a42" value="&lt;b&gt;Service A&lt;/b&gt; &amp;ndash; your code&lt;br&gt;reads x-vector-id from the request&lt;br&gt;name suffixed per vector" style="rounded=0;html=1;whiteSpace=wrap;fontSize=13;fillColor=#FFFFFF;strokeColor=#2F5597;" vertex="1" parent="1">
+          <mxGeometry x="30" y="250" width="215" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="b42" value="&lt;b&gt;Service B&lt;/b&gt; &amp;ndash; your code&lt;br&gt;reads x-vector-id from the request" style="rounded=0;html=1;whiteSpace=wrap;fontSize=13;fillColor=#FFFFFF;strokeColor=#2F5597;" vertex="1" parent="1">
+          <mxGeometry x="30" y="410" width="215" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="ofrep" value="&lt;b&gt;vector-data-service&lt;/b&gt;&lt;br&gt;OFREP, one per landscape&lt;br&gt;POST /ofrep/v1/evaluate/flags/&amp;lt;vectorId&amp;gt;&lt;br&gt;&amp;rarr; flags, config, deploymentResults&lt;br&gt;(sibling addresses)" style="rounded=0;html=1;whiteSpace=wrap;fontSize=13;fillColor=#FFF2CC;strokeColor=#D6B656;" vertex="1" parent="1">
+          <mxGeometry x="415" y="240" width="250" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" style="html=1;whiteSpace=wrap;edgeStyle=orthogonalEdgeStyle;strokeWidth=3;strokeColor=#2F5597;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="req" target="gw">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" value="&lt;div style=&quot;white-space:nowrap&quot;&gt;&amp;#9312; gateway adds x-vector-id: &amp;lt;vectorId&amp;gt;&lt;/div&gt;" style="html=1;whiteSpace=wrap;edgeStyle=orthogonalEdgeStyle;strokeWidth=3;strokeColor=#2F5597;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.3256;entryY=0;fontSize=13;align=left;verticalAlign=middle;spacingLeft=6;labelBackgroundColor=none;" edge="1" parent="1" source="gw" target="a42">
+          <mxGeometry x="-0.12" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" value="&lt;div style=&quot;white-space:nowrap&quot;&gt;&amp;#9314; your code forwards&lt;br&gt;x-vector-id to the&lt;br&gt;address from &amp;#9313;&lt;/div&gt;" style="html=1;whiteSpace=wrap;edgeStyle=orthogonalEdgeStyle;strokeWidth=3;strokeColor=#2F5597;endArrow=block;endFill=1;exitX=0.3256;exitY=1;entryX=0.3256;entryY=0;fontSize=13;align=left;verticalAlign=middle;spacingLeft=6;labelBackgroundColor=none;" edge="1" parent="1" source="a42" target="b42">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" value="&lt;div style=&quot;white-space:nowrap&quot;&gt;&amp;#9313; your code queries&lt;br&gt;with targetingKey&lt;br&gt;= x-vector-id&lt;/div&gt;" style="html=1;whiteSpace=wrap;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#8C7A2E;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=13;align=left;verticalAlign=bottom;spacingLeft=0;spacingBottom=4;labelBackgroundColor=none;" edge="1" parent="1" source="a42" target="ofrep">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="20" y="0" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

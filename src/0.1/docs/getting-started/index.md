@@ -1,0 +1,13 @@
+---
+title: Getting started
+description: Quick start guide for Konfidence. Install, configure, and deploy your first instance in minutes with step-by-step instructions.
+outline: [2, 3]
+editLink: true
+lastUpdated: true
+---
+
+# Getting started
+
+## Related
+
+- [Core concepts](../core-concepts/index.md) - Understand the fundamentals
