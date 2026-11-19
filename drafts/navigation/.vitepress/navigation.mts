@@ -3,6 +3,7 @@ import type { DefaultTheme } from 'vitepress'
 const core: DefaultTheme.SidebarItem[] = [
   {
     text: "Getting started",
+    collapsed: false,
     items: [
       { text: "Quickstart", link: "/start/quickstart" },
       { text: "Deliver an application", link: "/start/deliver-an-application" },
@@ -10,7 +11,6 @@ const core: DefaultTheme.SidebarItem[] = [
   },
   {
     text: "Concepts",
-    link: "/core/index",
     collapsed: true,
     items: [
       { text: "Artifacts and vectors", link: "/core/artifacts-and-vectors" },
@@ -23,7 +23,6 @@ const core: DefaultTheme.SidebarItem[] = [
   },
   {
     text: "Build",
-    link: "/core/build",
     collapsed: true,
     items: [
       { text: "Types of artifacts", link: "/core/artifact-types" },
@@ -32,7 +31,6 @@ const core: DefaultTheme.SidebarItem[] = [
   },
   {
     text: "Assemble",
-    link: "/core/assemble",
     collapsed: true,
     items: [
       { text: "Create a project", link: "/core/projects" },
@@ -44,7 +42,6 @@ const core: DefaultTheme.SidebarItem[] = [
   },
   {
     text: "Deploy",
-    link: "/core/deploy",
     collapsed: true,
     items: [
       { text: "Create a stage", link: "/core/stages" },
@@ -59,7 +56,6 @@ const core: DefaultTheme.SidebarItem[] = [
   },
   {
     text: "Promote",
-    link: "/core/release",
     collapsed: true,
     items: [
       { text: "Set up promotion flows", link: "/core/promotion-flows" },
@@ -69,7 +65,6 @@ const core: DefaultTheme.SidebarItem[] = [
   },
   {
     text: "Reference",
-    link: "/reference/index",
     collapsed: true,
     items: [
       { text: "Glossary", link: "/reference/glossary" },
@@ -87,16 +82,15 @@ const kubernetes: DefaultTheme.SidebarItem[] = [
     text: "Artifacts",
     collapsed: false,
     items: [
+      { text: "Prepare your application", link: "/deployers/kubernetes/prepare-your-application" },
       { text: "Author a Helm artifact", link: "/deployers/kubernetes/helm" },
       { text: "Author a Kustomize artifact", link: "/deployers/kubernetes/kustomize" },
       { text: "Artifact types", link: "/deployers/kubernetes/artifact-types" },
-      { text: "Prepare your application", link: "/deployers/kubernetes/prepare-your-application" },
       { text: "Share an artifact instance", link: "/deployers/kubernetes/artifact-reuse" },
     ],
   },
   {
     text: "Application runtime",
-    link: "/deployers/kubernetes/application-runtime",
     collapsed: true,
     items: [
       { text: "Vector data on Kubernetes", link: "/deployers/kubernetes/vector-data" },
@@ -144,26 +138,39 @@ const cloudFoundry: DefaultTheme.SidebarItem[] = [
 ]
 
 const community: DefaultTheme.SidebarItem[] = [
-  { text: "Community", link: "/community/index" },
-  { text: "Contributing", link: "/community/contributing" },
-  { text: "Local development", link: "/community/local-development" },
   {
-    text: "Contribute documentation",
-    link: "/community/documentation",
+    text: "Contribute",
+    collapsed: false,
+    items: [
+      { text: "Contribution guidelines", link: "/community/contributing" },
+      { text: "Local development", link: "/community/local-development" },
+      { text: "Deployer contract", link: "/community/deployer-contract" },
+    ],
+  },
+  {
+    text: "Write documentation",
     collapsed: true,
     items: [
+      { text: "Documentation workflow", link: "/community/documentation" },
       { text: "Style guide", link: "/community/style-guide" },
       { text: "Guide templates", link: "/community/guide-templates" },
     ],
   },
-  { text: "Deployer contract", link: "/community/deployer-contract" },
-  { text: "Architecture decisions", link: "/community/decisions/index" },
+  {
+    text: "Architecture",
+    collapsed: true,
+    items: [
+      { text: "Architecture decisions", link: "/community/decisions/index" },
+    ],
+  },
 ]
 
 export const sidebar: DefaultTheme.Sidebar = {
   '/start/': core,
   '/core/': core,
   '/reference/': core,
+  // Keep the sidebar slot visible for the selector before a deployer is chosen.
+  '/deployers/': [{ items: [] }],
   '/deployers/kubernetes/': kubernetes,
   '/deployers/s3/': s3,
   '/deployers/cloud-foundry/': cloudFoundry,

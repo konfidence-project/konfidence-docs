@@ -1,10 +1,10 @@
 ---
-title: "Contributing"
+title: "Contribution guidelines"
 scope: "Community"
 editLink: false
 lastUpdated: false
 ---
-# Contributing
+# Contribution guidelines
 
 ## General remarks
 

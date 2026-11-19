@@ -22,25 +22,21 @@ Continuous integration (CI) pipelines publish artifacts to an OCM-compliant repo
 
 ::: details Pages that use this term
 
-- [Advanced features](../deployers/kubernetes/application-runtime.md)
 - [Author a Helm artifact](../deployers/kubernetes/helm.md)
 - [Author a Kustomize artifact](../deployers/kubernetes/kustomize.md)
 - [Assemble a vector](../core/build-vectors.md)
 - [Deployers](../deployers/index.md)
 - [Configure deployment targets for a landscape](../core/deployment-targets.md)
 - [Configure signing and verification](../core/signing.md)
-- [Konfidence and deployers](../core/index.md)
 - [Create a landscape](../core/landscapes.md)
 - [Create a stage](../core/stages.md)
 - [Deliver an application](../start/deliver-an-application.md)
 - [Delivery Flow](../core/delivery-flow.md)
 - [Deployment model](../core/deployment-model.md)
-- [Build](../core/build.md)
 - [Grant teams access to a project](../core/team-access.md)
 - [Install the Kubernetes deployer](../deployers/kubernetes/install.md)
 - [Landscapes and stages](../core/landscapes-and-stages.md)
 - [Local development](../community/local-development.md)
-- [Observe & Deliver](../core/release.md)
 - [Prepare your application](../deployers/kubernetes/prepare-your-application.md)
 - [Publish artifacts](../core/publish-artifacts.md)
 - [Read feature flags in your application](../deployers/kubernetes/feature-flags.md)
@@ -84,7 +80,6 @@ The delivery flow is the path from published artifacts to the vector each stage 
 
 ::: details Pages that use this term
 
-- [Konfidence and deployers](../core/index.md)
 - [Create a stage](../core/stages.md)
 - [Deliver an application](../start/deliver-an-application.md)
 - [Delivery Flow](../core/delivery-flow.md)
@@ -105,7 +100,6 @@ The current release provides one deployer for Kubernetes, installed with the [la
 - [Author a Kustomize artifact](../deployers/kubernetes/kustomize.md)
 - [Deployers](../deployers/index.md)
 - [Configure deployment targets for a landscape](../core/deployment-targets.md)
-- [Konfidence and deployers](../core/index.md)
 - [Delivery Flow](../core/delivery-flow.md)
 - [Deployment model](../core/deployment-model.md)
 - [Install the Kubernetes deployer](../deployers/kubernetes/install.md)
@@ -161,7 +155,6 @@ A feature flag is a named value in the [vector configuration](#vector-configurat
 
 - [Access vector data in your application](../deployers/kubernetes/access-vector-data.md)
 - [Add configuration to a vector](../core/vector-configuration.md)
-- [Advanced features](../deployers/kubernetes/application-runtime.md)
 - [Install the Vector Data Service](../deployers/kubernetes/vector-data-service.md)
 - [Prepare your application](../deployers/kubernetes/prepare-your-application.md)
 - [Read feature flags in your application](../deployers/kubernetes/feature-flags.md)
@@ -262,7 +255,6 @@ Each stage belongs to a landscape and uses the deployment targets configured the
 
 - [Assemble a vector](../core/build-vectors.md)
 - [Configure deployment targets for a landscape](../core/deployment-targets.md)
-- [Konfidence and deployers](../core/index.md)
 - [Create a landscape](../core/landscapes.md)
 - [Create a stage](../core/stages.md)
 - [Deliver an application](../start/deliver-an-application.md)
@@ -270,7 +262,6 @@ Each stage belongs to a landscape and uses the deployment targets configured the
 - [Deployment model](../core/deployment-model.md)
 - [Grant teams access to a project](../core/team-access.md)
 - [Landscapes and stages](../core/landscapes-and-stages.md)
-- [Observe & Deliver](../core/release.md)
 - [Gateway routing](../deployers/kubernetes/gateway-routing.md)
 - [Set up Envoy Gateway](../deployers/kubernetes/envoy-gateway.md)
 - [Set up Istio](../deployers/kubernetes/istio.md)
@@ -291,13 +282,11 @@ Any change to an artifact reference or to the configuration creates a new vector
 
 - [Access vector data in your application](../deployers/kubernetes/access-vector-data.md)
 - [Add configuration to a vector](../core/vector-configuration.md)
-- [Advanced features](../deployers/kubernetes/application-runtime.md)
 - [Author a Helm artifact](../deployers/kubernetes/helm.md)
 - [Author a Kustomize artifact](../deployers/kubernetes/kustomize.md)
 - [Assemble a vector](../core/build-vectors.md)
 - [Configure deployment targets for a landscape](../core/deployment-targets.md)
 - [Configure signing and verification](../core/signing.md)
-- [Konfidence and deployers](../core/index.md)
 - [Create a stage](../core/stages.md)
 - [Deliver an application](../start/deliver-an-application.md)
 - [Delivery Flow](../core/delivery-flow.md)
@@ -355,7 +344,6 @@ The vector data service is a runtime component that serves vector data to worklo
 ::: details Pages that use this term
 
 - [Access vector data in your application](../deployers/kubernetes/access-vector-data.md)
-- [Advanced features](../deployers/kubernetes/application-runtime.md)
 - [Install Konfidence](../core/install.md)
 - [Install the Vector Data Service](../deployers/kubernetes/vector-data-service.md)
 - [Prepare your application](../deployers/kubernetes/prepare-your-application.md)
@@ -463,7 +451,6 @@ A `VectorTemplate` is a custom resource that defines how Konfidence assembles a 
 ::: details Pages that use this term
 
 - [Add configuration to a vector](../core/vector-configuration.md)
-- [Advanced features](../deployers/kubernetes/application-runtime.md)
 - [Assemble a vector](../core/build-vectors.md)
 - [Configure signing and verification](../core/signing.md)
 - [Create a project](../core/projects.md)

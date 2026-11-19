@@ -30,6 +30,19 @@ The responsible deployer validates the target and reports its `Ready` condition.
 
 If there is no condition, check that a running deployer supports the exact `spec.artifactType` value. If readiness stays false, inspect the condition reason and the deployer's parameter reference.
 
+## Check which types a landscape provides
+
+You need `kubectl` access and permission to read `DeploymentTarget` resources in the landscape namespace.
+
+List the targets in the landscape namespace with the following command.
+
+```bash
+kubectl get deploymenttargets --namespace=<landscape-namespace>
+```
+
+The `spec.artifactType` field identifies the artifact type and `Ready=True` indicates that its deployer accepts the target.
+The landscape can deploy an artifact when it contains a ready target matching the artifact manifest type.
+
 ## Next steps
 
 Once every required target is ready, [create a stage](./stages.md). The [DeploymentTarget reference](../reference/crd.md#deploymenttarget) lists the shared fields.

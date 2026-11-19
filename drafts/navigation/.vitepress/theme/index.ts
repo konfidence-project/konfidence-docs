@@ -5,8 +5,7 @@ import AdrHeader from '../../../../.vitepress/theme/components/AdrHeader.vue'
 import DrawioDiagram from '../../../../.vitepress/theme/components/DrawioDiagram.vue'
 import spec from '../../../../src/docs/reference/api.json'
 import Layout from './Layout.vue'
-import DeliveryPath from './DeliveryPath.vue'
-import TaskCards from './TaskCards.vue'
+import DeployerCards from './DeployerCards.vue'
 import './custom.css'
 
 export default {
@@ -15,8 +14,7 @@ export default {
   enhanceApp({ app }) {
     app.component('AdrHeader', AdrHeader)
     app.component('DrawioDiagram', DrawioDiagram)
-    app.component('DeliveryPath', DeliveryPath)
-    app.component('TaskCards', TaskCards)
+    app.component('DeployerCards', DeployerCards)
     useOpenapi({ spec, config: { operation: { hiddenSlots: ['playground', 'try-it'] } } })
     openapiTheme.enhanceApp({ app })
   },

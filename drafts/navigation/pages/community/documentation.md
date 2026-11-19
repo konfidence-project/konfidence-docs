@@ -1,16 +1,16 @@
 ---
-title: "Contribute documentation"
+title: "Documentation workflow"
 scope: "Contributing documentation"
 editLink: false
 lastUpdated: false
 ---
-# Contribute documentation
+# Documentation workflow
 
 Help readers understand Konfidence and complete a task. Documentation changes follow the same contribution agreements as code changes.
 
 ## Plan and write
 
-1. Read [Contributing](./contributing.md) for licensing, the Developer Certificate of Origin, and the guidance on AI-assisted contributions.
+1. Read [Contribution guidelines](./contributing.md) for licensing, the Developer Certificate of Origin, and the guidance on AI-assisted contributions.
 2. Choose one audience and one reader task with the [Guide templates](./guide-templates.md).
 3. Use the [Style guide](./style-guide.md) to write and format the page.
 4. Check technical statements, prerequisites, and expected results against the current implementation and with the feature owner.

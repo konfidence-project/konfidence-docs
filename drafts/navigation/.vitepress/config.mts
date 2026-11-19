@@ -4,9 +4,9 @@ import { MermaidMarkdown, MermaidPlugin } from 'vitepress-plugin-mermaid'
 import { navigationSources } from '../prepare.mjs'
 import { sidebar } from './navigation.mts'
 
-const documentation = { text: 'Documentation', link: '/start/quickstart', activeMatch: '^/(start|core|reference)/' }
+const documentation = { text: 'Konfidence core', link: '/start/quickstart', activeMatch: '^/(start|core|reference)/' }
 const deployers = { text: 'Deployers', link: '/deployers/', activeMatch: '^/deployers/' }
-const community = { text: 'Community', link: '/community/index', activeMatch: '^/community/' }
+const community = { text: 'Community', link: '/community/contributing', activeMatch: '^/community/' }
 const insideDocs = { themeConfig: { nav: [documentation, deployers, community] } }
 const draftRoot = fileURLToPath(new URL('../', import.meta.url))
 

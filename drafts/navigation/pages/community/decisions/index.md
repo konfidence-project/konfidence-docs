@@ -67,4 +67,4 @@ Gaps in the list are records that are superseded, internal to the project, or st
 
 ## Propose a new decision
 
-Follow the [Architecture decision records](../contributing.md#architecture-decision-records) section in the Contributing guide.
+Follow the [Architecture decision records](../contributing.md#architecture-decision-records) section in the contribution guidelines.

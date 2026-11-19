@@ -45,4 +45,4 @@ Before deploying, confirm that the [landscape](../../reference/glossary.md#lands
 The [deployment model](../../core/deployment-model.md) explains how artifacts, deployers, and targets connect.
 Operators set up targets by following [Configure deployment targets for a landscape](../../core/deployment-targets.md).
 
-To add a deployment method or a target platform, see [Community](../../community/index.md).
+To add a deployment method or a target platform, see [Deployer contract](../../community/deployer-contract.md).
