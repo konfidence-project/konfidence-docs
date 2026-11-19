@@ -215,6 +215,32 @@ When changing options or updating lychee, run `pnpm test:links`, rebuild, and ru
 
 The checks cover static output. JavaScript-generated anchors and assets loaded only in the browser, such as interactive diagrams, still need preview and manual review. They also do not establish technical accuracy, useful image descriptions, or correct commands.
 
+### Documentation versions
+
+`src/docs` is the development version and appears at `/docs/`. A release gets a snapshot in `src/<X.Y>/docs`, served at `/<X.Y>/docs/`. The `versions.json` file lists the snapshots, newest first. The first entry is the latest version. The version selector in the navigation bar and the "Docs" link read the list. Without snapshots, the site shows only the development version.
+
+To cut a version, run the command from the repository root with the release tag of Konfidence. Add the tag of the orchestrator if its release differs:
+
+```bash
+pnpm docs:version 0.1 --konfidence 0.1.0-alpha.1 --klo 0.1.0-alpha.1
+```
+
+The command copies `src/docs` to `src/0.1/docs` with its images and its `sidebar.json`, then adds the version to `versions.json`. It leaves out the architecture decision records and the pages listed in `srcExclude`, because the decisions are project history and exist once at `/docs/extend-customize/decisions/`. In the copy it also:
+
+- turns relative links to the decisions into absolute ones.
+- adjusts the include of `CONTRIBUTING.md` for the deeper folder.
+- pins links to the Konfidence and orchestrator repositories to the release tags, including `curl` commands in code blocks.
+
+Pages link to each other with relative links, such as `../reference/crd.md`, so a copy stays inside its version. The command stops if a page links to `/docs/` absolutely, and `pnpm test:version` checks the same for every pull request. Links to the decisions can stay absolute.
+
+The command refuses to replace an existing snapshot unless you add `--force`. Run it again with `--force` to refresh a snapshot from `src/docs`; this discards edits made in the snapshot. The `curl` commands that install the `kden` CLI from `konfidence.cloud` are not pinned.
+
+Snapshots are generated files. Vale and markdownlint skip `src/<X.Y>/`, so fix findings in the development pages. To correct a released version, edit the pages in its folder like any other page. The generated references in a snapshot are copies; the sync from the source repositories updates only the development version.
+
+Each version keeps its own sidebar in `sidebar.json`, so change the navigation of the development version in `src/docs/sidebar.json`. The architecture decision records are listed there with the `"@adr-items"` marker.
+
+To remove a version, delete `src/<X.Y>/` and its entry in `versions.json`. Run `pnpm test:version` after changing the command.
+
 ### Tests for the tooling
 
 The scripts and check configurations have tests that run with [Vitest](https://vitest.dev/). A test sits next to the file it covers and carries its name: `scripts/check-links.test.mjs` covers `scripts/check-links.mjs`, and `.markdownlint-cli2.test.mjs` covers `.markdownlint-cli2.yaml`. The Mermaid test sits beside the VitePress configuration in `.vitepress/`.

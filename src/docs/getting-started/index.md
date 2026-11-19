@@ -10,4 +10,4 @@ lastUpdated: true
 
 ## Related
 
-- [Core concepts](/docs/core-concepts/) - Understand the fundamentals
+- [Core concepts](../core-concepts/) - Understand the fundamentals

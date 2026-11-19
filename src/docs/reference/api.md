@@ -6,6 +6,11 @@ outline: false
 editLink: false
 ---
 
+<script setup>
+// each version renders the spec next to it, not the global one
+import spec from './api.json'
+</script>
+
 <ClientOnly>
-  <OASpec />
+  <OASpec :spec="spec" />
 </ClientOnly>

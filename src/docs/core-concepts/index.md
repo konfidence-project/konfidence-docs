@@ -17,5 +17,5 @@ Learn the mental models behind Konfidence before configuring [delivery flows](..
 
 ## Related
 
-- [Develop & Integrate](/docs/develop-integrate/) - Integration guides for developers
-- [Deploy & Operate](/docs/deploy-operate/plan/system-architecture) - Installation and operations guides
+- [Develop & Integrate](../develop-integrate/) - Integration guides for developers
+- [Deploy & Operate](../deploy-operate/plan/system-architecture.md) - Installation and operations guides

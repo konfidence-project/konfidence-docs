@@ -12,4 +12,4 @@ Plan and execute the delivery of your application: assemble [vectors](./build-ve
 
 ## Related
 
-- [Core Concepts](/docs/core-concepts/) - Fundamental concepts
+- [Core Concepts](../../core-concepts/) - Fundamental concepts

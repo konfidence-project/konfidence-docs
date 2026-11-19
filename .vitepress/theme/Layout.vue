@@ -15,6 +15,9 @@
     <template #home-features-after>
       <VPFooter />
     </template>
+    <template #doc-before>
+      <VersionBanner />
+    </template>
     <template #doc-after>
       <VPFooter />
     </template>
@@ -27,6 +30,7 @@ import VPFooter from './components/VPFooter.vue'
 import VPHeroInfo from './components/VPHeroInfo.vue'
 import FeatureOverview from './components/FeatureOverview.vue'
 import PreReleaseBanner from './components/PreReleaseBanner.vue'
+import VersionBanner from './components/VersionBanner.vue'
 
 const prerelease = __PRERELEASE__
 </script>

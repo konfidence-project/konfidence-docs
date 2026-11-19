@@ -7,6 +7,7 @@
     "src/docs/reference/api.json",
     "src/docs/reference/cli.md",
     "src/docs/reference/crd.md",
-    "src/docs/reference/helm-values-*.md"
+    "src/docs/reference/helm-values-*.md",
+    "src/[0-9]*/**"
   ]
 }

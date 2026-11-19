@@ -12,7 +12,7 @@ Install the Konfidence operator and API server from one Helm chart. After verify
 
 These steps are for the administrator of the Kubernetes installation. Review [System architecture](../plan/system-architecture.md) and [Plan for high availability](../plan/high-availability.md) before choosing your configuration.
 
-For a local test cluster, use the [Quickstart](/docs/getting-started/quickstart) instead. It sets up a kind cluster with everything installed.
+For a local test cluster, use the [Quickstart](../../getting-started/quickstart.md) instead. It sets up a kind cluster with everything installed.
 
 ## Prerequisites
 
@@ -57,7 +57,7 @@ helm upgrade --install konfidence oci://ghcr.io/konfidence-project/charts/konfid
   --wait
 ```
 
-The two `enabled=false` flags keep the first install self-contained. With the chart defaults, the API server refuses to start without an OIDC issuer URL. The admission webhook needs a TLS secret named `konfidence-webhook-server-cert`. [Give teams access to the dashboard and API](./expose-api.md) turns OIDC on. [Enable the admission webhook with cert-manager](#enable-the-admission-webhook-with-cert-manager) below creates the secret. Every chart value is listed in the [Helm values reference](/docs/reference/helm-values-konfidence).
+The two `enabled=false` flags keep the first install self-contained. With the chart defaults, the API server refuses to start without an OIDC issuer URL. The admission webhook needs a TLS secret named `konfidence-webhook-server-cert`. [Give teams access to the dashboard and API](./expose-api.md) turns OIDC on. [Enable the admission webhook with cert-manager](#enable-the-admission-webhook-with-cert-manager) below creates the secret. Every chart value is listed in the [Helm values reference](../../reference/helm-values-konfidence.md).
 
 ## Verify the installation
 
