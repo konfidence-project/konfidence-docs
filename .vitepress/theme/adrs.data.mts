@@ -25,7 +25,7 @@ function day(v: unknown): string | undefined {
   return String(v)
 }
 
-export default createContentLoader('docs/extend-customize/decisions/adr-*.md', {
+export default createContentLoader('**/decisions/adr-*.md', {
   transform(raw): Adr[] {
     return raw
       .map(({ url, frontmatter: fm }) => ({

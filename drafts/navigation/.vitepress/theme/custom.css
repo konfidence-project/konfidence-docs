@@ -1,0 +1,114 @@
+@import "./layout-base.css";
+@import "../../../../.vitepress/theme/custom.css";
+
+:root { --vp-sidebar-width: 300px; --vp-layout-max-width: 1480px; }
+.VPSidebar { background: var(--vp-c-bg-alt) !important; }
+.VPSidebar .group + .group { padding-top: 5px !important; }
+.VPSidebarItem.level-0 > .item > .text,
+.VPSidebarItem.level-0 > .item > .link > .text { font-size: 14px !important; }
+.VPSidebarItem.level-1 > .item > .link > .text,
+.VPSidebarItem.level-2 > .item > .link > .text { font-size: 13px; }
+.VPSidebarItem.level-2.is-active > .item > .link {
+  background: var(--vp-c-brand-soft);
+  border-radius: 5px;
+  margin-left: -9px;
+  padding-left: 9px;
+}
+.VPSidebarItem.level-1 > .item { padding: 3px 0 3px 12px; }
+.VPSidebarItem.level-0 { padding-top: 4px; padding-bottom: 4px; }
+.VPSidebarItem .items { padding-bottom: 4px; }
+.VPNavBarMenuLink.active { color: var(--konfidence-blue-dark) !important; border-bottom: 3px solid var(--konfidence-orange); }
+.dark .VPNavBarMenuLink.active { color: var(--konfidence-blue-light) !important; }
+.release-label { border-radius: 999px; background: rgba(255,170,0,.18); border: 1px solid var(--konfidence-orange); color: #9a6700; font-weight: 700; }
+.dark .release-label { color: var(--konfidence-orange); }
+.reference-context { font-size: 13px; padding: 12px 14px; margin-bottom: 22px; border-left: 3px solid var(--konfidence-orange); background: var(--vp-c-bg-soft); color: var(--vp-c-text-2); line-height: 1.6; }
+.platform-path {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  font-size: 0.83rem;
+  color: var(--vp-c-text-2);
+}
+.platform-path a { display: inline-flex; align-items: center; min-height: 1.75rem; }
+.platform-path a:hover { text-decoration: underline; }
+/* The mobile outline closes when the link receives the tap, including on its text. */
+.VPLocalNavOutlineDropdown .outline-link > bdi { pointer-events: none; }
+.VPNavScreenMenuLink.active { font-weight: 700; border-inline-start: 3px solid var(--konfidence-orange); padding-inline-start: 0.6rem; }
+:is(.VPNavMenu a, .VPSidebar a, .platform-path a, .deployer-card, #deployer-select):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Platform selection stays in the same position on the directory and guides. */
+.deployer-picker {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--konfidence-orange);
+}
+.deployer-picker select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 0.4rem;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  appearance: auto;
+}
+.deployer-picker select:hover { border-color: var(--konfidence-blue); }
+.deployer-directory .VPDoc .content-container { max-width: 960px !important; }
+.deployer-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+.vp-doc .deployer-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.4rem;
+  border: 1px solid var(--konfidence-surface-border);
+  border-top: 3px solid var(--konfidence-blue);
+  border-radius: 0.75rem;
+  background: var(--konfidence-gradient-surface);
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+}
+.vp-doc .deployer-card:hover {
+  border-color: var(--konfidence-blue);
+  background: var(--konfidence-gradient-card);
+}
+.vp-doc .deployer-card h2 {
+  margin: 0;
+  padding: 0;
+  border: 0 !important;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+.vp-doc .deployer-card .deployer-status {
+  margin: 0.45rem 0 0;
+  color: var(--vp-c-text-2);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.vp-doc .deployer-card .deployer-description {
+  margin: 1rem 0 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.65;
+}
+.deployer-arrow {
+  margin-top: auto;
+  color: var(--konfidence-blue-dark);
+  font-size: 1.3rem;
+}
+.dark .deployer-arrow { color: var(--konfidence-blue-light); }
+@media (max-width: 48rem) {
+  .deployer-cards { grid-template-columns: 1fr; }
+}

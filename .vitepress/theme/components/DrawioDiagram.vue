@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { withBase } from 'vitepress'
 
 const props = defineProps<{ src: string }>()
 const container = ref<HTMLElement | null>(null)
@@ -13,7 +14,7 @@ declare global {
 onMounted(async () => {
   if (!container.value) return
 
-  const response = await fetch(props.src)
+  const response = await fetch(withBase(props.src))
   const xmlText = await response.text()
 
   const parser = new DOMParser()

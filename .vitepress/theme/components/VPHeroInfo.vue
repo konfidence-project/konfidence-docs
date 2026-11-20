@@ -2,6 +2,9 @@
 import { Check, Github } from 'lucide-vue-next'
 import { withBase } from 'vitepress'
 
+withDefaults(defineProps<{ quickstartLink?: string }>(), {
+  quickstartLink: '/docs/getting-started/quickstart',
+})
 const logoUrl = withBase('/assets/logo/Icon_only/SVG/512_konfidence_icon_color.svg')
 </script>
 
@@ -14,7 +17,7 @@ const logoUrl = withBase('/assets/logo/Icon_only/SVG/512_konfidence_icon_color.s
       </p>
 
       <div class="hero-actions">
-        <a :href="withBase('/docs/getting-started/quickstart')" class="hero-button hero-button--primary">
+        <a :href="withBase(quickstartLink)" class="hero-button hero-button--primary">
           Get Konfidence running
         </a>
         <a href="https://github.com/konfidence-project/konfidence" class="hero-button hero-button--secondary">
