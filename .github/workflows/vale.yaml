@@ -20,7 +20,9 @@ jobs:
       VALE_VERSION: "3.25.1"
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       # Put the pinned release on PATH for both the tests and the official action.
       - name: Install Vale
@@ -40,7 +42,7 @@ jobs:
         run: vale --no-global --config=.vale.ini test --coverage .vale
 
       - name: Check documentation prose
-        uses: vale-cli/vale-action@v3
+        uses: vale-cli/vale-action@518a9136acc6e6668ce7c00d367051e0941e87ff # v3
         with:
           version: none
           config: .vale.ini

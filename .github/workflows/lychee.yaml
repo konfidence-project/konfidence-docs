@@ -24,13 +24,14 @@ jobs:
       report: ${{ steps.summary.outputs.report }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           # The report compares the full PR against its merge base.
           fetch-depth: 0
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 24
           cache: pnpm
@@ -100,7 +101,7 @@ jobs:
           esac
       - name: Cache successful external responses
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: .lycheecache
           key: lychee-${{ runner.os }}-${{ env.LYCHEE_VERSION }}-${{ hashFiles('lychee.toml', 'scripts/check-links.mjs') }}-${{ github.run_id }}-${{ github.run_attempt }}
