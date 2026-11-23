@@ -706,13 +706,23 @@
           "vector": {
             "description": "StageVersion vector",
             "type": "string"
+          },
+          "vectorDeploymentId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VectorDeploymentId"
+              }
+            ],
+            "description": "The associated VectorDeployment id. Null until it has been created.",
+            "nullable": true
           }
         },
         "required": [
           "id",
           "vector",
           "stageGeneration",
-          "status"
+          "status",
+          "vectorDeploymentId"
         ],
         "type": "object"
       },
