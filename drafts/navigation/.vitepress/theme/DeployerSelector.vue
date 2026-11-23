@@ -7,8 +7,12 @@ const router = useRouter()
 
 function selectDeployer(event: Event) {
   const value = (event.target as HTMLSelectElement).value
+  if (value === 'all') {
+    router.go(withBase('/deployers/'))
+    return
+  }
   const deployer = deployers.find(item => item.slug === value)
-  router.go(withBase(deployer?.entry ?? '/deployers/'))
+  if (deployer?.entry) router.go(withBase(deployer.entry))
 }
 </script>
 
@@ -18,8 +22,8 @@ function selectDeployer(event: Event) {
     <select id="deployer-select" :value="selected" @change="selectDeployer">
       <option value="" disabled>Choose a deployer</option>
       <option value="all">All deployers</option>
-      <option v-for="deployer in deployers" :key="deployer.slug" :value="deployer.slug">
-        {{ deployer.name }}
+      <option v-for="deployer in deployers" :key="deployer.slug" :value="deployer.slug" :disabled="!deployer.entry">
+        {{ deployer.name }}{{ deployer.entry ? '' : ' — No guide available' }}
       </option>
     </select>
   </div>

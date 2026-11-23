@@ -35,7 +35,6 @@ const selectedDeployer = computed(() => {
         <span aria-hidden="true">/</span>
         <span>{{ selectedDeployer.name }}</span>
       </nav>
-      <p v-if="page.relativePath === 'reference/crd.md'" class="reference-context">Shared Konfidence resources. Deployer-owned configuration belongs in the corresponding deployer reference.</p>
     </template>
     <template #doc-after>
       <footer class="reading-footer">

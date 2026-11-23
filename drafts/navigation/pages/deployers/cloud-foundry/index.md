@@ -1,19 +1,23 @@
 ---
-title: "Cloud Foundry prototype capabilities"
-scope: "Cloud Foundry · Proof of concept"
-editLink: false
-lastUpdated: false
+title: Cloud Foundry
+description: Placeholder content for the Cloud Foundry documentation navigation prototype.
+outline: [2, 3]
 ---
-# Cloud Foundry prototype capabilities
 
-The Cloud Foundry deployer is a proof of concept for deploying and removing a multi-target application (MTA).
+# Cloud Foundry
 
-## What the prototype covers
+::: warning Navigation prototype — placeholder content
+This page demonstrates where Cloud Foundry documentation would appear. It contains dummy text, not verified setup instructions or a statement of supported features.
+:::
 
-The recorded proof of concept demonstrates basic MTA deployment and removal. It does not cover every lifecycle edge case. Reading the deployment target configuration from a ConfigMap remains an open task in the prototype ticket.
+## Install and configure
 
-## What remains shared
+Placeholder: this section would explain prerequisites, credentials, target configuration, and how to verify the setup. The feature owner must provide the supported configuration and validation steps.
 
-The [Konfidence deployment model](../../core/deployment-model.md) distinguishes the application version from the platform that deploys its artifacts. Projects, vectors, stages, and promotions remain the shared concepts. A Cloud Foundry integration supplies the platform-specific execution and configuration.
+## Prepare artifacts
 
-For an installation you can try today, follow the [Kubernetes-based Quickstart](../../start/quickstart.md).
+Placeholder: this section would describe the supported artifact format and provide a complete authoring example. No artifact format or command is specified in this prototype.
+
+## Use the deployer
+
+Placeholder: this section would explain the deployment workflow, expected results, limitations, and troubleshooting once the behavior is confirmed.

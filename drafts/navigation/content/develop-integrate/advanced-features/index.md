@@ -1,0 +1,31 @@
+---
+title: "Advanced features"
+description: "Optional capabilities for applications that run in a vector: runtime configuration, feature flags, stage ingress, and signed artifacts."
+outline: deep
+editLink: true
+lastUpdated: true
+---
+
+# Advanced features
+
+Use these pages when your service needs data from its [vector](../../reference/glossary.md#vector) at runtime, accepts stage ingress traffic, or requires signed [artifacts](../../reference/glossary.md#artifact).
+
+## Read configuration and sibling addresses from the vector
+
+Konfidence includes configuration in each vector. The runtime integration makes it available to applications; the [Kubernetes implementation](../vector-data/kubernetes.md) uses the Vector Data Service. Start with the [vector data overview](../vector-data/overview.md), then:
+
+- [Add configuration to a vector](../vector-data/vector-configuration.md) to include [feature flags](../../reference/glossary.md#feature-flag) and authored configuration in the vector.
+- [Add deployment results to an artifact](../vector-data/deployment-results.md) to make a Service discoverable by other services in the vector.
+- [Access vector data in your application](../vector-data/access-vector-data.md) to read flags, configuration, and the addresses of other services at runtime.
+
+## Switch behavior per vector with feature flags
+
+[Read feature flags in your application](./feature-flags.md) evaluates a flag for the current vector with an OpenFeature client.
+
+## Opt in to stage ingress
+
+Follow [Expose a Service through stage ingress](./expose-service.md) to select one named Service port for external requests. Deployment results without a selected port do not get stage ingress rules.
+
+## Sign artifacts and verify them before deployment
+
+Signing and verification are optional. Konfidence skips them until they are configured. [Configure signing and verification](./configure-signing-and-verification.md) covers signing published artifacts, verifying artifacts during assembly, and signing the resulting vector. Follow its prerequisites for keys, registry access, and permissions, and coordinate credential setup with your administrator. Verification during deployment is configured separately on the operator and is outside that guide's scope.
