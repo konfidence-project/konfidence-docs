@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync } from "node:fs";
+import { sep } from "node:path";
 import { defineConfig, type DefaultTheme } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 
@@ -26,17 +27,41 @@ const versions: { version: string; konfidence: string; klo: string }[] = JSON.pa
 const docsBase = versions.length ? `/${versions[0].version}/docs` : "/docs";
 const quickstart = (base: string) => `${base}/getting-started/quickstart`;
 
-// the default theme's dropdown; it only appears once a version exists
+// pages for features that are not part of the initial release; recoverable
+// from git history / re-enabled by removing them here (issue #814)
+const srcExclude = [
+  "docs/overview.md",
+  "docs/getting-started/create-vector.md",
+  "docs/develop-integrate/observe-improve/paved-road.md",
+  "docs/develop-integrate/run-migrations.md",
+  "docs/extend-customize/create-deployer.md",
+  "docs/reference/deployer-specification.md",
+  "docs/reference/releases.md",
+];
+
+// the pages of every version, keyed "" for development, so the version menu
+// can open the same page in another version. Snapshots never contain the
+// excluded pages or the unversioned ADRs
+const listPages = (dir: string) =>
+  readdirSync(dir, { recursive: true, encoding: "utf8" })
+    .map((file) => file.split(sep).join("/"))
+    .filter((page) => page.endsWith(".md") && !page.startsWith("extend-customize/decisions/"));
+const versionPages: Record<string, string[]> = {
+  "": listPages("src/docs").filter((page) => !srcExclude.includes(`docs/${page}`)),
+};
+for (const { version } of versions) versionPages[version] = listPages(`src/${version}/docs`);
+
+// the default theme's dropdown; it only appears once a version exists. Each
+// entry is a VersionMenuLink, which keeps the reader's current page
 const versionMenu = versions.length
   ? [
       {
         text: "Versions",
         items: [
-          { text: "main (Development)", link: quickstart("/docs"), activeMatch: "^/docs/" },
+          { component: "VersionMenuLink", props: { version: "", text: "main (Development)" } },
           ...versions.map(({ version }, index) => ({
-            text: index ? version : `${version} (Latest)`,
-            link: quickstart(`/${version}/docs`),
-            activeMatch: `^/${version}/docs/`,
+            component: "VersionMenuLink",
+            props: { version, text: index ? version : `${version} (Latest)` },
           })),
         ],
       },
@@ -115,17 +140,7 @@ export default defineConfig(
     ],
     title: "Konfidence",
     description: "Public Documentation for Project Konfidence",
-    // pages for features that are not part of the initial release; recoverable
-    // from git history / re-enabled by removing them here (issue #814)
-    srcExclude: [
-      "docs/overview.md",
-      "docs/getting-started/create-vector.md",
-      "docs/develop-integrate/observe-improve/paved-road.md",
-      "docs/develop-integrate/run-migrations.md",
-      "docs/extend-customize/create-deployer.md",
-      "docs/reference/deployer-specification.md",
-      "docs/reference/releases.md",
-    ],
+    srcExclude,
     themeConfig: {
       // https://vitepress.dev/reference/default-theme-config
 
@@ -138,8 +153,9 @@ export default defineConfig(
       // Navigation bar
       nav: [{ text: "Docs", link: quickstart(docsBase) }, ...versionMenu],
 
-      // the version banner reads the list from the theme
+      // the version banner and menu read these from the theme
       versions,
+      versionPages,
 
       socialLinks: [{ icon: "github", link: "https://github.com/konfidence-project" }],
 

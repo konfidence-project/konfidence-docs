@@ -217,7 +217,7 @@ The checks cover static output. JavaScript-generated anchors and assets loaded o
 
 ### Documentation versions
 
-`src/docs` is the development version and appears at `/docs/`. A release gets a snapshot in `src/<X.Y>/docs`, served at `/<X.Y>/docs/`. The `versions.json` file lists the snapshots, newest first. The first entry is the latest version. The version selector in the navigation bar and the "Docs" link read the list. Without snapshots, the site shows only the development version.
+`src/docs` is the development version and appears at `/docs/`. A release gets a snapshot in `src/<X.Y>/docs`, served at `/<X.Y>/docs/`. The `versions.json` file lists the snapshots, newest first. The first entry is the latest version. The version selector in the navigation bar and the "Docs" link read the list. The selector opens the current page in the chosen version, or that version's Quickstart if the page doesn't exist there. Without snapshots, the site shows only the development version.
 
 To cut a version, run the command from the repository root with the release tag of Konfidence. Add the tag of the orchestrator if its release differs:
 

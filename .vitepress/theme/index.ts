@@ -6,6 +6,7 @@ import FeatureOverview from "./components/FeatureOverview.vue";
 import DrawioDiagram from "./components/DrawioDiagram.vue";
 import AdrHeader from "./components/AdrHeader.vue";
 import AdrLog from "./components/AdrLog.vue";
+import VersionMenuLink from "./components/VersionMenuLink.vue";
 import { theme as openapiTheme, useOpenapi } from "vitepress-openapi/client";
 import "vitepress-openapi/dist/style.css";
 import spec from "../../src/docs/reference/api.json";
@@ -21,6 +22,7 @@ export default {
     app.component("FeatureOverview", FeatureOverview);
     app.component("AdrHeader", AdrHeader);
     app.component("AdrLog", AdrLog);
+    app.component("VersionMenuLink", VersionMenuLink);
     useOpenapi({
       spec,
       config: {
