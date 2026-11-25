@@ -49,8 +49,14 @@ const current = computed(() => {
   font-size: 0.8125rem;
 }
 
+/* the flyout places its panel for a full-height nav button. This button is
+   shorter, so the panel starts right below it. The gap is padding inside
+   the panel, so the pointer never leaves button or panel on the way down,
+   which would close a hover-opened menu */
 .VersionSwitcher :deep(.menu) {
+  top: 100%;
   right: auto;
   left: 0;
+  padding-top: 0.25rem;
 }
 </style>
