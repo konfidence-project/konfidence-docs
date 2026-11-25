@@ -118,6 +118,13 @@ export default defineConfig(
           },
         ],
       },
+      // withMermaid pre-bundles dayjs, cytoscape and other CommonJS deps by
+      // bare name, which pnpm does not hoist to the root. Pre-bundling mermaid
+      // itself pulls them in; without it the dev server serves them as raw
+      // CommonJS and the page stays blank
+      optimizeDeps: {
+        include: ["mermaid"],
+      },
       define: {
         __PRERELEASE__: JSON.stringify(prerelease),
       },
