@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { sep } from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig, type DefaultTheme } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 
@@ -51,23 +52,6 @@ const versionPages: Record<string, string[]> = {
 };
 for (const { version } of versions) versionPages[version] = listPages(`src/${version}/docs`);
 
-// the default theme's dropdown; it only appears once a version exists. Each
-// entry is a VersionMenuLink, which keeps the reader's current page
-const versionMenu = versions.length
-  ? [
-      {
-        text: "Versions",
-        items: [
-          { component: "VersionMenuLink", props: { version: "", text: "main (Development)" } },
-          ...versions.map(({ version }, index) => ({
-            component: "VersionMenuLink",
-            props: { version, text: index ? version : `${version} (Latest)` },
-          })),
-        ],
-      },
-    ]
-  : [];
-
 // every version carries its own sidebar.json so old versions keep their
 // structure. "@adr-items" marks where the generated ADR list goes
 type SidebarFile = Omit<DefaultTheme.SidebarItem, "items"> & {
@@ -104,7 +88,7 @@ for (const { version } of versions) {
   );
 }
 
-// pre-release mode: shows the banner and pre-alpha badge; build with
+// pre-release mode: shows the pre-release banner; build with
 // KONFIDENCE_PRERELEASE=false to hide them
 const prerelease = process.env.KONFIDENCE_PRERELEASE !== "false";
 
@@ -122,6 +106,17 @@ export default defineConfig(
       publicDir: "../public",
       ssr: {
         noExternal: ["vitepress-openapi"],
+      },
+      resolve: {
+        // the nav bar title also holds the version switcher, see NavBarTitle.vue
+        alias: [
+          {
+            find: /^.*\/VPNavBarTitle\.vue$/,
+            replacement: fileURLToPath(
+              new URL("./theme/components/NavBarTitle.vue", import.meta.url),
+            ),
+          },
+        ],
       },
       define: {
         __PRERELEASE__: JSON.stringify(prerelease),
@@ -151,7 +146,7 @@ export default defineConfig(
       siteTitle: false,
 
       // Navigation bar
-      nav: [{ text: "Docs", link: quickstart(docsBase) }, ...versionMenu],
+      nav: [{ text: "Docs", link: quickstart(docsBase) }],
 
       // the version banner and menu read these from the theme
       versions,

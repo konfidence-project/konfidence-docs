@@ -90,9 +90,9 @@ The internal link check runs without network access and includes local links in 
 
 ## Pre-release mode
 
-The site builds in pre-release mode by default. It shows a fixed "pre-release software" banner on every page (`.vitepress/theme/components/PreReleaseBanner.vue`) and a `pre-alpha` badge next to the navbar logo.
+The site builds in pre-release mode by default. It shows a fixed "pre-release software" banner on every page (`.vitepress/theme/components/PreReleaseBanner.vue`).
 
-To hide both, build with the flag off:
+To hide it, build with the flag off:
 
 ```bash
 KONFIDENCE_PRERELEASE=false pnpm build

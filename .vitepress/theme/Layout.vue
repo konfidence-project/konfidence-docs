@@ -3,9 +3,6 @@
     <template #layout-top>
       <PreReleaseBanner v-if="prerelease" />
     </template>
-    <template #nav-bar-title-after>
-      <span v-if="prerelease" class="prerelease-badge">pre-alpha</span>
-    </template>
     <template #home-hero-info>
       <VPHeroInfo />
     </template>
@@ -36,23 +33,6 @@ const prerelease = __PRERELEASE__
 </script>
 
 <style scoped>
-.prerelease-badge {
-  margin-left: 0.5rem;
-  padding: 0.1rem 0.5rem;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  border-radius: 999px;
-  background: rgba(255, 170, 0, 0.18);
-  border: 1px solid var(--konfidence-orange);
-  color: #9A6700;
-}
-
-:global(.dark) .prerelease-badge {
-  color: var(--konfidence-orange);
-}
-
 :global(.VPHome .VPHero) {
   padding: 0;
 }
@@ -65,11 +45,5 @@ const prerelease = __PRERELEASE__
 
 :global(.VPHome .VPHero .main) {
   order: 0;
-}
-
-@media (max-width: 640px) {
-  .prerelease-badge {
-    display: none;
-  }
 }
 </style>
