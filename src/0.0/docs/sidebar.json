@@ -1,0 +1,40 @@
+[
+  {
+    "text": "Getting started",
+    "collapsed": false,
+    "items": [
+      {
+        "text": "Quickstart",
+        "link": "/docs/getting-started/quickstart"
+      },
+      {
+        "text": "Install the CLI",
+        "link": "/docs/getting-started/install-cli"
+      }
+    ]
+  },
+  {
+    "text": "Core concepts",
+    "collapsed": false,
+    "items": [
+      {
+        "text": "Artifacts and vectors",
+        "link": "/docs/core-concepts/vectors-and-artifacts"
+      },
+      {
+        "text": "Landscapes and stages",
+        "link": "/docs/core-concepts/landscapes-and-stages"
+      }
+    ]
+  },
+  {
+    "text": "Reference",
+    "collapsed": false,
+    "items": [
+      {
+        "text": "Glossary",
+        "link": "/docs/reference/glossary"
+      }
+    ]
+  }
+]
