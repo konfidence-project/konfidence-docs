@@ -28,11 +28,11 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^26.6.6",
-    "markdownlint-cli2": "0.24.1",
+    "markdownlint-cli2": "0.24.2",
     "markdownlint-cli2-formatter-sarif": "0.0.5",
     "mermaid": "^11.17.2",
     "vitepress": "2.0.0-alpha.21",
-    "vitepress-openapi": "^0.2.16",
+    "vitepress-openapi": "^0.2.19",
     "vitepress-plugin-mermaid": "2.0.17"
   },
   "dependencies": {

@@ -16,11 +16,11 @@ importers:
         specifier: ^26.6.6
         version: 26.6.6
       markdownlint-cli2:
-        specifier: 0.24.1
-        version: 0.24.1
+        specifier: 0.24.2
+        version: 0.24.2
       markdownlint-cli2-formatter-sarif:
         specifier: 0.0.5
-        version: 0.0.5(markdownlint-cli2@0.24.1)
+        version: 0.0.5(markdownlint-cli2@0.24.2)
       mermaid:
         specifier: ^11.17.2
         version: 11.17.2
@@ -28,8 +28,8 @@ importers:
         specifier: 2.0.0-alpha.21
         version: 2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32)
       vitepress-openapi:
-        specifier: ^0.2.16
-        version: 0.2.16(vitepress@2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32))(vue@3.5.44)
+        specifier: ^0.2.19
+        version: 0.2.19(vitepress@2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32))(vue@3.5.44)
       vitepress-plugin-mermaid:
         specifier: 2.0.17
         version: 2.0.17(mermaid@11.17.2)(vitepress@2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32))
@@ -106,8 +106,8 @@ packages:
   '@jridgewell/sourcemap-codec@1.6.0':
     resolution: {integrity: sha512-T7jf+5zgsZHwNJ4lvQ7/aezbyk0nNX+zJVWpmHA7VYsEx7a7qr5Rg5IbtJFqkgze5Y2sruq1RUY8Q837Od7iFw==}
 
-  '@lucide/vue@1.74.0':
-    resolution: {integrity: sha512-tQY7kwVLN3w65v69nGwZdpBqqtnMFDoOdoaFUPrYdnEeBX6ukeLduqC09oEAl09+9ApKO6Rgs2+Hpybjt+DHlw==}
+  '@lucide/vue@1.79.0':
+    resolution: {integrity: sha512-Qe9DrDeNmIPbClkaOzUC9gW0czx1J3YFmk8ua7CDEByY/JZ7CB4v1s9Ps6lLbuxOSQVLnC8LBei+lS9qI5X0iw==}
     peerDependencies:
       vue: '>=3.0.1'
 
@@ -273,11 +273,11 @@ packages:
   '@swc/helpers@0.5.24':
     resolution: {integrity: sha512-6tcXo4kA8HgGO7AVmawB57RYi/piBPYVHVcO6dXjX+SZw8GoHmi262sp4v2Ha2kNP9Cx84qei27yT+fjS1lxgg==}
 
-  '@tanstack/virtual-core@3.19.11':
-    resolution: {integrity: sha512-/5iHb0RHBvj8Di59FDs4ESNm45jls33aZAi4zccVXZjc/6ZvwQP6nzEYeT6weXjTf9E6/vrp2JhYWRyO+ZP13A==}
+  '@tanstack/virtual-core@3.19.13':
+    resolution: {integrity: sha512-CyCvMm7m5JuvPW6eMPZkZBZk6diySrlUQNNRpQPiEnh2vakyghx82Hw3wW2THFUsl6xJ6uM4lSUaiA2T0oYW8w==}
 
-  '@tanstack/vue-virtual@3.13.52':
-    resolution: {integrity: sha512-qTwG7HNr5o+FPd/u+T05N73A8howtkB9FgQI71VcBzx6J2KsYzlVugRz/0ji17kl26D8SAdKux1Wmk3yhTI1Kw==}
+  '@tanstack/vue-virtual@3.13.54':
+    resolution: {integrity: sha512-KIZR3xG56QORaFAUOg0oZzhOlxtaLwRw8W6WEeHUtzJ556tgcI2KuaSHy+GHe/tRi5/XOjn4c9BUYDI2zq2XxA==}
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
 
@@ -1045,13 +1045,13 @@ packages:
     peerDependencies:
       markdownlint-cli2: '>=0.23.3'
 
-  markdownlint-cli2@0.24.1:
-    resolution: {integrity: sha512-nLhes/MIPJQLm+Gmh+3jQEnwMOaalaN0wfCD2qz1247zNZ7R3r2WDHJB191x4hcy6soKAUTybp1bFK7aJGw/WA==}
+  markdownlint-cli2@0.24.2:
+    resolution: {integrity: sha512-bgxzhJkgR7t2puRgePHZYVqKzC90etPzxOC+9ZNATjAVJB2zs7EAolfF1inVsrkgYN+ykVIHIxk0WypG2VVLZA==}
     engines: {node: '>=22'}
     hasBin: true
 
-  markdownlint@0.42.1:
-    resolution: {integrity: sha512-Otolm9JX12iO2NG5cetlKfzGygpiLSlHuqXKxoT6HGhN5HtbxprJPicKZqqCQd88qOvUi/TEs3o1AmcYioVscA==}
+  markdownlint@0.42.2:
+    resolution: {integrity: sha512-IhlUBVT+kHBX+u3EjEsQdFB4q0Rl0Hx+JsGsvVkonNut1/n8Kv8yXzwk0pazC9uF35JlwMZ+LxV4CQ9YNAbG8w==}
     engines: {node: '>=22'}
 
   marked@16.4.2:
@@ -1401,9 +1401,10 @@ packages:
       yaml:
         optional: true
 
-  vitepress-openapi@0.2.16:
-    resolution: {integrity: sha512-Glp062ywCp+3gBdTwf9j6rG1YOzxhWu34tiIkB9fIELRkTxEIBAe1jNT9Watz+GqWin8gCwgV61M5tVkJTCSUw==}
+  vitepress-openapi@0.2.19:
+    resolution: {integrity: sha512-Ty42ssHaTE6ervfkkmwEbChlOfz9noAWDDqRtqy5Y/PlVOKbHKMpJzIS2Qrx/FytzrOpGS2FvLWzJJ79zHE4Cg==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24.0.0}
+    hasBin: true
     peerDependencies:
       vitepress: '>=1.0.0'
       vue: ^3.5.0
@@ -1517,7 +1518,7 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.6.0': {}
 
-  '@lucide/vue@1.74.0(vue@3.5.44)':
+  '@lucide/vue@1.79.0(vue@3.5.44)':
     dependencies:
       vue: 3.5.44
 
@@ -1646,11 +1647,11 @@ snapshots:
 
   '@swc/helpers@0.5.24': {}
 
-  '@tanstack/virtual-core@3.19.11': {}
+  '@tanstack/virtual-core@3.19.13': {}
 
-  '@tanstack/vue-virtual@3.13.52(vue@3.5.44)':
+  '@tanstack/vue-virtual@3.13.54(vue@3.5.44)':
     dependencies:
-      '@tanstack/virtual-core': 3.19.11
+      '@tanstack/virtual-core': 3.19.13
       vue: 3.5.44
 
   '@types/d3-array@3.2.2': {}
@@ -2393,29 +2394,29 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 3.0.0
 
-  markdownlint-cli2-formatter-default@0.0.6(markdownlint-cli2@0.24.1):
+  markdownlint-cli2-formatter-default@0.0.6(markdownlint-cli2@0.24.2):
     dependencies:
-      markdownlint-cli2: 0.24.1
+      markdownlint-cli2: 0.24.2
 
-  markdownlint-cli2-formatter-sarif@0.0.5(markdownlint-cli2@0.24.1):
+  markdownlint-cli2-formatter-sarif@0.0.5(markdownlint-cli2@0.24.2):
     dependencies:
-      markdownlint-cli2: 0.24.1
+      markdownlint-cli2: 0.24.2
 
-  markdownlint-cli2@0.24.1:
+  markdownlint-cli2@0.24.2:
     dependencies:
       globby: 16.2.4
       js-yaml: 5.5.0
       jsonc-parser: 3.3.1
       jsonpointer: 5.0.1
       markdown-it: 15.0.3
-      markdownlint: 0.42.1
-      markdownlint-cli2-formatter-default: 0.0.6(markdownlint-cli2@0.24.1)
+      markdownlint: 0.42.2
+      markdownlint-cli2-formatter-default: 0.0.6(markdownlint-cli2@0.24.2)
       micromatch: 4.0.8
       smol-toml: 1.9.1
     transitivePeerDependencies:
       - supports-color
 
-  markdownlint@0.42.1:
+  markdownlint@0.42.2:
     dependencies:
       micromark: 4.0.3
       micromark-core-commonmark: 2.0.4
@@ -2733,7 +2734,7 @@ snapshots:
       '@floating-ui/vue': 2.0.1(vue@3.5.44)
       '@internationalized/date': 3.12.4
       '@internationalized/number': 3.6.9
-      '@tanstack/vue-virtual': 3.13.52(vue@3.5.44)
+      '@tanstack/vue-virtual': 3.13.54(vue@3.5.44)
       '@vueuse/core': 14.4.0(vue@3.5.44)
       '@vueuse/shared': 14.4.0(vue@3.5.44)
       aria-hidden: 1.2.6
@@ -2889,9 +2890,9 @@ snapshots:
       '@types/node': 26.6.6
       fsevents: 2.3.3
 
-  vitepress-openapi@0.2.16(vitepress@2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32))(vue@3.5.44):
+  vitepress-openapi@0.2.19(vitepress@2.0.0-alpha.21(@types/node@26.6.6)(postcss@8.5.32))(vue@3.5.44):
     dependencies:
-      '@lucide/vue': 1.74.0(vue@3.5.44)
+      '@lucide/vue': 1.79.0(vue@3.5.44)
       '@vueuse/core': 14.4.0(vue@3.5.44)
       class-variance-authority: 0.7.1
       clsx: 2.1.1
