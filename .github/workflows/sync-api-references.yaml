@@ -54,6 +54,7 @@ jobs:
           persist-credentials: false
 
       - name: Checkout upstream orchestrator chart
+        id: orchestrator
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: konfidence-project/kubernetes-landscape-orchestrator
@@ -109,6 +110,13 @@ jobs:
         uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8
         with:
           token: ${{ steps.auth.outputs.token }}
+          sign-commits: true
+          add-paths: |
+            src/docs/reference/crd.md
+            src/docs/reference/cli.md
+            src/docs/reference/helm-values-konfidence.md
+            src/docs/reference/helm-values-orchestrator.md
+            src/docs/reference/api.json
           branch: sync/api-references
           base: main
           title: "docs: sync API references from konfidence @ ${{ steps.copy.outputs.short_sha }}"
@@ -122,8 +130,16 @@ jobs:
             - `src/docs/reference/cli.md` — CLI reference
             - `src/docs/reference/helm-values-konfidence.md` — konfidence chart values
             - `src/docs/reference/helm-values-orchestrator.md` — kubernetes-landscape-orchestrator chart values
+            - `src/docs/reference/api.json` — OpenAPI reference
 
-            Synced from `main` HEAD @ [`${{ steps.upstream.outputs.commit }}`](https://github.com/konfidence-project/konfidence/commit/${{ steps.upstream.outputs.commit }})
+            Synced from upstream `main` snapshots:
+            - Konfidence: [`${{ steps.upstream.outputs.commit }}`](https://github.com/konfidence-project/konfidence/commit/${{ steps.upstream.outputs.commit }})
+            - Orchestrator: [`${{ steps.orchestrator.outputs.commit }}`](https://github.com/konfidence-project/kubernetes-landscape-orchestrator/commit/${{ steps.orchestrator.outputs.commit }})
+
+            To refresh upstream content, run **Sync API references from konfidence** on `main` before review.
+            This updates the same PR; rebasing alone does not refresh the upstream files.
+            Review the latest changes, wait for required checks, then use **Rebase and merge**.
+            Further sync updates require fresh approval. This workflow does not approve or merge the PR.
           labels: |
             automated
             reference-sync
