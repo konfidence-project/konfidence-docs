@@ -97,7 +97,7 @@ jobs:
 
       - name: Create repository-scoped PR token
         id: auth
-        uses: konfidence-project/.github/.github/actions/github-app-auth@4d42404fca8862353c7fa2d457142d82b10a0930 # hardened actions
+        uses: konfidence-project/.github/.github/actions/github-app-auth@ef25064d200c2da0789c100878a4ee29a147518d # v5.0.0
         with:
           client-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.KONFIDENCE_PROJECT_REPO_ACCESS_PRIVATE_KEY }}
