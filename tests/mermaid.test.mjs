@@ -1,11 +1,10 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
-import { createMarkdownRenderer } from "vitepress";
-import { withMermaid } from "vitepress-plugin-mermaid";
+import { createMarkdownRenderer, resolveConfig } from "vitepress";
 
-const config = withMermaid({});
-const md = await createMarkdownRenderer(process.cwd(), config.markdown);
+const config = await resolveConfig();
+const md = await createMarkdownRenderer(config.srcDir, config.markdown);
 
 test("Mermaid flowcharts and sequence diagrams render as components, not code blocks", () => {
   for (const source of ["flowchart LR\n  A --> B\n", "sequenceDiagram\n  A->>B: Hello\n"]) {
