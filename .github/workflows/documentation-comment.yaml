@@ -13,6 +13,8 @@ on:
         type: string
         default: ""
 
+permissions: {}
+
 jobs:
   comment:
     name: Update documentation findings

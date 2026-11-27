@@ -15,8 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   # Serialize syncs on the shared branch: let any in-flight run finish cleanly
@@ -29,14 +28,18 @@ concurrency:
 jobs:
   sync-api-references:
     name: Sync / API References
+    if: github.ref == 'refs/heads/main'
+    environment: automation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout konfidence-docs
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Checkout upstream API references
         id: upstream
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: konfidence-project/konfidence
           ref: main
@@ -51,7 +54,8 @@ jobs:
           persist-credentials: false
 
       - name: Checkout upstream orchestrator chart
-        uses: actions/checkout@v7
+        id: orchestrator
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: konfidence-project/kubernetes-landscape-orchestrator
           ref: main
@@ -92,10 +96,27 @@ jobs:
         env:
           COMMIT: ${{ steps.upstream.outputs.commit }}
 
+      - name: Create repository-scoped PR token
+        id: auth
+        uses: konfidence-project/.github/.github/actions/github-app-auth@ef25064d200c2da0789c100878a4ee29a147518d # v5.0.0
+        with:
+          client-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.KONFIDENCE_PROJECT_REPO_ACCESS_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Open or update sync PR
         id: cpr
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8
         with:
+          token: ${{ steps.auth.outputs.token }}
+          sign-commits: true
+          add-paths: |
+            src/docs/reference/crd.md
+            src/docs/reference/cli.md
+            src/docs/reference/helm-values-konfidence.md
+            src/docs/reference/helm-values-orchestrator.md
+            src/docs/reference/api.json
           branch: sync/api-references
           base: main
           title: "docs: sync API references from konfidence @ ${{ steps.copy.outputs.short_sha }}"
@@ -109,23 +130,19 @@ jobs:
             - `src/docs/reference/cli.md` — CLI reference
             - `src/docs/reference/helm-values-konfidence.md` — konfidence chart values
             - `src/docs/reference/helm-values-orchestrator.md` — kubernetes-landscape-orchestrator chart values
+            - `src/docs/reference/api.json` — OpenAPI reference
 
-            Synced from `main` HEAD @ [`${{ steps.upstream.outputs.commit }}`](https://github.com/konfidence-project/konfidence/commit/${{ steps.upstream.outputs.commit }})
+            Synced from upstream `main` snapshots:
+            - Konfidence: [`${{ steps.upstream.outputs.commit }}`](https://github.com/konfidence-project/konfidence/commit/${{ steps.upstream.outputs.commit }})
+            - Orchestrator: [`${{ steps.orchestrator.outputs.commit }}`](https://github.com/konfidence-project/kubernetes-landscape-orchestrator/commit/${{ steps.orchestrator.outputs.commit }})
+
+            To refresh upstream content, run **Sync API references from konfidence** on `main` before review.
+            This updates the same PR; rebasing alone does not refresh the upstream files.
+            Review the latest changes, wait for required checks, then use **Rebase and merge**.
+            Further sync updates require fresh approval. This workflow does not approve or merge the PR.
           labels: |
             automated
             reference-sync
 
-      - name: Authenticate as konfidence-bot
-        if: steps.cpr.outputs.pull-request-number
-        uses: konfidence-project/.github/.github/actions/github-app-auth@v4
-        with:
-          client-id: ${{ vars.GH_APP_ID }}
-          private-key: ${{ secrets.KONFIDENCE_PROJECT_REPO_ACCESS_PRIVATE_KEY }}
-
-      - name: Auto-approve sync PR
-        if: steps.cpr.outputs.pull-request-number
-        run: gh pr review --approve ${{ steps.cpr.outputs.pull-request-number }}
-
-      - name: Enable auto-merge
-        if: steps.cpr.outputs.pull-request-number
-        run: gh pr merge --auto --rebase ${{ steps.cpr.outputs.pull-request-number }}
+      # Generated Markdown can contain executable site content. A human must
+      # review and merge the sync PR; the App must not approve its own update.
