@@ -1,0 +1,43 @@
+:root {
+  --vp-c-brand-1: #087d9e;
+  --vp-c-brand-2: #126a84;
+  --vp-c-brand-3: #087d9e;
+  --vp-c-brand-soft: #0b88aa12;
+  --vp-sidebar-width: 292px;
+  --vp-font-family-base: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --konfidence-surface-border: #dce5e9;
+  --konfidence-gradient-surface: #f6f9fa;
+  --vp-layout-max-width: 1480px;
+}
+.dark {
+  --vp-c-brand-1: #65c6df;
+  --vp-c-brand-2: #a2e0ef;
+  --vp-c-brand-3: #087d9e;
+  --vp-c-brand-soft: #65c6df16;
+  --konfidence-surface-border: #344650;
+  --konfidence-gradient-surface: #202a30;
+}
+.VPNavBar .title .logo { height: 22px; }
+.VPNavBarMenuLink, .VPNavBarMenuGroup { font-size: 14px; }
+.VPSidebar { background: var(--vp-c-bg) !important; border-right: 1px solid var(--vp-c-divider); }
+.VPSidebarItem.level-0 > .item > .text { font-size: 12px; letter-spacing: .04em; color: var(--vp-c-text-2); }
+.VPSidebar .group + .group { border-top: none; padding-top: 18px; }
+.VPSidebarItem.level-1 > .item { padding: 3px 0; }
+.VPSidebarItem .text { line-height: 1.45; }
+.VPSidebarItem.level-1.is-active > .item > .link { background: var(--vp-c-brand-soft); border-radius: 5px; margin-left: -9px; padding-left: 9px; }
+.VPDoc .content-container { max-width: 790px !important; }
+.vp-doc h1 { line-height: 1.17; font-size: 34px; font-weight: 650; letter-spacing: -.025em; }
+.vp-doc h2 { font-size: 23px; border-top: 0; padding-top: 0; margin-top: 40px; }
+.vp-doc p, .vp-doc li { line-height: 1.75; }
+.vp-doc a { text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.vp-doc table { font-size: 14px; }
+.vp-doc th { text-align: left; }
+.release-label { font-size: 10px; font-weight: 600; margin-left: 9px; background: #fff3cf; color: #745000; border-radius: 4px; padding: 2px 5px; white-space: nowrap; }
+.reading-footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--vp-c-divider); color: var(--vp-c-text-3); font-size: 12px; }
+.reading-footer p { margin-bottom: 14px; max-width: 650px; }
+.reading-footer a { margin-right: 20px; }
+@media (min-width: 960px) and (max-width: 1250px) { .VPDoc:not(.has-aside) .content { padding-right: 16px !important; } }
+@media (max-width: 760px) {
+  .vp-doc h1 { font-size: 30px; }
+  .release-label { display: none; }
+}

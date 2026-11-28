@@ -1,0 +1,20 @@
+{
+  "deploy-operate/install/connect-registries.md#give-the-deployer-credentials": "deployers/kubernetes/registry-access.md#give-the-deployer-credentials",
+  "deploy-operate/install/connect-registries.md#map-registries-to-secrets-with-different-names": "deployers/kubernetes/registry-access.md#map-registries-to-secrets-with-different-names",
+  "deploy-operate/install/connect-registries.md#workload-images-stay-your-responsibility": "deployers/kubernetes/registry-access.md#workload-images-stay-your-responsibility",
+  "deploy-operate/install/deployer/kubernetes.md#target-parameters": "deployers/kubernetes/configure-target.md#target-parameters",
+  "deploy-operate/install/deployer/kubernetes.md#how-deployment-results-work": "deployers/kubernetes/deployment-results.md#how-deployment-results-work",
+  "deploy-operate/install/deployer/kubernetes.md#why-the-annotation-is-required": "deployers/kubernetes/deployment-results.md#why-the-annotation-is-required",
+  "deploy-operate/install/deployer/kubernetes.md#how-the-deployer-processes-the-annotation": "deployers/kubernetes/deployment-results.md#how-the-deployer-processes-the-annotation",
+  "deploy-operate/install/deployer/kubernetes.md#scope": "deployers/kubernetes/deployment-results.md#scope",
+  "deploy-operate/install/deployer/kubernetes.md#service-ingress-opt-in": "deployers/kubernetes/expose-service.md#service-ingress-opt-in",
+  "develop-integrate/vector-data/overview.md#kubernetes-runtime": "deployers/kubernetes/vector-data.md#kubernetes-runtime",
+  "develop-integrate/artifact-types/index.md#choose-whether-vectors-share-one-instance-of-your-artifact": "core/artifacts-and-vectors.md#choose-whether-vectors-share-one-instance-of-your-artifact",
+  "develop-integrate/artifact-types/index.md#how-reuse-works": "core/artifacts-and-vectors.md#how-reuse-works",
+  "develop-integrate/artifact-types/index.md#choose-allowreuse-true-when": "core/artifacts-and-vectors.md#choose-allowreuse-true-when",
+  "develop-integrate/artifact-types/index.md#choose-allowreuse-false-when": "core/artifacts-and-vectors.md#choose-allowreuse-false-when",
+  "develop-integrate/artifact-types/index.md#what-reuse-demands-from-your-service": "deployers/kubernetes/access-vector-data.md#share-an-artifact-instance",
+  "deploy-operate/install/deployer/kubernetes.md#supported-artifact-types": "deployers/kubernetes/artifact-types.md#supported-artifact-types",
+  "develop-integrate/artifact-types/publish-artifacts.md#create-the-konfidence-manifest-file": "core/publish-artifacts.md#prepare-the-artifact-files",
+  "develop-integrate/artifact-types/publish-artifacts.md#create-the-ocm-component-constructor": "core/publish-artifacts.md#prepare-the-artifact-files"
+}
